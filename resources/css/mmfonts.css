@@ -1,0 +1,55 @@
+@font-face {
+    font-family: 'ArtHouse03';
+    font-style: normal;
+    font-weight: 400;
+    src: local('ArtHouse03'), local('ArtHouse03-Regular'), url(/fonts/ArtHouse03.woff) format('woff');
+    unicode-range: U+1000-109F;
+}
+
+@font-face {
+    font-family: 'ArtHouse05';
+    font-style: normal;
+    font-weight: 400;
+    src: local('ArtHouse05'), local('ArtHouse05-Regular'), url(/fonts/ArtHouse05.woff) format('woff');
+    unicode-range: U+1000-109F;
+}
+
+@font-face {
+    font-family: 'ArtHouse71';
+    font-style: normal;
+    font-weight: 400;
+    src: local('ArtHouse71'), local('ArtHouse71-Regular'), url(/fonts/ArtHouse71.woff) format('woff');
+    unicode-range: U+1000-109F;
+}
+
+@font-face {
+    font-family: 'BeikThaNo';
+    font-style: normal;
+    font-weight: 400;
+    src: local('BeikThaNo'), local('BeikThaNo-Regular'), url(/fonts/BeikThaNo.woff) format('woff');
+    unicode-range: U+1000-109F;
+}
+
+@font-face {
+    font-family: 'PyinOoLwin';
+    font-style: normal;
+    font-weight: 400;
+    src: local('PyinOoLwin'), local('PyinOoLwin-Regular'), url(/fonts/PyinOoLwin.woff) format('woff');
+    unicode-range: U+1000-109F;
+}
+
+@font-face {
+    font-family: 'ZawgyiFlower';
+    font-style: normal;
+    font-weight: 400;
+    src: local('ZawgyiFlower'), local('ZawgyiFlower-Regular'), url(/fonts/ZawgyiFlower.woff) format('woff');
+    unicode-range: U+1000-109F;
+}
+
+@font-face {
+    font-family: 'tsan';
+    font-style: normal;
+    font-weight: 400;
+    src: local('tsan'), local('tsan-Regular'), url(/fonts/180613022009tsan.woff) format('woff');
+    unicode-range: U+1000-109F;
+}

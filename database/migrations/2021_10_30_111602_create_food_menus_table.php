@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateFoodMenusTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('food_menus', function (Blueprint $table) {
+            $table->id('food_menu_id');
+            $table->string('food_menu_name_en')->nullable();
+            $table->string('food_menu_name_mm')->nullable();
+            $table->string('food_menu_name_ch')->nullable();
+            $table->unsignedBigInteger('restaurant_id')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('food_menus');
+    }
+}

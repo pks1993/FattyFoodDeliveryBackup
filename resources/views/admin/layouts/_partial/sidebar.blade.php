@@ -1,0 +1,311 @@
+<aside class="main-sidebar sidebar-dark-light elevation-4" style="background-color: #000335">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+
+          <img src="{{asset('image/user.jpg')}}" class="img-circle" alt="User Image">
+
+        </div>
+        <div class="info">
+          <a href="#" class="d-block"><b>Fatty Admin</b><i class="fa fa-circle text-success btn-sm"></i> <span style="font-size: 10;">Online</span></a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" style="color: white;">
+        <li class="nav-item has-treeview">
+                <a href="{{url('fatty/main/admin/dashboard')}}" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-dashboard" style="margin-right: 5px" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Dashboard</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="{{url('fatty/main/admin/foods/orders/lists')}}" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-list" style="margin-right: 5px" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Order Assign</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Users</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p> User all List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/daily_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Daily New Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/monthly_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Monthly New Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/yearly_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Yearly New Users</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Ordered Users</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/daily_ordered_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Daily Ordered Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/monthly_ordered_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Monthly Ordered Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/yearly_ordered_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Yearly Ordered Users</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Category</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/restaurant/categories')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p> Category List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/restaurant/categories/assign')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Category Assign List</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;text-align: left;">
+                            <i class="fas fa-store-alt" style="font-size: 90%;" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Restaurant</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>                    
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/restaurants') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Restaurant List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/recommend_restaurants') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Recommdned Restaurant</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-cutlery" style="margin-left: 3px;" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Food</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/foods') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Food List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/food_menu')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Food Menu List</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>  
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-bell" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Notification</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/notification_templates')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Send Notification</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-lock" style="margin-left: 3px;font-size: 115%;" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Permission</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/user')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Admin</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/roles')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Role</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/zones')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Zone</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/rider_group')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>RiderGroup</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>  
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-gear" style="margin-left: 2px;font-size: 115%;" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Settings</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/support_center')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Support Center</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/tutorials')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Tutorial Video</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form id="frm-logout" action="{{ route('fatty.admin.logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a href="{{route('fatty.admin.logout')}} " onclick="event.preventDefault(); document.getElementById('frm-logout').submit();" class="nav-link">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            <p>Logout</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+      </nav>
+    </div>
+</aside>
