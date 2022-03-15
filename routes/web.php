@@ -222,5 +222,5 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('yearly_food_order','Admin\Order\OrderController@yearlyfoodorderindex');
     Route::get('orders/datatable/yearlyfoodorderajax','Admin\Order\OrderController@yearlyfoodorderajax');
 
-
+    Route::get('testing_yellyintaung','TestingController');
 });
