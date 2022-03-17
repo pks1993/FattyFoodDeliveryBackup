@@ -120,6 +120,47 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
+                            <i class="fas fa-biking" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Riders</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/riders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Riders List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/daily_100_riders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Daily Top 100</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/monthly_100_riders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Monthly Top 100</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/yearly_100_riders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Yearly Top 100</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
                             <i class="fa fa-users" aria-hidden="true"></i>
                         </div>
                         <div style="width: 50%;">
@@ -163,13 +204,19 @@
                     <li class="nav-item">
                         <a href="{{ url('fatty/main/admin/restaurants') }}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            <p>Restaurant List</p>
+                            <p>All List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/100_restaurants') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Top 100 List</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ url('fatty/main/admin/recommend_restaurants') }}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                            <p>Recommdned Restaurant</p>
+                            <p>Recommanded All list</p>
                         </a>
                     </li>
                 </ul>

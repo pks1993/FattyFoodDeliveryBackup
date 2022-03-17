@@ -13,4 +13,8 @@ class Rider extends Model
     {
         return $this->belongsTo('App\Models\State\State','state_id','state_id');
     }
+    public function rider_order()
+    {
+        return $this->hasMany('App\Models\Order\CustomerOrder','rider_id');
+    }
 }

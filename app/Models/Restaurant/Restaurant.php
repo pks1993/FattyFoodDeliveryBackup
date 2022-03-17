@@ -60,4 +60,8 @@ class Restaurant extends Model
     {
         return $this->belongsTo('App\Models\Restaurant\RestaurantUser','restaurant_user_id','restaurant_user_id');
     }
+    public function restaurant_order()
+    {
+        return $this->hasMany('App\Models\Order\CustomerOrder','restaurant_id');
+    }
 }

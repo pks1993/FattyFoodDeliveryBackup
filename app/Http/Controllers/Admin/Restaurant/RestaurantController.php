@@ -29,6 +29,13 @@ class RestaurantController extends Controller
         return view('admin.restaurant.index',compact('restaurants'));
     }
 
+    public function hundredIndex()
+    {
+        $restaurants = Restaurant::withCount(['restaurant_order'])->has('restaurant_order')->orderBy('restaurant_order_count','DESC')->limit(100)->paginate(10);
+
+        // $restaurants=Restaurant::orderBy('state_id')->paginate(10);
+        return view('admin.100_restaurant.index',compact('restaurants'));
+    }
     /**
      *for city list all 
     */
