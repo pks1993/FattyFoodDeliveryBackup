@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Customer\Customer;
 use App\Models\City\City;
 use App\Models\State\State;
+use App\Models\Customer\ActiveCustomer;
 
 class CustomerApiController extends Controller
 {
@@ -56,6 +57,42 @@ class CustomerApiController extends Controller
             $customers->customer_name=null;
             $customers->image=null;
             $customers->save();
+            return response()->json(['success'=>true,'is_old'=>false,'message' => 'this is customer create','data'=>$customers]);
+        }
+
+    }
+
+    public function login_version_one(Request $request)
+    {
+        $customer_phone=$request['customer_phone'];
+        $fcm_token=$request['fcm_token'];
+        $is_ios=(int)$request['is_ios'];
+
+        $customer=Customer::where('customer_phone','=',$customer_phone)->first();
+
+        if($customer!=null){
+            $customer->fcm_token=$fcm_token;
+            $customer->is_ios=$is_ios;
+            $customer->update();
+            
+            $check=ActiveCustomer::where('customer_id',$customer->customer_id)->whereDate('created_at',date('Y-m-d'))->first();
+            if(empty($check)){
+                ActiveCustomer::create([
+                    "customer_id"=>$customer->customer_id,
+                ]);
+            }
+            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','data'=>$customer]);
+        }else{
+            $customers=new Customer();
+            $customers->customer_phone=$customer_phone;
+            $customers->customer_name=null;
+            $customers->image=null;
+            $customers->is_ios=$is_ios;
+            $customers->save();
+            
+            ActiveCustomer::create([
+                "customer_id"=>$customers->customer_id,
+            ]);
             return response()->json(['success'=>true,'is_old'=>false,'message' => 'this is customer create','data'=>$customers]);
         }
 
@@ -150,6 +187,13 @@ class CustomerApiController extends Controller
             $customers->latitude=$latitude;
             $customers->longitude=$longitude;
             $customers->update();
+
+            $check=ActiveCustomer::where('customer_id',$customer_id)->whereDate('created_at',date('Y-m-d'))->first();
+            if(empty($check)){
+                ActiveCustomer::create([
+                    "customer_id"=>$customer_id,
+                ]);
+            }
             return response()->json(['success'=>true,'message' => 'the customer location have been updated','data'=>$customers]);
         }else{
             return response()->json(['success'=>false,'message' => 'error something, customer id is not same!']);
