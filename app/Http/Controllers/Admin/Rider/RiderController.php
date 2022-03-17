@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Setting;
+namespace App\Http\Controllers\Admin\Rider;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Setting\Privacy;
-use App\Models\Setting\TermsConditions;
+use App\Models\Rider\Rider;
 
-class SettingController extends Controller
+class RiderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,14 +15,25 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $privacy=Privacy::orderBy('privacy_id','DESC')->get();
-        return view('admin.setting.privacy.index',compact('privacy'));
+        $riders = Rider::latest('created_at')->paginate(10);
+        return view('admin.rider.index',compact('riders'));
     }
 
-    public function term()
+    public function hundredIndex()
     {
-        $data=TermsConditions::where('terms_conditions_id','1')->first();
-        return view('admin.setting.term.index',compact('data'));
+        $riders = Rider::withCount(['rider_order'])->has('rider_order')->orderBy('rider_order_count','DESC')->whereDate('created_at',date('Y-m-d'))->limit(100)->paginate(10);
+        return view('admin.100_rider.index',compact('riders'));
+    }
+
+    public function hundredMonthlyIndex()
+    {
+        $riders = Rider::withCount(['rider_order'])->has('rider_order')->orderBy('rider_order_count','DESC')->whereMonth('created_at',date('m'))->limit(100)->paginate(10);
+        return view('admin.100_monthly_rider.index',compact('riders'));
+    }
+    public function hundredYearlyIndex()
+    {
+        $riders = Rider::withCount(['rider_order'])->has('rider_order')->orderBy('rider_order_count','DESC')->whereYear('created_at',date('Y'))->limit(100)->paginate(10);
+        return view('admin.100_yearly_rider.index',compact('riders'));
     }
 
     /**

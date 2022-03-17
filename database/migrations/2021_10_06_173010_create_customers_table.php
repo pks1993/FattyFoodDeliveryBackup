@@ -26,6 +26,7 @@ class CreateCustomersTable extends Migration
             $table->string('order_count')->nullable();
             $table->string('order_amount')->nullable();
             $table->string('total_distance')->nullable();
+            $table->integer('os_type')->nullable();
             $table->timestamps();
         });
     }
