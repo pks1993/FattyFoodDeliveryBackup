@@ -6,6 +6,7 @@ Route::get('/', function () {
 });
 
 Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
+Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
 Route::get('/','Admin\Login\LoginController@index')->name('login');
 
@@ -62,7 +63,6 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('daily_customers','Admin\Customer\CustomerController@dailyindex');
     Route::get('customers/datatable/dailyajax','Admin\Customer\CustomerController@dailyajax');
-    // Route::get('daily_customers/view/{customer_id}','Admin\Customer\CustomerController@dailyshow')->name('customers.dailyview');
 
     Route::get('monthly_customers','Admin\Customer\CustomerController@monthlyindex');
     Route::get('customers/datatable/monthlyajax','Admin\Customer\CustomerController@monthlyajax');
@@ -71,6 +71,12 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('yearly_customers','Admin\Customer\CustomerController@yearlyindex');
     Route::get('customers/datatable/yearlyajax','Admin\Customer\CustomerController@yearlyajax');
     // Route::get('yearly_customers/view/{customer_id}','Admin\Customer\CustomerController@yearlyshow')->name('customers.yearlyview');
+
+    //Riders
+    Route::get('riders','Admin\Rider\RiderController@index');
+    Route::get('daily_100_riders','Admin\Rider\RiderController@hundredIndex');
+    Route::get('monthly_100_riders','Admin\Rider\RiderController@hundredMonthlyIndex');
+    Route::get('yearly_100_riders','Admin\Rider\RiderController@hundredYearlyIndex');
 
     Route::get('daily_ordered_customers','Admin\Customer\CustomerController@dailyorderedindex');
     Route::get('customers/datatable/dailyorderedajax','Admin\Customer\CustomerController@dailyorderedajax');
@@ -131,6 +137,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('restaurants/delete/{restaurant_id}','Admin\Restaurant\RestaurantController@destroy')->name('restaurants.destroy');
     Route::get('restaurants/city/list/{id}','Admin\Restaurant\RestaurantController@city_list1');
     Route::get('restaurants/state/list/{id}','Admin\Restaurant\RestaurantController@state_list');
+
+    //100 Restaurant
+    Route::get('100_restaurants','Admin\Restaurant\RestaurantController@hundredIndex');
 
     //Recommend Restaurant
     Route::get('recommend_restaurants','Admin\Restaurant\RecommendRestaurantController@index');
@@ -221,6 +230,4 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('yearly_food_order','Admin\Order\OrderController@yearlyfoodorderindex');
     Route::get('orders/datatable/yearlyfoodorderajax','Admin\Order\OrderController@yearlyfoodorderajax');
-
-    Route::get('testing_yellyintaung','TestingController');
 });

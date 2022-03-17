@@ -140,13 +140,27 @@
 <script>
     $(function () {
         $("#restaurants").DataTable({
-            // "lengthMenu": [[10,25,50, 100, 250,500, -1], [10,25,50,100, 250, 500, "All"]],
-            "paging": false, // Allow data to be paged
-            "lengthChange": false,
-            "searching": false, // Search box and search function will be actived
-            "info": false,
+            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+            "paging": true, // Allow data to be paged
+            "lengthChange": true,
+            "searching": true, // Search box and search function will be actived
+            "info": true,
             "autoWidth": true,
-            "processing": false,  // Show processing
+            "processing": true,  // Show processing
+            // ajax: "/fatty/main/admin/customers/datatable/ssd",
+            // columns: [
+            // {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+            // {data: 'customer_name', name:'customer_name'},
+            // {data: 'customer_phone', name:'customer_phone'},
+            // {data: 'register_date', name:'register_date'},
+            // {data: 'order_count', name:'order_count'},
+            // {data: 'order_amount', name:'order_amount'},
+            // {data: 'action', name: 'action', orderable: false, searchable: false},
+            // ],
+            dom: 'PlBfrtip',
+            buttons: [
+            'excel', 'pdf', 'print'
+            ],
         });
     });
     setTimeout(function() {
