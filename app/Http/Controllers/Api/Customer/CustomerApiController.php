@@ -66,13 +66,13 @@ class CustomerApiController extends Controller
     {
         $customer_phone=$request['customer_phone'];
         $fcm_token=$request['fcm_token'];
-        $is_ios=(int)$request['is_ios'];
+        $os_type=(int)$request['os_type'];
 
         $customer=Customer::where('customer_phone','=',$customer_phone)->first();
 
         if($customer!=null){
             $customer->fcm_token=$fcm_token;
-            $customer->is_ios=$is_ios;
+            $customer->os_type=$os_type;
             $customer->update();
             
             $check=ActiveCustomer::where('customer_id',$customer->customer_id)->whereDate('created_at',date('Y-m-d'))->first();
@@ -87,7 +87,7 @@ class CustomerApiController extends Controller
             $customers->customer_phone=$customer_phone;
             $customers->customer_name=null;
             $customers->image=null;
-            $customers->is_ios=$is_ios;
+            $customers->os_type=$os_type;
             $customers->save();
             
             ActiveCustomer::create([
