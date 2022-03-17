@@ -28,7 +28,7 @@
                     </div>
                 </a>
             </li>
-            {{-- <li class="nav-item has-treeview">
+            <li class="nav-item has-treeview">
                 <a href="{{url('fatty/main/admin/foods/orders/lists')}}" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </a>
-            </li> --}}
+            </li>
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
@@ -157,7 +157,7 @@
                     </li>
                 </ul>
             </li>
-            {{-- <li class="nav-item has-treeview">
+            <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
@@ -185,7 +185,7 @@
                         </a>
                     </li>
                 </ul>
-            </li> --}}
+            </li>
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
@@ -213,15 +213,15 @@
                             <p>Top 100 List</p>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
+                    <li class="nav-item">
                         <a href="{{ url('fatty/main/admin/recommend_restaurants') }}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Recommanded All list</p>
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             </li>
-            {{-- <li class="nav-item has-treeview">
+            <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
@@ -272,7 +272,7 @@
                         </a>
                     </li>
                 </ul>
-            </li> --}}
+            </li>
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">

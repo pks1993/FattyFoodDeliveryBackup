@@ -81,7 +81,7 @@ class CustomerController extends Controller
     }
 
     public function monthlyajax(){
-        $model = Customer::whereMonth('created_atd',date('m'))->get();
+        $model = Customer::whereMonth('created_at',date('m'))->get();
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
