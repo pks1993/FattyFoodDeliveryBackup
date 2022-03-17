@@ -19,6 +19,16 @@ class CustomerAddressApiController extends Controller
         $customer_id=$request['customer_id'];
         if(!empty($customer_id)){
             $customer=CustomerAddress::with(['state'])->orderBy('is_default','DESC')->where('customer_id',$customer_id)->get();
+
+            $data=[];
+            foreach($customer as $value){
+                if($value->is_default==1){
+                    $value->is_default=true;
+                }else{
+                    $value->is_default=false;
+                }
+                array_push($data,$value);
+            }
             return response()->json(['success'=>true,'message'=>'this is address of customer','data'=>$customer]);    
         }else{
             return response()->json(['success'=>false,'message'=>'customer id not define!']);
@@ -58,6 +68,13 @@ class CustomerAddressApiController extends Controller
             $customer_address->save();
 
             $address=CustomerAddress::with(['state'])->where('customer_address_id',$customer_address->customer_address_id)->first();
+            $data=[];
+            if($address->is_default==1){
+                $address->is_default=true;
+            }else{
+                $address->is_default=false;
+            }
+            array_push($data,$address);
 
             return response()->json(['success'=>true,'message'=>'successfull create customer address','data'=>$address]);
         }else{
@@ -86,6 +103,13 @@ class CustomerAddressApiController extends Controller
             }
 
             $address=CustomerAddress::where('customer_address_id',$customer_address_id)->first();
+            $data=[];
+            if($address->is_default==1){
+                $address->is_default=true;
+            }else{
+                $address->is_default=false;
+            }
+            array_push($data,$address);
 
             return response()->json(['success'=>true,'message'=>'successfull update default','data'=>$address]);
         }else{
@@ -140,6 +164,13 @@ class CustomerAddressApiController extends Controller
             $customer_address->update();
 
             $address=CustomerAddress::with(['state'])->where('customer_address_id',$customer_address_id)->first();
+            $data=[];
+            if($address->is_default==1){
+                $address->is_default=true;
+            }else{
+                $address->is_default=false;
+            }
+            array_push($data,$address);
 
             return response()->json(['success'=>true,'message'=>'successfull update customer address','data'=>$address]);
         }else{
