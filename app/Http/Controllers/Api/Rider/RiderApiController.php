@@ -53,6 +53,17 @@ class RiderApicontroller extends Controller
 
     }
 
+    public function rider_details(Request $request)
+    {
+        $rider_id=$request['rider_id'];
+        $rider_check=Rider::where('rider_id',$rider_id)->first();
+        if($rider_check){
+            return response()->json(['success'=>true,'message'=>'rider details','data'=>$rider_check]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'rider id not found in database']);
+        }
+    }
+
     public function login(Request $request)
     {
         $rider_user_phone=$request['rider_user_phone'];

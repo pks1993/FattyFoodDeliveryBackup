@@ -83,6 +83,42 @@ class CustomerAddressApiController extends Controller
 
     }
 
+    public function default_v1(Request $request)
+    {
+        $customer_address_id=$request['customer_address_id'];
+        $check_address=CustomerAddress::where('customer_address_id',$customer_address_id)->first();
+
+        if($check_address){
+            CustomerAddress::where('customer_id',$check_address->customer_id)->where('is_default','1')->update([
+                "is_default"=>0,
+            ]);
+            if($check_address->is_default=="1"){
+                CustomerAddress::where('customer_address_id',$customer_address_id)->update([
+                    "is_default"=>0,
+                ]);
+            }else{
+                CustomerAddress::where('customer_address_id',$customer_address_id)->update([
+                    "is_default"=>1,
+                ]);
+            }
+
+            $address=CustomerAddress::with(['state'])->where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->get();
+            $data=[];
+            foreach ($address as $value) {
+                if($value->is_default==1){
+                    $value->is_default=true;
+                }else{
+                    $value->is_default=false;
+                }
+                array_push($data,$value);
+            }
+
+            return response()->json(['success'=>true,'message'=>'successfull update default','data'=>$address]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'customer address id not found']);
+        }
+    }
+
     public function default(Request $request)
     {
         $customer_address_id=$request['customer_address_id'];
@@ -191,7 +227,18 @@ class CustomerAddressApiController extends Controller
         $check_address=CustomerAddress::where('customer_address_id',$customer_address_id)->first();
         if(!empty($check_address)){
             CustomerAddress::destroy($customer_address_id);
-            return response()->json(['success'=>true,'message'=>'successfull destroy address of customer']);
+
+            $address=CustomerAddress::with(['state'])->where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->get();
+            $data=[];
+            foreach ($address as $value) {
+                if($value->is_default==1){
+                    $value->is_default=true;
+                }else{
+                    $value->is_default=false;
+                }
+                array_push($data,$value);
+            }
+            return response()->json(['success'=>true,'message'=>'successfull destroy address of customer','data'=>$data]);
         }else{
             return response()->json(['success'=>false,'message'=>'customer address not found!']);
         }
