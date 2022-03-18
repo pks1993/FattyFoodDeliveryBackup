@@ -69,6 +69,12 @@ class SettingApiController extends Controller
         }
     }
 
+    public function url_terms()
+    {
+        $url="http://174.138.22.156/fatty/main/admin/term&condition";
+        return response()->json(['success'=>true,'message'=>'this is url link for trems & conditions','data'=>['url'=>$url]]);
+    }
+
     /**
      * Display a listing of the resource.
      *

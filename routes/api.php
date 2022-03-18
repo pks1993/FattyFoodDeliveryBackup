@@ -25,7 +25,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Customer Api
 Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiController@index');
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
-Route::post('fatty/202221/lashio/main/admin/customers/new_version/login','Api\Customer\CustomerApiController@login_version_one');
+Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
@@ -44,6 +44,7 @@ Route::post('fatty/202221/lashio/main/admin/click/menu/data','Api\HomePage\HomeP
 
 //Customer Address
 Route::post('fatty/202221/lashio/main/admin/customers/address/default','Api\Customer\CustomerAddressApiController@default');
+Route::post('fatty/202221/lashio/main/admin/customers/address/v1/default','Api\Customer\CustomerAddressApiController@default_v1');
 Route::post('fatty/202221/lashio/main/admin/customers/address/list','Api\Customer\CustomerAddressApiController@index');
 Route::post('fatty/202221/lashio/main/admin/customers/address/create','Api\Customer\CustomerAddressApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/address/update','Api\Customer\CustomerAddressApiController@update');
@@ -64,6 +65,8 @@ Route::post('fatty/202221/lashio/main/admin/restaurants/opening/list','Api\Resta
 Route::post('fatty/202221/lashio/main/admin/restaurants/opening/create','Api\Restaurant\RestaurantApiController@opening_store');
 Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/define','Api\Restaurant\RestaurantApiController@preparing_store');
 Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/list','Api\Restaurant\RestaurantApiController@preparing_list');
+Route::post('fatty/202221/lashio/main/admin/restaurants/details','Api\Restaurant\RestaurantApiController@restaurant_details');
+
 
 //Food Menu Api
 Route::post('fatty/202221/lashio/main/admin/restaurants/menus','Api\Restaurant\RestaurantApiController@restaurant_menu');
@@ -107,6 +110,8 @@ Route::get('fatty/202221/lashio/main/admin/application/customers/termsandconditi
 Route::get('fatty/202221/lashio/main/admin/application/riders/termsandconditions','Api\Setting\SettingApiController@rider_terms');
 Route::get('fatty/202221/lashio/main/admin/application/restaurants/termsandconditions','Api\Setting\SettingApiController@restaurant_terms');
 
+Route::get('fatty/202221/lashio/main/admin/application/termsandconditions','Api\Setting\SettingApiController@url_terms');
+
 //Customer Order
 Route::post('fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@customr_index');
 Route::post('fatty/202221/lashio/main/admin/customers/orders/create','Api\Order\OrderApiController@store');
@@ -144,6 +149,7 @@ Route::post('fatty/202221/lashio/main/admin/rider/attendance','Api\Rider\RiderAp
 Route::post('fatty/202221/lashio/main/admin/rider/activenow','Api\Rider\RiderApiController@rider_activenow');
 Route::post('fatty/202221/lashio/main/admin/rider/activenow/list','Api\Rider\RiderApiController@rider_activenow_list');
 Route::post('fatty/202221/lashio/main/admin/rider/office/location','Api\Rider\RiderApiController@rider_office_location');
+Route::post('fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiController@rider_details');
 
 //insightRider
 Route::post('fatty/202221/lashio/main/admin/rider/insight','Api\Rider\RiderApiController@rider_insight');

@@ -35,6 +35,17 @@ class RestaurantApiController extends Controller
         //
     }
 
+    public function restaurant_details(Request $request)
+    {
+        $restaurant_id=$request['restaurant_id'];
+        $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        if($restaurant_check){
+            return response()->json(['success'=>true,'message'=>'restaurant details','data'=>$restaurant_check]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id not found in database']);
+        }
+    }
+
     public function restaurant_insight(Request $request)
     {
         $restaurant_id=$request['restaurant_id'];
