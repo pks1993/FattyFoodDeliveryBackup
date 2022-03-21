@@ -14,6 +14,21 @@
         margin-right: 15px !important;
         margin-top: 15px;
     }
+    .number {
+        text-align: center;
+    }
+    .order_amount {
+        text-align: center;
+    }
+    .order_count {
+        text-align: center;
+    }
+    .action {
+        text-align: center;
+    }
+    .register_date {
+        text-align: center;
+    }
 </style>
 @endsection
 
@@ -152,13 +167,13 @@
                 "processing": true,  // Show processing
                 ajax: "/fatty/main/admin/customers/datatable/yearlyajax",
                 columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
                 {data: 'customer_name', name:'customer_name'},
                 {data: 'customer_phone', name:'customer_phone'},
-                {data: 'register_date', name:'register_date'},
-                {data: 'order_count', name:'order_count'},
-                {data: 'order_amount', name:'order_amount'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'register_date', name:'register_date',className: "register_date"},
+                {data: 'order_count', name:'order_count',className: "order_count"},
+                {data: 'order_amount', name:'order_amount',className: "order_amount"},
+                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
                 ],
                 dom: 'PlBfrtip',
                 buttons: [

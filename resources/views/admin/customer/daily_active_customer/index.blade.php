@@ -48,7 +48,7 @@
             <div class="col-sm-5">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Customers</li>
+                    <li class="breadcrumb-item active">Daily Active Customers</li>
                     <li class="breadcrumb-item active">Lists</li>
                 </ol>
             </div>
@@ -66,7 +66,16 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-               
+                {{-- <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6 pagination">
+                            {{ $customers->appends(request()->input())->links() }}
+                        </div>
+                        <div class="col-md-6" style="text-align: right;">
+                            <h4><b>{{ "Customers Information" }}</b></h4>
+                        </div>
+                    </div>
+                </div> --}}
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
@@ -86,15 +95,15 @@
                                 </thead>
                                 <tbody>
                                     
-                                    </tbody>
-                                </table>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
     @endsection
     @push('scripts')
     <script>
@@ -107,7 +116,7 @@
                 "info": true,
                 "autoWidth": true,
                 "processing": true,  // Show processing
-                ajax: "/fatty/main/admin/customers/datatable/yearlyorderedajax",
+                ajax: "/fatty/main/admin/customers/datatable/dailyactiveajax",
                 columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
                 {data: 'customer_name', name:'customer_name'},

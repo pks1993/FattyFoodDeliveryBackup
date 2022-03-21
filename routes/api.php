@@ -113,7 +113,7 @@ Route::get('fatty/202221/lashio/main/admin/application/restaurants/termsandcondi
 Route::get('fatty/202221/lashio/main/admin/application/termsandconditions','Api\Setting\SettingApiController@url_terms');
 
 //Customer Order
-Route::post('fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@customr_index');
+Route::post('fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@customer_index');
 Route::post('fatty/202221/lashio/main/admin/customers/orders/create','Api\Order\OrderApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/orders/create/v1','Api\Order\OrderApiController@store_v1');
 Route::post('fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');

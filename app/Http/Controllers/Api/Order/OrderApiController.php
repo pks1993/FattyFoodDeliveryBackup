@@ -160,7 +160,7 @@ class OrderApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function customr_index(Request $request)
+    public function customer_index(Request $request)
     {
         $customer_id=$request['customer_id'];
         $order_type=$request['order_type'];
@@ -170,16 +170,60 @@ class OrderApiController extends Controller
                 // $active_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereRaw('order_status_id','1')->orwhere('order_status_id','3')->orwhere('order_status_id','4')->orwhere('order_status_id','5')->orwhere('order_status_id','6')->orwhere('order_status_id','10')->where('order_type','food')->get();
 
                 $active_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->get();
+                $active=[];
+                foreach($active_order as $value){
+                    if($value->customer_address_id != 0){
+                        if($value->customer_address->is_default==1){
+                            $value->customer_address->is_default=true;
+                        }else{
+                            $value->customer_address->is_default=false;
+                        }
+                        array_push($active,$value);
+                    }
+                }
 
                 // $past_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->where('order_status_id','7')->orwhere('order_status_id','2')->orwhere('order_status_id','8')->orwhere('order_status_id','9')->where('order_type','food')->get();
 
                 $past_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->get();
+                $past=[];
+                foreach($past_order as $value){
+                    if($value->customer_address_id != 0){
+                        if($value->customer_address->is_default==1){
+                            $value->customer_address->is_default=true;
+                        }else{
+                            $value->customer_address->is_default=false;
+                        }
+                        array_push($past,$value);
+                    }
+                }
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order ,'past_order'=>$past_order]);
             }elseif($order_type=="parcel"){
                 $active_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->get();
+                $active=[];
+                foreach($active_order as $value){
+                    if($value->customer_address_id != 0){
+                        if($value->customer_address->is_default==1){
+                            $value->customer_address->is_default=true;
+                        }else{
+                            $value->customer_address->is_default=false;
+                        }
+                        array_push($active,$value);
+                    }
+                }
 
                 $past_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->get();
+                $past=[];
+                foreach($past_order as $value){
+                    if($value->customer_address_id != 0){
+                        if($value->customer_address->is_default==1){
+                            $value->customer_address->is_default=true;
+                        }else{
+                            $value->customer_address->is_default=false;
+                        }
+                        array_push($past,$value);
+                    }
+                }
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order]);
             }else{
@@ -749,6 +793,15 @@ class OrderApiController extends Controller
     {
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+        $data=[];
+        if($customer_orders->customer_address_id != 0){
+            if($customer_orders->customer_address->is_default==1){
+                $customer_orders->customer_address->is_default=true;
+            }else{
+                $customer_orders->customer_address->is_default=false;
+            }
+            array_push($data,$customer_orders);
+        }
 
         if($customer_orders){
             return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
@@ -1167,6 +1220,15 @@ class OrderApiController extends Controller
             
         }
         $check=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('order_id',$customer_orders->order_id)->first();
+        $data=[];
+        if($check->customer_address_id != 0){
+            if($check->customer_address->is_default==1){
+                $check->customer_address->is_default=true;
+            }else{
+                $check->customer_address->is_default=false;
+            }
+            array_push($data,$check);
+        }
         $customer_check=Customer::where('customer_id',$customer_id)->first();
 
         if($check){

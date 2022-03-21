@@ -63,9 +63,12 @@
                                             <th>Image</th>
                                             <th class="text-left">Rider Name</th>
                                             <th class="text-left">Rider Phone</th>
-                                            <th class="text-left">Latitude</th>
-                                            <th class="text-left">Longitude</th>
-                                            <th class="text-left">Is Admin approved</th>
+                                            {{-- <th class="text-left">Latitude</th> --}}
+                                            {{-- <th class="text-left">Longitude</th> --}}
+                                            <th class="text-left">TotalOrder</th>
+                                            <th class="text-left">FoodOrder</th>
+                                            <th class="text-left">ParcelOrder</th>
+                                            <th class="text-left">OrderAmount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -97,15 +100,12 @@
                                             </td>
                                             <td class="text-left">{{ $rider->rider_user_name }}</td>
                                             <td class="text-left">{{ $rider->rider_user_phone }}</td>
-                                            <td class="text-left">{{ $rider->rider_latitude }}</td>
-                                            <td class="text-left">{{ $rider->rider_longitude }}</td> 
-                                            <td>
-                                                @if($rider->is_admin_approved=="0")
-                                                <a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>
-                                                @else
-                                                <a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>
-                                                @endif
-                                            </td>
+                                            {{-- <td class="text-left">{{ $rider->rider_latitude }}</td> --}}
+                                            {{-- <td class="text-left">{{ $rider->rider_longitude }}</td>  --}}
+                                            <td class="text-center">{{ $rider->count }}</td>
+                                            <td class="text-center">{{ $rider->rider_order_yearly->where('order_type','food')->count() }}</td>
+                                            <td class="text-center">{{ $rider->rider_order_yearly->where('order_type','parcel')->count() }}</td>
+                                            <td class="text-center">{{ $rider->rider_order_yearly->sum('bill_total_price') }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
