@@ -48,7 +48,7 @@
             <div class="col-sm-5">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Customers</li>
+                    <li class="breadcrumb-item active">Monthly Active Customers</li>
                     <li class="breadcrumb-item active">Lists</li>
                 </ol>
             </div>
@@ -165,7 +165,7 @@
                 "info": true,
                 "autoWidth": true,
                 "processing": true,  // Show processing
-                ajax: "/fatty/main/admin/customers/datatable/monthlyorderedajax",
+                ajax: "/fatty/main/admin/customers/datatable/monthlyactiveajax",
                 columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
                 {data: 'customer_name', name:'customer_name'},

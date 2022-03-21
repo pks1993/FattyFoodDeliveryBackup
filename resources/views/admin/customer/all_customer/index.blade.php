@@ -14,6 +14,21 @@
         margin-right: 15px !important;
         margin-top: 15px;
     }
+    .number {
+        text-align: center;
+    }
+    .order_amount {
+        text-align: center;
+    }
+    .order_count {
+        text-align: center;
+    }
+    .action {
+        text-align: center;
+    }
+    .register_date {
+        text-align: center;
+    }
 </style>
 @endsection
 
@@ -51,36 +66,43 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                {{-- <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-6 pagination">
-                            {{ $customers->appends(request()->input())->links() }}
-                        </div>
-                        <div class="col-md-6" style="text-align: right;">
-                            <h4><b>{{ "Customers Information" }}</b></h4>
-                        </div>
-                    </div>
-                </div> --}}
-                <!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
-                            <table id="customers" class="table table-bordered table-striped table-hover display nowrap">
+                                    {{-- <div class="row mb-2">
+                                        <div class="col-md-3">
+                                            <label for="min">Minimum date: </label><input type="text" id="min" name="min" placeholder="minimum date">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="max">Maximum date: </label><input type="text" id="max" name="max" placeholder="maximun date">
+                                        </div>
+                                    </div> --}}
+                            <table border="0" cellspacing="5" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td>Minimum date:</td>
+                                        <td><input type="text" id="min" name="min"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Maximum date:</td>
+                                        <td><input type="text" id="max" name="max"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table id="customers" class="table table-bordered table-striped table-hover display nowrap" border="0" cellspacing="5" cellpadding="5">
                                 <thead>
-                                    <tr class="text-center">
+                                    <tr>
                                         <th>No.</th>
-                                        <th class="text-left">Customer Name</th>
-                                        <th class="text-left">Customer Phone</th>
-                                        <th class="text-left">Register Date</th>
-                                        <th class="text-left">Order Count</th>
-                                        <th class="text-left">Order Amount</th>
-                                        {{-- <th>Image</th> --}}
+                                        <th class="text-left">CustomerName</th>
+                                        <th class="text-left">CustomerPhone</th>
+                                        <th class="text-left">RegisterDate</th>
+                                        <th class="text-left">OrderCount</th>
+                                        <th class="text-left">OrderAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                                    
+                                                                        
                                 </tbody>
                             </table>
                         </div>
@@ -93,8 +115,38 @@
 @endsection
 @push('scripts')
 <script>
-    $(function () {
-        $("#customers").DataTable({
+var minDate, maxDate;
+ 
+// Custom filtering function which will search data in column four between two values
+$.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var min = minDate.val();
+        var max = maxDate.val();
+        var date = new Date( data[3] );
+
+        if (
+            ( min === null && max === null ) ||
+            ( min === null && date <= max ) ||
+            ( min <= date   && max === null ) ||
+            ( min <= date   && date <= max )
+        ) {
+            return true;
+        }
+        return false;
+    }
+);
+ 
+$(document).ready(function() {
+    // Create date inputs
+    minDate = new DateTime($('#min'), {
+        format: 'Do MMMM YYYY'
+    });
+    maxDate = new DateTime($('#max'), {
+        format: 'Do MMMM YYYY'
+    });
+ 
+    // DataTables initialisation
+    var table = $("#customers").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
             "paging": true, // Allow data to be paged
             "lengthChange": true,
@@ -104,22 +156,24 @@
             "processing": true,  // Show processing
             ajax: "/fatty/main/admin/customers/datatable/ssd",
             columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+            {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
             {data: 'customer_name', name:'customer_name'},
             {data: 'customer_phone', name:'customer_phone'},
-            {data: 'register_date', name:'register_date'},
-            {data: 'order_count', name:'order_count'},
-            {data: 'order_amount', name:'order_amount'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
+            {data: 'register_date', name:'register_date',className: "register_date"},
+            {data: 'order_count', name:'order_count',className: "order_count"},
+            {data: 'order_amount', name:'order_amount',className: "order_amount"},
+            {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
             ],
             dom: 'PlBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],
         });
+ 
+    // Refilter the table
+    $('#min, #max').on('change', function () {
+        table.draw();
     });
-    setTimeout(function() {
-        $('#successMessage').fadeOut('fast');
-    }, 2000);
+});
 </script>
 @endpush

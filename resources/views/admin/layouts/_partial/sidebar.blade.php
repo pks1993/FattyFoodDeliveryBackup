@@ -44,10 +44,80 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Food Orders</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/daily_food_orders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Daily Food Orders</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/monthly_food_orders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Monthly Food Orders</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/yearly_food_orders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Yearly Food Orders</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Parcel Orders</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/daily_parcel_orders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Daily Parcel Orders</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/monthly_parcel_orders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Monthly Parcel Orders</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/yearly_parcel_orders')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Yearly Parcel Orders</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
                             <i class="fa fa-users" aria-hidden="true"></i>
                         </div>
                         <div style="width: 50%;">
-                            <p>Users</p>
+                            <p>New Users</p>
                         </div>
                         <div style="width: 35%;text-align: right;">
                             <i class="right fas fa-angle-left"></i>
@@ -120,6 +190,41 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Active Users</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/daily_active_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Daily Active Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/monthly_active_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Monthly Active Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/yearly_active_customers')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Yearly Active Users</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
                             <i class="fas fa-biking" aria-hidden="true"></i>
                         </div>
                         <div style="width: 50%;">
@@ -161,7 +266,7 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                            <i class="fa fa-bars" aria-hidden="true"></i>
                         </div>
                         <div style="width: 50%;">
                             <p>Category</p>

@@ -262,10 +262,12 @@ class HomePageApiController extends Controller
     {
         $customer_id=$request['customer_id'];
         $restaurant_id=$request['restaurant_id'];
-            $restaurants=Restaurant::with(['available_time','menu','menu.food'=>function($foods){
+            $restaurants=Restaurant::with(['available_time','menu'=>function($menu){
+                $menu->has('food')->get();
+            },'menu.food'=>function($foods){
                 $foods->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();
             },'menu.food.sub_item'=>function($sub_item){
-                $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();
+                $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->has('option')->get();
             },'menu.food.sub_item.option'])->orderby('created_at')->where('restaurant_id',$restaurant_id)->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->first();
 
         return response()->json(['success'=>true,'message'=>'this is menu data','data'=>$restaurants]);        

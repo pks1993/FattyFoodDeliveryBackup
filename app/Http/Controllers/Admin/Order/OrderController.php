@@ -8,6 +8,8 @@ use App\Models\Order\CustomerOrder;
 use App\Models\Customer\Customer;
 use App\Models\Order\OrderAssign;
 use App\Models\Rider\Rider;
+use Yajra\DataTables\DataTables;
+
 
 class OrderController extends Controller
 {
@@ -21,6 +23,227 @@ class OrderController extends Controller
         $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->paginate(10);
         return view('admin.order.index',compact('food_orders'));
     }
+
+    public function dailyfoodorderindex()
+    {
+        return view('admin.order.daily_food_orders.index');    
+    }
+
+    public function dailyfoodorderajax(){
+        $model = CustomerOrder::whereDate('created_at',date('Y-m-d'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->order_status_name=$value->order_status->order_status_name;
+            $value->customer_name=$value->customer->customer_name;
+            $value->restaurant_name=$value->restaurant->restaurant_name_mm;
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Null";
+            }
+            $value->payment_method_name=$value->payment_method->payment_method_name;
+
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            
+            return $btn;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d M Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    public function monthlyfoodorderindex()
+    {
+        return view('admin.order.monthly_food_orders.index');    
+    }
+
+    public function monthlyfoodorderajax(){
+        $model = CustomerOrder::whereMonth('created_at',date('m'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->order_status_name=$value->order_status->order_status_name;
+            $value->customer_name=$value->customer->customer_name;
+            $value->restaurant_name=$value->restaurant->restaurant_name_mm;
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Null";
+            }
+            $value->payment_method_name=$value->payment_method->payment_method_name;
+
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            
+            return $btn;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d M Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    public function yearlyfoodorderindex()
+    {
+        return view('admin.order.yearly_food_orders.index');    
+    }
+
+    public function yearlyfoodorderajax(){
+        $model = CustomerOrder::whereYear('created_at',date('Y'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->order_status_name=$value->order_status->order_status_name;
+            $value->customer_name=$value->customer->customer_name;
+            $value->restaurant_name=$value->restaurant->restaurant_name_mm;
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Null";
+            }
+            $value->payment_method_name=$value->payment_method->payment_method_name;
+
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            
+            return $btn;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d M Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    public function dailyparcelorderindex()
+    {
+        return view('admin.order.daily_parcel_orders.index');    
+    }
+
+    public function dailyparcelorderajax(){
+        $model = CustomerOrder::whereDate('created_at',date('Y-m-d'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->order_status_name=$value->order_status->order_status_name;
+            $value->customer_name=$value->customer->customer_name;
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Null";
+            }
+            $value->payment_method_name=$value->payment_method->payment_method_name;
+
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            
+            return $btn;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d M Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    public function monthlyparcelorderindex()
+    {
+        return view('admin.order.monthly_parcel_orders.index');    
+    }
+
+    public function monthlyparcelorderajax(){
+        $model = CustomerOrder::whereMonth('created_at',date('m'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->order_status_name=$value->order_status->order_status_name;
+            $value->customer_name=$value->customer->customer_name;
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Null";
+            }
+            $value->payment_method_name=$value->payment_method->payment_method_name;
+
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            
+            return $btn;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d M Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    public function yearlyparcelorderindex()
+    {
+        return view('admin.order.yearly_parcel_orders.index');    
+    }
+
+    public function yearlyparcelorderajax(){
+        $model = CustomerOrder::whereYear('created_at',date('Y'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->order_status_name=$value->order_status->order_status_name;
+            $value->customer_name=$value->customer->customer_name;
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Null";
+            }
+            $value->payment_method_name=$value->payment_method->payment_method_name;
+
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            
+            return $btn;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d M Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    
 
     /**
      * Show the form for creating a new resource.

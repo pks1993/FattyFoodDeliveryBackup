@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer\Customer;
-// use App\Models\Food\Food;
 use Yajra\DataTables\DataTables;
 use App\Models\Order\CustomerOrder;
+use App\Models\Customer\ActiveCustomer;
 
 
 class CustomerController extends Controller
@@ -26,6 +26,16 @@ class CustomerController extends Controller
 
     public function ssd(){
         $model =  Customer::orderBy('created_at','DESC')->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
@@ -39,7 +49,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -54,6 +64,16 @@ class CustomerController extends Controller
 
     public function dailyajax(){
         $model =  Customer::whereDate('created_at',date('Y-m-d'))->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
@@ -67,7 +87,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -82,6 +102,16 @@ class CustomerController extends Controller
 
     public function monthlyajax(){
         $model = Customer::whereMonth('created_at',date('m'))->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
@@ -95,7 +125,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -110,6 +140,16 @@ class CustomerController extends Controller
 
     public function yearlyajax(){
         $model = Customer::whereYear('created_at',date('Y'))->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
@@ -123,7 +163,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -140,6 +180,16 @@ class CustomerController extends Controller
     public function dailyorderedajax(){
         $ordered_customers=CustomerOrder::select('customer_id')->whereDate('created_at',date('Y-m-d'))->distinct()->get();
         $model=Customer::whereIn('customer_id',$ordered_customers)->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
@@ -153,7 +203,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -169,6 +219,16 @@ class CustomerController extends Controller
     public function monthlyorderedajax(){
         $ordered_customers=CustomerOrder::select('customer_id')->whereMonth('created_at',date('m'))->distinct()->get();
         $model=Customer::whereIn('customer_id',$ordered_customers)->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
@@ -182,7 +242,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -198,6 +258,15 @@ class CustomerController extends Controller
     public function yearlyorderedajax(){
         $ordered_customers=CustomerOrder::select('customer_id')->whereYear('created_at',date('Y'))->distinct()->get();
         $model=Customer::whereIn('customer_id',$ordered_customers)->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
 
         return DataTables::of($model)
         ->addIndexColumn()
@@ -212,13 +281,130 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
         ->searchPane('model', $model)
         ->make(true); 
     }
+
+    public function dailyactiveindex()
+    {
+        return view('admin.customer.daily_active_customer.index');    
+    }
+
+    public function dailyactiveajax(){
+        $active_customers=ActiveCustomer::select('customer_id')->whereDate('created_at',date('Y-m-d'))->get();
+        $model=Customer::whereIn('customer_id',$active_customers)->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(Customer $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
+        ->addColumn('register_date', function(Customer $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->rawColumns(['action','register_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
+    public function monthlyactiveindex()
+    {
+        return view('admin.customer.monthly_active_customer.index');    
+    }
+
+    public function monthlyactiveajax(){
+        $active_customers=ActiveCustomer::select('customer_id')->whereMonth('created_at',date('m'))->get();
+        $model=Customer::whereIn('customer_id',$active_customers)->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(Customer $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
+        ->addColumn('register_date', function(Customer $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->rawColumns(['action','register_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+    public function yearlyactiveindex()
+    {
+        return view('admin.customer.yearly_active_customer.index');    
+    }
+
+    public function yearlyactiveajax(){
+        $active_customers=ActiveCustomer::select('customer_id')->whereYear('created_at',date('Y'))->get();
+        $model=Customer::whereIn('customer_id',$active_customers)->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_name){
+                $value->customer_name=$value->customer_name;
+            }else{
+                $value->customer_name="Unknown";
+            }
+            array_push($data,$value);
+        }
+
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(Customer $post){
+            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
+        ->addColumn('register_date', function(Customer $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->rawColumns(['action','register_date'])
+        ->searchPane('model', $model)
+        ->make(true); 
+    }
+
     /**
      * Show the form for creating a new resource.
      *

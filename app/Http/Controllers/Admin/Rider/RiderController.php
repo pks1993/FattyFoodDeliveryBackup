@@ -21,18 +21,18 @@ class RiderController extends Controller
 
     public function hundredIndex()
     {
-        $riders = Rider::withCount(['rider_order'])->has('rider_order')->orderBy('rider_order_count','DESC')->whereDate('created_at',date('Y-m-d'))->limit(100)->paginate(10);
+        $riders=Rider::withCount(['rider_order_daily as count'])->has('rider_order_daily')->orderBy('count','DESC')->limit(100)->paginate(10);
         return view('admin.100_rider.index',compact('riders'));
     }
 
     public function hundredMonthlyIndex()
     {
-        $riders = Rider::withCount(['rider_order'])->has('rider_order')->orderBy('rider_order_count','DESC')->whereMonth('created_at',date('m'))->limit(100)->paginate(10);
+        $riders = Rider::withCount(['rider_order_monthly as count'])->has('rider_order_monthly')->orderBy('count','DESC')->limit(100)->paginate(10);
         return view('admin.100_monthly_rider.index',compact('riders'));
     }
     public function hundredYearlyIndex()
     {
-        $riders = Rider::withCount(['rider_order'])->has('rider_order')->orderBy('rider_order_count','DESC')->whereYear('created_at',date('Y'))->limit(100)->paginate(10);
+        $riders = Rider::withCount(['rider_order_yearly as count'])->has('rider_order_yearly')->orderBy('count','DESC')->limit(100)->paginate(10);
         return view('admin.100_yearly_rider.index',compact('riders'));
     }
 

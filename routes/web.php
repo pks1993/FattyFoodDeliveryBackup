@@ -72,6 +72,16 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/datatable/yearlyajax','Admin\Customer\CustomerController@yearlyajax');
     // Route::get('yearly_customers/view/{customer_id}','Admin\Customer\CustomerController@yearlyshow')->name('customers.yearlyview');
 
+    Route::get('daily_active_customers','Admin\Customer\CustomerController@dailyactiveindex');
+    Route::get('customers/datatable/dailyactiveajax','Admin\Customer\CustomerController@dailyactiveajax');
+
+    Route::get('monthly_active_customers','Admin\Customer\CustomerController@monthlyactiveindex');
+    Route::get('customers/datatable/monthlyactiveajax','Admin\Customer\CustomerController@monthlyactiveajax');
+
+    Route::get('yearly_active_customers','Admin\Customer\CustomerController@yearlyactiveindex');
+    Route::get('customers/datatable/yearlyactiveajax','Admin\Customer\CustomerController@yearlyactiveajax');
+
+
     //Riders
     Route::get('riders','Admin\Rider\RiderController@index');
     Route::get('daily_100_riders','Admin\Rider\RiderController@hundredIndex');
@@ -222,12 +232,22 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('foods/orders/assign/notification/{rider_id}','Admin\Order\OrderController@assign_noti')->name('food_orders.assign.notification');
 
     //food order
-    Route::get('daily_food_order','Admin\Order\OrderController@dailyfoodorderindex');
+    Route::get('daily_food_orders','Admin\Order\OrderController@dailyfoodorderindex');
     Route::get('orders/datatable/dailyfoodorderajax','Admin\Order\OrderController@dailyfoodorderajax');
 
-    Route::get('monthly_food_order','Admin\Order\OrderController@monthlyfoodorderindex');
+    Route::get('monthly_food_orders','Admin\Order\OrderController@monthlyfoodorderindex');
     Route::get('orders/datatable/monthlyfoodorderajax','Admin\Order\OrderController@monthlyfoodorderajax');
 
-    Route::get('yearly_food_order','Admin\Order\OrderController@yearlyfoodorderindex');
+    Route::get('yearly_food_orders','Admin\Order\OrderController@yearlyfoodorderindex');
     Route::get('orders/datatable/yearlyfoodorderajax','Admin\Order\OrderController@yearlyfoodorderajax');
+
+    //parcel order
+    Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
+    Route::get('orders/datatable/dailyparcelorderajax','Admin\Order\OrderController@dailyparcelorderajax');
+
+    Route::get('monthly_parcel_orders','Admin\Order\OrderController@monthlyparcelorderindex');
+    Route::get('orders/datatable/monthlyparcelorderajax','Admin\Order\OrderController@monthlyparcelorderajax');
+
+    Route::get('yearly_parcel_orders','Admin\Order\OrderController@yearlyparcelorderindex');
+    Route::get('orders/datatable/yearlyparcelorderajax','Admin\Order\OrderController@yearlyparcelorderajax');
 });
