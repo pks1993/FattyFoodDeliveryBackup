@@ -73,6 +73,12 @@
                             <p>Yearly Food Orders</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/food_orders_chart')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Food Orders Chart</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">
@@ -106,6 +112,12 @@
                         <a href="{{url('fatty/main/admin/yearly_parcel_orders')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Yearly Parcel Orders</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/parcel_orders_chart')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Parcel Orders Chart</p>
                         </a>
                     </li>
                 </ul>
@@ -149,6 +161,12 @@
                             <p>Yearly New Users</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/customer_chart')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Users Chart</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">
@@ -184,6 +202,12 @@
                             <p>Yearly Ordered Users</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/order_customer_chart')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Ordered Users Chart</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">
@@ -217,6 +241,12 @@
                         <a href="{{url('fatty/main/admin/yearly_active_customers')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Yearly Active Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/active_customer_chart')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Active Users Chart</p>
                         </a>
                     </li>
                 </ul>
@@ -258,6 +288,12 @@
                         <a href="{{url('fatty/main/admin/yearly_100_riders')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Yearly Top 100</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/rider_chart')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Riders Chart</p>
                         </a>
                     </li>
                 </ul>
@@ -322,6 +358,12 @@
                         <a href="{{ url('fatty/main/admin/recommend_restaurants') }}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Recommanded All list</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/restaurant_chart') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Restaurant Chart</p>
                         </a>
                     </li>
                 </ul>

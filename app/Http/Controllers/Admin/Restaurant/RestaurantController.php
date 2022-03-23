@@ -12,6 +12,7 @@ use App\Models\City\City;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 // use Illuminate\Support\Facades\Crypt;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,17 +26,165 @@ class RestaurantController extends Controller
      */
     public function index()
     {
-        $restaurants=Restaurant::orderBy('state_id')->paginate(10);
-        return view('admin.restaurant.index',compact('restaurants'));
+        return view('admin.restaurant.index');
+    }
+
+    public function restaurantajax(){
+        $model =  Restaurant::orderBy('state_id')->get();
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('restaurant_image', function(Restaurant $item){
+            if ($item->restaurant_image) {
+                $restaurant_image = '<img src="../../../uploads/restaurant/'.$item->restaurant_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
+            } else {
+                $restaurant_image = '<img src="../../../image/available.png" class="img-rounded" style="width: 55px;height: 45px;">';
+            };
+            return $restaurant_image;
+        })
+        ->addColumn('action', function(Restaurant $post){
+            // $btn = '<a href="/fatty/main/admin/restaurants/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
+        ->addColumn('register_date', function(Restaurant $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->addColumn('restaurant_category_name_mm', function(Restaurant $item){
+            $restaurant_category_name_mm = $item->category->restaurant_category_name_mm;
+            return $restaurant_category_name_mm;
+        })
+        ->addColumn('city_name_mm', function(Restaurant $item){
+            $city_name_mm = $item->city->city_name_mm;
+            return $city_name_mm;
+        })
+        ->addColumn('state_name_mm', function(Restaurant $item){
+            $state_name_mm = $item->state->state_name_mm;
+            return $state_name_mm;
+        })
+        ->addColumn('restaurant_user_phone', function(Restaurant $item){
+            $restaurant_user_phone = $item->restaurant_user->restaurant_user_phone;
+            return $restaurant_user_phone;
+        })
+        ->addColumn('restaurant_emergency_status', function(Restaurant $item){
+            if ($item->restaurant_emergency_status=="0") {
+                $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
+            } else {
+                $restaurant_emergency_status = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
+            };
+            return $restaurant_emergency_status;
+        })
+        ->addColumn('is_admin_approved', function(Restaurant $item){
+            if ($item->restaurant_user->is_admin_approved="0") {
+                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            return $is_admin_approved;
+        })
+        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_emergency_status','is_admin_approved','action','register_date'])
+        ->searchPane('model', $model)
+        ->make(true);
     }
 
     public function hundredIndex()
     {
-        $restaurants = Restaurant::withCount(['restaurant_order'])->has('restaurant_order')->orderBy('restaurant_order_count','DESC')->limit(100)->paginate(10);
-
-        // $restaurants=Restaurant::orderBy('state_id')->paginate(10);
-        return view('admin.100_restaurant.index',compact('restaurants'));
+        return view('admin.100_restaurant.index');
     }
+
+    public function hundredrestaurantajax(){
+        $model =  Restaurant::withCount(['restaurant_order'])->has('restaurant_order')->orderBy('restaurant_order_count','DESC')->limit(100)->get();
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('restaurant_image', function(Restaurant $item){
+            if ($item->restaurant_image) {
+                $restaurant_image = '<img src="../../../uploads/restaurant/'.$item->restaurant_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
+            } else {
+                $restaurant_image = '<img src="../../../image/available.png" class="img-rounded" style="width: 55px;height: 45px;">';
+            };
+            return $restaurant_image;
+        })
+        ->addColumn('action', function(Restaurant $post){
+            // $btn = '<a href="/fatty/main/admin/restaurants/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
+        ->addColumn('register_date', function(Restaurant $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->addColumn('restaurant_category_name_mm', function(Restaurant $item){
+            $restaurant_category_name_mm = $item->category->restaurant_category_name_mm;
+            return $restaurant_category_name_mm;
+        })
+        ->addColumn('city_name_mm', function(Restaurant $item){
+            $city_name_mm = $item->city->city_name_mm;
+            return $city_name_mm;
+        })
+        ->addColumn('state_name_mm', function(Restaurant $item){
+            $state_name_mm = $item->state->state_name_mm;
+            return $state_name_mm;
+        })
+        ->addColumn('restaurant_user_phone', function(Restaurant $item){
+            $restaurant_user_phone = $item->restaurant_user->restaurant_user_phone;
+            return $restaurant_user_phone;
+        })
+        ->addColumn('restaurant_emergency_status', function(Restaurant $item){
+            if ($item->restaurant_emergency_status=="0") {
+                $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
+            } else {
+                $restaurant_emergency_status = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
+            };
+            return $restaurant_emergency_status;
+        })
+        ->addColumn('is_admin_approved', function(Restaurant $item){
+            if ($item->restaurant_user->is_admin_approved="0") {
+                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            return $is_admin_approved;
+        })
+        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_emergency_status','is_admin_approved','action','register_date'])
+        ->searchPane('model', $model)
+        ->make(true);
+    }
+
+    public function restaurantchart()
+    {
+        $m= date("m");
+        
+        $de= date("d");
+        
+        $y= date("Y");
+        
+        for($i=0; $i<10; $i++){
+            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y)); 
+            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y)); 
+            $daily_restaurants[]=Restaurant::orderBy('state_id')->whereDate('created_at', '=', $format_date)->count();
+            
+            
+            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y)); 
+            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y)); 
+            $monthly_restaurants[] = Restaurant::orderBy('state_id')->whereMonth('created_at','=',$format_month)->count();
+            
+            $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
+            $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
+            $yearly_restaurants[] = Restaurant::orderBy('state_id')->whereYear('created_at','=',$format_year)->count();
+        }
+        return view('admin.restaurant.restaurant_chart.index')->with('days',$days)->with('daily_restaurants',$daily_restaurants)->with('months',$months)->with('monthly_restaurants',$monthly_restaurants)->with('years',$years)->with('yearly_restaurants',$yearly_restaurants);    
+    }
+
     /**
      *for city list all 
     */
