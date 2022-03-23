@@ -61,6 +61,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/datatable/ssd','Admin\Customer\CustomerController@ssd');
     Route::get('customers/view/{customer_id}','Admin\Customer\CustomerController@show')->name('customers.view');
 
+    //customer chart
+    Route::get('customer_chart','Admin\Customer\CustomerController@customerchart');
+
     Route::get('daily_customers','Admin\Customer\CustomerController@dailyindex');
     Route::get('customers/datatable/dailyajax','Admin\Customer\CustomerController@dailyajax');
 
@@ -80,13 +83,22 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('yearly_active_customers','Admin\Customer\CustomerController@yearlyactiveindex');
     Route::get('customers/datatable/yearlyactiveajax','Admin\Customer\CustomerController@yearlyactiveajax');
+    Route::get('active_customer_chart','Admin\Customer\CustomerController@activecustomerchart');
 
 
     //Riders
     Route::get('riders','Admin\Rider\RiderController@index');
+    Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
+    Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
+
     Route::get('daily_100_riders','Admin\Rider\RiderController@hundredIndex');
+    Route::get('riders/datatable/hundredriderajax','Admin\Rider\RiderController@hundredriderajax');
+
     Route::get('monthly_100_riders','Admin\Rider\RiderController@hundredMonthlyIndex');
+    Route::get('riders/datatable/monthlyhundredriderajax','Admin\Rider\RiderController@monthlyhundredriderajax');
+
     Route::get('yearly_100_riders','Admin\Rider\RiderController@hundredYearlyIndex');
+    Route::get('riders/datatable/yearlyhundredriderajax','Admin\Rider\RiderController@yearlyhundredriderajax');
 
     Route::get('daily_ordered_customers','Admin\Customer\CustomerController@dailyorderedindex');
     Route::get('customers/datatable/dailyorderedajax','Admin\Customer\CustomerController@dailyorderedajax');
@@ -96,6 +108,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('yearly_ordered_customers','Admin\Customer\CustomerController@yearlyorderedindex');
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
+
+    Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
     Route::get('customers/create','Admin\Customer\CustomerController@create')->name('customers.create');
     Route::get('customers/view/{customer_id}','Admin\Customer\CustomerController@show')->name('customers.view');
@@ -140,6 +154,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Restaurant
     Route::get('restaurants','Admin\Restaurant\RestaurantController@index');
+    Route::get('restaurants/datatable/restaurantajax','Admin\Restaurant\RestaurantController@restaurantajax');
+    Route::get('restaurant_chart','Admin\Restaurant\RestaurantController@restaurantchart');
+
     Route::get('restaurants/create','Admin\Restaurant\RestaurantController@create')->name('restaurants.create');
     Route::post('restaurants/store','Admin\Restaurant\RestaurantController@store')->name('restaurants.store');
     Route::get('restaurants/edit/{restaurant_id}','Admin\Restaurant\RestaurantController@edit')->name('restaurants.edit');
@@ -150,6 +167,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //100 Restaurant
     Route::get('100_restaurants','Admin\Restaurant\RestaurantController@hundredIndex');
+    Route::get('restaurants/datatable/hundredrestaurantajax','Admin\Restaurant\RestaurantController@hundredrestaurantajax');
 
     //Recommend Restaurant
     Route::get('recommend_restaurants','Admin\Restaurant\RecommendRestaurantController@index');
@@ -241,6 +259,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('yearly_food_orders','Admin\Order\OrderController@yearlyfoodorderindex');
     Route::get('orders/datatable/yearlyfoodorderajax','Admin\Order\OrderController@yearlyfoodorderajax');
 
+    Route::get('food_orders_chart','Admin\Order\OrderController@foodorderchart');
+
     //parcel order
     Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
     Route::get('orders/datatable/dailyparcelorderajax','Admin\Order\OrderController@dailyparcelorderajax');
@@ -250,4 +270,5 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('yearly_parcel_orders','Admin\Order\OrderController@yearlyparcelorderindex');
     Route::get('orders/datatable/yearlyparcelorderajax','Admin\Order\OrderController@yearlyparcelorderajax');
+    Route::get('parcel_orders_chart','Admin\Order\OrderController@parcelorderchart');
 });

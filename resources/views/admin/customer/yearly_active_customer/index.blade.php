@@ -80,6 +80,18 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
+                            <table border="0" cellspacing="5" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td>Minimum date:</td>
+                                        <td><input type="text" id="min" name="min"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Maximum date:</td>
+                                        <td><input type="text" id="max" name="max"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table id="customers" class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr class="text-center">
@@ -156,8 +168,38 @@
     @endsection
     @push('scripts')
     <script>
-        $(function () {
-            $("#customers").DataTable({
+        var minDate, maxDate;
+    
+    // Custom filtering function which will search data in column four between two values
+    $.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var min = minDate.val();
+        var max = maxDate.val();
+        var date = new Date( data[3] );
+        
+        if (
+        ( min === null && max === null ) ||
+        ( min === null && date <= max ) ||
+        ( min <= date   && max === null ) ||
+        ( min <= date   && date <= max )
+        ) {
+            return true;
+        }
+        return false;
+    }
+    );
+    
+    $(document).ready(function() {
+        // Create date inputs
+        minDate = new DateTime($('#min'), {
+            format: 'Do MMMM YYYY'
+        });
+        maxDate = new DateTime($('#max'), {
+            format: 'Do MMMM YYYY'
+        });
+        
+        // DataTables initialisation
+        var table = $("#customers").DataTable({
                 "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
                 "paging": true, // Allow data to be paged
                 "lengthChange": true,
@@ -180,10 +222,11 @@
                 'excel', 'pdf', 'print'
                 ],
             });
+        // Refilter the table
+        $('#min, #max').on('change', function () {
+            table.draw();
         });
-        setTimeout(function() {
-            $('#successMessage').fadeOut('fast');
-        }, 2000);
+    });
     </script>
     @endpush
     

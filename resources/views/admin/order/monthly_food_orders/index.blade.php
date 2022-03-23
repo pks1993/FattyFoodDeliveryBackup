@@ -55,10 +55,23 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
+                            <table border="0" cellspacing="5" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td>Minimum date:</td>
+                                        <td><input type="text" id="min" name="min"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Maximum date:</td>
+                                        <td><input type="text" id="max" name="max"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table id="orders" class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
+                                        <th>OrderDate</th>
                                         <th>OrderStatusName</th>
                                         <th>CustomerOrderId</th>
                                         <th>CustomerBookingId</th>
@@ -68,7 +81,6 @@
                                         <th>TotalPrice</th>
                                         <th>PaymentMethod</th>
                                         <th>OrderTime</th>
-                                        <th>OrderDate</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -83,42 +95,74 @@
         </div>
     </div>
 </section>
-    @endsection
-    @push('scripts')
-    <script>
-        $(function () {
-            $("#orders").DataTable({
-                "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-                "paging": true, // Allow data to be paged
-                "lengthChange": true,
-                "searching": true, // Search box and search function will be actived
-                "info": true,
-                "autoWidth": true,
-                "processing": true,  // Show processing
-                ajax: "/fatty/main/admin/orders/datatable/monthlyfoodorderajax",
-                columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-                {data: 'order_status_name', name:'order_status_name'},
-                {data: 'customer_order_id', name:'customer_order_id'},
-                {data: 'customer_booking_id', name:'customer_booking_id'},
-                {data: 'customer_name', name:'customer_name'},
-                {data: 'restaurant_name', name:'restaurant_name'},
-                {data: 'rider_name', name:'rider_name'},
-                {data: 'bill_total_price', name:'bill_total_price'},
-                {data: 'payment_method_name', name:'payment_method_name'},
-                {data: 'order_time', name:'order_time'},
-                {data: 'ordered_date', name:'ordered_date'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-                ],
-                dom: 'PlBfrtip',
-                buttons: [
-                'excel', 'pdf', 'print'
-                ],
-            });
-        });
-        setTimeout(function() {
-            $('#successMessage').fadeOut('fast');
-        }, 2000);
-    </script>
-    @endpush
+@endsection
+@push('scripts')
+<script>
+    var minDate, maxDate;
     
+    // Custom filtering function which will search data in column four between two values
+    $.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var min = minDate.val();
+        var max = maxDate.val();
+        var date = new Date( data[1] );
+        
+        if (
+        ( min === null && max === null ) ||
+        ( min === null && date <= max ) ||
+        ( min <= date   && max === null ) ||
+        ( min <= date   && date <= max )
+        ) {
+            return true;
+        }
+        return false;
+    }
+    );
+    
+    $(document).ready(function() {
+        // Create date inputs
+        minDate = new DateTime($('#min'), {
+            format: 'Do MMMM YYYY'
+        });
+        maxDate = new DateTime($('#max'), {
+            format: 'Do MMMM YYYY'
+        });
+        
+        // DataTables initialisation
+        var table = $("#orders").DataTable({
+            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+            "paging": true, // Allow data to be paged
+            "lengthChange": true,
+            "searching": true, // Search box and search function will be actived
+            "info": true,
+            "autoWidth": true,
+            "processing": true,  // Show processing
+            ajax: "/fatty/main/admin/orders/datatable/monthlyfoodorderajax",
+            columns: [
+            {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+            {data: 'ordered_date', name:'ordered_date'},
+            {data: 'order_status_name', name:'order_status_name'},
+            {data: 'customer_order_id', name:'customer_order_id'},
+            {data: 'customer_booking_id', name:'customer_booking_id'},
+            {data: 'customer_name', name:'customer_name'},
+            {data: 'restaurant_name', name:'restaurant_name'},
+            {data: 'rider_name', name:'rider_name'},
+            {data: 'bill_total_price', name:'bill_total_price'},
+            {data: 'payment_method_name', name:'payment_method_name'},
+            {data: 'order_time', name:'order_time'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+            ],
+            dom: 'PlBfrtip',
+            buttons: [
+            'excel', 'pdf', 'print'
+            ],
+        });
+        $('#min, #max').on('change', function () {
+            table.draw();
+        });
+    });
+    setTimeout(function() {
+        $('#successMessage').fadeOut('fast');
+    }, 2000);
+</script>
+@endpush
