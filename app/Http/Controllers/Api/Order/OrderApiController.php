@@ -11,7 +11,6 @@ use App\Models\Order\OrderStatus;
 use App\Models\Order\OrderFoodSection;
 use App\Models\Order\OrderFoodOption;
 use App\Models\Order\CustomerOrderHistory;
-use App\Models\Customer\CustomerAddress;
 use App\Models\Food\Food;
 use App\Models\Food\FoodSubItem;
 use App\Models\Food\FoodSubItemData;
@@ -406,6 +405,86 @@ class OrderApiController extends Controller
                     return response()->json(['success'=>false,'message'=>"order id not found"]);
                 }
             }
+    }
+
+    public function restaurant_cancle_order(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $cancle_type = $request['cancle_type'];
+        $restaurant_remark = $request['restaurant_remark'];
+        $order_food_id=$request->order_food_id;
+        $result = json_decode($order_food_id);
+        
+
+        $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
+        $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
+        $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+        $check_order=CustomerOrder::where('order_id',$order_id)->first();
+        
+        if($check_order){
+            if ($cancle_type == 'other') {
+                CustomerOrder::where('order_id',$order_id)->update([
+                    'restaurant_remark'=>$restaurant_remark,
+                    'order_status_id'=>2,
+                ]);
+                //Customer
+                $title="Order Canceled by Restaurant";
+                $messages="It’s sorry as your order is canceled by restaurant!";
+                $message = strip_tags($messages);
+                $fcm_token=array();
+                array_push($fcm_token, $check_order->customer->fcm_token);
+                $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
+                $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
+    
+                $playLoad = json_encode($field);
+                $curl_session = curl_init();
+                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+                curl_setopt($curl_session, CURLOPT_POST, true);
+                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+                $result = curl_exec($curl_session);
+                ($curl_session);
+                $data=CustomerOrder::where('order_id',$order_id)->first();
+                return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+            } else {
+                $check_order_food=OrderFoods::whereIn('order_food_id',$result)->pluck('food_id');
+                CustomerOrder::where('order_id',$order_id)->update([
+                    'order_status_id'=>2,
+                ]);
+                Food::whereIn('food_id',$check_order_food)->update([
+                    'food_emergency_status'=>1,
+                ]);
+    
+                 //Customer
+                 $title="Order Canceled by Restaurant";
+                 $messages="It’s sorry as your order is canceled by restaurant!";
+                 $message = strip_tags($messages);
+                 $fcm_token=array();
+                 array_push($fcm_token, $check_order->customer->fcm_token);
+                 $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
+                 $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
+     
+                 $playLoad = json_encode($field);
+                 $curl_session = curl_init();
+                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+                 curl_setopt($curl_session, CURLOPT_POST, true);
+                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+                 $result = curl_exec($curl_session);
+                 ($curl_session);
+                 $data=CustomerOrder::where('order_id',$order_id)->first();
+                 return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found']);
+        }
+        
     }
 
     public function restaurant_status_v1(Request $request)
