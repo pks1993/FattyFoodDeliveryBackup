@@ -60,6 +60,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->string('trans_end_time')->nullable();
             $table->string('order_time')->nullable();
             $table->unsignedBigInteger('order_status_id')->nullable();
+            $table->longText('restaurant_remark')->nullable();
             $table->double('rider_restaurant_distance')->nullable()->default(0.00);
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
