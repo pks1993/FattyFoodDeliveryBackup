@@ -331,7 +331,7 @@ class OrderApiController extends Controller
     public function cancle_order(Request $request)
     {
         $order_id=$request['order_id'];
-        $customer_orders=CustomerOrder::where('order_id',$order_id)->whereIn('order_status_id',['1','11'])->first();
+        $customer_orders=CustomerOrder::where('order_id',$order_id)->whereIn('order_status_id',['1','11','19'])->first();
 
         if(!empty($customer_orders)){
 
@@ -400,7 +400,7 @@ class OrderApiController extends Controller
             }else{
                 $orders=CustomerOrder::where('order_id',$order_id)->first();
                 if($orders){
-                    return response()->json(['success'=>false,'message'=>"order status is not same pending such as 1 and 11",'check_developer'=>$orders]);
+                    return response()->json(['success'=>false,'message'=>"order status is not same pending such as 1,11 and 19",'check_developer'=>$orders]);
                 }else{
                     return response()->json(['success'=>false,'message'=>"order id not found"]);
                 }
