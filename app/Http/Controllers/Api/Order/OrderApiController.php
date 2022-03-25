@@ -414,6 +414,7 @@ class OrderApiController extends Controller
         $restaurant_remark = $request['restaurant_remark'];
         $order_food_id=$request->order_food_id;
         $result = json_decode($order_food_id);
+        // return response()->json($result);
         
 
         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
@@ -448,9 +449,12 @@ class OrderApiController extends Controller
                 $result = curl_exec($curl_session);
                 ($curl_session);
                 $data=CustomerOrder::where('order_id',$order_id)->first();
-                return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+                return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>$data]);
             } else {
-                $check_order_food=OrderFoods::whereIn('order_food_id',$result)->pluck('food_id');
+                foreach ($result as $key => $value) {
+                    $of_id[] = $value->order_food_id;
+                }
+                $check_order_food=OrderFoods::whereIn('order_food_id',$of_id)->pluck('food_id');
                 CustomerOrder::where('order_id',$order_id)->update([
                     'order_status_id'=>2,
                 ]);
