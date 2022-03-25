@@ -1,6 +1,35 @@
 @extends('admin.layouts.master')
 
 @section('css')
+<style>
+    form>.fa {
+        display: none;
+    }
+    .dt-buttons>button{
+        border-radius: revert; 
+        margin-top: 15px;
+        margin-right: 5px;
+    }
+    .dataTables_length >label {
+        margin-right: 15px !important;
+        margin-top: 15px;
+    }
+    .number {
+        text-align: center;
+    }
+    .order_amount {
+        text-align: center;
+    }
+    .order_count {
+        text-align: center;
+    }
+    .action {
+        text-align: center;
+    }
+    .register_date {
+        text-align: center;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -19,7 +48,7 @@
             <div class="col-sm-5">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Rider</li>
+                    <li class="breadcrumb-item active">Monthly Top 100 Riders</li>
                     <li class="breadcrumb-item active">Lists</li>
                 </ol>
             </div>
@@ -52,62 +81,34 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane table-responsive active" id="Admin">
-                                <div class="pagination">
-                                    {{ $riders->appends(request()->input())->links() }}
-                                </div>
+                                <table border="0" cellspacing="5" cellpadding="5">
+                                    <tbody>
+                                        <tr>
+                                            <td>Minimum date:</td>
+                                            <td><input type="text" id="min" name="min"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Maximum date:</td>
+                                            <td><input type="text" id="max" name="max"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                                 <table id="riders" class="table table-hover">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No.</th>
                                             {{-- <th>Action</th> --}}
                                             <th>Image</th>
-                                            <th class="text-left">RiderName</th>
-                                            <th class="text-left">RiderPhone</th>
-                                            {{-- <th class="text-left">Latitude</th> --}}
-                                            {{-- <th class="text-left">Longitude</th> --}}
-                                            <th class="text-left">TotalOrder</th>
-                                            <th class="text-left">FoodOrder</th>
-                                            <th class="text-left">ParcelOrder</th>
-                                            <th class="text-left">OrderAmount</th>
+                                            <th class="text-left">Rider Name</th>
+                                            <th class="text-left">Rider Phone</th>
+                                            <th class="text-left">RegisterDate</th>
+                                            <th class="text-left">Latitude</th>
+                                            <th class="text-left">Longitude</th>
+                                            <th class="text-left">Is Admin approved</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($riders as $rider)
-                                        <tr class="text-center">
-                                            <td>{{ $loop->iteration }}</td> 
-                                            {{-- <td class="btn-group text-center">
-                                                <a style="pointer-events: none" href="{{route('fatty.admin.riders.edit',['rider_id'=>$rider->rider_id])}}" class="btn btn-primary btn-sm mr-1" title="Edit" disabled="true"><i class="fa fa-edit"></i></a>
-                                                <a href="#" class="btn btn-primary btn-sm mr-1" title="Edit" disabled="true"><i class="fa fa-edit"></i></a>
-                                                <form style="pointer-events: none" action="{{route('fatty.admin.riders.destroy', $rider->rider_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                                </form>
-                                                
-                                                <form style="pointer-events: none" action="{{route('fatty.admin.riders.destroy', $rider->rider_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button class="btn btn-danger btn-sm" title="Delete"><i class="fa fa-trash"></i></button>
-                                                </form>
-                                                
-                                            </td> --}}
-                                            <td>
-                                                @if($rider->rider_image)
-                                                <img src="../../../uploads/rider/{{$rider->rider_image}}" class="img-rounded" style="width: 55px;height: 45px;">
-                                                @else
-                                                <img src="{{asset('../image/available.png')}}" class="img-rounded" style="width: 55px;height: 45px;">
-                                                @endif
-                                            </td>
-                                            <td class="text-left">{{ $rider->rider_user_name }}</td>
-                                            <td class="text-left">{{ $rider->rider_user_phone }}</td>
-                                            {{-- <td class="text-left">{{ $rider->rider_latitude }}</td> --}}
-                                            {{-- <td class="text-left">{{ $rider->rider_longitude }}</td>  --}}
-                                            <td class="text-center">{{ $rider->count }}</td>
-                                            <td class="text-center">{{ $rider->rider_order_monthly->where('order_type','food')->count() }}</td>
-                                            <td class="text-center">{{ $rider->rider_order_monthly->where('order_type','parcel')->count() }}</td>
-                                            <td class="text-center">{{ $rider->rider_order_monthly->sum('bill_total_price') }}</td>
-                                        </tr>
-                                        @endforeach
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -120,34 +121,69 @@
     @endsection
     @push('scripts')
     <script>
-        $(function () {
-            $("#riders").DataTable({
-            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-            "paging": true, // Allow data to be paged
-            "lengthChange": true,
-            "searching": true, // Search box and search function will be actived
-            "info": true,
-            "autoWidth": true,
-            "processing": true,  // Show processing
-            // ajax: "/fatty/main/admin/customers/datatable/ssd",
-            // columns: [
-            // {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-            // {data: 'customer_name', name:'customer_name'},
-            // {data: 'customer_phone', name:'customer_phone'},
-            // {data: 'register_date', name:'register_date'},
-            // {data: 'order_count', name:'order_count'},
-            // {data: 'order_amount', name:'order_amount'},
-            // {data: 'action', name: 'action', orderable: false, searchable: false},
-            // ],
-            dom: 'PlBfrtip',
-            buttons: [
-            'excel', 'pdf', 'print'
-            ],
+        
+        var minDate, maxDate;
+        
+        // Custom filtering function which will search data in column four between two values
+        $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+            var min = minDate.val();
+            var max = maxDate.val();
+            var date = new Date( data[4] );
+            
+            if (
+            ( min === null && max === null ) ||
+            ( min === null && date <= max ) ||
+            ( min <= date   && max === null ) ||
+            ( min <= date   && date <= max )
+            ) {
+                return true;
+            }
+            return false;
+        }
+        );
+        
+        $(document).ready(function() {
+            // Create date inputs
+            minDate = new DateTime($('#min'), {
+                format: 'Do MMMM YYYY'
+            });
+            maxDate = new DateTime($('#max'), {
+                format: 'Do MMMM YYYY'
+            });
+            
+            // DataTables initialisation
+            var table = $("#riders").DataTable({
+                "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+                "paging": true, // Allow data to be paged
+                "lengthChange": true,
+                "searching": true, // Search box and search function will be actived
+                "info": true,
+                "autoWidth": true,
+                "processing": true,  // Show processing
+                ajax: "/fatty/main/admin/riders/datatable/monthlyhundredriderajax",
+                columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
+                {data: 'rider_image', name:'rider_image',className: "rider_image"},
+                {data: 'rider_user_name', name:'rider_user_name'},
+                {data: 'rider_user_phone', name:'rider_user_phone'},
+                {data: 'register_date', name:'register_date',className: "register_date"},
+                {data: 'rider_latitude', name:'rider_latitude'},
+                {data: 'rider_longitude', name:'rider_longitude'},
+                {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
+                
+                ],
+                dom: 'PlBfrtip',
+                buttons: [
+                'excel', 'pdf', 'print'
+                ],
+            });
+            
+            // Refilter the table
+            $('#min, #max').on('change', function () {
+                table.draw();
+            });
         });
-        });
-        setTimeout(function() {
-            $('#successMessage').fadeOut('fast');
-        }, 2000);
     </script>
     @endpush
     

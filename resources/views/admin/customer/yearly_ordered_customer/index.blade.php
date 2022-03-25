@@ -66,11 +66,23 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-               
+                
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
+                            <table border="0" cellspacing="5" cellpadding="5">
+                                <tbody>
+                                    <tr>
+                                        <td>Minimum date:</td>
+                                        <td><input type="text" id="min" name="min"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Maximum date:</td>
+                                        <td><input type="text" id="max" name="max"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table id="customers" class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr class="text-center">
@@ -86,46 +98,76 @@
                                 </thead>
                                 <tbody>
                                     
-                                    </tbody>
-                                </table>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    @endsection
-    @push('scripts')
-    <script>
-        $(function () {
-            $("#customers").DataTable({
-                "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-                "paging": true, // Allow data to be paged
-                "lengthChange": true,
-                "searching": true, // Search box and search function will be actived
-                "info": true,
-                "autoWidth": true,
-                "processing": true,  // Show processing
-                ajax: "/fatty/main/admin/customers/datatable/yearlyorderedajax",
-                columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-                {data: 'customer_name', name:'customer_name'},
-                {data: 'customer_phone', name:'customer_phone'},
-                {data: 'register_date', name:'register_date',className: "register_date"},
-                {data: 'order_count', name:'order_count',className: "order_count"},
-                {data: 'order_amount', name:'order_amount',className: "order_amount"},
-                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
-                ],
-                dom: 'PlBfrtip',
-                buttons: [
-                'excel', 'pdf', 'print'
-                ],
-            });
-        });
-        setTimeout(function() {
-            $('#successMessage').fadeOut('fast');
-        }, 2000);
-    </script>
-    @endpush
+    </div>
+</section>
+@endsection
+@push('scripts')
+<script>
+    var minDate, maxDate;
     
+    // Custom filtering function which will search data in column four between two values
+    $.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var min = minDate.val();
+        var max = maxDate.val();
+        var date = new Date( data[3] );
+        
+        if (
+        ( min === null && max === null ) ||
+        ( min === null && date <= max ) ||
+        ( min <= date   && max === null ) ||
+        ( min <= date   && date <= max )
+        ) {
+            return true;
+        }
+        return false;
+    }
+    );
+    
+    $(document).ready(function() {
+        // Create date inputs
+        minDate = new DateTime($('#min'), {
+            format: 'Do MMMM YYYY'
+        });
+        maxDate = new DateTime($('#max'), {
+            format: 'Do MMMM YYYY'
+        });
+        
+        // DataTables initialisation
+        var table = $("#customers").DataTable({
+            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+            "paging": true, // Allow data to be paged
+            "lengthChange": true,
+            "searching": true, // Search box and search function will be actived
+            "info": true,
+            "autoWidth": true,
+            "processing": true,  // Show processing
+            ajax: "/fatty/main/admin/customers/datatable/yearlyorderedajax",
+            columns: [
+            {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
+            {data: 'customer_name', name:'customer_name'},
+            {data: 'customer_phone', name:'customer_phone'},
+            {data: 'register_date', name:'register_date',className: "register_date"},
+            {data: 'order_count', name:'order_count',className: "order_count"},
+            {data: 'order_amount', name:'order_amount',className: "order_amount"},
+            {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
+            ],
+            dom: 'PlBfrtip',
+            buttons: [
+            'excel', 'pdf', 'print'
+            ],
+        });
+        // Refilter the table
+        $('#min, #max').on('change', function () {
+            table.draw();
+        });
+    });
+</script>
+@endpush

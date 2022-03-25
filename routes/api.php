@@ -26,6 +26,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiController@index');
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
+Route::post('fatty/202221/lashio/main/admin/customers/otp_send','Api\Customer\CustomerApiController@otp_send');
+Route::post('fatty/202221/lashio/main/admin/customers/otp_check','Api\Customer\CustomerApiController@otp_check');
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
@@ -130,6 +132,7 @@ Route::post('fatty/202221/lashio/main/admin/restaurants/orders/preparing','Api\O
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/click','Api\Order\OrderApiController@restaurant_order_click');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/status','Api\Order\OrderApiController@restaurant_status');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/v1/status','Api\Order\OrderApiController@restaurant_status_v1');
+Route::post('fatty/202221/lashio/main/admin/restaurants/cancle_orders/status','Api\Order\OrderApiController@restaurant_cancle_order');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/details','Api\Restaurant\RestaurantApiController@restaurant_order_details');
 Route::post('fatty/202221/lashio/main/admin/restaurants/activenow','Api\Restaurant\RestaurantApiController@activenow');
 Route::post('fatty/202221/lashio/main/admin/foods/onoff','Api\Restaurant\RestaurantApiController@food_onoff');
