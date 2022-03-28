@@ -72,8 +72,9 @@ class PaymentClient
         $request->setMerchCode($this->merchantCode);
 
         $paymentRequest = PaymentUtils::buildPaymentRequest($request, $this->merchantKey);
-        // var_dump($paymentRequest);
-
+        $arrayName = array($paymentRequest);
+                    $result=json_encode($arrayName);
+                    echo $result;
         return json_decode($this->httpClient->doPost($url, $paymentRequest));
     }
 

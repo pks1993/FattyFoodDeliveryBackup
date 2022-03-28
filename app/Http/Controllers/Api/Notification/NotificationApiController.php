@@ -32,7 +32,8 @@ class NotificationApiController extends Controller
         
         $_SESSION['merchOrderId']=$request['merchOrderId'];
         $_SESSION['refundReason']=$request['refundReason'];
-        $_SESSION['refundRequestNo']=$request['refundRequestNo'];
+        $_SESSION['refundRequestNo']='"'.time().'"';
+        $_SESSION['refundAmount']=$request['refundAmount'];
         return view('admin.src.example.refund');
     }
 

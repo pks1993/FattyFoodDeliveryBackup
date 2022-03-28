@@ -4,27 +4,6 @@
         session_start(); 
     } 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Refund Result<</title>
-    <link rel="stylesheet" href="../style.css">
-</head>
-<body>
-
-<div class="responsive-container">
-
-    <div class="card">
-        <div class="card-header">
-            <div>
-                <span>Refund Result</span>
-            </div>
-        </div>
-
-
-        <div class="card-body">
-            <div class="code">
-
 
                 <?php
                 /**
@@ -57,17 +36,13 @@
 
                     $response = $client->refund($refundRequest);
 
-                    var_dump($response);
+
+                    $arrayName = array($response);
+                    $result=json_encode($arrayName);
+                    echo $result;
 
                 } catch (Throwable $e) {
                     var_dump($e);
                 }
 
                 ?>
-
-            </div>
-        </div>
-    </div>
-</div>
-</body>
-</html>

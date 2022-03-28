@@ -30,7 +30,6 @@ class RefundRequest extends PaymentRequest
 
         PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_REASON, $this->refundReason);
         PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_REQUEST_NO, $this->refundRequestNo);
-
         return $bizContent;
     }
 
