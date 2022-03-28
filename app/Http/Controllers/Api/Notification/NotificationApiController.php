@@ -22,6 +22,20 @@ class NotificationApiController extends Controller
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
 
+    public function refund(Request $request)
+    {
+
+            if(!isset($_SESSION)) 
+            { 
+                session_start(); 
+            } 
+        
+        $_SESSION['merchOrderId']=$request['merchOrderId'];
+        $_SESSION['refundReason']=$request['refundReason'];
+        $_SESSION['refundRequestNo']=$request['refundRequestNo'];
+        return view('admin.src.example.refund');
+    }
+
     public function notify_url(Request $request)
     {
         $data=$request->getContent();

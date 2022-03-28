@@ -184,6 +184,7 @@ Route::post('fatty/202221/lashio/main/admin/customers/food/orders/delivery/fee',
 
 //Notify url
 Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\NotificationApiController@notify_url');
+Route::post('fatty/main/admin/kbz/pay/refund','Api\Notification\NotificationApiController@refund');
 
 
 

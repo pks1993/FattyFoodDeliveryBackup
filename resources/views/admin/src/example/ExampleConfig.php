@@ -40,12 +40,12 @@ class ExampleConfig implements ConfigInterface
 
     public function getSslKeyPwd()
     {
-        return "client123";
+        return "Aa123456";
     }
 
     public function getSslCertPath()
     {
-        return __DIR__ . '/cert/client.crt';
+        return __DIR__ . '/cert/clientcert.pem';
     }
 
     public function getCaInfoPath()
@@ -68,7 +68,8 @@ class ExampleConfig implements ConfigInterface
     public function getRefundUrl()
     {
         // return "https://100.100.181.252:443/payment/gateway/refund";
-        return "http://api.kbzpay.com/payment/gateway/uat/refund";
+        // return "http://api.kbzpay.com/payment/gateway/uat/refund";
+        return "https://api.kbzpay.com:18008/payment/gateway/uat/refund";
     }
 
 }

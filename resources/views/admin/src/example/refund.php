@@ -1,3 +1,9 @@
+<?php
+    if(!isset($_SESSION)) 
+    { 
+        session_start(); 
+    } 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,9 +38,13 @@
                 require_once __DIR__ . '/../lib/io/RefundRequest.php';
                 require_once __DIR__ . '/../lib/PaymentClient.php';
 
-                $merchOrderId = trim($_POST['merchOrderId']);
-                $refundReason = trim($_POST['refundReason']);
-                $refundRequestNo = trim($_POST['refundRequestNo']);
+                // $merchOrderId = trim($_POST['merchOrderId']);
+                // $refundReason = trim($_POST['refundReason']);
+                // $refundRequestNo = trim($_POST['refundRequestNo']);
+
+                $merchOrderId=$_SESSION['merchOrderId'];
+                $refundReason=$_SESSION['refundReason'];
+                $refundRequestNo=$_SESSION['refundRequestNo'];
 
                 try {
                     $refundRequest = RefundRequest::builder()
