@@ -235,22 +235,17 @@ class RestaurantApiController extends Controller
 
     public function opening_store(Request $request)
     {
-        $restaurant_id=$request['restaurant_id'];
+        $restaurant_id=(int)$request['restaurant_id'];
         $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
         $check_opeining=RestaurantAvailableTime::where('restaurant_id',$restaurant_id)->first();
         $available_datetime=$request->availableTime;
 
         if($check_restaurant){
             if(empty($check_opeining)){
-                $availabel_list=json_decode($available_datetime,true);
-                foreach($availabel_list as $list){
+                // $availabel_list=json_decode($available_datetime,true);
+                foreach($available_datetime as $list){
                     $day=$list['day'];
                     $on_off=$list['on_off'];
-                    // if(!empty($list['on_off'])){
-                    //     $on_off=$list['on_off'];
-                    // }else{
-                    //     $on_off=1;
-                    // }
                     $opening_time=$list['opening_time'];
                     $closing_time=$list['closing_time'];
                     $time=RestaurantAvailableTime::create([
@@ -266,15 +261,10 @@ class RestaurantApiController extends Controller
                     return response()->json(['success'=>true,'message' => 'successfully restaurant create','data'=>$res_name]);
             }else{
                 $opening_time=RestaurantAvailableTime::where('restaurant_id',$restaurant_id)->get();
-                $availabel_list=json_decode($available_datetime,true);
-                foreach($availabel_list as $list){
+                // $availabel_list=json_decode($available_datetime,true);
+                foreach($available_datetime as $list){
                     $day=$list['day'];
                     $on_off=$list['on_off'];
-                    // if(!empty($list['on_off'])){
-                    //     $on_off=$list['on_off'];
-                    // }else{
-                    //     $on_off=1;
-                    // }
                     $opening_time=$list['opening_time'];
                     $closing_time=$list['closing_time'];
                     $time=RestaurantAvailableTime::whereIn('day',[$day])->where('restaurant_id',$restaurant_id)->update([
