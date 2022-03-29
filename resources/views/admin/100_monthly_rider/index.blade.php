@@ -84,20 +84,20 @@
                                 <table border="0" cellspacing="5" cellpadding="5">
                                     <tbody>
                                         <tr>
-                                            <td>Minimum date:</td>
+                                            <td>From Month:</td>
                                             <td><input type="text" id="min" name="min"></td>
                                         </tr>
                                         <tr>
-                                            <td>Maximum date:</td>
+                                            <td>To Month:</td>
                                             <td><input type="text" id="max" name="max"></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table id="riders" class="table table-hover">
+                                <table id="riders" class="table table-bordered table-striped table-hover display nowrap" border="0" cellspacing="5" cellpadding="5">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No.</th>
-                                            {{-- <th>Action</th> --}}
+                                            <th>Action</th>
                                             <th>Image</th>
                                             <th class="text-left">Rider Name</th>
                                             <th class="text-left">Rider Phone</th>
@@ -122,34 +122,111 @@
     @push('scripts')
     <script>
         
-        var minDate, maxDate;
-        
-        // Custom filtering function which will search data in column four between two values
-        $.fn.dataTable.ext.search.push(
-        function( settings, data, dataIndex ) {
-            var min = minDate.val();
-            var max = maxDate.val();
-            var date = new Date( data[4] );
-            
-            if (
-            ( min === null && max === null ) ||
-            ( min === null && date <= max ) ||
-            ( min <= date   && max === null ) ||
-            ( min <= date   && date <= max )
-            ) {
-                return true;
-            }
-            return false;
-        }
-        );
-        
         $(document).ready(function() {
+            $.fn.dataTable.ext.search.push(
+            function( settings, data, dataIndex ) {
+                var min = $('#min').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'MM yy',
+                    onChangeMonthYear: function(year, month, widget) {
+                        setTimeout(function() {
+                            $('.ui-datepicker-calendar').hide();
+                        });
+                    },
+                    onClose: function(dateText, inst) { 
+                        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                        $(this).datepicker('setDate', new Date(year, month, 1));
+                        table.draw();
+                    },
+                }).click(function(){
+                    $('.ui-datepicker-calendar').hide();
+                });
+                var minDate = min.val();
+                var minData = minDate.split('-');
+                var minMonth = minData[0];
+                var minYear = minData[1];
+                
+                var max = $('#max').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'MM yy',
+                    onChangeMonthYear: function(year, month, widget) {
+                        setTimeout(function() {
+                            $('.ui-datepicker-calendar').hide();
+                        });
+                    },
+                    onClose: function(dateText, inst) { 
+                        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                        $(this).datepicker('setDate', new Date(year, month, 1));
+                        table.draw();
+                    },
+                }).click(function(){
+                    $('.ui-datepicker-calendar').hide();
+                });
+                var maxDate = max.val();
+                var maxData = maxDate.split('-');
+                var maxMonth = maxData[0];
+                var maxYear = maxData[1];
+                
+                
+                
+                var date = data[5].split('-');
+                console.log(date[1] >= minMonth && minYear <= date[2] && date[1] <= maxMonth && maxYear >= date[2]);
+                
+                if ((isNaN(minDate) == false && isNaN(maxDate) == false) ||
+                (date[1] == minMonth && minYear == date[2]) || 
+                ((date[1] >= minMonth || date[1] <= minMonth && minYear < date[2]) && minYear <= date[2] && (date[1] <= maxMonth || date[1] >= maxMonth && maxYear > date[2]) && maxYear >= date[2]) 
+                )  {
+                    return true;
+                }
+                return false;
+            }
+            );
+            
             // Create date inputs
-            minDate = new DateTime($('#min'), {
-                format: 'Do MMMM YYYY'
+            $("#min").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'mm-yy',
+                onChangeMonthYear: function(year, month, widget) {
+                    setTimeout(function() {
+                        $('.ui-datepicker-calendar').hide();
+                    });
+                },
+                onClose: function(dateText, inst) { 
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).datepicker('setDate', new Date(year, month, 1));
+                    table.draw();
+                },
+            }).click(function(){
+                $('.ui-datepicker-calendar').hide();
             });
-            maxDate = new DateTime($('#max'), {
-                format: 'Do MMMM YYYY'
+            
+            $("#max").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'mm-yy',
+                onChangeMonthYear: function(year, month, widget) {
+                    setTimeout(function() {
+                        $('.ui-datepicker-calendar').hide();
+                    });
+                },
+                onClose: function(dateText, inst) { 
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).datepicker('setDate', new Date(year, month, 1));
+                    table.draw();
+                },
+            }).click(function(){
+                $('.ui-datepicker-calendar').hide();
             });
             
             // DataTables initialisation
@@ -164,6 +241,7 @@
                 ajax: "/fatty/main/admin/riders/datatable/monthlyhundredriderajax",
                 columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
                 {data: 'rider_image', name:'rider_image',className: "rider_image"},
                 {data: 'rider_user_name', name:'rider_user_name'},
                 {data: 'rider_user_phone', name:'rider_user_phone'},
@@ -173,7 +251,7 @@
                 {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
                 
                 ],
-                dom: 'PlBfrtip',
+                dom: 'lBfrtip',
                 buttons: [
                 'excel', 'pdf', 'print'
                 ],

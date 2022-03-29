@@ -29,6 +29,9 @@
     .register_date {
         text-align: center;
     }
+    .ui-datepicker-month{
+        display: none !important;
+    }
 </style>
 @endsection
 
@@ -74,12 +77,12 @@
                             <table border="0" cellspacing="5" cellpadding="5">
                                 <tbody>
                                     <tr>
-                                        <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min"></td>
+                                        <td>From Year:</td>
+                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
-                                        <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max"></td>
+                                        <td>To Year:</td>
+                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -110,35 +113,112 @@
 @endsection
 @push('scripts')
 <script>
-    var minDate, maxDate;
-    
-    // Custom filtering function which will search data in column four between two values
-    $.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
-        var date = new Date( data[3] );
-        
-        if (
-        ( min === null && max === null ) ||
-        ( min === null && date <= max ) ||
-        ( min <= date   && max === null ) ||
-        ( min <= date   && date <= max )
-        ) {
-            return true;
-        }
-        return false;
-    }
-    );
-    
-    $(document).ready(function() {
-        // Create date inputs
-        minDate = new DateTime($('#min'), {
-            format: 'Do MMMM YYYY'
-        });
-        maxDate = new DateTime($('#max'), {
-            format: 'Do MMMM YYYY'
-        });
+     $(document).ready(function() {
+            $.fn.dataTable.ext.search.push(
+            function( settings, data, dataIndex ) {
+                var min = $('#min').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'yy',
+                    onChangeMonthYear: function(year, month, widget) {
+                        setTimeout(function() {
+                            $('.ui-datepicker-calendar').hide();
+                        });
+                    },
+                    onClose: function(dateText, inst) { 
+                        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                        $(this).datepicker('setDate', new Date(year, month, 1));
+                        table.draw();
+                    },
+                }).click(function(){
+                    $('.ui-datepicker-calendar').hide();
+                });
+                var minData = min.val();
+                var minYear = min.val();
+                // var minData = minDate.split('-');
+                // var minYear = minData[1];
+                
+                var max = $('#max').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'yy',
+                    onChangeMonthYear: function(year, month, widget) {
+                        setTimeout(function() {
+                            $('.ui-datepicker-calendar').hide();
+                        });
+                    },
+                    onClose: function(dateText, inst) { 
+                        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                        $(this).datepicker('setDate', new Date(year, month, 1));
+                        table.draw();
+                    },
+                }).click(function(){
+                    $('.ui-datepicker-calendar').hide();
+                });
+                var maxData = max.val();
+                var maxYear = max.val();
+                // var maxData = maxDate.split('-');
+                // var maxYear = maxData[1];
+                
+                var date = data[3].split('-');
+                
+                console.log(minData);
+                
+                if ((minData == '' && maxData == '') ||
+                (date[2] == minYear) ||
+                ((date[2] <= minYear || date[2] > minYear) && maxYear >= date[2])
+                
+                )  {
+                    return true;
+                }
+                return false;
+            }
+            );
+            
+            // Create date inputs
+            $("#min").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'yy',
+                onChangeMonthYear: function(year, month, widget) {
+                    setTimeout(function() {
+                        $('.ui-datepicker-calendar').hide();
+                    });
+                },
+                onClose: function(dateText, inst) { 
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).datepicker('setDate', new Date(year, month, 1));
+                    table.draw();
+                },
+            }).click(function(){
+                $('.ui-datepicker-calendar').hide();
+            });
+            
+            $("#max").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'yy',
+                onChangeMonthYear: function(year, month, widget) {
+                    setTimeout(function() {
+                        $('.ui-datepicker-calendar').hide();
+                    });
+                },
+                onClose: function(dateText, inst) { 
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).datepicker('setDate', new Date(year, month, 1));
+                    table.draw();
+                },
+            }).click(function(){
+                $('.ui-datepicker-calendar').hide();
+            });
         
         // DataTables initialisation
         var table = $("#customers").DataTable({
@@ -159,7 +239,7 @@
             {data: 'order_amount', name:'order_amount',className: "order_amount"},
             {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
             ],
-            dom: 'PlBfrtip',
+            dom: 'lBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],

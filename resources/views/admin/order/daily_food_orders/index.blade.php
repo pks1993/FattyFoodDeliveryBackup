@@ -98,13 +98,11 @@
 @endsection
 @push('scripts')
 <script>
-    var minDate, maxDate;
-    
-    // Custom filtering function which will search data in column four between two values
-    $.fn.dataTable.ext.search.push(
+     // Custom filtering function which will search data in column four between two values
+     $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
+        var min = $('#min').datepicker("getDate");
+        var max = $('#max').datepicker("getDate");
         var date = new Date( data[1] );
         
         if (
@@ -119,14 +117,12 @@
     }
     );
     
+    
     $(document).ready(function() {
         // Create date inputs
-        minDate = new DateTime($('#min'), {
-            format: 'Do MMMM YYYY'
-        });
-        maxDate = new DateTime($('#max'), {
-            format: 'Do MMMM YYYY'
-        });
+        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+        
+        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
         
         // DataTables initialisation
         var table = $("#orders").DataTable({
@@ -152,7 +148,7 @@
             {data: 'order_time', name:'order_time'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
-            dom: 'PlBfrtip',
+            dom: 'lBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],

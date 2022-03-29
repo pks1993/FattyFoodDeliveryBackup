@@ -74,11 +74,11 @@
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min"></td>
+                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max"></td>
+                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -97,77 +97,71 @@
                                 </thead>
                                 <tbody>
                                 </tbody>
-                                </table>
-                            </div>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    @endsection
-    @push('scripts')
+    </div>
+</section>
+@endsection
+@push('scripts')
 <script>
-var minDate, maxDate;
- 
-// Custom filtering function which will search data in column four between two values
-$.fn.dataTable.ext.search.push(
+    // Custom filtering function which will search data in column four between two values
+    $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
+        var min = $('#min').datepicker("getDate");
+        var max = $('#max').datepicker("getDate");
         var date = new Date( data[3] );
-
+        
         if (
-            ( min === null && max === null ) ||
-            ( min === null && date <= max ) ||
-            ( min <= date   && max === null ) ||
-            ( min <= date   && date <= max )
+        ( min === null && max === null ) ||
+        ( min === null && date <= max ) ||
+        ( min <= date   && max === null ) ||
+        ( min <= date   && date <= max )
         ) {
             return true;
         }
         return false;
     }
-);
- 
-$(document).ready(function() {
-    // Create date inputs
-    minDate = new DateTime($('#min'), {
-        format: 'Do MMMM YYYY'
-    });
-    maxDate = new DateTime($('#max'), {
-        format: 'Do MMMM YYYY'
-    });
- 
-    // DataTables initialisation
-    var table = $("#customers").DataTable({
-                "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-                "paging": true, // Allow data to be paged
-                "lengthChange": true,
-                "searching": true, // Search box and search function will be actived
-                "info": true,
-                "autoWidth": true,
-                "processing": true,  // Show processing
-                ajax: "/fatty/main/admin/customers/datatable/dailyajax",
-                columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-                {data: 'customer_name', name:'customer_name'},
-                {data: 'customer_phone', name:'customer_phone'},
-                {data: 'register_date', name:'register_date',className: "register_date"},
-                {data: 'order_count', name:'order_count',className: "order_count"},
-                {data: 'order_amount', name:'order_amount',className: "order_amount"},
-                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
-                ],
-                dom: 'PlBfrtip',
-                buttons: [
-                'excel', 'pdf', 'print'
-                ],
-            });
- 
-    // Refilter the table
-    $('#min, #max').on('change', function () {
-        table.draw();
-    });
-});
-</script>
-    @endpush
+    );
     
+    
+    $(document).ready(function() {
+        // Create date inputs
+        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+        
+        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
+        // DataTables initialisation
+        var table = $("#customers").DataTable({
+            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+            "paging": true, // Allow data to be paged
+            "lengthChange": true,
+            "searching": true, // Search box and search function will be actived
+            "info": true,
+            "autoWidth": true,
+            "processing": true,  // Show processing
+            ajax: "/fatty/main/admin/customers/datatable/dailyajax",
+            columns: [
+            {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
+            {data: 'customer_name', name:'customer_name'},
+            {data: 'customer_phone', name:'customer_phone'},
+            {data: 'register_date', name:'register_date',className: "register_date"},
+            {data: 'order_count', name:'order_count',className: "order_count"},
+            {data: 'order_amount', name:'order_amount',className: "order_amount"},
+            {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
+            ],
+            dom: 'lBfrtip',
+            buttons: [
+            'excel', 'pdf', 'print'
+            ],
+        });
+        
+        // Refilter the table
+        $('#min, #max').on('change', function () {
+            table.draw();
+        });
+    });
+</script>
+@endpush
