@@ -122,6 +122,7 @@ Route::post('fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\Or
 Route::get('fatty/202221/lashio/main/admin/order/payment/lists','Api\Order\OrderApiController@payment_list');
 Route::get('fatty/202221/lashio/main/admin/order/status/lists','Api\Order\OrderApiController@status_list');
 Route::post('fatty/202221/lashio/main/admin/customers/orders/cancel','Api\Order\OrderApiController@cancle_order');
+Route::post('fatty/202221/lashio/main/admin/customers/orders/v1/cancel','Api\Order\OrderApiController@cancle_order_v1');
 Route::post('fatty/202221/lashio/main/admin/riders/send/noti/to/customers','Api\Order\OrderApiController@send_noti_to_customer');
 
 
@@ -184,7 +185,6 @@ Route::post('fatty/202221/lashio/main/admin/customers/food/orders/delivery/fee',
 
 //Notify url
 Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\NotificationApiController@notify_url');
-Route::post('fatty/main/admin/kbz/pay/refund','Api\Notification\NotificationApiController@refund');
 
 
 
