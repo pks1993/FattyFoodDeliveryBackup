@@ -37,7 +37,6 @@ class NotificationApiController extends Controller
 
             $order=CustomerOrder::where('merch_order_id',$merch_order_id)->first();
             if($order){
-                $order->order_description=$data;
                 $order->notify_time=$notify_time;
                 $order->payment_total_amount=$total_amount;
                 $order->trade_status=$trade_status;
