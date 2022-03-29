@@ -127,13 +127,11 @@
     @push('scripts')
     <script>
         
-        var minDate, maxDate;
-        
         // Custom filtering function which will search data in column four between two values
         $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
-            var min = minDate.val();
-            var max = maxDate.val();
+            var min = $('#min').datepicker("getDate");
+            var max = $('#max').datepicker("getDate");
             var date = new Date( data[3] );
             
             if (
@@ -148,15 +146,12 @@
         }
         );
         
+        
         $(document).ready(function() {
             // Create date inputs
-            minDate = new DateTime($('#min'), {
-                format: 'Do MMMM YYYY'
-            });
-            maxDate = new DateTime($('#max'), {
-                format: 'Do MMMM YYYY'
-            });
+            $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
             
+            $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
             // DataTables initialisation
             var table = $("#restaurants").DataTable({
                 "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
@@ -184,7 +179,7 @@
                 {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
                 
                 ],
-                dom: 'PlBfrtip',
+                dom: 'lBfrtip',
                 buttons: [
                 'excel', 'pdf', 'print'
                 ],

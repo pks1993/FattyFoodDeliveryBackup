@@ -84,11 +84,11 @@
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min"></td>
+                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max"></td>
+                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -168,13 +168,11 @@
     @endsection
     @push('scripts')
     <script>
-        var minDate, maxDate;
-        
         // Custom filtering function which will search data in column four between two values
         $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
-            var min = minDate.val();
-            var max = maxDate.val();
+            var min = $('#min').datepicker("getDate");
+            var max = $('#max').datepicker("getDate");
             var date = new Date( data[3] );
             
             if (
@@ -189,14 +187,12 @@
         }
         );
         
+        
         $(document).ready(function() {
             // Create date inputs
-            minDate = new DateTime($('#min'), {
-                format: 'Do MMMM YYYY'
-            });
-            maxDate = new DateTime($('#max'), {
-                format: 'Do MMMM YYYY'
-            });
+            $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+            
+            $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
             
             // DataTables initialisation
             var table = $("#customers").DataTable({
@@ -217,7 +213,7 @@
                 {data: 'order_amount', name:'order_amount',className: "order_amount"},
                 {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
                 ],
-                dom: 'PlBfrtip',
+                dom: 'lBfrtip',
                 buttons: [
                 'excel', 'pdf', 'print'
                 ],

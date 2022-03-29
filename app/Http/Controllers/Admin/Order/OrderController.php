@@ -31,7 +31,7 @@ class OrderController extends Controller
     }
     
     public function dailyfoodorderajax(){
-        $model = CustomerOrder::whereDate('created_at',date('Y-m-d'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -68,7 +68,7 @@ class OrderController extends Controller
     }
     
     public function monthlyfoodorderajax(){
-        $model = CustomerOrder::whereMonth('created_at',date('m'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -91,7 +91,7 @@ class OrderController extends Controller
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -105,7 +105,7 @@ class OrderController extends Controller
     }
     
     public function yearlyfoodorderajax(){
-        $model = CustomerOrder::whereYear('created_at',date('Y'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -128,7 +128,7 @@ class OrderController extends Controller
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -142,7 +142,7 @@ class OrderController extends Controller
     }
     
     public function dailyparcelorderajax(){
-        $model = CustomerOrder::whereDate('created_at',date('Y-m-d'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -178,7 +178,7 @@ class OrderController extends Controller
     }
     
     public function monthlyparcelorderajax(){
-        $model = CustomerOrder::whereMonth('created_at',date('m'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -200,7 +200,7 @@ class OrderController extends Controller
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -214,7 +214,7 @@ class OrderController extends Controller
     }
     
     public function yearlyparcelorderajax(){
-        $model = CustomerOrder::whereYear('created_at',date('Y'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -236,7 +236,7 @@ class OrderController extends Controller
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])

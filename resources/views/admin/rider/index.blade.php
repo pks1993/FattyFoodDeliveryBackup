@@ -85,26 +85,26 @@
                                     <tbody>
                                         <tr>
                                             <td>Minimum date:</td>
-                                            <td><input type="text" id="min" name="min"></td>
+                                            <td><input type="text" id="min" name="min" autocomplete="off"></td>
                                         </tr>
                                         <tr>
                                             <td>Maximum date:</td>
-                                            <td><input type="text" id="max" name="max"></td>
+                                            <td><input type="text" id="max" name="max" autocomplete="off"></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table id="riders" class="table table-hover">
+                                <table id="riders" class="table table-bordered table-striped table-hover display nowrap" border="0" cellspacing="5" cellpadding="5">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No.</th>
-                                            {{-- <th>Action</th> --}}
+                                            <th>Action</th>
                                             <th>Image</th>
-                                            <th class="text-left">Rider Name</th>
-                                            <th class="text-left">Rider Phone</th>
+                                            <th class="text-left">RiderName</th>
+                                            <th class="text-left">RiderPhone</th>
                                             <th class="text-left">RegisterDate</th>
                                             <th class="text-left">Latitude</th>
                                             <th class="text-left">Longitude</th>
-                                            <th class="text-left">Is Admin approved</th>
+                                            <th class="text-left">IsAdminapproved</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -122,36 +122,32 @@
     @push('scripts')
     <script>
         
-        var minDate, maxDate;
-        
         // Custom filtering function which will search data in column four between two values
-        $.fn.dataTable.ext.search.push(
-        function( settings, data, dataIndex ) {
-            var min = minDate.val();
-            var max = maxDate.val();
-            var date = new Date( data[4] );
-            
-            if (
-            ( min === null && max === null ) ||
-            ( min === null && date <= max ) ||
-            ( min <= date   && max === null ) ||
-            ( min <= date   && date <= max )
-            ) {
-                return true;
-            }
-            return false;
-        }
-        );
+    $.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var min = $('#min').datepicker("getDate");
+        var max = $('#max').datepicker("getDate");
+        var date = new Date( data[5] );
         
-        $(document).ready(function() {
-            // Create date inputs
-            minDate = new DateTime($('#min'), {
-                format: 'Do MMMM YYYY'
-            });
-            maxDate = new DateTime($('#max'), {
-                format: 'Do MMMM YYYY'
-            });
-            
+        if (
+        ( min === null && max === null ) ||
+        ( min === null && date <= max ) ||
+        ( min <= date   && max === null ) ||
+        ( min <= date   && date <= max )
+        ) {
+            return true;
+        }
+        return false;
+    }
+    );
+    
+    
+    $(document).ready(function() {
+        // Create date inputs
+        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+        
+        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
+
             // DataTables initialisation
             var table = $("#riders").DataTable({
                 "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
@@ -164,6 +160,7 @@
                 ajax: "/fatty/main/admin/riders/datatable/riderajax",
                 columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
                 {data: 'rider_image', name:'rider_image',className: "rider_image"},
                 {data: 'rider_user_name', name:'rider_user_name'},
                 {data: 'rider_user_phone', name:'rider_user_phone'},
@@ -173,7 +170,7 @@
                 {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
                 
                 ],
-                dom: 'PlBfrtip',
+                dom: 'lBfrtip',
                 buttons: [
                 'excel', 'pdf', 'print'
                 ],

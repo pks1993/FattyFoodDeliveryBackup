@@ -91,6 +91,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
 
+    Route::get('riders/view/{rider_id}','Admin\Rider\RiderController@show')->name('riders.view');
+    Route::delete('riders/delete/{rider_id}','Admin\Rider\RiderController@destroy')->name('riders.destroy');
+
     Route::get('daily_100_riders','Admin\Rider\RiderController@hundredIndex');
     Route::get('riders/datatable/hundredriderajax','Admin\Rider\RiderController@hundredriderajax');
 

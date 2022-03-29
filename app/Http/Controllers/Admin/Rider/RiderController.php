@@ -24,6 +24,16 @@ class RiderController extends Controller
         $model =  Rider::latest('created_at')->get();
         return DataTables::of($model)
         ->addIndexColumn()
+        ->addColumn('action', function(Rider $post){
+            $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
                 $rider_image = '<img src="../../../uploads/rider/'.$item->rider_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
@@ -37,7 +47,7 @@ class RiderController extends Controller
             return $register_date;
         })
         ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved="0") {
+            if ($item->is_admin_approved == 0) {
                 $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
             } else {
                 $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
@@ -57,6 +67,16 @@ class RiderController extends Controller
         $model = Rider::withCount(['rider_order_daily as count'])->has('rider_order_daily')->orderBy('count','DESC')->limit(100)->get();
         return DataTables::of($model)
         ->addIndexColumn()
+        ->addColumn('action', function(Rider $post){
+            $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
                 $rider_image = '<img src="../../../uploads/rider/'.$item->rider_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
@@ -70,7 +90,7 @@ class RiderController extends Controller
             return $register_date;
         })
         ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved="0") {
+            if ($item->is_admin_approved == 0) {
                 $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
             } else {
                 $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
@@ -93,6 +113,16 @@ class RiderController extends Controller
         $model = Rider::withCount(['rider_order_monthly as count'])->has('rider_order_monthly')->orderBy('count','DESC')->limit(100)->get();
         return DataTables::of($model)
         ->addIndexColumn()
+        ->addColumn('action', function(Rider $post){
+            $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
                 $rider_image = '<img src="../../../uploads/rider/'.$item->rider_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
@@ -102,11 +132,11 @@ class RiderController extends Controller
             return $rider_image;
         })
         ->addColumn('register_date', function(Rider $item){
-            $register_date = $item->created_at->format('d M Y');
+            $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
         ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved="0") {
+            if ($item->is_admin_approved == 0) {
                 $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
             } else {
                 $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
@@ -128,6 +158,16 @@ class RiderController extends Controller
         $model =  Rider::withCount(['rider_order_yearly as count'])->has('rider_order_yearly')->orderBy('count','DESC')->limit(100)->get();
         return DataTables::of($model)
         ->addIndexColumn()
+        ->addColumn('action', function(Rider $post){
+            $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            
+            return $btn;
+        })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
                 $rider_image = '<img src="../../../uploads/rider/'.$item->rider_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
@@ -137,11 +177,11 @@ class RiderController extends Controller
             return $rider_image;
         })
         ->addColumn('register_date', function(Rider $item){
-            $register_date = $item->created_at->format('d M Y');
+            $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
         ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved="0") {
+            if ($item->is_admin_approved == 0) {
                 $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
             } else {
                 $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
@@ -207,7 +247,8 @@ class RiderController extends Controller
      */
     public function show($id)
     {
-        //
+        $rider = Rider::findOrFail($id);
+        return view('admin.rider.view',compact('rider'));
     }
 
     /**
