@@ -233,24 +233,32 @@ class OrderApiController extends Controller
         }
     }
 
-    // public function restaurant_order_count(Request $request)
-    // {
-    //     //for shop index and done
-    //     $restaurant_id=$request['restaurant_id'];
+    public function restaurant_order_count(Request $request)
+    {
+        //for shop index and done
+        $restaurant_id=$request['restaurant_id'];
 
-    //     $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
-    //     if($check_restaurant){
-    //         $customer_orders=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['1','19'])->whereRaw('Date(created_at) = CURDATE()')->count();
-    //             $customer_orders_v1=CustomerOrder::orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->where('order_status_id','>=','4')->where('order_status_id','!=','19')->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id');
+        $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        if($check_restaurant){
+            //income
+            $incoming=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['1','19'])->whereRaw('Date(created_at) = CURDATE()')->count();
 
-    //             $check_history=CustomerOrderHistory::whereIn('order_id',$customer_orders_v1)->where('order_status_id','5')->pluck('order_id');
+            //done
+            $customer_orders_v1=CustomerOrder::orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->where('order_status_id','>=','4')->where('order_status_id','!=','19')->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id');
+            $check_history_v1=CustomerOrderHistory::whereIn('order_id',$customer_orders_v1)->where('order_status_id','5')->pluck('order_id');
+            $done=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->whereIn('order_id',$check_history_v1)->count();
 
-    //             $result=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->whereIn('order_id',$check_history)->count();
-    //             return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$customer_orders]);
-    //     }else{
-    //         return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
-    //     }
-    // }
+            //preparing
+            $customer_orders_v2=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id');
+            $check_history_v2=CustomerOrderHistory::whereIn('order_id',$customer_orders_v2)->where('order_status_id','5')->pluck('order_id');
+            $preparing=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereNotIn('order_id',$check_history_v2)->whereRaw('Date(created_at) = CURDATE()')->count();
+
+            return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>['incoming'=>$incoming,'preparing'=>$preparing,'done'=>$done]]);
+
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
+        }
+    }
 
     public function restaurant_index(Request $request)
     {

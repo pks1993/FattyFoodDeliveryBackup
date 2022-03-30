@@ -119,7 +119,7 @@ try {
                 echo $result;
             }
         }else{
-            $arrayName = array('success' =>false,'message'=>$response);
+            $arrayName = array('success' =>false,'message'=>$response->msg);
             $result=json_encode($arrayName);
             echo $result;
         }
@@ -127,11 +127,11 @@ try {
     } catch (Throwable $e) {
         $sql = "UPDATE customer_orders SET order_status_id=19 WHERE order_id=$customer_orders->order_id;";
         if ($conn->query($sql) === TRUE) {
-            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!","check_error"=>$e);
+            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!");
             $result=json_encode($arrayName);
             echo $result;
         } else {
-            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!","check_error"=>$e);
+            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!");
             $result=json_encode($arrayName);
             echo $result;
         }
