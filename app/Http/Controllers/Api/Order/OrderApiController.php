@@ -253,7 +253,7 @@ class OrderApiController extends Controller
             $check_history_v2=CustomerOrderHistory::whereIn('order_id',$customer_orders_v2)->where('order_status_id','5')->pluck('order_id');
             $preparing=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereNotIn('order_id',$check_history_v2)->whereRaw('Date(created_at) = CURDATE()')->count();
 
-            return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>['incoming'=>$incoming,'preparing'=>$preparing,'done'=>$done]]);
+            return response()->json(['success'=>true,'message'=>"this is restaurant order count",'data'=>['incoming'=>$incoming,'preparing'=>$preparing,'done'=>$done]]);
 
         }else{
             return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
@@ -279,6 +279,27 @@ class OrderApiController extends Controller
                 $check_history=CustomerOrderHistory::whereIn('order_id',$customer_orders)->where('order_status_id','5')->pluck('order_id');
 
                 $result=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->whereIn('order_id',$check_history)->get();
+                $data=[];
+                foreach($result as $value){
+                    if(!empty($value->rider)){
+                        $theta = $value->customer_address_longitude - $check_restaurant->restaurant_longitude;
+                        $dist = sin(deg2rad($value->customer_address_latitude)) * sin(deg2rad($check_restaurant->restaurant_latitude)) +  cos(deg2rad($value->customer_address_latitude)) * cos(deg2rad($check_restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                        $dist = acos($dist);
+                        $dist = rad2deg($dist);
+                        $miles = $dist * 60 * 1.1515;
+                        $kilometer=$miles * 1.609344;
+                        $kilometer= number_format((float)$kilometer, 1, '.', '');
+                        $minutes=(int)$kilometer*2;
+                        if($minutes >=60){
+                            $value->rider_arrive_time=intdiv($minutes, 60).' hr '. ($minutes % 60).' min';
+                        }else{
+                            $value->rider_arrive_time=($minutes % 60).' min';
+                        }
+                    }else{
+                        $value->rider_arrive_time=null;
+                    }
+                    array_push($data,$value);
+                }
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$result]);
             }else{
@@ -299,6 +320,28 @@ class OrderApiController extends Controller
             $check_history=CustomerOrderHistory::whereIn('order_id',$customer_orders)->where('order_status_id','5')->pluck('order_id');
 
             $result=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereNotIn('order_id',$check_history)->whereRaw('Date(created_at) = CURDATE()')->get();
+            $data=[];
+            foreach($result as $value){
+                if(!empty($value->rider)){
+                    $theta = $value->customer_address_longitude - $check_restaurant->restaurant_longitude;
+                    $dist = sin(deg2rad($value->customer_address_latitude)) * sin(deg2rad($check_restaurant->restaurant_latitude)) +  cos(deg2rad($value->customer_address_latitude)) * cos(deg2rad($check_restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                    $dist = acos($dist);
+                    $dist = rad2deg($dist);
+                    $miles = $dist * 60 * 1.1515;
+                    $kilometer=$miles * 1.609344;
+                    $kilometer= number_format((float)$kilometer, 1, '.', '');
+                    $minutes=(int)$kilometer*2;
+                    if($minutes >=60){
+                        $value->rider_arrive_time=intdiv($minutes, 60).' hr '. ($minutes % 60).' min';
+                    }else{
+                        $value->rider_arrive_time=($minutes % 60).' min';
+                    }
+                }else{
+                    $value->rider_arrive_time=null;
+                }
+                array_push($data,$value);
+            }
+
 
             return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$result]);
         }else{
