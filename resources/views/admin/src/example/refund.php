@@ -10,15 +10,15 @@ require_once __DIR__ . '/ExampleConfig.php';
 require_once __DIR__ . '/../lib/io/RefundRequest.php';
 require_once __DIR__ . '/../lib/PaymentClient.php';
 
-// $servername = "localhost";
-// $username = "root";
-// $password = "Fatty@2021";
-// $dbname = "FattyApplication";
-
 $servername = "localhost";
-$username = "sithu";
-$password = "Sithu@orikino#2022";
-$dbname = "FattyDatabase";
+$username = "root";
+$password = "Fatty@2021";
+$dbname = "FattyApplication";
+
+// $servername = "localhost";
+// $username = "sithu";
+// $password = "Sithu@orikino#2022";
+// $dbname = "FattyDatabase";
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
