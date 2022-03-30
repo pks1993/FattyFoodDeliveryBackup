@@ -9,6 +9,7 @@ use App\Models\Rider\RiderReport;
 use App\Models\Rider\RiderReportHistory;
 use App\Models\Order\CustomerOrder;
 use App\Models\Order\CustomerOrderHistory;
+use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use DB;
@@ -897,8 +898,16 @@ class RiderApicontroller extends Controller
                         $miles= number_format((float)$mile, 1, '.', '');
                     }
                     // $distance=($order->rider_restaurant_distance)+$miles;
+                    // $order->rider_restaurant_distance=$distance;
                     $order->rider_restaurant_distance=$miles;
                     $order->update();
+
+                    $count=Customer::where('customer_id',$order->customer_id)->first();
+                    Customer::where('customer_id',$order->customer_id)->update([
+                        'order_count'=>$count->order_count+1,
+                        'order_amount'=>$order->bill_total_price+$count->order_amount,
+                    ]);
+
                 }elseif($order_status_id=="12"){
                     $rider->is_order=1;
                     $rider->update();
