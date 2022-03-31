@@ -4,16 +4,16 @@
     <li class="nav-item">
       <a class="nav-link" data-widget="pushmenu" href="#" style="color: #000000;"><i class="fas fa-bars"></i></a>
     </li>
-    <li class="nav-item d-none d-sm-inline-block">
+    {{-- <li class="nav-item d-none d-sm-inline-block">
       <a href="{{url('fatty/main/admin/dashboard')}}" class="nav-link">
-        <img src="{{asset('image/fatty.jpg')}}" alt="" class="brand-image img-circle" style="margin-top: -8px;width: 50px;height: 50px;">
+        <img src="{{asset('logo/user_logo.png')}}" alt="" class="brand-image img-circle" style="margin-top: -8px;width: 50px;height: 50px;">
       </a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
       <b>
-        <a href="{{url('fatty/main/admin/dashboard')}}" class="nav-link" style="font-size: 25px;color: #000000;margin-bottom: 12px;">Fatty Application</a>
+        <a href="{{url('fatty/main/admin/dashboard')}}" class="nav-link" style="font-size: 25px;color: #FF6604;margin-bottom: 12px;">Fatty Application</a>
       </b>
-    </li>
+    </li> --}}
   </ul>
 
   <!-- Right navbar links -->

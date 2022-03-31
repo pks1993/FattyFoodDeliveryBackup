@@ -415,14 +415,11 @@ class RestaurantApiController extends Controller
     {
         $restaurant_id=$request['restaurant_id'];
         $restaurant=Restaurant::with(['available_time','menu'=> function($menu){
-            $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food'=>function ($food){
-                $food->select('food_id','food_name_mm as food_name','food_name_mm','food_name_en','food_name_ch','food_menu_id','food_price','food_image','food_emergency_status','food_recommend_status','restaurant_id')->get();
-            },'menu.food.sub_item'=>function($sub_item){
+            $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food','menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();
             },'menu.food.sub_item.option'])->where('restaurant_id',$restaurant_id)->select('restaurant_id','restaurant_name_mm as restaurant_name','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_latitude','restaurant_longitude','restaurant_address_mm as restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status')->first();
-        $restaurants['restaurant']=$restaurant;
         
-        return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>$restaurants]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>['restaurant'=>$restaurant]]);
     }
 
     public function food_menus(Request $request){

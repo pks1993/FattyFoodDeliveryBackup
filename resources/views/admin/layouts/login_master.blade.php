@@ -52,8 +52,7 @@
           @csrf
           <div class="login-img" style="text-align: center;">
 
-              <img src="{{asset('image/fatty.jpg')}}" style="align-items: center;width: 70px;height: 100%;" alt="" class="img-circle mt-2">
-              <h5 style="font-weight: 600;color:#FF6604;">FATTY</h5>
+              <img src="{{asset('logo/user_logo.png')}}" style="align-items: center;width: 70px;height: 100%;" alt="" class="img-circle mt-2">
           </div>
           <div class="wrap-input100 validate-input" data-validate = "Enter User Name">
             <input class="input100" type="text" name="name" placeholder="User Name" value="{{old('name')}}">
@@ -65,7 +64,7 @@
 
             <span class="focus-input100" data-placeholder="&#xe80f;"></span>
           </div>
-          <div class="container-login-form-btn m-t-32">
+          <div class="container-login-form-btn m-t-32 mb-4">
             <button type="submit" class="btn btn-primary login-form-btn">
               Login
             </button>
