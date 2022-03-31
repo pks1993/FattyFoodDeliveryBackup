@@ -74,16 +74,16 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>OrderDate</th>
-                                        <th>OrderStatusName</th>
                                         <th>CustomerOrderId</th>
-                                        <th>CustomerBookingId</th>
+                                        <th>BookingId</th>
+                                        <th>OrdereDate</th>
+                                        <th>OrderTime</th>
+                                        <th>OrderStatus</th>
                                         <th>CustomerName</th>
                                         <th>RiderName</th>
-                                        <th>TotalPrice</th>
                                         <th>PaymentMethod</th>
-                                        <th>OrderTime</th>
-                                        <th>Action</th>
+                                        <th>TotalPrice</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -151,7 +151,7 @@
             // var maxData = maxDate.split('-');
             // var maxYear = maxData[1];
             
-            var date = data[1].split('-');
+            var date = data[3].split('-');
             
             // console.log(minData);
             
@@ -219,15 +219,15 @@
             ajax: "/fatty/main/admin/orders/datatable/yearlyparcelorderajax",
             columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-            {data: 'ordered_date', name:'ordered_date'},
-            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_order_id', name:'customer_order_id'},
             {data: 'customer_booking_id', name:'customer_booking_id'},
+            {data: 'ordered_date', name:'ordered_date'},
+            {data: 'order_time', name:'order_time'},
+            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_name', name:'customer_name'},
             {data: 'rider_name', name:'rider_name'},
-            {data: 'bill_total_price', name:'bill_total_price'},
             {data: 'payment_method_name', name:'payment_method_name'},
-            {data: 'order_time', name:'order_time'},
+            {data: 'bill_total_price', name:'bill_total_price'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
             dom: 'lBfrtip',

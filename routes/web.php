@@ -252,6 +252,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('foods/orders/assign/{order_id}','Admin\Order\OrderController@assign')->name('food_orders.assign');
     Route::post('foods/orders/assign/notification/{rider_id}','Admin\Order\OrderController@assign_noti')->name('food_orders.assign.notification');
 
+    //Food Order View
+    Route::get('food_orders/view/{order_id}','Admin\Order\OrderController@show');
+    Route::get('parcel_orders/view/{order_id}','Admin\Order\OrderController@parcel_show');
+
     //food order
     Route::get('daily_food_orders','Admin\Order\OrderController@dailyfoodorderindex');
     Route::get('orders/datatable/dailyfoodorderajax','Admin\Order\OrderController@dailyfoodorderajax');
