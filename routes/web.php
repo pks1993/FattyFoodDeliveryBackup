@@ -274,4 +274,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('yearly_parcel_orders','Admin\Order\OrderController@yearlyparcelorderindex');
     Route::get('orders/datatable/yearlyparcelorderajax','Admin\Order\OrderController@yearlyparcelorderajax');
     Route::get('parcel_orders_chart','Admin\Order\OrderController@parcelorderchart');
+
+    Route::get('parcel_states','Admin\Parcel\ParcelStateController@index');
+    Route::post('store/parcel_states','Admin\Parcel\ParcelStateController@store')->name('parcel_state.store');;
+
 });
