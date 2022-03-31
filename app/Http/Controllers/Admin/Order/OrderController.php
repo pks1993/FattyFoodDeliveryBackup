@@ -49,7 +49,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -86,7 +86,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -123,7 +123,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -159,7 +159,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -195,7 +195,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -231,7 +231,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -325,7 +325,14 @@ class OrderController extends Controller
     */
     public function show($id)
     {
-        //
+        $food_order = CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->withCount(['foods'])->findOrFail($id);
+        return view('admin.order.view')->with('food_order',$food_order);
+    }
+
+    public function parcel_show($id)
+    {
+        $parcel_order = CustomerOrder::findOrFail($id);
+        return view('admin.order.parcel_view')->with('parcel_order',$parcel_order);
     }
     
     /**
