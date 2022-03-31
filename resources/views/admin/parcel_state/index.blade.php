@@ -29,6 +29,7 @@
     .register_date {
         text-align: center;
     }
+
 </style>
 @endsection
 
@@ -146,7 +147,12 @@
     setTimeout(function() {
         $('#successMessage').fadeOut('fast');
     }, 2000);
-
-$('#state_id').select2();
+</script>
+<script>
+    $(function () {
+        $('#state_id').select2({
+            theme: 'bootstrap4'
+        });
+    });
 </script>
 @endpush

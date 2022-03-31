@@ -78,14 +78,16 @@ class WishlistApiController extends Controller
             $wishlist_check=Wishlist::where('customer_id',$customer_id)->where('restaurant_id',$restaurant_id)->first();
             if($wishlist_check){
                 wishlist::destroy($wishlist_check->customer_wishlist_id);
-                return response()->json(['success'=>true,'message'=>'successfull customer wishlist delete!','data'=>$wishlist_check]);
+                $count=Wishlist::where('customer_id',$customer_id)->count();
+                return response()->json(['success'=>true,'message'=>'successfull customer wishlist delete!','wishlist_count'=>$count,'data'=>$wishlist_check]);
             }else{
                 $wishlist=new Wishlist();
                 $wishlist->customer_id=$customer_id;
                 $wishlist->restaurant_id=$restaurant_id;
                 $wishlist->save();
 
-                return response()->json(['success'=>true,'message'=>'successfull customer wishlist create','data'=>$wishlist]);
+                $count=Wishlist::where('customer_id',$customer_id)->count();
+                return response()->json(['success'=>true,'message'=>'successfull customer wishlist create','wishlist_count'=>$count,'data'=>$wishlist]);
             }
         }else{
             return response()->json(['success'=>false,'message'=>'Error Restaurant id OR Rider id not found']);
