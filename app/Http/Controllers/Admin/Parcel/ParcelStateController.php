@@ -39,8 +39,8 @@ class ParcelStateController extends Controller
      */
     public function store(Request $request)
     {
-        $id=$request['state_id'];
-        dd($id);
+        ParcelState::create($request->all());
+        return redirect('admin/about');
     }
 
     /**

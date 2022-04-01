@@ -120,6 +120,12 @@
                             <p>Parcel Orders Chart</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/parcel_states')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Parcel States</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">

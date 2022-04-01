@@ -392,9 +392,9 @@ class RestaurantApiController extends Controller
 
             $check_restaurant->update();
 
-            $res_name['restaurant']=$check_restaurant;
+            $res_name=Restaurant::with(['city','state','category'])->where('restaurant_id',$restaurant_id)->first();
 
-            return response()->json(['success'=>true,'message' => 'successfully restaurant update','data'=>$res_name]);
+            return response()->json(['success'=>true,'message' => 'successfully restaurant update','data'=>['restaurant'=>$res_name]]);
         }else{
             return response()->json(['success'=>false,'message' => 'restaurant user id not found!']);
         }
