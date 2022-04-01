@@ -11,16 +11,16 @@ require_once __DIR__ . '/../lib/io/RefundRequest.php';
 require_once __DIR__ . '/../lib/PaymentClient.php';
 
 //uat srver
-// $servername = "localhost";
-// $username = "root";
-// $password = "Fatty@2021";
-// $dbname = "FattyApplication";
-
-//production
 $servername = "localhost";
 $username = "root";
-$password = "Fatty@Orikino#412F";
-$dbname = "FattyDatabase";
+$password = "Fatty@2021";
+$dbname = "FattyApplication";
+
+//production
+// $servername = "localhost";
+// $username = "root";
+// $password = "Fatty@Orikino#412F";
+// $dbname = "FattyDatabase";
 
 // $servername = "localhost";
 // $username = "sithu";

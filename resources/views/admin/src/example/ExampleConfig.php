@@ -1,4 +1,10 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: l00428552
+ * Date: 2019/7/30
+ * Time: 16:58
+ */
 
 require_once __DIR__ . "/../lib/ConfigInterface.php";
 
@@ -16,8 +22,8 @@ class ExampleConfig implements ConfigInterface
 
     public function getNotifyUrl()
     {
-        // return "http://159.223.66.158/api/fatty/main/admin/kbz/pay/notify_url";
-        return "http://174.138.22.156/api/fatty/main/admin/kbz/pay/notify_url";
+        return "http://159.223.66.158/api/fatty/main/admin/kbz/pay/notify_url";
+        // return "http://174.138.22.156/api/fatty/main/admin/kbz/pay/notify_url";
         // return "http://localhost:8083/receive_notify.php";
         //return "http://test.payment.com/notify";
     }
