@@ -351,6 +351,8 @@ class RestaurantApiController extends Controller
         $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
         $check=RestaurantUser::where('restaurant_user_id',$check_restaurant->restaurant_user_id)->where('is_admin_approved','1')->first();
 
+        $restaurant_user=RestaurantUser::where('restaurant_user_phone',$check_restaurant->restaurant_phone)->where('is_admin_approved','1')->first();
+
         $restaurant_name_mm=$request['restaurant_name_mm'];
         $restaurant_name_en=$request['restaurant_name_en'];
         $restaurant_name_ch=$request['restaurant_name_ch'];
@@ -394,7 +396,7 @@ class RestaurantApiController extends Controller
 
             $res_name=Restaurant::with(['city','state','category'])->where('restaurant_id',$restaurant_id)->first();
 
-            return response()->json(['success'=>true,'message' => 'successfully restaurant update','data'=>['restaurant'=>$res_name]]);
+            return response()->json(['success'=>true,'message' => 'successfully restaurant update','data'=>['user'=>$res_name->restaurant_user,'restaurant'=>$res_name]]);
         }else{
             return response()->json(['success'=>false,'message' => 'restaurant user id not found!']);
         }
