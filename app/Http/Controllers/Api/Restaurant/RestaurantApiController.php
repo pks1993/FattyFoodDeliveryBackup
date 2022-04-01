@@ -1059,6 +1059,11 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
@@ -1124,6 +1129,14 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
+                $data=[];
+                
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
+                
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
