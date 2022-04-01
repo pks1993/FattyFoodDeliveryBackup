@@ -10,7 +10,7 @@ require_once __DIR__ . '/ExampleConfig.php';
 require_once __DIR__ . '/../lib/io/RefundRequest.php';
 require_once __DIR__ . '/../lib/PaymentClient.php';
 
-//uat
+//uat srver
 // $servername = "localhost";
 // $username = "root";
 // $password = "Fatty@2021";

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: l00428552
- * Date: 2019/7/30
- * Time: 16:58
- */
 
 require_once __DIR__ . "/../lib/ConfigInterface.php";
 
