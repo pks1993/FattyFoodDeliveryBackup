@@ -14,6 +14,9 @@
         margin-right: 15px !important;
         margin-top: 15px;
     }
+    .ui-datepicker-month{
+        display: none !important;
+    }
 </style>
 @endsection
 
@@ -58,12 +61,12 @@
                             <table border="0" cellspacing="5" cellpadding="5">
                                 <tbody>
                                     <tr>
-                                        <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min"></td>
+                                        <td>From Year:</td>
+                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
-                                        <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max"></td>
+                                        <td>To Year:</td>
+                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -71,17 +74,17 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>OrderDate</th>
-                                        <th>OrderStatusName</th>
                                         <th>CustomerOrderId</th>
-                                        <th>CustomerBookingId</th>
+                                        <th>BookingId</th>
+                                        <th>OrdereDate</th>
+                                        <th>OrderTime</th>
+                                        <th>OrderStatus</th>
                                         <th>CustomerName</th>
                                         <th>RestaurantName</th>
                                         <th>RiderName</th>
-                                        <th>TotalPrice</th>
                                         <th>PaymentMethod</th>
-                                        <th>OrderTime</th>
-                                        <th>Action</th>
+                                        <th>TotalPrice</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,33 +101,111 @@
 @endsection
 @push('scripts')
 <script>
-    var minDate, maxDate;
-    // Custom filtering function which will search data in column four between two values
-    $.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
-        var date = new Date( data[1] );
-        
-        if (
-        ( min === null && max === null ) ||
-        ( min === null && date <= max ) ||
-        ( min <= date   && max === null ) ||
-        ( min <= date   && date <= max )
-        ) {
-            return true;
-        }
-        return false;
-    }
-    );
-    
     $(document).ready(function() {
+        $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+            var min = $('#min').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'yy',
+                onChangeMonthYear: function(year, month, widget) {
+                    setTimeout(function() {
+                        $('.ui-datepicker-calendar').hide();
+                    });
+                },
+                onClose: function(dateText, inst) { 
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).datepicker('setDate', new Date(year, month, 1));
+                    table.draw();
+                },
+            }).click(function(){
+                $('.ui-datepicker-calendar').hide();
+            });
+            var minData = min.val();
+            var minYear = min.val();
+            // var minData = minDate.split('-');
+            // var minYear = minData[1];
+            
+            var max = $('#max').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'yy',
+                onChangeMonthYear: function(year, month, widget) {
+                    setTimeout(function() {
+                        $('.ui-datepicker-calendar').hide();
+                    });
+                },
+                onClose: function(dateText, inst) { 
+                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                    $(this).datepicker('setDate', new Date(year, month, 1));
+                    table.draw();
+                },
+            }).click(function(){
+                $('.ui-datepicker-calendar').hide();
+            });
+            var maxData = max.val();
+            var maxYear = max.val();
+            // var maxData = maxDate.split('-');
+            // var maxYear = maxData[1];
+            
+            var date = data[3].split('-');
+            
+            // console.log(minData);
+            
+            if ((minData == '' && maxData == '') ||
+            (date[2] == minYear) ||
+            ((date[2] <= minYear || date[2] > minYear) && maxYear >= date[2])
+            
+            )  {
+                return true;
+            }
+            return false;
+        }
+        );
+        
         // Create date inputs
-        minDate = new DateTime($('#min'), {
-            format: 'Do MMMM YYYY'
+        $("#min").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'yy',
+            onChangeMonthYear: function(year, month, widget) {
+                setTimeout(function() {
+                    $('.ui-datepicker-calendar').hide();
+                });
+            },
+            onClose: function(dateText, inst) { 
+                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, month, 1));
+                table.draw();
+            },
+        }).click(function(){
+            $('.ui-datepicker-calendar').hide();
         });
-        maxDate = new DateTime($('#max'), {
-            format: 'Do MMMM YYYY'
+        
+        $("#max").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'yy',
+            onChangeMonthYear: function(year, month, widget) {
+                setTimeout(function() {
+                    $('.ui-datepicker-calendar').hide();
+                });
+            },
+            onClose: function(dateText, inst) { 
+                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, month, 1));
+                table.draw();
+            },
+        }).click(function(){
+            $('.ui-datepicker-calendar').hide();
         });
         
         // DataTables initialisation
@@ -139,19 +220,19 @@
             ajax: "/fatty/main/admin/orders/datatable/yearlyfoodorderajax",
             columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-            {data: 'ordered_date', name:'ordered_date'},
-            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_order_id', name:'customer_order_id'},
             {data: 'customer_booking_id', name:'customer_booking_id'},
+            {data: 'ordered_date', name:'ordered_date'},
+            {data: 'order_time', name:'order_time'},
+            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_name', name:'customer_name'},
             {data: 'restaurant_name', name:'restaurant_name'},
             {data: 'rider_name', name:'rider_name'},
-            {data: 'bill_total_price', name:'bill_total_price'},
             {data: 'payment_method_name', name:'payment_method_name'},
-            {data: 'order_time', name:'order_time'},
+            {data: 'bill_total_price', name:'bill_total_price'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
-            dom: 'PlBfrtip',
+            dom: 'lBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],

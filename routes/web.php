@@ -91,6 +91,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
 
+    Route::get('riders/view/{rider_id}','Admin\Rider\RiderController@show')->name('riders.view');
+    Route::delete('riders/delete/{rider_id}','Admin\Rider\RiderController@destroy')->name('riders.destroy');
+
     Route::get('daily_100_riders','Admin\Rider\RiderController@hundredIndex');
     Route::get('riders/datatable/hundredriderajax','Admin\Rider\RiderController@hundredriderajax');
 
@@ -249,6 +252,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('foods/orders/assign/{order_id}','Admin\Order\OrderController@assign')->name('food_orders.assign');
     Route::post('foods/orders/assign/notification/{rider_id}','Admin\Order\OrderController@assign_noti')->name('food_orders.assign.notification');
 
+    //Food Order View
+    Route::get('food_orders/view/{order_id}','Admin\Order\OrderController@show');
+    Route::get('parcel_orders/view/{order_id}','Admin\Order\OrderController@parcel_show');
+
     //food order
     Route::get('daily_food_orders','Admin\Order\OrderController@dailyfoodorderindex');
     Route::get('orders/datatable/dailyfoodorderajax','Admin\Order\OrderController@dailyfoodorderajax');
@@ -271,4 +278,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('yearly_parcel_orders','Admin\Order\OrderController@yearlyparcelorderindex');
     Route::get('orders/datatable/yearlyparcelorderajax','Admin\Order\OrderController@yearlyparcelorderajax');
     Route::get('parcel_orders_chart','Admin\Order\OrderController@parcelorderchart');
+
+    Route::get('parcel_states','Admin\Parcel\ParcelStateController@index');
+    Route::post('store/parcel_states','Admin\Parcel\ParcelStateController@store')->name('parcel_state.store');;
+
 });

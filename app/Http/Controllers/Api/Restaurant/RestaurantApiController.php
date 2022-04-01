@@ -235,22 +235,17 @@ class RestaurantApiController extends Controller
 
     public function opening_store(Request $request)
     {
-        $restaurant_id=$request['restaurant_id'];
+        $restaurant_id=(int)$request['restaurant_id'];
         $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
         $check_opeining=RestaurantAvailableTime::where('restaurant_id',$restaurant_id)->first();
         $available_datetime=$request->availableTime;
 
         if($check_restaurant){
             if(empty($check_opeining)){
-                $availabel_list=json_decode($available_datetime,true);
-                foreach($availabel_list as $list){
+                // $availabel_list=json_decode($available_datetime,true);
+                foreach($available_datetime as $list){
                     $day=$list['day'];
                     $on_off=$list['on_off'];
-                    // if(!empty($list['on_off'])){
-                    //     $on_off=$list['on_off'];
-                    // }else{
-                    //     $on_off=1;
-                    // }
                     $opening_time=$list['opening_time'];
                     $closing_time=$list['closing_time'];
                     $time=RestaurantAvailableTime::create([
@@ -266,15 +261,10 @@ class RestaurantApiController extends Controller
                     return response()->json(['success'=>true,'message' => 'successfully restaurant create','data'=>$res_name]);
             }else{
                 $opening_time=RestaurantAvailableTime::where('restaurant_id',$restaurant_id)->get();
-                $availabel_list=json_decode($available_datetime,true);
-                foreach($availabel_list as $list){
+                // $availabel_list=json_decode($available_datetime,true);
+                foreach($available_datetime as $list){
                     $day=$list['day'];
                     $on_off=$list['on_off'];
-                    // if(!empty($list['on_off'])){
-                    //     $on_off=$list['on_off'];
-                    // }else{
-                    //     $on_off=1;
-                    // }
                     $opening_time=$list['opening_time'];
                     $closing_time=$list['closing_time'];
                     $time=RestaurantAvailableTime::whereIn('day',[$day])->where('restaurant_id',$restaurant_id)->update([
@@ -361,6 +351,8 @@ class RestaurantApiController extends Controller
         $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
         $check=RestaurantUser::where('restaurant_user_id',$check_restaurant->restaurant_user_id)->where('is_admin_approved','1')->first();
 
+        $restaurant_user=RestaurantUser::where('restaurant_user_phone',$check_restaurant->restaurant_phone)->where('is_admin_approved','1')->first();
+
         $restaurant_name_mm=$request['restaurant_name_mm'];
         $restaurant_name_en=$request['restaurant_name_en'];
         $restaurant_name_ch=$request['restaurant_name_ch'];
@@ -402,9 +394,9 @@ class RestaurantApiController extends Controller
 
             $check_restaurant->update();
 
-            $res_name['restaurant']=$check_restaurant;
+            $res_name=Restaurant::with(['city','state','category'])->where('restaurant_id',$restaurant_id)->first();
 
-            return response()->json(['success'=>true,'message' => 'successfully restaurant update','data'=>$res_name]);
+            return response()->json(['success'=>true,'message' => 'successfully restaurant update','data'=>['user'=>$res_name->restaurant_user,'restaurant'=>$res_name]]);
         }else{
             return response()->json(['success'=>false,'message' => 'restaurant user id not found!']);
         }
@@ -425,14 +417,11 @@ class RestaurantApiController extends Controller
     {
         $restaurant_id=$request['restaurant_id'];
         $restaurant=Restaurant::with(['available_time','menu'=> function($menu){
-            $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food'=>function ($food){
-                $food->select('food_id','food_name_mm as food_name','food_name_mm','food_name_en','food_name_ch','food_menu_id','food_price','food_image','food_emergency_status','food_recommend_status','restaurant_id')->get();
-            },'menu.food.sub_item'=>function($sub_item){
+            $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food','menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();
             },'menu.food.sub_item.option'])->where('restaurant_id',$restaurant_id)->select('restaurant_id','restaurant_name_mm as restaurant_name','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_latitude','restaurant_longitude','restaurant_address_mm as restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status')->first();
-        $restaurants['restaurant']=$restaurant;
         
-        return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>$restaurants]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>['restaurant'=>$restaurant]]);
     }
 
     public function food_menus(Request $request){
@@ -1072,6 +1061,11 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
@@ -1137,6 +1131,14 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
+                $data=[];
+                
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
+                
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;

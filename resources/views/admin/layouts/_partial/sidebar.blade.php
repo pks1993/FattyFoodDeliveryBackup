@@ -5,7 +5,7 @@
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
 
-          <img src="{{asset('image/user.jpg')}}" class="img-circle" alt="User Image">
+          <img src="{{asset('logo/user_logo.png')}}" class="img-circle" alt="User Image">
 
         </div>
         <div class="info">
@@ -118,6 +118,12 @@
                         <a href="{{url('fatty/main/admin/parcel_orders_chart')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Parcel Orders Chart</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/parcel_states')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Parcel States</p>
                         </a>
                     </li>
                 </ul>

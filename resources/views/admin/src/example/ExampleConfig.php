@@ -22,8 +22,8 @@ class ExampleConfig implements ConfigInterface
 
     public function getNotifyUrl()
     {
-        // return "http://159.223.66.158/api/fatty/main/admin/kbz/pay/notify_url";
-        return "http://174.138.22.156/api/fatty/main/admin/kbz/pay/notify_url";
+        return "http://159.223.66.158/api/fatty/main/admin/kbz/pay/notify_url";
+        // return "http://174.138.22.156/api/fatty/main/admin/kbz/pay/notify_url";
         // return "http://localhost:8083/receive_notify.php";
         //return "http://test.payment.com/notify";
     }
@@ -40,12 +40,12 @@ class ExampleConfig implements ConfigInterface
 
     public function getSslKeyPwd()
     {
-        return "client123";
+        return "Aa123456";
     }
 
     public function getSslCertPath()
     {
-        return __DIR__ . '/cert/client.crt';
+        return __DIR__ . '/cert/clientcert.pem';
     }
 
     public function getCaInfoPath()
@@ -68,7 +68,8 @@ class ExampleConfig implements ConfigInterface
     public function getRefundUrl()
     {
         // return "https://100.100.181.252:443/payment/gateway/refund";
-        return "http://api.kbzpay.com/payment/gateway/uat/refund";
+        // return "http://api.kbzpay.com/payment/gateway/uat/refund";
+        return "https://api.kbzpay.com:18008/payment/gateway/uat/refund";
     }
 
 }

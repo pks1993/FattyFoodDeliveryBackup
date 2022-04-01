@@ -71,16 +71,16 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>OrderDate</th>
-                                        <th>OrderStatusName</th>
                                         <th>CustomerOrderId</th>
-                                        <th>CustomerBookingId</th>
+                                        <th>BookingId</th>
+                                        <th>OrdereDate</th>
+                                        <th>OrderTime</th>
+                                        <th>OrderStatus</th>
                                         <th>CustomerName</th>
                                         <th>RiderName</th>
-                                        <th>TotalPrice</th>
                                         <th>PaymentMethod</th>
-                                        <th>OrderTime</th>
-                                        <th>Action</th>
+                                        <th>TotalPrice</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -97,14 +97,12 @@
 @endsection
 @push('scripts')
 <script>
-    var minDate, maxDate;
-    
-    // Custom filtering function which will search data in column four between two values
-    $.fn.dataTable.ext.search.push(
+     // Custom filtering function which will search data in column four between two values
+     $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
-        var date = new Date( data[1] );
+        var min = $('#min').datepicker("getDate");
+        var max = $('#max').datepicker("getDate");
+        var date = new Date( data[3] );
         
         if (
         ( min === null && max === null ) ||
@@ -118,14 +116,12 @@
     }
     );
     
+    
     $(document).ready(function() {
         // Create date inputs
-        minDate = new DateTime($('#min'), {
-            format: 'Do MMMM YYYY'
-        });
-        maxDate = new DateTime($('#max'), {
-            format: 'Do MMMM YYYY'
-        });
+        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+        
+        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
         
         // DataTables initialisation
         var table = $("#orders").DataTable({
@@ -139,18 +135,18 @@
             ajax: "/fatty/main/admin/orders/datatable/dailyparcelorderajax",
             columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-            {data: 'ordered_date', name:'ordered_date'},
-            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_order_id', name:'customer_order_id'},
             {data: 'customer_booking_id', name:'customer_booking_id'},
+            {data: 'ordered_date', name:'ordered_date'},
+            {data: 'order_time', name:'order_time'},
+            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_name', name:'customer_name'},
             {data: 'rider_name', name:'rider_name'},
-            {data: 'bill_total_price', name:'bill_total_price'},
             {data: 'payment_method_name', name:'payment_method_name'},
-            {data: 'order_time', name:'order_time'},
+            {data: 'bill_total_price', name:'bill_total_price'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             ],
-            dom: 'PlBfrtip',
+            dom: 'lBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],

@@ -21,7 +21,7 @@ class NotificationApiController extends Controller
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
-
+    
     public function notify_url(Request $request)
     {
         $data=$request->getContent();
@@ -37,7 +37,6 @@ class NotificationApiController extends Controller
 
             $order=CustomerOrder::where('merch_order_id',$merch_order_id)->first();
             if($order){
-                $order->order_description=$data;
                 $order->notify_time=$notify_time;
                 $order->payment_total_amount=$total_amount;
                 $order->trade_status=$trade_status;

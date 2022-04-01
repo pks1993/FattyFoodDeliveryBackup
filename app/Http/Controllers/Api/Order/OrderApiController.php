@@ -233,28 +233,32 @@ class OrderApiController extends Controller
         }
     }
 
-    // public function restaurant_index(Request $request)
-    // {
-    //     //for shop index and done
-    //     $restaurant_id=$request['restaurant_id'];
-    //     $order_status_id=$request['order_status_id'];
+    public function restaurant_order_count(Request $request)
+    {
+        //for shop index and done
+        $restaurant_id=$request['restaurant_id'];
 
-    //     $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
-    //     if($check_restaurant){
-    //         if($order_status_id=='1'){
-    //             $customer_orders=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->where('order_status_id','1')->get();
-    //             return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$customer_orders]);
-    //         }
-    //         elseif($order_status_id >= '5'){
-    //             $customer_orders=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->where('order_status_id','>=',$order_status_id)->get();
-    //             return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$customer_orders]);
-    //         }else{
-    //             return response()->json(['success'=>false,'message'=>"order status!"]);
-    //         }
-    //     }else{
-    //         return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
-    //     }
-    // }
+        $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        if($check_restaurant){
+            //income
+            $incoming=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['1','19'])->whereRaw('Date(created_at) = CURDATE()')->count();
+
+            //done
+            $customer_orders_v1=CustomerOrder::orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->where('order_status_id','>=','4')->where('order_status_id','!=','19')->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id');
+            $check_history_v1=CustomerOrderHistory::whereIn('order_id',$customer_orders_v1)->where('order_status_id','5')->pluck('order_id');
+            $done=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->whereIn('order_id',$check_history_v1)->count();
+
+            //preparing
+            $customer_orders_v2=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id');
+            $check_history_v2=CustomerOrderHistory::whereIn('order_id',$customer_orders_v2)->where('order_status_id','5')->pluck('order_id');
+            $preparing=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereNotIn('order_id',$check_history_v2)->whereRaw('Date(created_at) = CURDATE()')->count();
+
+            return response()->json(['success'=>true,'message'=>"this is restaurant order count",'data'=>['incoming'=>$incoming,'preparing'=>$preparing,'done'=>$done]]);
+
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
+        }
+    }
 
     public function restaurant_index(Request $request)
     {
@@ -275,6 +279,27 @@ class OrderApiController extends Controller
                 $check_history=CustomerOrderHistory::whereIn('order_id',$customer_orders)->where('order_status_id','5')->pluck('order_id');
 
                 $result=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->whereIn('order_id',$check_history)->get();
+                $data=[];
+                foreach($result as $value){
+                    if(!empty($value->rider)){
+                        $theta = $value->customer_address_longitude - $check_restaurant->restaurant_longitude;
+                        $dist = sin(deg2rad($value->customer_address_latitude)) * sin(deg2rad($check_restaurant->restaurant_latitude)) +  cos(deg2rad($value->customer_address_latitude)) * cos(deg2rad($check_restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                        $dist = acos($dist);
+                        $dist = rad2deg($dist);
+                        $miles = $dist * 60 * 1.1515;
+                        $kilometer=$miles * 1.609344;
+                        $kilometer= number_format((float)$kilometer, 1, '.', '');
+                        $minutes=(int)$kilometer*2;
+                        if($minutes >=60){
+                            $value->rider_arrive_time=intdiv($minutes, 60).' hr '. ($minutes % 60).' min';
+                        }else{
+                            $value->rider_arrive_time=($minutes % 60).' min';
+                        }
+                    }else{
+                        $value->rider_arrive_time=null;
+                    }
+                    array_push($data,$value);
+                }
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$result]);
             }else{
@@ -295,26 +320,34 @@ class OrderApiController extends Controller
             $check_history=CustomerOrderHistory::whereIn('order_id',$customer_orders)->where('order_status_id','5')->pluck('order_id');
 
             $result=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->whereNotIn('order_id',$check_history)->whereRaw('Date(created_at) = CURDATE()')->get();
+            $data=[];
+            foreach($result as $value){
+                if(!empty($value->rider)){
+                    $theta = $value->customer_address_longitude - $check_restaurant->restaurant_longitude;
+                    $dist = sin(deg2rad($value->customer_address_latitude)) * sin(deg2rad($check_restaurant->restaurant_latitude)) +  cos(deg2rad($value->customer_address_latitude)) * cos(deg2rad($check_restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                    $dist = acos($dist);
+                    $dist = rad2deg($dist);
+                    $miles = $dist * 60 * 1.1515;
+                    $kilometer=$miles * 1.609344;
+                    $kilometer= number_format((float)$kilometer, 1, '.', '');
+                    $minutes=(int)$kilometer*2;
+                    if($minutes >=60){
+                        $value->rider_arrive_time=intdiv($minutes, 60).' hr '. ($minutes % 60).' min';
+                    }else{
+                        $value->rider_arrive_time=($minutes % 60).' min';
+                    }
+                }else{
+                    $value->rider_arrive_time=null;
+                }
+                array_push($data,$value);
+            }
+
 
             return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$result]);
         }else{
             return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
         }
     }
-
-    // public function restaurant_preparing(Request $request)
-    // {
-    //     $restaurant_id=$request['restaurant_id'];
-
-    //     $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
-    //     if($check_restaurant){
-    //         // $customer_orders=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->where('order_status_id','3')->orwhere('order_status_id','4')->get();
-    //         $customer_orders=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['3','4','10'])->get();
-    //         return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$customer_orders]);
-    //     }else{
-    //         return response()->json(['success'=>false,'message'=>'restaurant id not found!']);
-    //     }
-    // }
 
     public function restaurant_order_click(Request $request)
     {
@@ -407,6 +440,99 @@ class OrderApiController extends Controller
             }
     }
 
+    public function cancle_order_v1(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $customer_orders=CustomerOrder::where('order_id',$order_id)->whereIn('order_status_id',['1','11','19'])->first();
+
+        if(!empty($customer_orders)){
+
+            $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
+            $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
+                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+
+            //Customer
+            $title="Order Canceled!";
+            $messages="Your order has been canceled successfully!";
+            $message = strip_tags($messages);
+            $fcm_token=array();
+            array_push($fcm_token, $customer_orders->customer->fcm_token);
+                $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
+                $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'order_type'=>$customer_orders->order_type,'type'=>'customer_cancel_order','title' => $title, 'body' => $message]);
+
+                $playLoad = json_encode($field);
+                $test=json_decode($playLoad);
+                $curl_session = curl_init();
+                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+                curl_setopt($curl_session, CURLOPT_POST, true);
+                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+                $result = curl_exec($curl_session);
+                curl_close($curl_session);
+
+                if($customer_orders->order_type=="food"){
+                    if($customer_orders->order_status_id==19){
+                        $customer_orders->order_status_id=9;
+                        $customer_orders->update();
+
+                        if(!isset($_SESSION)) 
+                        { 
+                            session_start(); 
+                        } 
+                    
+                        $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
+                        $_SESSION['customer_orders']=$customer_orders;
+
+                        return view('admin.src.example.refund');
+                    }
+                    else{
+                        $customer_orders->order_status_id=9;
+                        $customer_orders->update();
+                        //restaurant
+                        $restaurant_check=Restaurant::where('restaurant_id',$customer_orders->restaurant_id)->first();
+
+                        $title1="Order Canceled by Customer";
+                        $messages1="New order has been canceled by customer!";
+                        $message1 = strip_tags($messages1);
+                        $fcm_token1=array();
+                        array_push($fcm_token1, $restaurant_check->restaurant_fcm_token);
+                        $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'customer_cancel_order','order_type'=>$customer_orders->order_type,'title' => $title1, 'body' => $message1]);
+
+
+                        $playLoad1 = json_encode($field1);
+                        $test1=json_decode($playLoad1);
+                        $curl_session1 = curl_init();
+                        curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
+                        curl_setopt($curl_session1, CURLOPT_POST, true);
+                        curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
+                        curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                        curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
+                        $result = curl_exec($curl_session1);
+                        curl_close($curl_session1);
+
+                        return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
+                    }
+                }elseif($customer_orders->order_type=="parcel"){
+                    $customer_orders->order_status_id=16;
+                    $customer_orders->update();
+
+                    return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
+                }
+            }else{
+                $orders=CustomerOrder::where('order_id',$order_id)->first();
+                if($orders){
+                    return response()->json(['success'=>false,'message'=>"order status is not same pending such as 1,11 and 19",'check_order'=>['order_id'=>$orders->order_id,'order_type'=>$orders->order_type,'order_status_id'=>$orders->order_status_id]]);
+                }else{
+                    return response()->json(['success'=>false,'message'=>"order id not found"]);
+                }
+            }
+    }
+
     public function restaurant_cancle_order(Request $request)
     {
         $order_id=$request['order_id'];
@@ -492,11 +618,126 @@ class OrderApiController extends Controller
         
     }
 
+    public function restaurant_cancel_order_v1(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $cancel_type = $request['cancel_type'];
+        $restaurant_remark = $request['restaurant_remark'];
+        $order_food_id=$request->order_food_id;
+        // $result = json_decode($order_food_id);
+
+        $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
+        $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
+        $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+        $check_order=CustomerOrder::where('order_id',$order_id)->first();
+        
+        if($check_order){
+            if($check_order->order_status_id==19){
+                if ($cancel_type == 'other') {
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'restaurant_remark'=>$restaurant_remark,
+                        'order_status_id'=>2,
+                    ]);
+                    // return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>$data]);
+                } else {
+                    foreach ($order_food_id as $value) {
+                        $of_id[] = $value['order_food_id'];
+                    }
+                
+                    $check_order_food=OrderFoods::whereIn('order_food_id',$of_id)->pluck('food_id');
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'order_status_id'=>2,
+                    ]);
+                    Food::whereIn('food_id',$check_order_food)->update([
+                        'food_emergency_status'=>1,
+                    ]);
+                    // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+                }
+                //Restaurant
+                $title="Succesfully Order Cancel";
+                $messages="You success cancel customer order!";
+                $message = strip_tags($messages);
+                $fcm_token=array();
+                array_push($fcm_token, $check_order->restaurant->restaurant_fcm_token);
+                $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
+        
+                $playLoad = json_encode($field);
+                $curl_session = curl_init();
+                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+                curl_setopt($curl_session, CURLOPT_POST, true);
+                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+                $result = curl_exec($curl_session);
+                curl_close($curl_session);
+
+                if(!isset($_SESSION)) 
+                { 
+                    session_start(); 
+                } 
+                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+                        
+                $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
+                $_SESSION['customer_orders']=$customer_orders;
+
+                return view('admin.src.example.refund');
+            }else{
+                if ($cancel_type == 'other') {
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'restaurant_remark'=>$restaurant_remark,
+                        'order_status_id'=>2,
+                    ]);
+                    // return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>$data]);
+                } else {
+                    foreach ($order_food_id as $value) {
+                        $of_id[] = $value['order_food_id'];
+                    }
+                
+                    $check_order_food=OrderFoods::whereIn('order_food_id',$of_id)->pluck('food_id');
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'order_status_id'=>2,
+                    ]);
+                    Food::whereIn('food_id',$check_order_food)->update([
+                        'food_emergency_status'=>1,
+                    ]);
+                    // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+                }
+                //Restaurant
+                $title="Succesfully Order Cancel";
+                $messages="You success cancel customer order!";
+                $message = strip_tags($messages);
+                $fcm_token=array();
+                array_push($fcm_token, $check_order->restaurant->restaurant_fcm_token);
+                $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
+        
+                $playLoad = json_encode($field);
+                $curl_session = curl_init();
+                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+                curl_setopt($curl_session, CURLOPT_POST, true);
+                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+                $result = curl_exec($curl_session);
+                curl_close($curl_session);
+
+                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+                return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_orders]]);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found']);
+        }
+        
+    }
+
     public function restaurant_status_v1(Request $request)
     {
         $order_id=$request['order_id'];
         if(!empty($order_id)){
-            $order_status_id=$request['order_status_id'];
+            $order_status_id=(int)$request['order_status_id'];
             $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
             
             if($customer_orders){

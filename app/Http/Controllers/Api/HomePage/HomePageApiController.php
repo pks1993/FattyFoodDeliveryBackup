@@ -80,6 +80,15 @@ class HomePageApiController extends Controller
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])
         ->limit(20)
         ->get();
+        $recommend_data=[];
+        foreach($recommend as $data){
+            if($data->wishlist==1){
+                $data->is_wish=true;
+            }else{
+                $data->is_wish=false;
+            }
+            array_push($recommend_data,$data);
+        }
 
         $up_ads=UpAds::orderBy('created_at','DESC')->select('up_ads_id','restaurant_id','image')->get();
         $down_ads=DownAds::orderBy('created_at','DESC')->select('down_ads_id','restaurant_id','image')->get();
@@ -119,9 +128,15 @@ class HomePageApiController extends Controller
                         }
                     }
                 }
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
                 $value->distance=(float) $kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
+
                 array_push($restaurants_val,$value);
 
             }
@@ -178,6 +193,11 @@ class HomePageApiController extends Controller
                             $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
                         }
                     }
+                }
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
                 }
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
@@ -237,6 +257,11 @@ class HomePageApiController extends Controller
                         }
                     }
                 }
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
@@ -253,6 +278,15 @@ class HomePageApiController extends Controller
     {
         $restaurant_id=$request['restaurant_id'];
         $restaurants=DB::select("SELECT restaurants.restaurant_id,restaurants.restaurant_id,restaurants.restaurant_name_mm,restaurants.restaurant_name_en,restaurants.restaurant_name_ch,restaurants.restaurant_category_id,restaurant_categories.restaurant_category_name_mm,restaurant_categories.restaurant_category_name_en,restaurant_categories.restaurant_category_name_ch,restaurant_categories.restaurant_category_image,restaurants.city_id,cities.city_name_mm,cities.city_name_en,restaurants.state_id,states.state_name_mm,states.state_name_en,restaurants.restaurant_address_mm,restaurants.restaurant_address_en,restaurants.restaurant_address_ch,restaurants.restaurant_image,restaurants.restaurant_fcm_token,restaurants.restaurant_emergency_status, (CASE WHEN wishlists.restaurant_id IS NULL THEN 0 ELSE 1 END) as wishlist FROM restaurants LEFT JOIN wishlists ON restaurants.restaurant_id = wishlists.restaurant_id LEFT JOIN restaurant_categories ON restaurants.restaurant_category_id = restaurant_categories.restaurant_category_id LEFT JOIN cities ON restaurants.city_id = cities.city_id LEFT JOIN states ON restaurants.state_id = states.state_id WHERE restaurants.restaurant_id=$restaurant_id");
+        $data=[];
+        foreach($restaurants as $value){
+            if($value->wishlist==1){
+                $value->is_wish=true;
+            }else{
+                $value->is_wish=false;
+            }
+            array_push($data,$value);
+        }
 
         $food_menu=FoodMenu::where('restaurant_id',$restaurant_id)->select('food_menu_id','food_menu_name')->get();
         return response()->json(['success'=>true,'message'=>'this is restaurant data','restaurant'=>$restaurants,'food_menu'=>$food_menu]);
@@ -269,6 +303,13 @@ class HomePageApiController extends Controller
             },'menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->has('option')->get();
             },'menu.food.sub_item.option'])->orderby('created_at')->where('restaurant_id',$restaurant_id)->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->first();
+            $data=[];
+            if($restaurants->wishlist==1){
+                $restaurants->is_wish=true;
+            }else{
+                $restaurants->is_wish=false;
+            }
+            array_push($data,$restaurants);
 
         return response()->json(['success'=>true,'message'=>'this is menu data','data'=>$restaurants]);        
     }

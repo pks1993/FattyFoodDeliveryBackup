@@ -122,17 +122,20 @@ Route::post('fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\Or
 Route::get('fatty/202221/lashio/main/admin/order/payment/lists','Api\Order\OrderApiController@payment_list');
 Route::get('fatty/202221/lashio/main/admin/order/status/lists','Api\Order\OrderApiController@status_list');
 Route::post('fatty/202221/lashio/main/admin/customers/orders/cancel','Api\Order\OrderApiController@cancle_order');
+Route::post('fatty/202221/lashio/main/admin/customers/orders/v1/cancel','Api\Order\OrderApiController@cancle_order_v1');
 Route::post('fatty/202221/lashio/main/admin/riders/send/noti/to/customers','Api\Order\OrderApiController@send_noti_to_customer');
 
 
 
 //Restaurant Order
+Route::post('fatty/202221/lashio/main/admin/restaurants/orders/count','Api\Order\OrderApiController@restaurant_order_count');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/lists','Api\Order\OrderApiController@restaurant_index');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/preparing','Api\Order\OrderApiController@restaurant_preparing');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/click','Api\Order\OrderApiController@restaurant_order_click');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/status','Api\Order\OrderApiController@restaurant_status');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/v1/status','Api\Order\OrderApiController@restaurant_status_v1');
 Route::post('fatty/202221/lashio/main/admin/restaurants/cancle_orders/status','Api\Order\OrderApiController@restaurant_cancle_order');
+Route::post('fatty/202221/lashio/main/admin/restaurants/cancel_orders/v1/status','Api\Order\OrderApiController@restaurant_cancel_order_v1');
 Route::post('fatty/202221/lashio/main/admin/restaurants/orders/details','Api\Restaurant\RestaurantApiController@restaurant_order_details');
 Route::post('fatty/202221/lashio/main/admin/restaurants/activenow','Api\Restaurant\RestaurantApiController@activenow');
 Route::post('fatty/202221/lashio/main/admin/foods/onoff','Api\Restaurant\RestaurantApiController@food_onoff');

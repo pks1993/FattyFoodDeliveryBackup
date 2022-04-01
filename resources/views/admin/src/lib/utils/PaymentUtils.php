@@ -80,7 +80,6 @@ class PaymentUtils
     public static function signature($text, $merchantKey)
     {
         $toSignString = $text . "&key=" . $merchantKey;
-        //var_dump($toSignString);
 
         return strtoupper(hash("sha256", $toSignString));
     }

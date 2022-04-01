@@ -31,7 +31,7 @@ class OrderController extends Controller
     }
     
     public function dailyfoodorderajax(){
-        $model = CustomerOrder::whereDate('created_at',date('Y-m-d'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -49,7 +49,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -68,7 +68,7 @@ class OrderController extends Controller
     }
     
     public function monthlyfoodorderajax(){
-        $model = CustomerOrder::whereMonth('created_at',date('m'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -86,12 +86,12 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -105,7 +105,7 @@ class OrderController extends Controller
     }
     
     public function yearlyfoodorderajax(){
-        $model = CustomerOrder::whereYear('created_at',date('Y'))->where('order_type','food')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -123,12 +123,12 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -142,7 +142,7 @@ class OrderController extends Controller
     }
     
     public function dailyparcelorderajax(){
-        $model = CustomerOrder::whereDate('created_at',date('Y-m-d'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -159,7 +159,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
@@ -178,7 +178,7 @@ class OrderController extends Controller
     }
     
     public function monthlyparcelorderajax(){
-        $model = CustomerOrder::whereMonth('created_at',date('m'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -195,12 +195,12 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -214,7 +214,7 @@ class OrderController extends Controller
     }
     
     public function yearlyparcelorderajax(){
-        $model = CustomerOrder::whereYear('created_at',date('Y'))->where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -231,12 +231,12 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-m-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
@@ -325,7 +325,14 @@ class OrderController extends Controller
     */
     public function show($id)
     {
-        //
+        $food_order = CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->withCount(['foods'])->findOrFail($id);
+        return view('admin.order.view')->with('food_order',$food_order);
+    }
+
+    public function parcel_show($id)
+    {
+        $parcel_order = CustomerOrder::findOrFail($id);
+        return view('admin.order.parcel_view')->with('parcel_order',$parcel_order);
     }
     
     /**

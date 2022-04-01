@@ -69,23 +69,23 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
-                                    {{-- <div class="row mb-2">
-                                        <div class="col-md-3">
-                                            <label for="min">Minimum date: </label><input type="text" id="min" name="min" placeholder="minimum date">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label for="max">Maximum date: </label><input type="text" id="max" name="max" placeholder="maximun date">
-                                        </div>
-                                    </div> --}}
+                            {{-- <div class="row mb-2">
+                                <div class="col-md-3">
+                                    <label for="min">Minimum date: </label><input type="text" id="min" name="min" placeholder="minimum date">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="max">Maximum date: </label><input type="text" id="max" name="max" placeholder="maximun date">
+                                </div>
+                            </div> --}}
                             <table border="0" cellspacing="5" cellpadding="5">
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min"></td>
+                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max"></td>
+                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -102,7 +102,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                                                        
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -115,38 +115,34 @@
 @endsection
 @push('scripts')
 <script>
-var minDate, maxDate;
- 
-// Custom filtering function which will search data in column four between two values
-$.fn.dataTable.ext.search.push(
+    // Custom filtering function which will search data in column four between two values
+    $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
+        var min = $('#min').datepicker("getDate");
+        var max = $('#max').datepicker("getDate");
         var date = new Date( data[3] );
-
+        
         if (
-            ( min === null && max === null ) ||
-            ( min === null && date <= max ) ||
-            ( min <= date   && max === null ) ||
-            ( min <= date   && date <= max )
+        ( min === null && max === null ) ||
+        ( min === null && date <= max ) ||
+        ( min <= date   && max === null ) ||
+        ( min <= date   && date <= max )
         ) {
             return true;
         }
         return false;
     }
-);
- 
-$(document).ready(function() {
-    // Create date inputs
-    minDate = new DateTime($('#min'), {
-        format: 'Do MMMM YYYY'
-    });
-    maxDate = new DateTime($('#max'), {
-        format: 'Do MMMM YYYY'
-    });
- 
-    // DataTables initialisation
-    var table = $("#customers").DataTable({
+    );
+    
+    
+    $(document).ready(function() {
+        // Create date inputs
+        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+        
+        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
+        
+        // DataTables initialisation
+        var table = $("#customers").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
             "paging": true, // Allow data to be paged
             "lengthChange": true,
@@ -164,16 +160,16 @@ $(document).ready(function() {
             {data: 'order_amount', name:'order_amount',className: "order_amount"},
             {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
             ],
-            dom: 'PlBfrtip',
+            dom: 'lBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],
         });
- 
-    // Refilter the table
-    $('#min, #max').on('change', function () {
-        table.draw();
+        
+        // Refilter the table
+        $('#min, #max').on('change', function () {
+            table.draw();
+        });
     });
-});
 </script>
 @endpush
