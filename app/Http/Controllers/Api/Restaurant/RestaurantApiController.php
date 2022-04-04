@@ -312,14 +312,11 @@ class RestaurantApiController extends Controller
         if($restaurants){
             if($average_time > 59 || $rush_hour_time > 59){
                 return response()->json(['success'=>false,'message' => 'over define minutes is 59! minutes is less than 59']);
-            }elseif(!empty($average_time)){
+            }elseif(!empty($average_time) && !empty($rush_hour_time)){
                 $restaurants->average_time=$average_time;
-                $restaurants->update();
-                return response()->json(['success'=>true,'message'=>'successfull preparing start time define','data'=>$restaurants]);
-            }elseif(!empty($rush_hour_time)){
                 $restaurants->rush_hour_time=$rush_hour_time;
                 $restaurants->update();
-                return response()->json(['success'=>true,'message'=>'successfull preparing end time define','data'=>$restaurants]);
+                return response()->json(['success'=>true,'message'=>'successfull preparing start and end time define','data'=>$restaurants]);
             }else{
                 return response()->json(['success'=>false,'message' => 'preparing time not found!']);
             }
@@ -482,15 +479,17 @@ class RestaurantApiController extends Controller
 
     public function food_menus_delete(Request $request){
         $food_menu_id=$request['food_menu_id'];
-        $menus=FoodMenu::where('food_menu_id',$food_menu_id)->first();
+        $menus=FoodMenu::withCount(['food'])->where('food_menu_id',$food_menu_id)->first();
 
         if(!empty($menus)){
-            $menus->delete();
-
-            $data['food_menu']=$menus;
-            return response()->json(['success'=>true,'message'=>'successfull delete restaurant food menu','data'=>$data]);
+            if($menus->food_count==0){
+                $menus->delete();
+                return response()->json(['success'=>true,'message'=>'successfull delete restaurant food menu','data'=>['food_menu'=>$menus]]);
+            }else{
+                return response()->json(['success'=>false,'message'=>'food menu id have foods!']);
+            }
         }else{
-            return response()->json(['success'=>false,'message'=>'food menu id not found!',]);
+            return response()->json(['success'=>false,'message'=>'food menu id not found!']);
         }
     }
 
