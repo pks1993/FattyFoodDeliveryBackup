@@ -13,13 +13,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use App\Models\Food\FoodSubItemData;
 use App\Models\Restaurant\Restaurant;
-use App\Models\Food\FoodAvailableTime;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Restaurant\RestaurantUser;
 use App\Models\Restaurant\RestaurantAvailableTime;
 use App\Models\Order\CustomerOrder;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 
 
 
@@ -581,34 +579,7 @@ class RestaurantApiController extends Controller
         }
         
 
-        $available_datetime=$request->availableTime;
-
-        if($available_datetime){
-            $availabel_list=json_decode($available_datetime,true);
-            foreach($availabel_list as $list){
-                $day=$list['day'];
-                if(!empty($list['on_off'])){
-                    $on_off=$list['on_off'];
-                }else{
-                    $on_off=1;
-                }
-                $opening_time=$list['opening_time'];
-                $closing_time=$list['closing_time'];
-
-                $time=FoodAvailableTime::create([
-                    "day"=>$day,
-                    "on_off"=>$on_off,
-                    "opening_time"=>$opening_time,
-                    "closing_time"=>$closing_time,
-                    "food_id"=>$food_id,
-                ]);
-
-            }
-        }else{
-            return response()->json(['success'=>false,'message'=>'check availableTime']);
-        }
-
-        $foods=Food::with(['available_time','sub_item'=>function($sub_item){
+        $foods=Food::with(['sub_item'=>function($sub_item){
                 $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
             },'sub_item.option' => function($option){
                 $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
@@ -729,49 +700,8 @@ class RestaurantApiController extends Controller
                     }
                 }
             }
-            
 
-            $available_datetime=$request->availableTime;
-
-            if($available_datetime){
-                $availabel_list=json_decode($available_datetime,true);
-                foreach($availabel_list as $list){
-                    $food_available_time_id=$list['food_available_time_id'];
-                    $day=$list['day'];
-                    // $on_off=$list['on_off'];
-                    if(!empty($list['on_off'])){
-                        $on_off=$list['on_off'];
-                    }else{
-                        $on_off=1;
-                    }
-                    $opening_time=$list['opening_time'];
-                    $closing_time=$list['closing_time'];
-
-                    if($food_available_time_id=="0"){
-                        $time=FoodAvailableTime::create([
-                            "day"=>$day,
-                            "on_off"=>$on_off,
-                            "opening_time"=>$opening_time,
-                            "closing_time"=>$closing_time,
-                            "food_id"=>$food_id,
-                        ]);
-                    }else{
-                        $time=FoodAvailableTime::where('food_available_time_id',$food_available_time_id)->update([
-                            "day"=>$day,
-                            "on_off"=>$on_off,
-                            "opening_time"=>$opening_time,
-                            "closing_time"=>$closing_time,
-                            "food_id"=>$food_id,
-                        ]);
-
-                    }
-
-                }
-            }else{
-                return response()->json(['success'=>false,'message'=>'check availableTime']);
-            }
-
-            $foods=Food::with(['available_time','sub_item'=>function($sub_item){
+            $foods=Food::with(['sub_item'=>function($sub_item){
                     $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
                 },'sub_item.option' => function($option){
                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
@@ -788,209 +718,6 @@ class RestaurantApiController extends Controller
         }
 
     }
-
-    // public function food_update(Request $request)
-    // {
-    //     $food_id=$request['food_id'];
-    //     $restaurant_id=$request['restaurant_id'];
-    //     $food_name_mm=$request['food_name_mm'];
-    //     $food_name_en=$request['food_name_en'];
-    //     $food_name_ch=$request['food_name_ch'];
-    //     $food_menu_id=$request['food_menu_id'];
-    //     $food_price=$request['food_price'];
-    //     $food_description=$request['food_description'];
-    //     $food_emergency_status=$request['food_emergency_status'];
-    //     $food_recommend_status=$request['food_recommend_status'];
-
-    //     $validated=Validator::make($request->all(),[
-    //         'food_id' => 'required',
-    //         'restaurant_id' => 'required',
-    //         'food_name_mm' => 'required',
-    //         'food_name_en' => 'required',
-    //         'food_name_ch' => 'required',
-    //         'food_menu_id' => 'required',
-    //         'food_price' => 'required',
-    //         'food_description' => 'required',
-    //         'food_emergency_status' => 'required',
-    //         'food_recommend_status' => 'required',
-    //     ]);
-
-    //     if($validated->fails()) {
-    //       return response()->json(['success'=>false,'message'=>'Error! food required field','required'=>['food_id','restaurant_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','food_price','food_description','food_emergency_status','food_recommend_status']]);
-    //     }else{
-    //         $food_image=$request->file('food_image');
-    //         $photoname=time();
-
-    //         if(!empty($food_id)){
-    //             $foods=Food::where('food_id',$food_id)->first();
-    //             if($food_image){
-    //                 if($foods->food_image){
-    //                     Storage::disk('Foods')->delete($foods->food_image);
-    //                 }
-    //                 $img_name=$photoname.'.'.$food_image->getClientOriginalExtension();
-    //                 $foods->food_image=$img_name;
-    //                 Storage::disk('Foods')->put($img_name, File::get($food_image));
-    //             }
-
-
-    //             $foods->food_name_mm=$food_name_mm;
-    //             $foods->food_name_en=$food_name_en;
-    //             $foods->food_name_ch=$food_name_ch;
-    //             $foods->food_menu_id=$food_menu_id;
-    //             $foods->restaurant_id=$restaurant_id;
-    //             $foods->food_price=$food_price;
-    //             $foods->food_description=$food_description;
-    //             $foods->food_emergency_status=$food_emergency_status;
-    //             $foods->food_recommend_status=$food_recommend_status;
-    //             // $foods->update();
-            
-    //             $subitem_list=$request->add_on_list;
-    //             if($subitem_list){
-    //                 $item_lists=json_decode($subitem_list,true);
-    //                  $rules = array(
-    //         'food_sub_item_id' => 'required',
-    //         'section_name_mm' => 'required',
-    //         'section_name_en' => 'required',
-    //         'section_name_ch' => 'required',
-    //         'required_type' => 'required',
-    //         );
-    //                  $validation = Validator::make($form, $rules);
-
-    //     if ($validation->fails()) {
-    //         return Response::make(['error' => $validation->errors()], 400);
-    //     }
-    //                 foreach ($item_lists as $list) {
-    //                     // $food_sub_item_id=$list['food_sub_item_id'];
-                        
-    //                     if(empty($list['food_sub_item_id'])){
-    //                         $food_sub_item_id=$list['food_sub_item_id'];
-    //                     }else{
-    //                         return response()->json(['success'=>false,'message'=>'food_sub_item_id not found'],400);
-    //                         $food_sub_item_id=$list['food_sub_item_id'];
-    //                     }
-    //                     dd($food_sub_item_id);
-    //                     $section_name_mm=$list['section_name_mm'];
-    //                     $section_name_en=$list['section_name_en'];
-    //                     $section_name_ch=$list['section_name_ch'];
-    //                     $required_type=$list['required_type'];
-
-    //                     if($food_sub_item_id=="0"){
-    //                         $food_subitem=new FoodSubItem();
-    //                         $food_subitem->section_name_mm=$section_name_mm;
-    //                         $food_subitem->section_name_en=$section_name_en;
-    //                         $food_subitem->section_name_ch=$section_name_ch;
-    //                         $food_subitem->required_type=$required_type;
-    //                         $food_subitem->food_id=$food_id;
-    //                         $food_subitem->restaurant_id=$restaurant_id;
-    //                         // $food_subitem->save();
-    //                     }else{
-    //                         $food_subitem=FoodSubItem::where('food_sub_item_id',$food_sub_item_id)->first();
-    //                         $food_subitem->section_name_mm=$section_name_mm;
-    //                         $food_subitem->section_name_en=$section_name_en;
-    //                         $food_subitem->section_name_ch=$section_name_ch;
-    //                         $food_subitem->required_type=$required_type;
-    //                         $food_subitem->food_id=$food_id;
-    //                         $food_subitem->restaurant_id=$restaurant_id;
-    //                         // $food_subitem->update();
-    //                     }
-
-
-    //                     $option=$list['option'];
-    //                     foreach ($option as $key=>$value1){
-    //                         $food_sub_item_data_id=$value1['food_sub_item_data_id'];
-    //                         $item_name_mm=$value1['item_name_mm'];
-    //                         $item_name_en=$value1['item_name_en'];
-    //                         $item_name_ch=$value1['item_name_ch'];
-    //                         $item_price=$value1['food_sub_item_price'];
-    //                         $instock=$value1['instock'];
-
-    //                         // if($food_sub_item_data_id=="0"){
-    //                         //     FoodSubItemData::create([
-    //                         //         "food_sub_item_id"=>$food_subitem->food_sub_item_id,
-    //                         //         "item_name_mm"=>$item_name_mm,
-    //                         //         "item_name_en"=>$item_name_en,
-    //                         //         "item_name_ch"=>$item_name_ch,
-    //                         //         "food_sub_item_price"=>$item_price,
-    //                         //         "instock"=>$instock,
-    //                         //         "food_id"=>$food_id,
-    //                         //         "restaurant_id"=>$restaurant_id,
-    //                         //     ]);
-    //                         // }else{
-    //                         //     FoodSubItemData::where('food_sub_item_data_id',$food_sub_item_data_id)->update([
-    //                         //         "food_sub_item_id"=>$food_subitem->food_sub_item_id,
-    //                         //         "item_name_mm"=>$item_name_mm,
-    //                         //         "item_name_en"=>$item_name_en,
-    //                         //         "item_name_ch"=>$item_name_ch,
-    //                         //         "food_sub_item_price"=>$item_price,
-    //                         //         "instock"=>$instock,
-    //                         //         "food_id"=>$food_id,
-    //                         //         "restaurant_id"=>$restaurant_id,
-    //                         //     ]);
-    //                         // }
-
-    //                     }
-    //                 }
-    //             }else{
-    //                 return response()->json(['success'=>false,'message'=>'add_on_list is not define']);
-    //             }
-                
-
-    //             $available_datetime=$request->availableTime;
-
-    //             if($available_datetime){
-    //                 $availabel_list=json_decode($available_datetime,true);
-    //                 foreach($availabel_list as $list){
-    //                     $food_available_time_id=$list['food_available_time_id'];
-    //                     $day=$list['day'];
-    //                     if(!empty($list['on_off'])){
-    //                         $on_off=$list['on_off'];
-    //                     }else{
-    //                         $on_off=1;
-    //                     }
-    //                     $opening_time=$list['opening_time'];
-    //                     $closing_time=$list['closing_time'];
-
-    //                     if($food_available_time_id=="0"){
-    //                         $time=FoodAvailableTime::create([
-    //                             "day"=>$day,
-    //                             "on_off"=>$on_off,
-    //                             "opening_time"=>$opening_time,
-    //                             "closing_time"=>$closing_time,
-    //                             "food_id"=>$food_id,
-    //                         ]);
-    //                     }else{
-    //                         $time=FoodAvailableTime::where('food_available_time_id',$food_available_time_id)->update([
-    //                             "day"=>$day,
-    //                             "on_off"=>$on_off,
-    //                             "opening_time"=>$opening_time,
-    //                             "closing_time"=>$closing_time,
-    //                             "food_id"=>$food_id,
-    //                         ]);
-
-    //                     }
-
-    //                 }
-    //             }else{
-    //                 return response()->json(['success'=>false,'message'=>'check availableTime']);
-    //             }
-
-    //             $foods=Food::with(['available_time','sub_item'=>function($sub_item){
-    //                     $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
-    //                 },'sub_item.option' => function($option){
-    //                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
-    //                 },'restaurant'=>function ($restaurant){
-    //                     $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id')->get();
-    //                 },'restaurant.category' => function ($category){
-    //                     $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
-    //                 },'restaurant.available_time'])->where('restaurant_id',$restaurant_id)->orderby('created_at','DESC')->first();
-    //             $food['foods']=$foods;
-
-    //             return response()->json(['success'=>true,'message'=>'successfull update foods','data'=>$food]);
-    //         }else{
-    //             return response()->json(['success'=>false,'message'=>'food id not found']);
-    //         }
-    //     }
-    // }
 
     public function food_search(Request $request)
     {
@@ -1130,7 +857,6 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
-                $data=[];
                 
                 if($value->wishlist==1){
                     $value->is_wish=true;
