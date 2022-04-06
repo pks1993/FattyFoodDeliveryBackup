@@ -167,6 +167,11 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('restaurants/delete/{restaurant_id}','Admin\Restaurant\RestaurantController@destroy')->name('restaurants.destroy');
     Route::get('restaurants/city/list/{id}','Admin\Restaurant\RestaurantController@city_list1');
     Route::get('restaurants/state/list/{id}','Admin\Restaurant\RestaurantController@state_list');
+    Route::get('restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update');
+    Route::get('restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update');
+
+    Route::get('100_restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update_100');
+    Route::get('100_restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update_100');
 
     //100 Restaurant
     Route::get('100_restaurants','Admin\Restaurant\RestaurantController@hundredIndex');
@@ -231,6 +236,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //testing
     Route::get('golocation','Admin\About\AboutController@golocation');
+    Route::get('golocation','Admin\About\AboutController@index');
 
     //UpAds
     Route::get('ads/up_ads','Admin\Ads\UpAdsController@index');

@@ -40,7 +40,6 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
           <div class="form-group">
             <label for="state_name" class="col-form-label">Show State Name:</label>
             <input type="text" class="form-control" name="state_name">
@@ -55,7 +54,6 @@
                 option
             </select>
           </div>
-        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

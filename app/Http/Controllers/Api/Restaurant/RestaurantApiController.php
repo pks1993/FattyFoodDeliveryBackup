@@ -169,7 +169,7 @@ class RestaurantApiController extends Controller
     public function restaurant_register(Request $request)
     {
         $restaurant_user_id=$request['restaurant_user_id'];
-        $check=RestaurantUser::where('restaurant_user_id',$restaurant_user_id)->where('is_admin_approved','1')->first();
+        $check=RestaurantUser::where('restaurant_user_id',$restaurant_user_id)->where('is_admin_approved',0)->first();
         $check_restaurant=Restaurant::where('restaurant_user_id',$restaurant_user_id)->first();
 
         $restaurant_name_mm=$request['restaurant_name_mm'];

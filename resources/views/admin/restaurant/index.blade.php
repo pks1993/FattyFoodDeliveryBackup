@@ -35,8 +35,8 @@
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-7">
+        <div class="row mb-3">
+            <div class="col-sm-7" style="height: 20px;">
                 <div class="flash-message" id="successMessage">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                     @if(Session::has('alert-' . $msg))
@@ -53,11 +53,7 @@
                 </ol>
             </div>
             <div class="col-md-12">
-                {{-- <form method='post' action="{{ route('fatty.admin.backup.restaurants') }}">
-                    @csrf
-                    <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
-                    <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
-                </form> --}}
+    
             </div>
         </div>
     </div>
@@ -66,17 +62,17 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
+                {{-- <div class="card-header">
                     <div class="row">
                         <div class="col-md-6">
-                            {{-- <a href="{{route('fatty.admin.restaurants.create')}}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-plus"></i> Add Restaurant</a> --}}
-                            </div>
-                            <div class="col-md-6" style="text-align: right;">
-                                <h4><b>{{ "Restaurant Information" }}</b></h4>
-                            </div>
+                            <a href="{{route('fatty.admin.restaurants.create')}}" class="btn btn-primary btn-sm">
+                                <i class="fa fa-plus"></i> Add Restaurant</a>
+                        </div>
+                        <div class="col-md-6" style="text-align: right;">
+                            <h4><b>{{ "Restaurant Information" }}</b></h4>
                         </div>
                     </div>
+                </div> --}}
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="tab-content">
@@ -96,24 +92,24 @@
                                 <table id="restaurants" class="table table-hover">
                                     <thead>
                                         <tr class="text-center">
-                                            <th>No.</th>
+                                            {{-- <th>Opening</th>
+                                                <th>Approved</th> --}}
                                             <th>Action</th>
+                                            <th>No.</th>
                                             <th>Image</th>
-                                            <th class="text-left">RegisterDate</th>
-                                            <th class="text-left">NameMyanmar</th>
-                                            <th class="text-left">NameEnglish</th>
-                                            <th class="text-left">NameChina</th>
-                                            <th class="text-left">CategoryName</th>
-                                            <th class="text-left">Address</th>
-                                            <th class="text-left">CityName</th>
-                                            <th class="text-left">StateName</th>
-                                            <th class="text-left">UserName</th>
-                                            <th class="text-left">Open/Close</th>
-                                            <th class="text-left">Approved</th>
+                                            <th>RegisterDate</th>
+                                            <th>NameMyanmar</th>
+                                            <th>NameEnglish</th>
+                                            <th>NameChina</th>
+                                            <th>CategoryName</th>
+                                            <th>Address</th>
+                                            <th>CityName</th>
+                                            <th>StateName</th>
+                                            <th>UserName</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+                                
                                     </tbody>
                                 </table>
                             </div>
@@ -126,6 +122,10 @@
     @endsection
     @push('scripts')
     <script>
+
+    setTimeout(function() {
+        $('#successMessage').fadeOut('fast');
+    }, 2000);
         
         // Custom filtering function which will search data in column four between two values
         $.fn.dataTable.ext.search.push(
@@ -163,8 +163,10 @@
                 "processing": true,  // Show processing
                 ajax: "/fatty/main/admin/restaurants/datatable/restaurantajax",
                 columns: [
+                {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
+                // {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "text-center"},
+                // {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},
                 {data: 'restaurant_image', name:'restaurant_image',className: "restaurant_image"},
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'restaurant_name_mm', name:'restaurant_name_mm'},
@@ -172,11 +174,9 @@
                 {data: 'restaurant_name_ch', name:'restaurant_name_ch'},
                 {data: 'restaurant_category_name_mm', name:'restaurant_category_name_mm',className: "restaurant_category_name_mm"},
                 {data: 'restaurant_address', name:'restaurant_address'},
-                {data: 'city_name_mm', name:'city_name_mm',className: "city_name_mm"},
-                {data: 'state_name_mm', name:'state_name_mm',className: "state_name_mm"},
+                {data: 'city_name_mm', name:'city_name_mm',className: "text-center"},
+                {data: 'state_name_mm', name:'state_name_mm',className: "text-center"},
                 {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "restaurant_user_phone"},
-                {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "restaurant_emergency_status"},
-                {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
                 
                 ],
                 dom: 'lBfrtip',

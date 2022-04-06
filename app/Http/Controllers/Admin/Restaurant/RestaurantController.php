@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Restaurant;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurant\Restaurant;
+use App\Models\Restaurant\RestaurantUser;
 use App\Models\Restaurant\RestaurantCategory;
 use App\Models\Zone\Zone;
 use App\Models\State\State;
@@ -19,6 +20,81 @@ use Illuminate\Support\Facades\Storage;
 
 class RestaurantController extends Controller
 {
+    public function approved_update(Request $request,$id)
+    {
+        $restaurant=Restaurant::find($id);
+        if($restaurant->restaurant_user->is_admin_approved==1){
+            RestaurantUser::find($restaurant->restaurant_user_id)->update([
+                "is_admin_approved"=>0,
+            ]);
+            $request->session()->flash('alert-success', 'successfully restaurant reject by admin!');
+        }else{
+            RestaurantUser::find($restaurant->restaurant_user_id)->update([
+                "is_admin_approved"=>1,
+            ]);
+            $request->session()->flash('alert-success', 'successfully restaurant approved by admin!');
+        }
+        return redirect('fatty/main/admin/restaurants');
+    }
+
+    public function opening_update(Request $request,$id)
+    {
+        $restaurant=Restaurant::find($id);
+        if($restaurant){
+            if($restaurant->restaurant_emergency_status==1){
+                Restaurant::find($restaurant->restaurant_id)->update([
+                    "restaurant_emergency_status"=>0,
+                ]);
+                $request->session()->flash('alert-success', 'successfully restaurant open by admin!');
+            }else{
+                Restaurant::find($restaurant->restaurant_id)->update([
+                    "restaurant_emergency_status"=>1,
+                ]);
+                $request->session()->flash('alert-success', 'successfully restaurant close by admin!');
+            }
+            return redirect('fatty/main/admin/restaurants');
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id not found']);
+        }
+    }
+
+    public function approved_update_100(Request $request,$id)
+    {
+        $restaurant=Restaurant::find($id);
+        if($restaurant->restaurant_user->is_admin_approved==1){
+            RestaurantUser::find($restaurant->restaurant_user_id)->update([
+                "is_admin_approved"=>0,
+            ]);
+            $request->session()->flash('alert-success', 'successfully restaurant reject by admin!');
+        }else{
+            RestaurantUser::find($restaurant->restaurant_user_id)->update([
+                "is_admin_approved"=>1,
+            ]);
+            $request->session()->flash('alert-success', 'successfully restaurant approved by admin!');
+        }
+        return redirect('fatty/main/admin/100_restaurants');
+    }
+
+    public function opening_update_100(Request $request,$id)
+    {
+        $restaurant=Restaurant::find($id);
+        if($restaurant){
+            if($restaurant->restaurant_emergency_status==1){
+                Restaurant::find($restaurant->restaurant_id)->update([
+                    "restaurant_emergency_status"=>0,
+                ]);
+                $request->session()->flash('alert-success', 'successfully restaurant open by admin!');
+            }else{
+                Restaurant::find($restaurant->restaurant_id)->update([
+                    "restaurant_emergency_status"=>1,
+                ]);
+                $request->session()->flash('alert-success', 'successfully restaurant close by admin!');
+            }
+            return redirect('fatty/main/admin/100_restaurants');
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id not found']);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -42,14 +118,24 @@ class RestaurantController extends Controller
             return $restaurant_image;
         })
         ->addColumn('action', function(Restaurant $post){
-            // $btn = '<a href="/fatty/main/admin/restaurants/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            if ($post->restaurant_emergency_status==0) {
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
+            } else {
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
+            };
+            if ($post->restaurant_user->is_admin_approved==0) {
+                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
             $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
             '.csrf_field().'
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
+            $value=$restaurant_emergency_status.$is_admin_approved.$btn;
             
-            return $btn;
+            return $value;
         })
         ->addColumn('register_date', function(Restaurant $item){
             $register_date = $item->created_at->format('d M Y');
@@ -71,23 +157,23 @@ class RestaurantController extends Controller
             $restaurant_user_phone = $item->restaurant_user->restaurant_user_phone;
             return $restaurant_user_phone;
         })
-        ->addColumn('restaurant_emergency_status', function(Restaurant $item){
-            if ($item->restaurant_emergency_status=="0") {
-                $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
-            } else {
-                $restaurant_emergency_status = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
-            };
-            return $restaurant_emergency_status;
-        })
-        ->addColumn('is_admin_approved', function(Restaurant $item){
-            if ($item->restaurant_user->is_admin_approved="0") {
-                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            return $is_admin_approved;
-        })
-        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_emergency_status','is_admin_approved','action','register_date'])
+        // ->addColumn('restaurant_emergency_status', function(Restaurant $item){
+        //     if ($item->restaurant_emergency_status==0 && $item->restaurant_user->is_admin_approved==1) {
+        //         $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
+        //     } else {
+        //         $restaurant_emergency_status = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
+        //     };
+        //     return $restaurant_emergency_status;
+        // })
+        // ->addColumn('is_admin_approved', function(Restaurant $item){
+        //     if ($item->restaurant_user->is_admin_approved==0) {
+        //         $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/view/'.$item->restaurant_id.'" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+        //     } else {
+        //         $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/view/'.$item->restaurant_id.'" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+        //     };
+        //     return $is_admin_approved;
+        // })
+        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','action','register_date'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -110,14 +196,19 @@ class RestaurantController extends Controller
             return $restaurant_image;
         })
         ->addColumn('action', function(Restaurant $post){
-            // $btn = '<a href="/fatty/main/admin/restaurants/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            if ($post->restaurant_emergency_status==0) {
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/100_restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
+            } else {
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/100_restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
+            };
+            if ($post->restaurant_user->is_admin_approved==0) {
+                $is_admin_approved = '<a href="/fatty/main/admin/100_restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $is_admin_approved = '<a href="/fatty/main/admin/100_restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            $value=$restaurant_emergency_status.$is_admin_approved;
             
-            return $btn;
+            return $value;
         })
         ->addColumn('register_date', function(Restaurant $item){
             $register_date = $item->created_at->format('d M Y');
@@ -139,23 +230,7 @@ class RestaurantController extends Controller
             $restaurant_user_phone = $item->restaurant_user->restaurant_user_phone;
             return $restaurant_user_phone;
         })
-        ->addColumn('restaurant_emergency_status', function(Restaurant $item){
-            if ($item->restaurant_emergency_status=="0") {
-                $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
-            } else {
-                $restaurant_emergency_status = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
-            };
-            return $restaurant_emergency_status;
-        })
-        ->addColumn('is_admin_approved', function(Restaurant $item){
-            if ($item->restaurant_user->is_admin_approved="0") {
-                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            return $is_admin_approved;
-        })
-        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_emergency_status','is_admin_approved','action','register_date'])
+        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','action','register_date'])
         ->searchPane('model', $model)
         ->make(true);
     }
