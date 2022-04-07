@@ -69,8 +69,8 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-6">
-                            {{-- <a href="{{route('fatty.admin.riders.create')}}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-plus"></i> Add rider</a> --}}
+                            <a href="{{route('fatty.admin.riders.create')}}" class="btn btn-primary btn-sm">
+                                <i class="fa fa-plus"></i> Add rider</a>
                             </div>
                             <div class="col-md-6" style="text-align: right;">
                                 <h4><b>{{ "Rider Information" }}</b></h4>
@@ -101,10 +101,11 @@
                                             <th>Image</th>
                                             <th class="text-left">RiderName</th>
                                             <th class="text-left">RiderPhone</th>
+                                            <th class="text-left">StateName</th>
                                             <th class="text-left">RegisterDate</th>
                                             <th class="text-left">Latitude</th>
                                             <th class="text-left">Longitude</th>
-                                            <th class="text-left">IsAdminapproved</th>
+                                            <th class="text-left">Approved</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -164,10 +165,11 @@
                 {data: 'rider_image', name:'rider_image',className: "rider_image"},
                 {data: 'rider_user_name', name:'rider_user_name'},
                 {data: 'rider_user_phone', name:'rider_user_phone'},
+                {data: 'state', name:'state'},
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'rider_latitude', name:'rider_latitude'},
                 {data: 'rider_longitude', name:'rider_longitude'},
-                {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
+                {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},
                 
                 ],
                 dom: 'lBfrtip',

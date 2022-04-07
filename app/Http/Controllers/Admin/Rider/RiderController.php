@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rider\Rider;
 use Yajra\DataTables\DataTables;
+use App\Models\State\State;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class RiderController extends Controller
 {
@@ -54,7 +57,11 @@ class RiderController extends Controller
             };
             return $is_admin_approved;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
+        })
+        ->rawColumns(['rider_image','is_admin_approved','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -97,7 +104,11 @@ class RiderController extends Controller
             };
             return $is_admin_approved;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
+        })
+        ->rawColumns(['rider_image','is_admin_approved','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -143,7 +154,11 @@ class RiderController extends Controller
             };
             return $is_admin_approved;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
+        })
+        ->rawColumns(['rider_image','is_admin_approved','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -188,7 +203,11 @@ class RiderController extends Controller
             };
             return $is_admin_approved;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
+        })
+        ->rawColumns(['rider_image','is_admin_approved','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -225,7 +244,8 @@ class RiderController extends Controller
      */
     public function create()
     {
-        //
+        $states=State::all();
+        return view('admin.rider.create',compact('states'));
     }
 
     /**
@@ -236,7 +256,33 @@ class RiderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'rider_user_name' => 'required',
+            'rider_user_phone' => 'required',
+            'rider_latitude' => 'required',
+            'rider_longitude' => 'required',
+            'state_id' => 'required',
+            'rider_user_password' => 'required|min:6|same:password_confirmation',
+        ]);
+        $photoname=time();
+        $riders=new Rider();
+
+        if(!empty($request['rider_image'])){
+            $img_name=$photoname.'.'.$request->file('rider_image')->getClientOriginalExtension();
+            $riders->rider_image=$img_name;
+            Storage::disk('Rider')->put($img_name, File::get($request['rider_image']));
+        }
+        $riders->rider_user_name=$request['rider_user_name'];
+        $riders->rider_user_phone=$request['rider_user_phone'];
+        $riders->rider_latitude=$request['rider_latitude'];
+        $riders->rider_longitude=$request['rider_longitude'];
+        $riders->state_id=$request['state_id'];
+        $riders->rider_user_password=$request['rider_user_password'];
+        $riders->is_admin_approved=$request['is_admin_approved'];
+        $riders->save();
+
+        $request->session()->flash('alert-success', 'successfully store rider!');
+        return redirect('fatty/main/admin/riders');
     }
 
     /**

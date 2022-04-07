@@ -88,6 +88,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Riders
     Route::get('riders','Admin\Rider\RiderController@index');
+    Route::get('riders/create','Admin\Rider\RiderController@create')->name('riders.create');
+    Route::post('riders/store','Admin\Rider\RiderController@store')->name('riders.store');
+
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
 
@@ -114,6 +117,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
+    //customer
     Route::get('customers/create','Admin\Customer\CustomerController@create')->name('customers.create');
     Route::get('customers/view/{customer_id}','Admin\Customer\CustomerController@show')->name('customers.view');
     Route::post('customers/store','Admin\Customer\CustomerController@store')->name('customers.store');

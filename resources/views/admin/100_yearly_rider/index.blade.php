@@ -104,6 +104,7 @@
                                             <th>Image</th>
                                             <th class="text-left">Rider Name</th>
                                             <th class="text-left">Rider Phone</th>
+                                            <th class="text-left">StateName</th>
                                             <th class="text-left">RegisterDate</th>
                                             <th class="text-left">Latitude</th>
                                             <th class="text-left">Longitude</th>
@@ -247,6 +248,7 @@
                 {data: 'rider_image', name:'rider_image',className: "rider_image"},
                 {data: 'rider_user_name', name:'rider_user_name'},
                 {data: 'rider_user_phone', name:'rider_user_phone'},
+                {data: 'state', name:'state'},
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'rider_latitude', name:'rider_latitude'},
                 {data: 'rider_longitude', name:'rider_longitude'},
