@@ -90,6 +90,11 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('riders','Admin\Rider\RiderController@index');
     Route::get('riders/create','Admin\Rider\RiderController@create')->name('riders.create');
     Route::post('riders/store','Admin\Rider\RiderController@store')->name('riders.store');
+    Route::get('riders/admin/approved/update/{rider}','Admin\Rider\RiderController@admin_approved');
+    Route::get('daily_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@daily_admin_approved');
+    Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
+    Route::get('yearly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@yearly_admin_approved');
+
 
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
@@ -114,7 +119,6 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('yearly_ordered_customers','Admin\Customer\CustomerController@yearlyorderedindex');
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
-
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
     //customer

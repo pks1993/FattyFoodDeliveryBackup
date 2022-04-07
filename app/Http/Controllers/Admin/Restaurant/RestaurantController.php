@@ -128,12 +128,12 @@ class RestaurantController extends Controller
             } else {
                 $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
             };
-            $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
-            $value=$restaurant_emergency_status.$is_admin_approved.$btn;
+            // $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
+            $value=$restaurant_emergency_status.$is_admin_approved;
             
             return $value;
         })

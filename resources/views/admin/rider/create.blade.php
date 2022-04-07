@@ -96,32 +96,6 @@
                                     </div>
                                 </div>
                                 
-
-                                <div class="form-group row">
-                                    <label for="rider_latitude" class="col-md-12 col-form-label">{{ __('Rider Latitude') }} <span  style="color: #990000;font-weight:700;">*</span></label>
-                                    <div class="col-md-12">
-                                        <input type="text" id="rider_latitude" class="form-control @error('rider_latitude') is-invalid @enderror" name="rider_latitude" autocomplete="rider_latitude">{{ old('rider_latitude') }}
-                                        @error('rider_latitude')
-                                            <span class="invalid-feedback" role="alert">
-                                              <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label for="rider_longitude" class="col-md-12 col-form-label">{{ __('Rider Longitude') }} <span  style="color: #990000;font-weight:700;">*</span></label>
-                                    <div class="col-md-12">
-                                        <input type="text" id="rider_longitude" class="form-control @error('rider_longitude') is-invalid @enderror" name="rider_longitude" autocomplete="rider_longitude">{{ old('rider_longitude') }}
-                                        @error('rider_longitude')
-                                            <span class="invalid-feedback" role="alert">
-                                              <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                
-
                                 <div class="form-group row">
                                     <label for="rider_user_password" class="col-md-12 col-form-label">{{ __('Password') }} <span  style="color: #990000;font-weight:700;">*</span></label>
 

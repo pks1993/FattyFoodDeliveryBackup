@@ -36,7 +36,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="height: 20px;">
                 <div class="flash-message" id="successMessage">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                     @if(Session::has('alert-' . $msg))
@@ -105,7 +105,6 @@
                                             <th class="text-left">RegisterDate</th>
                                             <th class="text-left">Latitude</th>
                                             <th class="text-left">Longitude</th>
-                                            <th class="text-left">Approved</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -122,6 +121,10 @@
     @endsection
     @push('scripts')
     <script>
+
+setTimeout(function() {
+        $('#successMessage').fadeOut('fast');
+    }, 2000);
         
         // Custom filtering function which will search data in column four between two values
     $.fn.dataTable.ext.search.push(
@@ -169,7 +172,6 @@
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'rider_latitude', name:'rider_latitude'},
                 {data: 'rider_longitude', name:'rider_longitude'},
-                {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},
                 
                 ],
                 dom: 'lBfrtip',

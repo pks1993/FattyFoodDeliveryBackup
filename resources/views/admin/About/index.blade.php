@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+{{-- @extends('admin.layouts.master')
 
 @section('css')
 @endsection
@@ -89,4 +89,33 @@
         $('#successMessage').fadeOut('fast');
     }, 2000);
 </script>
-@endpush
+@endpush --}}
+
+{{-- <iframe 
+  width="300" 
+  height="170" 
+  frameborder="0" 
+  scrolling="no" 
+  marginheight="0" 
+  marginwidth="0" 
+  src="https://maps.google.com/maps?q='+YOUR_LAT+','+YOUR_LON+'&hl=es&z=14&amp;output=embed"
+ > --}}
+
+ {{-- <iframe width="100%" 
+ height="100%" 
+ frameborder="0" 
+ scrolling="no" 
+ marginheight="0" 
+ marginwidth="0" 
+src = "https://maps.google.com/maps?q=21.9293083,96.1116005&hl=es;z=14&amp;output=embed"></iframe> --}}
+<iframe width="100%" height="100%" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" style="border:0" src="https://maps.google.com/maps?saddr=21.9339885,96.110661&daddr=21.938852968794,96.136361720505%20to:21.929273415891313,96.1115577444434&hl=es;z=19&amp;output=embed" allowfullscreen></iframe>
+{{-- <iframe width="100%" 
+        height="100%" 
+        frameborder="0" 
+        scrolling="no" 
+        marginheight="0" 
+        marginwidth="0" 
+        src="https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=333+E+34th+St,+New+York,+NY&aq=1&oq=333&sll=37.269174,-119.306607&sspn=16.742323,33.815918&ie=UTF8&hq=&hnear=333+E+34th+St,+New+York,+10016&t=m&z=14&ll=40.744403,-73.974467&output=embed">
+</iframe> --}}
+
+

@@ -11,7 +11,7 @@
     
     <div class="form-group">
         <label>Rider Image :</label><br>
-        @if($rider->image)
+        @if($rider->rider_image)
             <img src="../../../../../uploads/rider/{{ $rider->rider_image}}" class="img-thumbnail" width="200" height="200">
         @else
             <img src="../../../../../image/available.png" class="img-thumbnail" width="200" height="200">
