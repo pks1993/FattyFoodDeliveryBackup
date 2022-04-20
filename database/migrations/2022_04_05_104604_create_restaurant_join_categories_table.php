@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentMethodsTable extends Migration
+class CreateRestaurantJoinCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_methods', function (Blueprint $table) {
-            $table->id('payment_method_id');
-            $table->string('payment_method_name');
-            $table->boolean('on_off_status')->nullable()->default(0);
+        Schema::create('restaurant_join_categories', function (Blueprint $table) {
+            $table->id('restaurant_join_category_id');
+            $table->unsignedBigInteger('restaurant_id');
+            $table->unsignedBigInteger('restaurant_category_id');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_methods');
+        Schema::dropIfExists('restaurant_join_categories');
     }
 }

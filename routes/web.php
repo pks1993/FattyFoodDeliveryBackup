@@ -163,27 +163,35 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('rider_group/delete/{rider_group_id}','Admin\RiderGroup\RiderGroupController@destroy')->name('rider_group.destroy');
     Route::get('all_user/list/{id}','Admin\RiderGroup\RiderGroupController@user_list');
 
-    //Restaurant
+    //Restaurant Start//
+    //CRUD
     Route::get('restaurants','Admin\Restaurant\RestaurantController@index');
     Route::get('restaurants/datatable/restaurantajax','Admin\Restaurant\RestaurantController@restaurantajax');
-    Route::get('restaurant_chart','Admin\Restaurant\RestaurantController@restaurantchart');
+    Route::get('restaurants/view/{restaurant_id}','Admin\Restaurant\RestaurantController@show')->name('restaurants.view');
 
-    Route::get('restaurants/create','Admin\Restaurant\RestaurantController@create')->name('restaurants.create');
+    // Route::get('restaurants/create','Admin\Restaurant\RestaurantController@create')->name('restaurants.create');
     Route::post('restaurants/store','Admin\Restaurant\RestaurantController@store')->name('restaurants.store');
     Route::get('restaurants/edit/{restaurant_id}','Admin\Restaurant\RestaurantController@edit')->name('restaurants.edit');
     Route::post('restaurants/update/{restaurant_id}','Admin\Restaurant\RestaurantController@update')->name('restaurants.update');
     Route::delete('restaurants/delete/{restaurant_id}','Admin\Restaurant\RestaurantController@destroy')->name('restaurants.destroy');
+
+    //restaurant user
+    Route::get('restaurants/user/create','Admin\Restaurant\RestaurantController@user_create')->name('restaurants_user.create');
+    Route::post('restaurants/user/store','Admin\Restaurant\RestaurantController@user_store')->name('restaurants_user.store');
+
+    //chart
+    Route::get('restaurant_chart','Admin\Restaurant\RestaurantController@restaurantchart');
     Route::get('restaurants/city/list/{id}','Admin\Restaurant\RestaurantController@city_list1');
     Route::get('restaurants/state/list/{id}','Admin\Restaurant\RestaurantController@state_list');
+    //approved and opening
     Route::get('restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update');
     Route::get('restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update');
-
-    Route::get('100_restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update_100');
-    Route::get('100_restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update_100');
-
     //100 Restaurant
     Route::get('100_restaurants','Admin\Restaurant\RestaurantController@hundredIndex');
     Route::get('restaurants/datatable/hundredrestaurantajax','Admin\Restaurant\RestaurantController@hundredrestaurantajax');
+    Route::get('100_restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update_100');
+    Route::get('100_restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update_100');
+    //Restaurant End//
 
     //Recommend Restaurant
     Route::get('recommend_restaurants','Admin\Restaurant\RecommendRestaurantController@index');

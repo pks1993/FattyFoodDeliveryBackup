@@ -62,17 +62,17 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                {{-- <div class="card-header">
+                <div class="card-header">
                     <div class="row">
                         <div class="col-md-6">
-                            <a href="{{route('fatty.admin.restaurants.create')}}" class="btn btn-primary btn-sm">
+                            <a href="{{route('fatty.admin.restaurants_user.create')}}" class="btn btn-primary btn-sm">
                                 <i class="fa fa-plus"></i> Add Restaurant</a>
                         </div>
                         <div class="col-md-6" style="text-align: right;">
                             <h4><b>{{ "Restaurant Information" }}</b></h4>
                         </div>
                     </div>
-                </div> --}}
+                </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="tab-content">
@@ -92,10 +92,8 @@
                                 <table id="restaurants" class="table table-hover">
                                     <thead>
                                         <tr class="text-center">
-                                            {{-- <th>Opening</th>
-                                                <th>Approved</th> --}}
-                                            <th>Action</th>
                                             <th>No.</th>
+                                            <th>Status</th>
                                             <th>Image</th>
                                             <th>RegisterDate</th>
                                             <th>NameMyanmar</th>
@@ -105,7 +103,9 @@
                                             <th>Address</th>
                                             <th>CityName</th>
                                             <th>StateName</th>
-                                            <th>UserName</th>
+                                            <th>UserPhone</th>
+                                            <th>UserPassword</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -125,7 +125,7 @@
 
     setTimeout(function() {
         $('#successMessage').fadeOut('fast');
-    }, 2000);
+    }, 3000);
         
         // Custom filtering function which will search data in column four between two values
         $.fn.dataTable.ext.search.push(
@@ -163,21 +163,22 @@
                 "processing": true,  // Show processing
                 ajax: "/fatty/main/admin/restaurants/datatable/restaurantajax",
                 columns: [
-                {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-                // {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "text-center"},
-                // {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},
-                {data: 'restaurant_image', name:'restaurant_image',className: "restaurant_image"},
-                {data: 'register_date', name:'register_date',className: "register_date"},
-                {data: 'restaurant_name_mm', name:'restaurant_name_mm'},
-                {data: 'restaurant_name_en', name:'restaurant_name_en'},
-                {data: 'restaurant_name_ch', name:'restaurant_name_ch'},
-                {data: 'restaurant_category_name_mm', name:'restaurant_category_name_mm',className: "restaurant_category_name_mm"},
-                {data: 'restaurant_address', name:'restaurant_address'},
-                {data: 'city_name_mm', name:'city_name_mm',className: "text-center"},
-                {data: 'state_name_mm', name:'state_name_mm',className: "text-center"},
-                {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "restaurant_user_phone"},
-                
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
+                    {data: 'status', name: 'status', orderable: false, searchable: false,className: "btn-group"},
+                    {data: 'restaurant_image', name:'restaurant_image',className: "restaurant_image"},
+                    {data: 'register_date', name:'register_date',className: "register_date"},
+                    {data: 'restaurant_name_mm', name:'restaurant_name_mm'},
+                    {data: 'restaurant_name_en', name:'restaurant_name_en'},
+                    {data: 'restaurant_name_ch', name:'restaurant_name_ch'},
+                    {data: 'restaurant_category_name_mm', name:'restaurant_category_name_mm',className: "restaurant_category_name_mm"},
+                    {data: 'restaurant_address', name:'restaurant_address'},
+                    {data: 'city_name_mm', name:'city_name_mm',className: "text-center"},
+                    {data: 'state_name_mm', name:'state_name_mm',className: "text-center"},
+                    {data: 'restaurant_user_password', name:'restaurant_user_phone',className: "restaurant_user_phone"},
+                    {data: 'restaurant_user_password', name:'restaurant_user_password',className: "restaurant_user_password"},
+                    {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
+                    // {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "text-center"},
+                    // {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},
                 ],
                 dom: 'lBfrtip',
                 buttons: [

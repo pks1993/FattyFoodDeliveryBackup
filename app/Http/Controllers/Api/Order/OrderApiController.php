@@ -1090,7 +1090,16 @@ class OrderApiController extends Controller
 
     public function payment_list(Request $request)
     {
-        $payment_list=PaymentMethod::orderBy('created_at','DESC')->get();
+        $payment_list=PaymentMethod::orderBy('created_at','DESC')->where('on_off_status',1)->get();
+        $data=[];
+        foreach($payment_list as $value){
+            if($value->on_off_status==1){
+                $value->on_off_status=true;
+            }else{
+                $value->on_off_status=false;
+            }
+            array_push($data,$value);
+        }
         return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
     }
 

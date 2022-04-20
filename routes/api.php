@@ -188,6 +188,9 @@ Route::post('fatty/202221/lashio/main/admin/customers/food/orders/delivery/fee',
 //Notify url
 Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\NotificationApiController@notify_url');
 
+//force update
+Route::get('fatty/main/admin/android/version/check','Api\Notification\NotificationApiController@android_version_check');
+Route::get('fatty/main/admin/ios/version/check','Api\Notification\NotificationApiController@ios_version_check');
 
 
 

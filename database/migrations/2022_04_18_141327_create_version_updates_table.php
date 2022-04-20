@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentMethodsTable extends Migration
+class CreateVersionUpdatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_methods', function (Blueprint $table) {
-            $table->id('payment_method_id');
-            $table->string('payment_method_name');
-            $table->boolean('on_off_status')->nullable()->default(0);
+        Schema::create('version_updates', function (Blueprint $table) {
+            $table->id('version_update_id');
+            $table->string('current_version')->nullable();
+            $table->boolean('is_force_update')->default(0);
+            $table->string('os_type')->nullable()->default('android');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_methods');
+        Schema::dropIfExists('version_updates');
     }
 }

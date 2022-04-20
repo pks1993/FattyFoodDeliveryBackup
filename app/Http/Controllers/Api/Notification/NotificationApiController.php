@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order\CustomerOrder;
 use App\Models\Customer\Customer;
 use App\Models\Restaurant\Restaurant;
+use App\Models\Setting\VersionUpdate;
 
 class NotificationApiController extends Controller
 {
@@ -20,6 +21,40 @@ class NotificationApiController extends Controller
     {
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
+    }
+
+    public function android_version_check()
+    {
+        $value=VersionUpdate::where('os_type','android')->first();
+        if($value){
+            $data=[];
+            if($value->is_force_update==1){
+                $value->is_force_update=true;
+            }else{
+                $value->is_force_update=false;
+            }
+            array_push($data,$value);
+            return response()->json(['success'=>true,'message'=>'this is current version for android','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'version data not found']);
+        }
+    }
+
+    public function ios_version_check()
+    {
+        $value=VersionUpdate::where('os_type','ios')->first();
+        if($value){
+            $data=[];
+            if($value->is_force_update==1){
+                $value->is_force_update=true;
+            }else{
+                $value->is_force_update=false;
+            }
+            array_push($data,$value);
+            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'version data not found']);
+        }
     }
     
     public function notify_url(Request $request)

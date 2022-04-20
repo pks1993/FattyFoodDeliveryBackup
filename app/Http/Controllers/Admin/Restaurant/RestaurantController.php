@@ -10,8 +10,16 @@ use App\Models\Restaurant\RestaurantCategory;
 use App\Models\Zone\Zone;
 use App\Models\State\State;
 use App\Models\City\City;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+// use App\Models\Order\CustomerOrder;
+use App\Models\Restaurant\RestaurantAvailableTime;
+use App\Models\Food\Food;
+use App\Models\Food\FoodMenu;
+use App\Models\Food\FoodSubItem;
+use App\Models\Food\FoodSubItemData;
+use App\Models\Restaurant\RecommendRestaurant;
+use App\Models\Wishlist\Wishlist;
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
 // use Illuminate\Support\Facades\Crypt;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\File;
@@ -95,6 +103,7 @@ class RestaurantController extends Controller
             return response()->json(['success'=>false,'message'=>'restaurant id not found']);
         }
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -117,24 +126,29 @@ class RestaurantController extends Controller
             };
             return $restaurant_image;
         })
-        ->addColumn('action', function(Restaurant $post){
+        ->addColumn('status', function(Restaurant $post){
             if ($post->restaurant_emergency_status==0) {
-                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Restaurant Open"><i class="fas fa-lock-open"></i></a>';
             } else {
-                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Restaurant Close"><i class="fas fa-lock"></i></a>';
             };
             if ($post->restaurant_user->is_admin_approved==0) {
-                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Admin Not Approved"><i class="fas fa-thumbs-down"></i></a>';
             } else {
-                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Admin Approved"><i class="fas fa-thumbs-up"></i></a>';
             };
-            // $btn = '<form action="/fatty/main/admin/restaurants/delete'.$post->restaurant_id.'" method="post" class="d-inline">
-            // '.csrf_field().'
-            // '.method_field("DELETE").'
-            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            // </form>';
-            $value=$restaurant_emergency_status.$is_admin_approved;
-            
+            $view_detail = '<a href="/fatty/main/admin/restaurants/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Detail"><i class="fas fa-eye"></i></a>';
+            $value=$view_detail.$restaurant_emergency_status.$is_admin_approved;
+            return $value;
+        })
+        ->addColumn('action', function(Restaurant $post){
+            $delete = '<form action="/fatty/main/admin/restaurants/delete/'.$post->restaurant_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Restaurant Delete"><i class="fa fa-trash"></button>
+            </form>';
+            $edit = '<a href="/fatty/main/admin/restaurants/edit/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Edit"><i class="fas fa-edit"></i></a>';
+            $value=$edit.$delete;
             return $value;
         })
         ->addColumn('register_date', function(Restaurant $item){
@@ -157,6 +171,10 @@ class RestaurantController extends Controller
             $restaurant_user_phone = $item->restaurant_user->restaurant_user_phone;
             return $restaurant_user_phone;
         })
+        ->addColumn('restaurant_user_password', function(Restaurant $item){
+            $restaurant_user_password = $item->restaurant_user->restaurant_user_password;
+            return $restaurant_user_password;
+        })
         // ->addColumn('restaurant_emergency_status', function(Restaurant $item){
         //     if ($item->restaurant_emergency_status==0 && $item->restaurant_user->is_admin_approved==1) {
         //         $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
@@ -173,7 +191,7 @@ class RestaurantController extends Controller
         //     };
         //     return $is_admin_approved;
         // })
-        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','action','register_date'])
+        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_user_password','action','register_date','status'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -272,6 +290,57 @@ class RestaurantController extends Controller
    //      $encrypted = Crypt::encryptString('Hello DevDojo');
    //       $decrypt= Crypt::decryptString('your_encrypted_string_here');
 
+   public function user_create()
+   {
+       return view('admin.restaurant.restaurant_user.user_create');
+   }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+   public function user_store(Request $request)
+   {
+        $this->validate($request, [
+            'restaurant_user_phone' => 'required',
+            'password' => 'required|min:6|same:password_confirmation',
+        ]);
+
+        $states=State::all();
+        $categories=RestaurantCategory::all();
+
+        $check_user=RestaurantUser::withCount('restaurant as check_restaurant')->where('restaurant_user_phone',$request['restaurant_user_phone'])->first();
+
+        // return response()->json($check_user);
+        if($check_user){
+            $restaurant_user=$check_user;
+            if($check_user->check_restaurant==0){
+                if($check_user->restaurant_user_password==$request['password']){
+                    $request->session()->flash('alert-success', 'successfully create restaurant user.');
+                    return view('admin.restaurant.create',compact('restaurant_user','states','categories')); 
+                }else{
+                    $check_user->restaurant_user_password=$request['password'];
+                    $check_user->update();
+                    $request->session()->flash('alert-success', 'successfully create restaurant user');
+                    return view('admin.restaurant.create',compact('restaurant_user','states','categories')); 
+                }
+            }else{
+                $request->session()->flash('alert-warning', 'Please Check! This Phone Number have Restaurant Account.');
+                return redirect()->back();
+            }
+        }else{
+            $restaurant_user=RestaurantUser::create([
+                "restaurant_user_phone"=>$request['restaurant_user_phone'],
+                "restaurant_user_password"=>$request['password'],
+                "is_admin_approved"=>1,
+            ]);
+
+            $request->session()->flash('alert-success', 'successfully create restaurant user');
+            return view('admin.restaurant.create',compact('restaurant_user','states','categories'));
+        }
+   }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -298,9 +367,8 @@ class RestaurantController extends Controller
             'city_id' => 'required',
             'state_id' => 'required',
             'address' => 'required',
-            'restaurant_latitude' => 'required',
-            'restaurant_longitude' => 'required',
-            'password' => 'required|min:6|same:password_confirmation',
+            // 'restaurant_latitude' => 'required',
+            // 'restaurant_longitude' => 'required',
         ]);
         $photoname=time();
         $restaurants=new Restaurant();
@@ -317,10 +385,18 @@ class RestaurantController extends Controller
         $restaurants->restaurant_category_id=$request['restaurant_category_id'];
         $restaurants->city_id=$request['city_id'];
         $restaurants->state_id=$request['state_id'];
-        $restaurants->address=$request['address'];
-        $restaurants->password=$request['password'];
+        $restaurants->restaurant_address=$request['address'];
+        $restaurants->restaurant_address_mm=$request['address'];
+        $restaurants->restaurant_address_en=$request['address'];
+        $restaurants->restaurant_address_ch=$request['address'];
+        $restaurants->restaurant_latitude=$request['restaurant_latitude'];
+        $restaurants->restaurant_longitude=$request['restaurant_longitude'];
+        $restaurants->restaurant_phone=$request['restaurant_phone'];
+        $restaurants->restaurant_user_id=$request['restaurant_user_id'];
+        $restaurants->average_time=$request['average_time'];
+        $restaurants->rush_hour_time=$request['rush_hour_time'];
         $restaurants->save();
-        $request->session()->flash('alert-success', 'successfully store restaurant!');
+        $request->session()->flash('alert-success', 'successfully create restaurant!');
         return redirect('fatty/main/admin/restaurants');
     }
 
@@ -332,7 +408,8 @@ class RestaurantController extends Controller
      */
     public function show($id)
     {
-        //
+        $restaurant=Restaurant::find($id);
+        return view('admin.restaurant.view',compact('restaurant'));
     }
 
     /**
@@ -346,9 +423,8 @@ class RestaurantController extends Controller
         $restaurants=Restaurant::findOrFail($id);
         $states=State::where('state_id','!=',$restaurants->state_id)->get();
         $cities=City::where('city_id','!=',$restaurants->city_id)->where('state_id',$restaurants->state_id)->get();
-        $zones=Zone::where('zone_id','!=',$restaurants->zone_id)->get();
         $categories=RestaurantCategory::where('restaurant_category_id','!=',$restaurants->restaurant_category_id)->get();
-        return view('admin.restaurant.edit',compact('categories','restaurants','states','cities','zones'));
+        return view('admin.restaurant.edit',compact('categories','restaurants','states','cities'));
     }
 
     /**
@@ -361,21 +437,32 @@ class RestaurantController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'restaurant_name' => 'required',
+            'restaurant_name_mm' => 'required',
+            'restaurant_category_id' => 'required',
             'city_id' => 'required',
             'state_id' => 'required',
-            'zone_id' => 'required',
-            // 'address' => 'required',
-            'password' => 'required|min:6|same:password_confirmation',
+            'address' => 'required',
         ]);
         $photoname=time();
         $restaurants=Restaurant::where('restaurant_id',$id)->first();
 
-        $restaurants->restaurant_name=$request['restaurant_name'];
+        $restaurants->restaurant_name_mm=$request['restaurant_name_mm'];
+        $restaurants->restaurant_name_en=$request['restaurant_name_en'];
+        $restaurants->restaurant_name_ch=$request['restaurant_name_ch'];
+        $restaurants->restaurant_category_id=$request['restaurant_category_id'];
         $restaurants->city_id=$request['city_id'];
         $restaurants->state_id=$request['state_id'];
-        $restaurants->zone_id=$request['zone_id'];
-        $restaurants->address=$request['address'];
+        $restaurants->restaurant_address=$request['address'];
+        $restaurants->restaurant_address_mm=$request['address'];
+        $restaurants->restaurant_address_en=$request['address'];
+        $restaurants->restaurant_address_ch=$request['address'];
+        $restaurants->restaurant_latitude=$request['restaurant_latitude'];
+        $restaurants->restaurant_longitude=$request['restaurant_longitude'];
+        $restaurants->restaurant_phone=$request['restaurant_phone'];
+        $restaurants->restaurant_user_id=$restaurants->restaurant_user_id;
+        $restaurants->average_time=$request['average_time'];
+        $restaurants->rush_hour_time=$request['rush_hour_time'];
+
 
         if(!empty($request['restaurant_image'])){
             Storage::disk('Restaurants')->delete($restaurants->restaurant_image);
@@ -383,12 +470,9 @@ class RestaurantController extends Controller
             $restaurants->restaurant_image=$img_name;
             Storage::disk('Restaurants')->put($img_name, File::get($request['restaurant_image']));
         }
-        if($request['password']){
-            // $password = Crypt::encryptString($request['password']);
-            $restaurants->password=$request['password'];
-        }
         $restaurants->update();
-        // dd($restaurants);
+
+
         $request->session()->flash('alert-success', 'successfully update restaurant!');
         return redirect('fatty/main/admin/restaurants');
     }
@@ -401,10 +485,25 @@ class RestaurantController extends Controller
      */
     public function destroy(Request $request,$id)
     {
-        $restaurants=Restaurant::where('restaurant_id','=',$id)->FirstOrFail();
-        Storage::disk('Restaurants')->delete($restaurants->restaurant_image);
-        $restaurants->delete();
-        $request->session()->flash('alert-danger', 'successfully delete restaurant!');
-        return redirect('fatty/main/admin/restaurants');
+        $restaurants=Restaurant::withCount(['orders','menu','food','recommend','wishlist','available_time','restaurant_user'])->where('restaurant_id','=',$id)->FirstOrFail();
+
+        if($restaurants->orders_count==0){
+            RecommendRestaurant::where('restaurant_id',$id)->delete();
+            Food::where('restaurant_id',$id)->delete();
+            FoodMenu::where('restaurant_id',$id)->delete();
+            FoodSubItem::where('restaurant_id',$id)->delete();
+            FoodSubItemData::where('restaurant_id',$id)->delete();
+            RestaurantAvailableTime::where('restaurant_id',$id)->delete();
+            RestaurantUser::where('restaurant_user_id',$restaurants->restaurant_user_id)->delete();
+            Wishlist::where('restaurant_id',$id)->delete();
+
+            Storage::disk('Restaurants')->delete($restaurants->restaurant_image);
+            $restaurants->delete();
+            $request->session()->flash('alert-danger', 'successfully delete restaurant!');
+            return redirect('fatty/main/admin/restaurants');
+        }else{
+            $request->session()->flash('alert-warning', 'Please Check! '. $restaurants->restaurant_name_en .' have orders! So not delete this restaurant');
+            return redirect()->back();
+        }
     }
 }
