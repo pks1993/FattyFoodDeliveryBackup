@@ -2535,15 +2535,34 @@ class RiderApicontroller extends Controller
         $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
 
         $this_week=CustomerOrder::with(['rider'=>function($foods){
-            $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
+            $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->where('created_at','>',Carbon::now()->subDays(10)->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
+        $this_week_data=[];
+        foreach($this_week as $value){
+            $kilometer=number_format((float)$value->distance, 2, '.', '');
+            $value->distance=$kilometer;
+            array_push($this_week_data,$value);
+        }
            
         $this_month=CustomerOrder::with(['rider'=>function($foods){
             $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
-       
+        $this_month_data=[];
+        foreach($this_month as $value1){
+            $kilometer=number_format((float)$value1->distance, 2, '.', '');
+            $value1->distance=$kilometer;
+            array_push($this_month_data,$value1);
+        }
+
+        $today=CustomerOrder::with(['rider'=>function($foods){
+                $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get()->each(function ($row, $index) {$row->rank = $index + 1;});
+        $today_data=[];
+        foreach($today as $value2){
+            $kilometer=number_format((float)$value2->distance, 2, '.', '');
+            $value2->distance=$kilometer;
+            array_push($today_data,$value2);
+        }
 
 
-
-        return response()->json(['success'=>true,'message'=>'this is rider report','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'ranking'=>['this_week'=>$this_week,'this_month'=>$this_month]]]);
+        return response()->json(['success'=>true,'message'=>'this is rider report','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'ranking'=>['today'=>$today,'this_week'=>$this_week,'this_month'=>$this_month]]]);
     }
 
     /**
