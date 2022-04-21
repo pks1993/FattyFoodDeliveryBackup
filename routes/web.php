@@ -168,6 +168,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('restaurants','Admin\Restaurant\RestaurantController@index');
     Route::get('restaurants/datatable/restaurantajax','Admin\Restaurant\RestaurantController@restaurantajax');
     Route::get('restaurants/view/{restaurant_id}','Admin\Restaurant\RestaurantController@show')->name('restaurants.view');
+    Route::get('restaurants/openingtime/view/{restaurant_id}','Admin\Restaurant\RestaurantController@openingtime_view')->name('restaurants.openingtime.view');
+    Route::post('restaurants/openingtime/store/{restaurant_id}','Admin\Restaurant\RestaurantController@openingtime_store')->name('restaurants_openingtime.store');
 
     // Route::get('restaurants/create','Admin\Restaurant\RestaurantController@create')->name('restaurants.create');
     Route::post('restaurants/store','Admin\Restaurant\RestaurantController@store')->name('restaurants.store');
