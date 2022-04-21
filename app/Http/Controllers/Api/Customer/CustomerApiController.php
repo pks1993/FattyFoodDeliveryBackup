@@ -66,6 +66,7 @@ class CustomerApiController extends Controller
     public function login_version_one(Request $request)
     {
         $device_id = $request->header('device_id');
+        $headers = getallheaders();
         $customer_phone=$request['customer_phone'];
         $fcm_token=$request['fcm_token'];
         $os_type=(int)$request['os_type'];
@@ -112,7 +113,7 @@ class CustomerApiController extends Controller
                     "customer_id"=>$customer->customer_id,
                 ]);
             }
-            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','data'=>$customer]);
+            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','data'=>$customer,'device'=>$device_id,'header'=>$headers]);
         }else{
             $customers=new Customer();
             $customers->customer_phone=$customer_phone;
