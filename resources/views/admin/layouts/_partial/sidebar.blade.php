@@ -345,7 +345,7 @@
                         <div style="width: 35%;text-align: right;">
                             <i class="right fas fa-angle-left"></i>
                         </div>
-                    </div>                    
+                    </div>
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
@@ -374,7 +374,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview">
+            <!-- <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
@@ -402,7 +402,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>  
+            </li>   -->
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
@@ -466,7 +466,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>  
+            </li>
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
