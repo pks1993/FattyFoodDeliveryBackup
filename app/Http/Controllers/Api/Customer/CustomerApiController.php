@@ -63,6 +63,51 @@ class CustomerApiController extends Controller
 
     }
 
+    public function one_device_login(Request $request)
+    {
+        $headers[] = getallheaders();
+        foreach($headers as $value){
+            $device_id=$value['device_id'];
+        }
+        $customer_id=$request['customer_id'];
+        $customer=Customer::where('customer_id',$customer_id)->first();
+
+        if($customer!=null){
+
+            if($customer->device_id != $device_id){
+                $title="Another Device Login";
+                $messages="Your account have been login from another device";
+                $message = strip_tags($messages);
+                $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
+                $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
+                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+                //Customer
+                $fcm_token_noti=array();
+                array_push($fcm_token_noti, $customer->fcm_token);
+
+                $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
+                $field=array('registration_ids'=>$fcm_token_noti,'notification'=>$notification,'data'=>['type'=>'another_login','title' => $title,'body' => $message]);
+
+                $playLoad = json_encode($field);
+                $curl_session = curl_init();
+                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+                curl_setopt($curl_session, CURLOPT_POST, true);
+                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+                $result = curl_exec($curl_session);
+                curl_close($curl_session);
+                return response()->json(['success'=>true,'message' => 'this is customer notification','data'=>$customer,'notification'=>$playLoad]);
+            }else{
+                return response()->json(['success'=>false,'message' => 'device id same! So not send notification']);
+            }
+        }else{
+            return response()->json(['success'=>false,'message' => 'customer not found']);
+        }
+    }
+
     public function login_version_one(Request $request)
     {
         $headers[] = getallheaders();
@@ -115,7 +160,7 @@ class CustomerApiController extends Controller
                     "customer_id"=>$customer->customer_id,
                 ]);
             }
-            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','notification_log'=>$playLoad,'data'=>$customer]);
+            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','data'=>$customer]);
         }else{
             $customers=new Customer();
             $customers->customer_phone=$customer_phone;

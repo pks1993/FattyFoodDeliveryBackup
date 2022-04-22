@@ -69,6 +69,33 @@ class RestaurantApiController extends Controller
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
     }
 
+    public function restaurant_insight_v1(Request $request)
+    {
+        $restaurant_id=$request['restaurant_id'];
+        $current_date=$request['start_date'];
+        $next_date=$request['end_date'];
+        $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
+        $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+        // $tt=Date(Carbon::today());
+
+        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->get();
+        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','1')->count();
+        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','2')->count();
+        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','3')->count();
+        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+
+        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+
+        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+
+        //OrderShow
+        $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+
+        $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
+
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -145,7 +172,7 @@ class RestaurantApiController extends Controller
         }
     }
 
-   public function user_register(Request $request) 
+   public function user_register(Request $request)
    {
     $restaurant_user_phone=$request['restaurant_user_phone'];
     $restaurant_user_password=$request['restaurant_user_password'];
@@ -415,7 +442,7 @@ class RestaurantApiController extends Controller
             $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food','menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();
             },'menu.food.sub_item.option'])->where('restaurant_id',$restaurant_id)->select('restaurant_id','restaurant_name_mm as restaurant_name','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_latitude','restaurant_longitude','restaurant_address_mm as restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status')->first();
-        
+
         return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>['restaurant'=>$restaurant]]);
     }
 
@@ -555,7 +582,7 @@ class RestaurantApiController extends Controller
                 // }
 
                 $option=$list['option'];
-                
+
 
                 foreach ($option as $key=>$value1){
                     $item_name_mm=$value1['item_name_mm'];
@@ -577,7 +604,7 @@ class RestaurantApiController extends Controller
                 }
             }
         }
-        
+
 
         $foods=Food::with(['sub_item'=>function($sub_item){
                 $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
@@ -753,10 +780,10 @@ class RestaurantApiController extends Controller
             $result=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
             $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
-            ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+            ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
@@ -805,7 +832,7 @@ class RestaurantApiController extends Controller
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>[]]);
         }
         else{
-            return response()->json(['success'=>false,'message'=>'Something Error!']);   
+            return response()->json(['success'=>false,'message'=>'Something Error!']);
         }
     }
 
@@ -826,10 +853,10 @@ class RestaurantApiController extends Controller
         $restaurants=Restaurant::with(['category'=> function($category){
         $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
         $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
-        ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+        ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         ->whereIn('restaurant_category_id',$category_id)
@@ -857,13 +884,13 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
-                
+
                 if($value->wishlist==1){
                     $value->is_wish=true;
                 }else{
                     $value->is_wish=false;
                 }
-                
+
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
@@ -872,7 +899,7 @@ class RestaurantApiController extends Controller
             }
 
 
-        
+
         return response()->json(['success'=>true,'message'=>'this is restaurant','data'=>$restaurants]);
     }
 
