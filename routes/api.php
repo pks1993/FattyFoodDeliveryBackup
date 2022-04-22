@@ -22,7 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Route::post('auth_login','Api\Auth\AuthApiController@index');
 
 
-//Customer Api
+//Customer Api //one device login
 Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiController@index');
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
@@ -31,6 +31,7 @@ Route::post('fatty/202221/lashio/main/admin/customers/otp_check','Api\Customer\C
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
+Route::post('fatty/202221/lashio/main/admin/customers/one_device/login','Api\Customer\CustomerApiController@one_device_login');
 
 //Customer Notification
 Route::get('fatty/202221/lashio/main/admin/customers/notifications','Api\Notification\NotificationApiController@index');
@@ -161,6 +162,7 @@ Route::post('fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiCo
 Route::post('fatty/202221/lashio/main/admin/rider/insight','Api\Rider\RiderApiController@rider_insight');
 //insightRestaurant
 Route::post('fatty/202221/lashio/main/admin/restaurants/insight','Api\Restaurant\RestaurantApiController@restaurant_insight');
+Route::post('fatty/202221/lashio/main/admin/restaurants/insight/v1','Api\Restaurant\RestaurantApiController@restaurant_insight_v1');
 
 //Testing
 Route::post('rider/test/store','Api\Rider\RiderApiController@test_store');
