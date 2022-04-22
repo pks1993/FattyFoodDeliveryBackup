@@ -115,7 +115,7 @@ class CustomerApiController extends Controller
                     "customer_id"=>$customer->customer_id,
                 ]);
             }
-            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','data'=>$customer]);
+            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','notification_log'=>$playLoad,'data'=>$customer]);
         }else{
             $customers=new Customer();
             $customers->customer_phone=$customer_phone;
