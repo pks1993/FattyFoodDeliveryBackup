@@ -115,7 +115,7 @@ class RestaurantController extends Controller
     }
 
     public function restaurantajax(){
-        $model =  Restaurant::orderBy('state_id')->get();
+        $model =  Restaurant::orderBy('restaurant_id','desc')->get();
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('restaurant_image', function(Restaurant $item){
@@ -148,7 +148,9 @@ class RestaurantController extends Controller
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Restaurant Delete"><i class="fa fa-trash"></button>
             </form>';
             $edit = '<a href="/fatty/main/admin/restaurants/edit/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Edit"><i class="fas fa-edit"></i></a>';
-            $value=$edit.$delete;
+            $opening = '<a href="/fatty/main/admin/restaurants/openingtime/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Opening Time"><i class="fas fa-clock"></i></a>';
+            $menu='<a href="/fatty/main/admin/restaurants/menu/list/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Menu"><i class="fas fa-list"></i></a>';
+            $value=$opening.$menu.$edit.$delete;
             return $value;
         })
         ->addColumn('register_date', function(Restaurant $item){
@@ -175,22 +177,7 @@ class RestaurantController extends Controller
             $restaurant_user_password = $item->restaurant_user->restaurant_user_password;
             return $restaurant_user_password;
         })
-        // ->addColumn('restaurant_emergency_status', function(Restaurant $item){
-        //     if ($item->restaurant_emergency_status==0 && $item->restaurant_user->is_admin_approved==1) {
-        //         $restaurant_emergency_status = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>';
-        //     } else {
-        //         $restaurant_emergency_status = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>';
-        //     };
-        //     return $restaurant_emergency_status;
-        // })
-        // ->addColumn('is_admin_approved', function(Restaurant $item){
-        //     if ($item->restaurant_user->is_admin_approved==0) {
-        //         $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/view/'.$item->restaurant_id.'" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-        //     } else {
-        //         $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/view/'.$item->restaurant_id.'" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-        //     };
-        //     return $is_admin_approved;
-        // })
+
         ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_user_password','action','register_date','status'])
         ->searchPane('model', $model)
         ->make(true);
@@ -225,7 +212,7 @@ class RestaurantController extends Controller
                 $is_admin_approved = '<a href="/fatty/main/admin/100_restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
             };
             $value=$restaurant_emergency_status.$is_admin_approved;
-            
+
             return $value;
         })
         ->addColumn('register_date', function(Restaurant $item){
@@ -256,30 +243,30 @@ class RestaurantController extends Controller
     public function restaurantchart()
     {
         $m= date("m");
-        
+
         $de= date("d");
-        
+
         $y= date("Y");
-        
+
         for($i=0; $i<10; $i++){
-            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y)); 
-            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y)); 
+            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y));
+            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y));
             $daily_restaurants[]=Restaurant::orderBy('state_id')->whereDate('created_at', '=', $format_date)->count();
-            
-            
-            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y)); 
-            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y)); 
+
+
+            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y));
+            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y));
             $monthly_restaurants[] = Restaurant::orderBy('state_id')->whereMonth('created_at','=',$format_month)->count();
-            
+
             $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $yearly_restaurants[] = Restaurant::orderBy('state_id')->whereYear('created_at','=',$format_year)->count();
         }
-        return view('admin.restaurant.restaurant_chart.index')->with('days',$days)->with('daily_restaurants',$daily_restaurants)->with('months',$months)->with('monthly_restaurants',$monthly_restaurants)->with('years',$years)->with('yearly_restaurants',$yearly_restaurants);    
+        return view('admin.restaurant.restaurant_chart.index')->with('days',$days)->with('daily_restaurants',$daily_restaurants)->with('months',$months)->with('monthly_restaurants',$monthly_restaurants)->with('years',$years)->with('yearly_restaurants',$yearly_restaurants);
     }
 
     /**
-     *for city list all 
+     *for city list all
     */
     public function city_list($id)
     {
@@ -318,12 +305,12 @@ class RestaurantController extends Controller
             if($check_user->check_restaurant==0){
                 if($check_user->restaurant_user_password==$request['password']){
                     $request->session()->flash('alert-success', 'successfully create restaurant user.');
-                    return view('admin.restaurant.create',compact('restaurant_user','states','categories')); 
+                    return view('admin.restaurant.create',compact('restaurant_user','states','categories'));
                 }else{
                     $check_user->restaurant_user_password=$request['password'];
                     $check_user->update();
                     $request->session()->flash('alert-success', 'successfully create restaurant user');
-                    return view('admin.restaurant.create',compact('restaurant_user','states','categories')); 
+                    return view('admin.restaurant.create',compact('restaurant_user','states','categories'));
                 }
             }else{
                 $request->session()->flash('alert-warning', 'Please Check! This Phone Number have Restaurant Account.');
@@ -396,8 +383,155 @@ class RestaurantController extends Controller
         $restaurants->average_time=$request['average_time'];
         $restaurants->rush_hour_time=$request['rush_hour_time'];
         $restaurants->save();
+
+        $collect=array([
+                'day'=>"Monday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Tuesday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Wednesday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Thursday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Friday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Saturday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Sunday",
+                'on_off'=>0
+            ]
+        );
+
+        foreach($collect as $value){
+            $day=$value['day'];
+            $on_off=$value['on_off'];
+            RestaurantAvailableTime::create([
+                    "day"=>$day,
+                    "on_off"=>$on_off,
+                    "restaurant_id"=>$restaurants->restaurant_id,
+                ]);
+        }
+
+
         $request->session()->flash('alert-success', 'successfully create restaurant!');
         return redirect('fatty/main/admin/restaurants');
+    }
+
+    public function openingtime_view($id)
+    {
+        $restaurant=Restaurant::find($id);
+        $available=RestaurantAvailableTime::where('restaurant_id',$id)->get();
+        return view('admin.restaurant.restaurant_openingtime.index',compact('restaurant','available'));
+    }
+
+    public function openingtime_update(Request $request,$id)
+    {
+        if($request['on_off_monday']==null){
+            $on_off_monday=0;
+        }else{
+            $on_off_monday=1;
+        }
+        if($request['on_off_tuesday']==null){
+            $on_off_tuesday=0;
+        }else{
+            $on_off_tuesday=1;
+        }
+        if($request['on_off_wednesday']==null){
+            $on_off_wednesday=0;
+        }else{
+            $on_off_wednesday=1;
+        }
+        if($request['on_off_thursday']==null){
+            $on_off_thurdsay=0;
+        }else{
+            $on_off_thurdsay=1;
+        }
+        if($request['on_off_friday']==null){
+            $on_off_friday=0;
+        }else{
+            $on_off_friday=1;
+        }
+        if($request['on_off_saturday']==null){
+            $on_off_saturday=0;
+        }else{
+            $on_off_saturday=1;
+        }
+        if($request['on_off_sunday']==null){
+            $on_off_sunday=0;
+        }else{
+            $on_off_sunday=1;
+        }
+        $collect=array([
+            'day'=>$request['monday'],
+            'on_off'=>$on_off_monday,
+            'opening_time'=>$request['opening_time_monday'],
+            'closing_time'=>$request['closing_time_monday'],
+        ]
+        ,[
+            'day'=>$request['tuesday'],
+            'on_off'=>$on_off_tuesday,
+            'opening_time'=>$request['opening_time_tuesday'],
+            'closing_time'=>$request['closing_time_tuesday'],
+        ]
+        ,[
+            'day'=>$request['wednesday'],
+            'on_off'=>$on_off_wednesday,
+            'opening_time'=>$request['opening_time_wednesday'],
+            'closing_time'=>$request['closing_time_wednesday'],
+        ]
+        ,[
+            'day'=>$request['thursday'],
+            'on_off'=>$on_off_thurdsay,
+            'opening_time'=>$request['opening_time_thursday'],
+            'closing_time'=>$request['closing_time_thursday'],
+        ]
+        ,[
+            'day'=>$request['friday'],
+            'on_off'=>$on_off_friday,
+            'opening_time'=>$request['opening_time_friday'],
+            'closing_time'=>$request['closing_time_friday'],
+        ]
+        ,[
+            'day'=>$request['saturday'],
+            'on_off'=>$on_off_saturday,
+            'opening_time'=>$request['opening_time_saturday'],
+            'closing_time'=>$request['closing_time_saturday'],
+        ]
+        ,[
+            'day'=>$request['sunday'],
+            'on_off'=>$on_off_sunday,
+            'opening_time'=>$request['opening_time_sunday'],
+            'closing_time'=>$request['closing_time_sunday'],
+        ]
+    );
+        foreach($collect as $value){
+            $day=$value['day'];
+            $on_off=$value['on_off'];
+            $opening_time=$value['opening_time'];
+            $closing_time=$value['closing_time'];
+            RestaurantAvailableTime::where('day',$day)->where('restaurant_id',$id)->update([
+                    "day"=>$day,
+                    "on_off"=>$on_off,
+                    "opening_time"=>$opening_time,
+                    "closing_time"=>$closing_time,
+                    "restaurant_id"=>$id,
+                ]);
+        }
+
+        $request->session()->flash('alert-success', 'successfully create restaurant opening time!');
+        return redirect()->back();
     }
 
     /**
@@ -505,5 +639,75 @@ class RestaurantController extends Controller
             $request->session()->flash('alert-warning', 'Please Check! '. $restaurants->restaurant_name_en .' have orders! So not delete this restaurant');
             return redirect()->back();
         }
+    }
+
+    public function menu_list(Request $request,$id)
+    {
+        $restaurants=Restaurant::find($id);
+        $menus=FoodMenu::where('restaurant_id',$id)->get();
+        return view('admin.restaurant.restaurant_menu.index',compact('menus','restaurants'));
+    }
+
+    public function menu_list_data($id)
+    {
+        $model = FoodMenu::where('restaurant_id',$id)->orderBy('created_at','ASC')->get();
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(FoodMenu $post){
+            $edit='<a href="/fatty/main/admin/restaurants/menu/edit/'.$post->food_menu_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Menu Edit"><i class="fas fa-edit"></i></a>';
+            $delete = '<form action="/fatty/main/admin/restaurants/menu/delete/'.$post->food_menu_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Restaurant Delete"><i class="fa fa-trash"></button>
+            </form>';
+            $value=$edit.$delete;
+            return $value;
+        })
+        ->addColumn('food_menu_name_mm', function(FoodMenu $item){
+            $food_menu_name_mm = $item->food_menu_name_mm;
+            return $food_menu_name_mm;
+        })
+        ->addColumn('food_menu_name_en', function(FoodMenu $item){
+            $food_menu_name_en = $item->food_menu_name_en;
+            return $food_menu_name_en;
+        })
+        ->addColumn('food_menu_name_ch', function(FoodMenu $item){
+            $food_menu_name_ch = $item->food_menu_name_ch;
+            return $food_menu_name_ch;
+        })
+        ->addColumn('register_date', function(FoodMenu $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->rawColumns(['food_menu_name_mm','food_menu_name_en','food_menu_name_ch','action','register_date'])
+        ->searchPane('model', $model)
+        ->make(true);
+    }
+
+    public function menu_edit(Request $request,$id)
+    {
+        $food_menu=FoodMenu::findOrFail($id);
+        return view('admin.restaurant.restaurant_menu.edit',compact('food_menu'));
+    }
+
+    public function menu_store(Request $request)
+    {
+        FoodMenu::create($request->all());
+        $request->session()->flash('alert-success', 'successfully create food menu!');
+        return redirect()->back();
+    }
+
+    public function menu_update(Request $request,$id)
+    {
+        FoodMenu::find($id)->update($request->all());
+        $request->session()->flash('alert-success', 'successfully update food menu!');
+        return redirect('fatty/main/admin/restaurants/menu/list/'.$request['restaurant_id']);
+    }
+
+    public function menu_destroy(Request $request,$id)
+    {
+        FoodMenu::destroy($id);
+        $request->session()->flash('alert-danger', 'successfully delete food menu!');
+        return redirect()->back();
     }
 }

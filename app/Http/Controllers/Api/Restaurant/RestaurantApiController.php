@@ -932,4 +932,51 @@ class RestaurantApiController extends Controller
         }
     }
 
+    public function available_create(){
+        $restaurant=Restaurant::all();
+        foreach($restaurant as $value){
+            $id=$value['restaurant_id'];
+            $collect=array([
+                'day'=>"Monday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Tuesday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Wednesday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Thursday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Friday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Saturday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Sunday",
+                'on_off'=>0
+            ]
+        );
+
+        foreach($collect as $value1){
+            $day=$value1['day'];
+            $on_off=$value1['on_off'];
+            RestaurantAvailableTime::create([
+                    "day"=>$day,
+                    "on_off"=>$on_off,
+                    "restaurant_id"=>$id,
+                ]);
+        }
+        }
+        return response()->json(['success'=>true]);
+    }
+
 }

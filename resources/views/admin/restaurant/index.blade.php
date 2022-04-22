@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -53,7 +53,7 @@
                 </ol>
             </div>
             <div class="col-md-12">
-    
+
             </div>
         </div>
     </div>
@@ -109,7 +109,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                
+
                                     </tbody>
                                 </table>
                             </div>
@@ -126,14 +126,14 @@
     setTimeout(function() {
         $('#successMessage').fadeOut('fast');
     }, 3000);
-        
+
         // Custom filtering function which will search data in column four between two values
         $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
             var min = $('#min').datepicker("getDate");
             var max = $('#max').datepicker("getDate");
             var date = new Date( data[3] );
-            
+
             if (
             ( min === null && max === null ) ||
             ( min === null && date <= max ) ||
@@ -145,12 +145,12 @@
             return false;
         }
         );
-        
-        
+
+
         $(document).ready(function() {
             // Create date inputs
             $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-            
+
             $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
             // DataTables initialisation
             var table = $("#restaurants").DataTable({
@@ -185,7 +185,7 @@
                 'excel', 'pdf', 'print'
                 ],
             });
-            
+
             // Refilter the table
             $('#min, #max').on('change', function () {
                 table.draw();
@@ -193,4 +193,3 @@
         });
     </script>
     @endpush
-    

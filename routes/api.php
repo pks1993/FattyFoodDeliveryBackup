@@ -70,7 +70,6 @@ Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/define','
 Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/list','Api\Restaurant\RestaurantApiController@preparing_list');
 Route::post('fatty/202221/lashio/main/admin/restaurants/details','Api\Restaurant\RestaurantApiController@restaurant_details');
 
-
 //Food Menu Api
 Route::post('fatty/202221/lashio/main/admin/restaurants/menus','Api\Restaurant\RestaurantApiController@restaurant_menu');
 
@@ -168,6 +167,8 @@ Route::post('fatty/202221/lashio/main/admin/restaurants/insight/v1','Api\Restaur
 Route::post('rider/test/store','Api\Rider\RiderApiController@test_store');
 Route::post('fatty/202221/lashio/main/admin/testing','Api\Rider\RiderApiController@index');
 Route::get('fatty/202221/lashio/main/admin/customers/food/orders/delivery/Hello','Api\Order\OrderApiController@Test');
+Route::get('restaurant/available/create/all','Api\Restaurant\RestaurantApiController@available_create');
+
 
 //parcel
 Route::post('fatty/202221/lashio/main/admin/customers/parcels/type/store','Api\Order\ParcelOrderApiController@create');
