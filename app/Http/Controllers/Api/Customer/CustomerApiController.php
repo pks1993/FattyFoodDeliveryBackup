@@ -108,7 +108,7 @@ class CustomerApiController extends Controller
         }
     }
 
-    public function login_version_one(Request $request)
+    public function login_version_two(Request $request)
     {
         $headers[] = getallheaders();
         foreach($headers as $value){
@@ -151,6 +151,42 @@ class CustomerApiController extends Controller
 
             $customer->fcm_token=$fcm_token;
             $customer->device_id=$device_id;
+            $customer->os_type=$os_type;
+            $customer->update();
+
+            $check=ActiveCustomer::where('customer_id',$customer->customer_id)->whereDate('created_at',date('Y-m-d'))->first();
+            if(empty($check)){
+                ActiveCustomer::create([
+                    "customer_id"=>$customer->customer_id,
+                ]);
+            }
+            return response()->json(['success'=>true,'is_old'=>true,'message' => 'this is customer already exit','data'=>$customer]);
+        }else{
+            $customers=new Customer();
+            $customers->customer_phone=$customer_phone;
+            $customers->customer_name=null;
+            $customers->image=null;
+            $customers->os_type=$os_type;
+            $customers->save();
+
+            ActiveCustomer::create([
+                "customer_id"=>$customers->customer_id,
+            ]);
+            return response()->json(['success'=>true,'is_old'=>false,'message' => 'this is customer create','data'=>$customers]);
+        }
+
+    }
+
+    public function login_version_one(Request $request)
+    {
+        $customer_phone=$request['customer_phone'];
+        $fcm_token=$request['fcm_token'];
+        $os_type=(int)$request['os_type'];
+
+        $customer=Customer::where('customer_phone','=',$customer_phone)->first();
+
+        if($customer!=null){
+            $customer->fcm_token=$fcm_token;
             $customer->os_type=$os_type;
             $customer->update();
 

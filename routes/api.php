@@ -26,6 +26,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiController@index');
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
+Route::post('fatty/202221/lashio/main/admin/customers/login/v2','Api\Customer\CustomerApiController@login_version_two');
 Route::post('fatty/202221/lashio/main/admin/customers/otp_send','Api\Customer\CustomerApiController@otp_send');
 Route::post('fatty/202221/lashio/main/admin/customers/otp_check','Api\Customer\CustomerApiController@otp_check');
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
