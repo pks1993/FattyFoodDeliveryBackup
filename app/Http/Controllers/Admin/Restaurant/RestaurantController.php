@@ -149,8 +149,17 @@ class RestaurantController extends Controller
             </form>';
             $edit = '<a href="/fatty/main/admin/restaurants/edit/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Edit"><i class="fas fa-edit"></i></a>';
             $opening = '<a href="/fatty/main/admin/restaurants/openingtime/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Opening Time"><i class="fas fa-clock"></i></a>';
+            $value=$opening.$edit.$delete;
+            return $value;
+        })
+        ->addColumn('restaurant_food', function(Restaurant $post){
+            $restaurant_food = '<a href="/fatty/main/admin/restaurants/food/list/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Food"><i class="fas fa-burger"></i></a>';
+            $value=$restaurant_food;
+            return $value;
+        })
+        ->addColumn('restaurant_menu', function(Restaurant $post){
             $menu='<a href="/fatty/main/admin/restaurants/menu/list/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Menu"><i class="fas fa-list"></i></a>';
-            $value=$opening.$menu.$edit.$delete;
+            $value=$menu;
             return $value;
         })
         ->addColumn('register_date', function(Restaurant $item){
@@ -178,7 +187,7 @@ class RestaurantController extends Controller
             return $restaurant_user_password;
         })
 
-        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_user_password','action','register_date','status'])
+        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_user_password','action','register_date','status','restaurant_food','restaurant_menu'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -709,5 +718,104 @@ class RestaurantController extends Controller
         FoodMenu::destroy($id);
         $request->session()->flash('alert-danger', 'successfully delete food menu!');
         return redirect()->back();
+    }
+
+    public function food_list($id)
+    {
+        $restaurants=Restaurant::find($id);
+        $foods=Food::where('restaurant_id',$id)->get();
+        return view('admin.restaurant.restaurant_food.index',compact('foods','restaurants'));
+    }
+
+    public function foodlistajax($id){
+        $model =  Food::where('restaurant_id',$id)->orderBy('created_at','DESC')->orderBy('food_recommend_status','DESC')->get();
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('food_image', function(Food $item){
+            if ($item->food_image) {
+                $food_image = '<img src="../../../../../../uploads/food/'.$item->food_image.'" class="img-rounded" style="width: 55px;height: 45px;">';
+            } else {
+                $food_image = '<img src="../../../../../../image/available.png" class="img-rounded" style="width: 55px;height: 45px;">';
+            };
+            return $food_image;
+        })
+        ->addColumn('status', function(Food $post){
+            if ($post->food_emergency_status==0) {
+                $food_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Open"><i class="fas fa-lock-open"></i></a>';
+            } else {
+                $food_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Close"><i class="fas fa-lock"></i></a>';
+            };
+            if ($post->food_recommend_status==1) {
+                $food_recommend_status = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Recommend"><i class="fas fa-thumbs-up"></i></a>';
+            } else {
+                $food_recommend_status = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Not Recommend"><i class="fas fa-thumbs-down"></i></a>';
+            };
+            $view_detail = '<a href="/fatty/main/admin/restaurants/food/detail/view/'.$post->food_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Food Detail"><i class="fas fa-eye"></i></a>';
+            $value=$view_detail.$food_emergency_status.$food_recommend_status;
+            return $value;
+        })
+        ->addColumn('action', function(Food $post){
+            $delete = '<form action="/fatty/main/admin/food/delete/'.$post->food_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'
+            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Food Delete"><i class="fa fa-trash"></button>
+            </form>';
+            $edit = '<a href="/fatty/main/admin/food/edit/'.$post->food_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Food Edit"><i class="fas fa-edit"></i></a>';
+            $opening = '<a href="/fatty/main/admin/foods/sub_items/'.$post->food_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Food Section"><i class="fas fa-plus-circle"></i></a>';
+            $value=$opening.$edit.$delete;
+            return $value;
+        })
+        ->addColumn('register_date', function(Food $item){
+            $register_date = $item->created_at->format('d M Y');
+            return $register_date;
+        })
+        ->addColumn('food_name_mm', function(Food $item){
+            $food_name_mm = $item->food_name_mm;
+            return $food_name_mm;
+        })
+        ->addColumn('food_name_en', function(Food $item){
+            $food_name_en = $item->food_name_en;
+            return $food_name_en;
+        })
+        ->addColumn('food_name_ch', function(Food $item){
+            $food_name_ch = $item->food_name_ch;
+            return $food_name_ch;
+        })
+        ->addColumn('food_price', function(Food $item){
+            $food_price = $item->food_price;
+            return $food_price;
+        })
+        ->addColumn('food_menu_name', function(Food $item){
+            $food_menu_name = $item->menu->food_menu_name_mm.' ('.$item->menu->food_menu_name_en.') '.' ('.$item->menu->food_menu_name_ch.')';
+            return $food_menu_name;
+        })
+        ->addColumn('restaurant_name', function(Food $item){
+            $restaurant_name = $item->restaurant->restaurant_name_mm.' ('.$item->restaurant->restaurant_name_en.') ';
+            return $restaurant_name;
+        })
+        ->addColumn('food_description', function(Food $item){
+            if($item->description){
+                $food_description = $item->food_description;
+            }else{
+                $food_description="Empty";
+            }
+            return $food_description;
+        })
+
+        ->rawColumns(['register_date','food_description','restaurant_name','food_menu_name','food_price','food_name_mm','food_name_en','food_name_ch','action','food_image','status'])
+        ->searchPane('model', $model)
+        ->make(true);
+    }
+
+    public function food_create(Request $request,$id)
+    {
+        $restaurant=Restaurant::find($id);
+        return view('admin.restaurant.restaurant_food.create',compact('restaurant_id'));
+    }
+
+    public function food_view($id)
+    {
+        $foods=Food::find($id);
+        return view('admin.restaurant.restaurant_food.view',compact('foods'));
     }
 }

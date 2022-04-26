@@ -30,6 +30,8 @@
         text-align: center;
     }
 </style>
+<link rel="stylesheet" href="{{asset('/plugins/fontawesome/css/fontawesome.min.css')}}">
+
 @endsection
 
 @section('content')
@@ -105,6 +107,8 @@
                                             <th>StateName</th>
                                             <th>UserPhone</th>
                                             <th>UserPassword</th>
+                                            <th>Foods</th>
+                                            <th>Menus</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -174,8 +178,10 @@
                     {data: 'restaurant_address', name:'restaurant_address'},
                     {data: 'city_name_mm', name:'city_name_mm',className: "text-center"},
                     {data: 'state_name_mm', name:'state_name_mm',className: "text-center"},
-                    {data: 'restaurant_user_password', name:'restaurant_user_phone',className: "restaurant_user_phone"},
+                    {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "restaurant_user_phone"},
                     {data: 'restaurant_user_password', name:'restaurant_user_password',className: "restaurant_user_password"},
+                    {data: 'restaurant_food', name:'restaurant_food',orderable: false,searchable:false,className: "text-center"},
+                    {data: 'restaurant_menu', name:'restaurant_menu',orderable: false,searchable:false,className: "text-center"},
                     {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
                     // {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "text-center"},
                     // {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},

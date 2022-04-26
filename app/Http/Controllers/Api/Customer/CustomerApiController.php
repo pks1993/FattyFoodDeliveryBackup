@@ -65,9 +65,15 @@ class CustomerApiController extends Controller
 
     public function one_device_login(Request $request)
     {
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
+        // $headers[] = getallheaders();
+        // foreach($headers as $value){
+        //     $device_id=$value['device_id'];
+        // }
+        $headers= getallheaders();
+        if(count($headers)==10){
+            $device_id=$headers['device_id'];
+        }else{
+            return response()->json(['success'=>false,'message'=>'you need device_id']);
         }
         $customer_id=$request['customer_id'];
         $customer=Customer::where('customer_id',$customer_id)->first();
@@ -110,9 +116,11 @@ class CustomerApiController extends Controller
 
     public function login_version_two(Request $request)
     {
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
+        $headers= getallheaders();
+        if(count($headers)==10){
+            $device_id=$headers['device_id'];
+        }else{
+            return response()->json(['success'=>false,'message'=>'you need device_id']);
         }
         $customer_phone=$request['customer_phone'];
         $fcm_token=$request['fcm_token'];
@@ -318,9 +326,15 @@ class CustomerApiController extends Controller
     */
     public function update(Request $request)
     {
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
+        // $headers[] = getallheaders();
+        // foreach($headers as $value){
+        //     $device_id=$value['device_id'];
+        // }
+        $headers= getallheaders();
+        if(count($headers)==10){
+            $device_id=$headers['device_id'];
+        }else{
+            return response()->json(['success'=>false,'message'=>'you need device_id']);
         }
         $id=$request['customer_id'];
         $customer_name=$request['customer_name'];

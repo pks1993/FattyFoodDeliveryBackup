@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\About;
 
-use App\Models\About;
+use App\Models\About\About;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\Models\Customer\Customer;
+// use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Models\Permission;
+// use App\Models\Customer\Customer;
 use DB;
 use Carbon\Carbon;
 
@@ -25,10 +25,12 @@ class AboutController extends Controller
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');
         // echo $start_time."\n".$end_time;
-        $now = Carbon::now();
-        $created_at = Carbon::parse("2022-02-23 13:01:45");
-        $diffMinutes = $created_at->diffInMinutes($now);
-        dd($diffMinutes);
+
+        // $now = Carbon::now();
+        // $created_at = Carbon::parse("2022-02-23 13:01:45");
+        // $diffMinutes = $created_at->diffInMinutes($now);
+        // dd($diffMinutes);
+        
         // $lat1 ="22.918267903378916";
         // $lon1 = "97.2557699754834";
         // $lat2 ="22.962385";
@@ -76,7 +78,7 @@ class AboutController extends Controller
     public function index()
     {
         $abouts=About::orderBy('about_id','DESC')->get();
-        return view('admin.about.index',compact('abouts'));
+        return view('admin.About.index',compact('abouts'));
     }
 
     public function sendNoti(){
