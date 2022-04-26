@@ -191,14 +191,15 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('restaurants/user/store','Admin\Restaurant\RestaurantController@user_store')->name('restaurants_user.store');
 
     //restaurant_food
-    Route::get('restaurants/food/detail/view/{food_id}','Admin\Restaurant\RestaurantController@food_view')->name('restaurants_food.view');
-    Route::get('restaurants/food/list/{restaurant_id}','Admin\Restaurant\RestaurantController@food_list')->name('restaurants_food.list');
+    Route::get('restaurants/food/detail/view/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_view')->name('restaurants_food.view');
+    Route::get('restaurants/food/list/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_food_list')->name('restaurants_food.list');
     Route::get('restaurants/food/list/datatable/foodlistajax/{restaurant_id}','Admin\Restaurant\RestaurantController@foodlistajax');
-    Route::post('restaurants/food/create/{restaurant_id}','Admin\Restaurant\RestaurantController@food_create')->name('restaurants_food.create');
-    Route::post('restaurants/food/store','Admin\Restaurant\RestaurantController@food_store')->name('restaurants_food.store');
-    Route::get('restaurants/food/edit/{food_id}','Admin\Restaurant\RestaurantController@food_edit');
-    Route::post('restaurants/food/update/{food_id}','Admin\Restaurant\RestaurantController@food_update')->name('restaurants_food.update');
-    Route::delete('restaurants/food/delete/{food_id}','Admin\Restaurant\RestaurantController@food_destroy')->name('restaurants_food.destroy');
+    Route::get('restaurants/food/create/{restaurant_id}','Admin\Restaurant\RestaurantController@restauant_food_create')->name('restaurants_food.create');
+    Route::post('restaurants/food/store','Admin\Restaurant\RestaurantController@restaurant_food_store')->name('restaurants_food.store');
+    Route::get('restaurants/food/edit/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_edit');
+    Route::post('restaurants/food/update/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_update')->name('restaurants_food.update');
+    Route::delete('restaurants/food/delete/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_destroy')->name('restaurants_food.destroy');
+
 
 
     //chart

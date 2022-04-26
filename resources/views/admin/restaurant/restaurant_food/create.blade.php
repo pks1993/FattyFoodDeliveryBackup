@@ -37,41 +37,55 @@
                                     <h2 class="card-title" style="font-size: 25px;"><b>Add A New Food</b></h2>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
-                                    <a href="{{url('fatty/main/admin/foods')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                    <a href="{{url('fatty/main/admin/restaurants/food/list',$restaurants->restaurant_id)}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('fatty.admin.foods.store') }}" autocomplete="off" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('fatty.admin.restaurants_food.store') }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group row">
-                                    <label for="food_name" class="col-md-12 col-form-label">{{ __('Food Name') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <label for="food_name_mm" class="col-md-12 col-form-label">{{ __('Food Name Myanmar') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="food_name" type="text" class="form-control @error('food_name') is-invalid @enderror" name="food_name" value="{{ old('food_name') }}" autocomplete="food_name" autofocus>
-                                        @error('food_name')
+                                        <input type="hidden" name="restaurant_id" value="{{ $restaurants->restaurant_id }}">
+                                        <input id="food_name_mm" type="text" class="form-control @error('food_name_mm') is-invalid @enderror" name="food_name_mm" value="{{ old('food_name_mm') }}" autocomplete="food_name_mm" autofocus>
+                                        @error('food_name_mm')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
-
-                                <!-- {{-- <div class="form-group row">
-                                    <label for="food_category_id" class="col-md-12 col-form-label">{{ __('Food Category') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                <div class="form-group row">
+                                    <label for="food_name_en" class="col-md-12 col-form-label">{{ __('Food Name English') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <select id="food_category_id" style="width: 100%;" class="form-control @error('food_category_id') is-invalid @enderror" name="food_category_id" value="{{ old('food_category_id') }}" autocomplete="food_category_id" autofocus>
-                                        </select>
-                                        @error('food_category_id')
+                                        <input id="food_name_en" type="text" class="form-control @error('food_name_en') is-invalid @enderror" name="food_name_en" value="{{ old('food_name_en') }}" autocomplete="food_name_en" autofocus>
+                                        @error('food_name_en')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
-                                </div> --}} -->
+                                </div>
+                                <div class="form-group row">
+                                    <label for="food_name_ch" class="col-md-12 col-form-label">{{ __('Food Name China') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input id="food_name_ch" type="text" class="form-control @error('food_name_ch') is-invalid @enderror" name="food_name_ch" value="{{ old('food_name_ch') }}" autocomplete="food_name_ch" autofocus>
+                                        @error('food_name_ch')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label for="food_menu_id" class="col-md-12 col-form-label">{{ __('Food Menu') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="food_menu_id" style="width: 100%;" class="form-control @error('food_menu_id') is-invalid @enderror" name="food_menu_id" value="{{ old('food_menu_id') }}" autocomplete="food_menu_id" autofocus>
+                                            <option value="">Choose Menu</option>
+                                            @foreach ($menus as $menu)
+                                                <option value="{{ $menu->food_menu_id }}">{{ $menu->food_menu_name_mm }} ( {{ $menu->food_menu_name_en }} )</option>
+                                            @endforeach
                                         </select>
                                         @error('food_menu_id')
                                             <span class="invalid-feedback" role="alert">
@@ -92,7 +106,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="image" class="col-md-12 col-form-label">{{ __('Category Image') }} </label>
+                                    <label for="food_description" class="col-md-12 col-form-label">{{ __('Food Description') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <textarea id="food_description" class="form-control @error('food_description') is-invalid @enderror" name="food_description" value="{{ old('food_description') }}" autocomplete="food_description" autofocus></textarea>
+                                        @error('food_description')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="image" class="col-md-12 col-form-label">{{ __('Food Image') }} </label>
                                     <div class="col-md-6">
                                         <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image" autocomplete="image" onchange="loadFileImage(event)">
                                         @error('image')
@@ -113,9 +138,9 @@
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fa fa-save"></i> {{ __('Create') }}
                                         </button>
-                                        <!-- <a href="{{url('fatty/main/admin/zones')}}" class="btn btn-secondary btn-sm">
+                                        <a href="{{url('fatty/main/admin/restaurants/food/list',$restaurants->restaurant_id)}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
-                                        </a> -->
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -131,23 +156,6 @@
 @section('script')
 <script type="text/javascript">
 $(document).ready(function () {
-    $('#restaurant_id').on('change', function(){
-        $('#food_menu_id').empty();
-        // $('#food_category_id').empty();
-        var id = $(this).val();
-        if(id){
-            $.ajax({
-                type: 'get',
-                url: '/fatty/main/admin/foods/menu/list/'+id,
-                success: function(data){
-                    $('#food_menu_id').append(`<option value="">Choose Menu</option>`);
-                    $.each(data, function(index,value) {
-                        $('#food_menu_id').append('<option value='+value.food_menu_id+'>'+value.food_menu_name+'</option>');
-                    });
-                }
-            });
-        }
-    });
     $('#food_menu_id').select2();
     // $('#food_category_id').select2();
     $('#restaurant_id').select2();

@@ -34,21 +34,22 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h2 class="card-title" style="font-size: 25px;"><b>Edit " {{ $foods->food_name }} "</b></h2>
+                                    <h4 class="card-title" style="font-size: 25px;">Edit <b> "{{ $foods->food_name_mm }}" </b></h4>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
-                                    <a href="{{url('fatty/main/admin/foods')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                    <a href="{{url('fatty/main/admin/restaurants/food/list',$foods->restaurant_id)}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('fatty.admin.foods.update',$foods) }}" autocomplete="off" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('fatty.admin.restaurants_food.update',$foods->food_id) }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group row">
-                                    <label for="food_name" class="col-md-12 col-form-label">{{ __('Food Name') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <label for="food_name_mm" class="col-md-12 col-form-label">{{ __('Food Name Myanmar') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="food_name" type="text" class="form-control @error('food_name') is-invalid @enderror" name="food_name" value="{{ $foods->food_name }}" autocomplete="food_name" autofocus>
-                                        @error('food_name')
+                                        <input type="hidden" name="restaurant_id" value="{{ $foods->restaurant_id }}">
+                                        <input id="food_name_mm" type="text" class="form-control @error('food_name_mm') is-invalid @enderror" name="food_name_mm" value="{{ $foods->food_name_mm }}" autocomplete="food_name_mm" autofocus>
+                                        @error('food_name_mm')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -56,44 +57,34 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="restaurant_id" class="col-md-12 col-form-label">{{ __('Restaurant Name') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <label for="food_name_en" class="col-md-12 col-form-label">{{ __('Food Name English') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <select id="restaurant_id" style="width: 100%;" class="form-control @error('restaurant_id') is-invalid @enderror" name="restaurant_id" value="{{ old('restaurant_id') }}" autocomplete="restaurant_id">
-                                            <option value="{{ $foods->restaurant_id }}">{{ $foods->restaurant->restaurant_name }}</option>
-                                            @foreach($restaurants as $value)
-                                                <option value="{{ $value->restaurant_id }}">{{ $value->restaurant_name }} ( {{ $value->zone->zone_name }} )</option>
-                                            @endforeach
-                                        </select>
-                                        @error('restaurant_id')
+                                        <input id="food_name_en" type="text" class="form-control @error('food_name_en') is-invalid @enderror" name="food_name_en" value="{{ $foods->food_name_en }}" autocomplete="food_name_en" autofocus>
+                                        @error('food_name_en')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- <div class="form-group row">
-                                    <label for="food_category_id" class="col-md-12 col-form-label">{{ __('Food Category') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                <div class="form-group row">
+                                    <label for="food_name_ch" class="col-md-12 col-form-label">{{ __('Food Name China') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <select id="food_category_id" style="width: 100%;" class="form-control @error('food_category_id') is-invalid @enderror" name="food_category_id" value="{{ old('food_category_id') }}" autocomplete="food_category_id" autofocus>
-                                            <option value="{{ $foods->food_category_id }}">{{ $foods->category->food_category_name }}</option>
-                                            @foreach($food_category as $value)
-                                                <option value="{{ $value->food_category_id }}">{{ $value->food_category_name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('food_category_id')
+                                        <input id="food_name_ch" type="text" class="form-control @error('food_name_ch') is-invalid @enderror" name="food_name_ch" value="{{ $foods->food_name_ch }}" autocomplete="food_name_ch" autofocus>
+                                        @error('food_name_ch')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
-                                </div> --}}
+                                </div>
                                 <div class="form-group row">
                                     <label for="food_menu_id" class="col-md-12 col-form-label">{{ __('Food Menu') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="food_menu_id" style="width: 100%;" class="form-control @error('food_menu_id') is-invalid @enderror" name="food_menu_id" value="{{ old('food_menu_id') }}" autocomplete="food_menu_id" autofocus>
-                                            <option value="{{ $foods->food_menu_id }}">{{ $foods->menu->food_menu_name }}</option>
-                                            @foreach($food_menu as $value)
-                                                <option value="{{ $value->food_menu_id }}">{{ $value->food_menu_name }}</option>
+                                            <option value="{{ $foods->food_menu_id }}">{{ $foods->menu->food_menu_name_mm }} ({{ $foods->menu->food_menu_name_en }})</option>u</option>
+                                            @foreach ($food_menu as $menu)
+                                                <option value="{{ $menu->food_menu_id }}">{{ $menu->food_menu_name_mm }} ( {{ $menu->food_menu_name_en }} )</option>
                                             @endforeach
                                         </select>
                                         @error('food_menu_id')
@@ -115,7 +106,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="image" class="col-md-12 col-form-label">{{ __('Category Image') }} </label>
+                                    <label for="food_description" class="col-md-12 col-form-label">{{ __('Food Description') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <textarea id="food_description" class="form-control @error('food_description') is-invalid @enderror" name="food_description" value="{{ old('food_description') }}" autocomplete="food_description" autofocus>{{ $foods->food_description }}</textarea>
+                                        @error('food_description')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="image" class="col-md-12 col-form-label">{{ __('Restaurant Image') }} </label>
                                     <div class="col-md-6">
                                         <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image" autocomplete="image" onchange="loadFileImage(event)">
                                         @error('image')
@@ -127,20 +129,21 @@
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
                                             @if($foods->food_image==null)
-                                                <image src="{{asset('../image/available.png')}}" id="imageOne" style="width: 100%;height: 150px;"></image>
+                                                <image src="{{asset('../image/available.png')}}" id="image_one" style="width: 100%;height: 150px;"></image>
                                             @else
-                                                <image src="../../../../../uploads/food/{{$foods->food_image}}" id="imageOne" style="width: 100%;height: 150px;"></image>
+                                                <image src="../../../../../../../uploads/food/{{$foods->food_image}}" id="image_one" style="width: 100%;height: 150px;"></image>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
 
+
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-save"></i> {{ __('Update') }}
+                                            <i class="fa fa-edit"></i> {{ __('Update') }}
                                         </button>
-                                        <a href="{{url('fatty/main/admin/foods')}}" class="btn btn-secondary btn-sm">
+                                        <a href="{{url('fatty/main/admin/restaurants/food/list',$foods->restaurant_id)}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
                                         </a>
                                     </div>
@@ -158,35 +161,6 @@
 @section('script')
 <script type="text/javascript">
 $(document).ready(function () {
-    $('#restaurant_id').on('change', function(){
-        $('#food_menu_id').empty();
-        // $('#food_category_id').empty();
-        var id = $(this).val();
-        // if(id){
-        //     $.ajax({
-        //         type: 'get',
-        //         url: '/fatty/main/admin/foods/category/list/'+id,
-        //         success: function(data){ 
-        //             $('#food_category_id').append(`<option value="">Choose Category</option>`);
-        //             $.each(data, function(index,value) {
-        //                 $('#food_category_id').append('<option value='+value.food_category_id+'>'+value.food_category_name+'</option>');
-        //             });
-        //         }
-        //     });  
-        // }
-        if(id){
-            $.ajax({
-                type: 'get',
-                url: '/fatty/main/admin/foods/menu/list/'+id,
-                success: function(data){ 
-                    $('#food_menu_id').append(`<option value="">Choose Menu</option>`);
-                    $.each(data, function(index,value) {
-                        $('#food_menu_id').append('<option value='+value.food_menu_id+'>'+value.food_menu_name+'</option>');
-                    });
-                }
-            });  
-        }
-    }); 
     $('#food_menu_id').select2();
     // $('#food_category_id').select2();
     $('#restaurant_id').select2();
@@ -194,8 +168,8 @@ $(document).ready(function () {
 
 //Image Show
 var loadFileImage= function(event) {
-var image = document.getElementById('imageOne');
-image.src = URL.createObjectURL(event.target.files[0]);
+    var image = document.getElementById('image_one');
+    image.src = URL.createObjectURL(event.target.files[0]);
 };
 </script>
 @endsection

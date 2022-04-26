@@ -720,7 +720,7 @@ class RestaurantController extends Controller
         return redirect()->back();
     }
 
-    public function food_list($id)
+    public function restaurant_food_list($id)
     {
         $restaurants=Restaurant::find($id);
         $foods=Food::where('restaurant_id',$id)->get();
@@ -755,14 +755,18 @@ class RestaurantController extends Controller
             return $value;
         })
         ->addColumn('action', function(Food $post){
-            $delete = '<form action="/fatty/main/admin/food/delete/'.$post->food_id.'" method="post" class="d-inline">
+            $delete = '<form action="/fatty/main/admin/restaurants/food/delete/'.$post->food_id.'" method="post" class="d-inline">
             '.csrf_field().'
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Food Delete"><i class="fa fa-trash"></button>
             </form>';
-            $edit = '<a href="/fatty/main/admin/food/edit/'.$post->food_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Food Edit"><i class="fas fa-edit"></i></a>';
-            $opening = '<a href="/fatty/main/admin/foods/sub_items/'.$post->food_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Food Section"><i class="fas fa-plus-circle"></i></a>';
-            $value=$opening.$edit.$delete;
+            $edit = '<a href="/fatty/main/admin/restaurants/food/edit/'.$post->food_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Food Edit"><i class="fas fa-edit"></i></a>';
+            $value=$edit.$delete;
+            return $value;
+        })
+        ->addColumn('food_add', function(Food $post){
+            $food = '<a href="/fatty/main/admin/foods/sub_items/'.$post->food_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Food Section"><i class="fas fa-plus-circle"></i></a>';
+            $value=$food;
             return $value;
         })
         ->addColumn('register_date', function(Food $item){
@@ -794,7 +798,7 @@ class RestaurantController extends Controller
             return $restaurant_name;
         })
         ->addColumn('food_description', function(Food $item){
-            if($item->description){
+            if($item->food_description){
                 $food_description = $item->food_description;
             }else{
                 $food_description="Empty";
@@ -802,20 +806,98 @@ class RestaurantController extends Controller
             return $food_description;
         })
 
-        ->rawColumns(['register_date','food_description','restaurant_name','food_menu_name','food_price','food_name_mm','food_name_en','food_name_ch','action','food_image','status'])
+        ->rawColumns(['register_date','food_description','restaurant_name','food_menu_name','food_price','food_name_mm','food_name_en','food_name_ch','action','food_image','status','food_add'])
         ->searchPane('model', $model)
         ->make(true);
     }
 
-    public function food_create(Request $request,$id)
+    public function restauant_food_create(Request $request,$id)
     {
-        $restaurant=Restaurant::find($id);
-        return view('admin.restaurant.restaurant_food.create',compact('restaurant_id'));
+        $menus=FoodMenu::where('restaurant_id',$id)->get();
+        $restaurants=Restaurant::find($id);
+        return view('admin.restaurant.restaurant_food.create',compact('restaurants','menus'));
     }
 
-    public function food_view($id)
+    public function restaurant_food_view($id)
     {
         $foods=Food::find($id);
         return view('admin.restaurant.restaurant_food.view',compact('foods'));
+    }
+
+    public function restaurant_food_store(Request $request)
+    {
+        $this->validate($request, [
+            'food_name_mm' => 'required',
+            'food_menu_id' => 'required',
+            'food_price' => 'required',
+        ]);
+        $foods = new Food();
+        $photoname=time();
+        if(!empty($request['image'])){
+            $img_name=$photoname.'.'.$request->file('image')->getClientOriginalExtension();
+            $foods->food_image=$img_name;
+            Storage::disk('Foods')->put($img_name, File::get($request['image']));
+        }
+        $foods->food_name_mm=$request['food_name_mm'];
+        $foods->food_name_en=$request['food_name_en'];
+        $foods->food_name_ch=$request['food_name_ch'];
+        $foods->restaurant_id=$request['restaurant_id'];
+        $foods->food_menu_id=$request['food_menu_id'];
+        $foods->food_price=$request['food_price'];
+        $foods->food_description=$request['food_description'];
+        $foods->save();
+        $request->session()->flash('alert-success', 'successfully create food!');
+        return redirect('fatty/main/admin/restaurants/food/list/'.$request['restaurant_id']);
+    }
+
+    public function restaurant_food_edit(Request $request,$id)
+    {
+        $foods=Food::find($id);
+        $restaurants=Restaurant::where('restaurant_id','!=',$foods->restaurant_id)->get();
+        // $food_category=FoodCategory::where('food_category_id','!=',$foods->food_category_id)->where('restaurant_id',$foods->restaurant_id)->get();
+        $food_menu=FoodMenu::where('food_menu_id','!=',$foods->food_menu_id)->where('restaurant_id',$foods->restaurant_id)->get();
+        return view('admin.restaurant.restaurant_food.edit',compact('restaurants','food_menu','foods'));
+    }
+
+    public function restaurant_food_update(Request $request,$id)
+    {
+        $this->validate($request, [
+            'food_name_mm' => 'required',
+            'food_menu_id' => 'required',
+            'food_price' => 'required',
+        ]);
+
+        $foods =Food::findOrFail($id);
+        $photoname=time();
+
+        if(!empty($request['image'])){
+            Storage::disk('Foods')->delete($foods->food_image);
+            $img_name=$photoname.'.'.$request->file('image')->getClientOriginalExtension();
+            $foods->food_image=$img_name;
+            Storage::disk('Foods')->put($img_name, File::get($request['image']));
+        }
+        $foods->food_name_mm=$request['food_name_mm'];
+        $foods->food_name_en=$request['food_name_en'];
+        $foods->food_name_ch=$request['food_name_ch'];
+        $foods->restaurant_id=$request['restaurant_id'];
+        $foods->food_menu_id=$request['food_menu_id'];
+        $foods->food_price=$request['food_price'];
+        $foods->food_description=$request['food_description'];
+        $foods->update();
+        $request->session()->flash('alert-success', 'successfully update food!');
+        return redirect('fatty/main/admin/restaurants/food/list/'.$request['restaurant_id']);
+    }
+
+    public function restaurant_food_destroy(Request $request,$id)
+    {
+        $food=Food::where('food_id',$id)->FirstOrFail();
+        if($food){
+            Storage::disk('Foods')->delete($food->food_image);
+            FoodSubItem::where('food_id',$id)->delete();
+            FoodSubItemData::where('food_id',$id)->delete();
+        }
+        $food->delete();
+        $request->session()->flash('alert-danger', 'successfully delete food!');
+        return redirect()->back();
     }
 }

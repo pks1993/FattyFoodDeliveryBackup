@@ -94,6 +94,7 @@
                                             <th>FoodMenuName</th>
                                             <th>RestaurantName</th>
                                             <th>Description</th>
+                                            <th>Food</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -140,6 +141,7 @@
                     {data: 'food_menu_name', name:'food_menu_name'},
                     {data: 'restaurant_name', name:'restaurant_name'},
                     {data: 'food_description', name:'food_description'},
+                    {data: 'food_add', name: 'food_add', orderable: false, searchable: false,className: "text-center"},
                     {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
                 ],
                 dom: 'lBfrtip',
