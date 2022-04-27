@@ -178,7 +178,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('restaurants/openingtime/view/{restaurant_id}','Admin\Restaurant\RestaurantController@openingtime_view')->name('restaurants.openingtime.view');
     Route::post('restaurants/openingtime/update/{restaurant_id}','Admin\Restaurant\RestaurantController@openingtime_update')->name('restaurants_openingtime.update');
     //recommend_restaurant
-    Route::post('restaurants/recommends/update/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_recommend_update')->name('restaurants_recommend.update');
+    Route::get('restaurants/recommends/update/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_recommend_update')->name('restaurants_recommend.update');
 
     //menu
     Route::get('restaurants/menu/list/{restaurant_id}','Admin\Restaurant\RestaurantController@menu_list')->name('restaurants_menu.list');

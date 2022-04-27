@@ -28,6 +28,29 @@ use Illuminate\Support\Facades\Storage;
 
 class RestaurantController extends Controller
 {
+    public function restaurant_recommend_update(Request $request,$id)
+    {
+        $restaurant=Restaurant::find($id);
+
+        if($restaurant->is_recommend==1){
+            $restaurant->is_recommend=0;
+            $restaurant->update();
+
+            RecommendRestaurant::where('restaurant_id',$id)->delete();
+
+            $request->session()->flash('alert-success', 'successfully restaurant close recommend status by admin!');
+        }else{
+            $restaurant->is_recommend=1;
+            $restaurant->update();
+
+            RecommendRestaurant::create([
+                "restaurant_id"=>$id,
+            ]);
+            $request->session()->flash('alert-success', 'successfully restaurant open recommend status by admin!');
+        }
+        return redirect('fatty/main/admin/restaurants');
+    }
+
     public function approved_update(Request $request,$id)
     {
         $restaurant=Restaurant::find($id);
@@ -115,7 +138,7 @@ class RestaurantController extends Controller
     }
 
     public function restaurantajax(){
-        $model =  Restaurant::orderBy('restaurant_id','desc')->get();
+        $model =  Restaurant::orderBy('is_recommend','desc')->get();
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('restaurant_image', function(Restaurant $item){
@@ -126,41 +149,48 @@ class RestaurantController extends Controller
             };
             return $restaurant_image;
         })
+        ->addColumn('recommend_restaurant', function(Restaurant $post){
+            if($post->is_recommend==1){
+                $value = '<a href="/fatty/main/admin/restaurants/recommends/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are you sure want to close recommend status this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;width:110px;" title="Restaurant Recommend">Recommended</a>';
+            }else{
+                $value = '<a href="/fatty/main/admin/restaurants/recommends/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are you sure want to open recommend status this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;width:110px;" title="Restaurant Recommend">Recommended</a>';
+            }
+            return $value;
+        })
         ->addColumn('status', function(Restaurant $post){
             if ($post->restaurant_emergency_status==0) {
-                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Restaurant Open"><i class="fas fa-lock-open"></i></a>';
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;width:60px;" title="Restaurant Open">Open</a>';
             } else {
-                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Restaurant Close"><i class="fas fa-lock"></i></a>';
+                $restaurant_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;width:60px;" title="Restaurant Close">Close</a>';
             };
             if ($post->restaurant_user->is_admin_approved==0) {
-                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Admin Not Approved"><i class="fas fa-thumbs-down"></i></a>';
+                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;width:80px;" title="Admim Reject">Reject</a>';
             } else {
-                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Admin Approved"><i class="fas fa-thumbs-up"></i></a>';
+                $is_admin_approved = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->restaurant_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;width:80px;" title="Admin Approved">Approved</a>';
             };
-            $view_detail = '<a href="/fatty/main/admin/restaurants/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Detail"><i class="fas fa-eye"></i></a>';
+            $view_detail = '<a href="/fatty/main/admin/restaurants/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;width:60px;" title="Restaurant Detail">Detail</a>';
             $value=$view_detail.$restaurant_emergency_status.$is_admin_approved;
             return $value;
         })
         ->addColumn('action', function(Restaurant $post){
             $delete = '<form action="/fatty/main/admin/restaurants/delete/'.$post->restaurant_id.'" method="post" class="d-inline">
             '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Restaurant Delete"><i class="fa fa-trash"></button>
-            </form>';
-            $edit = '<a href="/fatty/main/admin/restaurants/edit/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Edit"><i class="fas fa-edit"></i></a>';
-            $opening = '<a href="/fatty/main/admin/restaurants/openingtime/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Opening Time"><i class="fas fa-clock"></i></a>';
-            $value=$opening.$edit.$delete;
+            '.method_field("DELETE").'<button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')" title="Restaurant Delete">Delete</button></form>';
+            $edit = '<a href="/fatty/main/admin/restaurants/edit/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Edit">Edit</a>';
+            $value=$edit.$delete;
             return $value;
+        })
+        ->addColumn('preparation_time', function(Restaurant $post){
+            $preparation_time = '<a href="/fatty/main/admin/restaurants/openingtime/view/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Opening Time">PreparationTime</a>';
+            return $preparation_time;
         })
         ->addColumn('restaurant_food', function(Restaurant $post){
-            $restaurant_food = '<a href="/fatty/main/admin/restaurants/food/list/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Food"><i class="fas fa-burger"></i></a>';
-            $value=$restaurant_food;
-            return $value;
+            $restaurant_food = '<a href="/fatty/main/admin/restaurants/food/list/'.$post->restaurant_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Restaurant Food">FoodList</a>';
+            return $restaurant_food;
         })
         ->addColumn('restaurant_menu', function(Restaurant $post){
-            $menu='<a href="/fatty/main/admin/restaurants/menu/list/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Menu"><i class="fas fa-list"></i></a>';
-            $value=$menu;
-            return $value;
+            $menu='<a href="/fatty/main/admin/restaurants/menu/list/'.$post->restaurant_id.'" class="btn btn-primary btn-sm mr-1" style="color: white;" title="Restaurant Menu">MenuList</a>';
+            return $menu;
         })
         ->addColumn('register_date', function(Restaurant $item){
             $register_date = $item->created_at->format('d M Y');
@@ -187,7 +217,7 @@ class RestaurantController extends Controller
             return $restaurant_user_password;
         })
 
-        ->rawColumns(['restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_user_password','action','register_date','status','restaurant_food','restaurant_menu'])
+        ->rawColumns(['preparation_time','restaurant_image','city_name_mm','state_name_mm','restaurant_category_name_mm','restaurant_user_phone','restaurant_user_password','action','register_date','status','restaurant_food','restaurant_menu','recommend_restaurant'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -915,4 +945,6 @@ class RestaurantController extends Controller
         $request->session()->flash('alert-danger', 'successfully delete food!');
         return redirect()->back();
     }
+
+
 }

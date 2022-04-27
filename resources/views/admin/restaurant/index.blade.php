@@ -95,7 +95,8 @@
                                     <thead>
                                         <tr class="text-center">
                                             <th>No.</th>
-                                            <th>Status</th>
+                                            <th>Restaurant_Status</th>
+                                            <th>Recommended</th>
                                             <th>Image</th>
                                             <th>RegisterDate</th>
                                             <th>NameMyanmar</th>
@@ -109,6 +110,7 @@
                                             <th>UserPassword</th>
                                             <th>Foods</th>
                                             <th>Menus</th>
+                                            <th>PreparationTime</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -169,6 +171,7 @@
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
                     {data: 'status', name: 'status', orderable: false, searchable: false,className: "btn-group"},
+                    {data: 'recommend_restaurant', name: 'recommend_restaurant', orderable: false, searchable: false,className: "text-center"},
                     {data: 'restaurant_image', name:'restaurant_image',className: "restaurant_image"},
                     {data: 'register_date', name:'register_date',className: "register_date"},
                     {data: 'restaurant_name_mm', name:'restaurant_name_mm'},
@@ -182,9 +185,9 @@
                     {data: 'restaurant_user_password', name:'restaurant_user_password',className: "restaurant_user_password"},
                     {data: 'restaurant_food', name:'restaurant_food',orderable: false,searchable:false,className: "text-center"},
                     {data: 'restaurant_menu', name:'restaurant_menu',orderable: false,searchable:false,className: "text-center"},
+                    {data: 'preparation_time', name: 'preparation_time', orderable: false, searchable: false},
                     {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
-                    // {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "text-center"},
-                    // {data: 'is_admin_approved', name:'is_admin_approved',className: "text-center"},
+
                 ],
                 dom: 'lBfrtip',
                 buttons: [
