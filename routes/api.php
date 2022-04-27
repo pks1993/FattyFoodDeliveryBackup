@@ -33,6 +33,8 @@ Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\Cust
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
 Route::post('fatty/202221/lashio/main/admin/customers/one_device/login','Api\Customer\CustomerApiController@one_device_login');
+Route::post('fatty/202221/lashio/main/admin/customers/logout','Api\Customer\CustomerApiController@logout');
+
 
 //Customer Notification
 Route::get('fatty/202221/lashio/main/admin/customers/notifications','Api\Notification\NotificationApiController@index');
@@ -125,6 +127,9 @@ Route::get('fatty/202221/lashio/main/admin/order/status/lists','Api\Order\OrderA
 Route::post('fatty/202221/lashio/main/admin/customers/orders/cancel','Api\Order\OrderApiController@cancle_order');
 Route::post('fatty/202221/lashio/main/admin/customers/orders/v1/cancel','Api\Order\OrderApiController@cancle_order_v1');
 Route::post('fatty/202221/lashio/main/admin/riders/send/noti/to/customers','Api\Order\OrderApiController@send_noti_to_customer');
+
+//kpay close api
+Route::post('fatty/202221/lashio/main/admin/customers/kpay/close','Api\Order\OrderApiController@kpay_close');
 
 
 

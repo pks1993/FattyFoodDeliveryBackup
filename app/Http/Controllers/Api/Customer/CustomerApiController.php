@@ -225,58 +225,79 @@ class CustomerApiController extends Controller
 
     }
 
+    public function logout(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        if($customer_id){
+            Customer::where('customer_id',$customer_id)->update(['device_id'=>null]);
+            return response()->json(['success'=>true,'message'=>'successfully logout']);
+        }else{
+            return response()->json(['success'=>false,'message'=>'empty customer id']);
+        }
+    }
+
     public function otp_send(Request $request)
     {
+        $headers[] = getallheaders();
+        foreach($headers as $value){
+            $device_id=$value['device_id'];
+        }
         $customer_phone=$request['customer_phone'];
-
         $customer=Customer::where('customer_phone','=',$customer_phone)->first();
         $otp = sprintf("%06d", mt_rand(1, 999999));
-        if($customer!=null){
-            $customer->otp = $otp;
-            $customer->update();
-            $client = new Client();
-            $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
-            $url = "https://smspoh.com/api/v2/send";
-            $response = $client->post($url,[
-                'headers' => ['Content-type' => 'application/json',
-                'Authorization' => 'Bearer ' .$token],
 
-                'json' => [
-                    "to"=>$customer_phone,
-                    "message"=>$customer->otp." is your verification code for fatty application login",
-                    "sender"=>"Fatty"
-                ],
-            ]);
+        if($device_id==$customer->device_id || $customer->device_id==null){
+            if($customer){
+                $customer->otp = $otp;
+                $customer->update();
+                $client = new Client();
+                $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+                $url = "https://smspoh.com/api/v2/send";
+                $response = $client->post($url,[
+                    'headers' => ['Content-type' => 'application/json',
+                    'Authorization' => 'Bearer ' .$token],
 
-            $result = json_decode($response->getBody());
-            return response()->json(['success'=>true,'message' => 'Success OTP','data'=>$result]);
+                    'json' => [
+                        "to"=>$customer_phone,
+                        "message"=>$customer->otp." is your verification code for fatty application login",
+                        "sender"=>"Fatty"
+                    ],
+                ]);
+
+                $result = json_decode($response->getBody());
+                return response()->json(['success'=>true,'message' => 'Success OTP','data'=>$result]);
+            }else{
+                $customers=new Customer();
+                $customers->customer_phone=$customer_phone;
+                $customers->otp=$otp;
+                $customers->save();
+
+                ActiveCustomer::create([
+                    "customer_id"=>$customers->customer_id,
+                ]);
+
+                $client = new Client();
+                $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+                $url = "https://smspoh.com/api/v2/send";
+                $response = $client->post($url,[
+                    'headers' => ['Content-type' => 'application/json',
+                    'Authorization' => 'Bearer ' .$token],
+
+                    'json' => [
+                        "to"=>$customer_phone,
+                        "message"=>$customers->otp." is your verification code for fatty application login",
+                        "sender"=>"Fatty"
+                    ],
+                ]);
+
+                $result = json_decode($response->getBody());
+                return response()->json(['success'=>true,'message' => 'Success OTP','data'=>$result]);
+            }
+
         }else{
-            $customers=new Customer();
-            $customers->customer_phone=$customer_phone;
-            $customers->otp=$otp;
-            $customers->save();
-
-            ActiveCustomer::create([
-                "customer_id"=>$customers->customer_id,
-            ]);
-
-            $client = new Client();
-            $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
-            $url = "https://smspoh.com/api/v2/send";
-            $response = $client->post($url,[
-                'headers' => ['Content-type' => 'application/json',
-                'Authorization' => 'Bearer ' .$token],
-
-                'json' => [
-                    "to"=>$customer_phone,
-                    "message"=>$customers->otp." is your verification code for fatty application login",
-                    "sender"=>"Fatty"
-                ],
-            ]);
-
-            $result = json_decode($response->getBody());
-            return response()->json(['success'=>true,'message' => 'Success OTP','data'=>$result]);
+            return response()->json(['success'=>false,'message'=>'exit another login']);
         }
+
 
     }
 
