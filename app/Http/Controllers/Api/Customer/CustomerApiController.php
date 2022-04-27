@@ -246,8 +246,8 @@ class CustomerApiController extends Controller
         $customer=Customer::where('customer_phone','=',$customer_phone)->first();
         $otp = sprintf("%06d", mt_rand(1, 999999));
 
-        if($device_id==$customer->device_id || $customer->device_id==null){
-            if($customer){
+        if($customer){
+            if($device_id==$customer->device_id || $customer->device_id==null){
                 $customer->otp = $otp;
                 $customer->update();
                 $client = new Client();
@@ -266,7 +266,11 @@ class CustomerApiController extends Controller
 
                 $result = json_decode($response->getBody());
                 return response()->json(['success'=>true,'message' => 'Success OTP','data'=>$result]);
+
             }else{
+                return response()->json(['success'=>false,'message'=>'exit another login']);
+            }
+        }else{
                 $customers=new Customer();
                 $customers->customer_phone=$customer_phone;
                 $customers->otp=$otp;
@@ -294,9 +298,7 @@ class CustomerApiController extends Controller
                 return response()->json(['success'=>true,'message' => 'Success OTP','data'=>$result]);
             }
 
-        }else{
-            return response()->json(['success'=>false,'message'=>'exit another login']);
-        }
+
 
 
     }
