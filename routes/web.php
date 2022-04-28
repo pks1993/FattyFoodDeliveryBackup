@@ -227,6 +227,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('recommend_restaurants/delete/{recommend_restaurant_id}','Admin\Restaurant\RecommendRestaurantController@destroy')->name('recommend_restaurants.destroy');
     Route::get('restaurants/city/list/{id}','Admin\Restaurant\RecommendRestaurantController@city_list');
     Route::get('restaurants/list/{id}','Admin\Restaurant\RecommendRestaurantController@restaurant_list');
+    Route::post('recommend_restaurants/sort/update','Admin\Restaurant\RecommendRestaurantController@sort_update');
 
     Route::post('restaurants/list','Admin\Restaurant\RecommendRestaurantController@restaurant_list')->name('recommend_restaurants.show');
 

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\Restaurant\Restaurant;
 use App\Models\Restaurant\RestaurantUser;
 use App\Models\Restaurant\RestaurantCategory;
-use App\Models\Zone\Zone;
 use App\Models\State\State;
 use App\Models\City\City;
 // use App\Models\Order\CustomerOrder;
@@ -43,8 +42,10 @@ class RestaurantController extends Controller
             $restaurant->is_recommend=1;
             $restaurant->update();
 
+            $count=RecommendRestaurant::count();
             RecommendRestaurant::create([
                 "restaurant_id"=>$id,
+                "sort_id"=>$count+1,
             ]);
             $request->session()->flash('alert-success', 'successfully restaurant open recommend status by admin!');
         }

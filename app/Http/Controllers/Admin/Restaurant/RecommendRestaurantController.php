@@ -8,6 +8,8 @@ use App\Models\Restaurant\RecommendRestaurant;
 use App\Models\Restaurant\Restaurant;
 use App\Models\State\State;
 use App\Models\City\City;
+// use Yajra\DataTables\DataTables;
+
 
 class RecommendRestaurantController extends Controller
 {
@@ -18,8 +20,23 @@ class RecommendRestaurantController extends Controller
      */
     public function index()
     {
-        $recommend_restaurants=RecommendRestaurant::orderBy('created_at','DESC')->paginate(10);
+        $recommend_restaurants=RecommendRestaurant::orderBy('sort_id')->paginate(50);
         return view('admin.restaurant.recommend.index',compact('recommend_restaurants'));
+    }
+
+    public function sort_update(Request $request)
+    {
+        $posts = RecommendRestaurant::all();
+
+        foreach ($posts as $post) {
+            foreach ($request->order as $order) {
+                if ($order['id'] == $post->recommend_restaurant_id) {
+                    $post->update(['sort_id' => $order['position']]);
+                }
+            }
+        }
+        $request->session()->flash('alert-success', 'successfully sort number!');
+        return response()->json(['status'=>'success']);
     }
 
     public function city_list($id)
@@ -117,9 +134,18 @@ class RecommendRestaurantController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        RecommendRestaurant::destroy($id);
+
+        $recommend=RecommendRestaurant::find($id);
+
+        $restaurant=Restaurant::find($recommend->restaurant_id);
+        $restaurant->is_recommend=0;
+        $restaurant->update();
+
+        $recommend->delete();
+
+        $request->session()->flash('alert-danger', 'successfully delete recommend restaurant!');
         return redirect('fatty/main/admin/recommend_restaurants');
     }
 }
