@@ -129,7 +129,7 @@ Route::post('fatty/202221/lashio/main/admin/customers/orders/v1/cancel','Api\Ord
 Route::post('fatty/202221/lashio/main/admin/riders/send/noti/to/customers','Api\Order\OrderApiController@send_noti_to_customer');
 
 //kpay close api
-Route::post('fatty/202221/lashio/main/admin/customers/kpay/close','Api\Order\OrderApiController@kpay_close');
+Route::post('fatty/202221/lashio/main/admin/customers/ios/payment/list','Api\Order\OrderApiController@kpay_close');
 
 
 
