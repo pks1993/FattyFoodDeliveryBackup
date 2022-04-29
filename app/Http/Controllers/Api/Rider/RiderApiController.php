@@ -28,7 +28,7 @@ class RiderApicontroller extends Controller
         $dd=DB::select("SELECT restaurants.* ,wishlists.created_at FROM  restaurants INNER JOIN  wishlists ON  wishlists.restaurant_id = restaurants.restaurant_id");
 
 
-        return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$dd]);   
+        return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$dd]);
         // dd($dd);
         $rider_id=$request['rider_id'];
         $rider_check=Rider::where('rider_id',$rider_id)->first();
@@ -38,10 +38,10 @@ class RiderApicontroller extends Controller
         $distance="1000";
 
         $orders=DB::table("customer_orders")->select("customer_orders.order_id"
-        ,DB::raw("6371 * acos(cos(radians(" . $rider_latitude . ")) 
-        * cos(radians(customer_orders.restaurant_address_latitude)) 
-        * cos(radians(customer_orders.restaurant_address_longitude) - radians(" . $rider_longitude . ")) 
-        + sin(radians(" .$rider_latitude. ")) 
+        ,DB::raw("6371 * acos(cos(radians(" . $rider_latitude . "))
+        * cos(radians(customer_orders.restaurant_address_latitude))
+        * cos(radians(customer_orders.restaurant_address_longitude) - radians(" . $rider_longitude . "))
+        + sin(radians(" .$rider_latitude. "))
         * sin(radians(customer_orders.restaurant_address_latitude))) AS distance"))
         ->having('distance', '<', $distance)
         ->groupBy("customer_orders.order_id")
@@ -456,10 +456,10 @@ class RiderApicontroller extends Controller
                 // $rider_orders=CustomerOrder::with(['rider','customer','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->get();
 
                 $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(".$rider_latitude.")) 
-                * cos(radians(customer_orders.restaurant_address_latitude)) 
-                * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude.")) 
-                + sin(radians(".$rider_latitude.")) 
+                ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+                * cos(radians(customer_orders.restaurant_address_latitude))
+                * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
+                + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.restaurant_address_latitude))) AS distance"))
                 // ->having('distance', '<', $distance)
                 ->whereIn("order_status_id",["3","4","5","6","10"])
@@ -482,10 +482,10 @@ class RiderApicontroller extends Controller
                 // $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->get();
 
                 $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude)) 
-                * cos(radians(customer_orders.to_drop_latitude)) 
-                * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude)) 
-                + sin(radians(customer_orders.from_pickup_latitude)) 
+                ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
+                * cos(radians(customer_orders.to_drop_latitude))
+                * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
+                + sin(radians(customer_orders.from_pickup_latitude))
                 * sin(radians(customer_orders.to_drop_latitude))) AS distance"))
                 // ->having('distance', '<', $distance)
                 ->whereIn('order_status_id',['12','13','14','17'])
@@ -508,10 +508,10 @@ class RiderApicontroller extends Controller
                 $distance="1000";
 
                 $parcels=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude)) 
-                * cos(radians(customer_orders.to_drop_latitude)) 
-                * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude)) 
-                + sin(radians(customer_orders.from_pickup_latitude)) 
+                ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
+                * cos(radians(customer_orders.to_drop_latitude))
+                * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
+                + sin(radians(customer_orders.from_pickup_latitude))
                 * sin(radians(customer_orders.to_drop_latitude))) AS distance"))
                 // ->having('distance', '<', $distance)
                 ->groupBy("order_id")
@@ -521,14 +521,15 @@ class RiderApicontroller extends Controller
                 ->get();
 
                 $foods=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(".$rider_latitude.")) 
-                * cos(radians(customer_orders.restaurant_address_latitude)) 
-                * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude.")) 
-                + sin(radians(".$rider_latitude.")) 
+                ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+                * cos(radians(customer_orders.restaurant_address_latitude))
+                * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
+                + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.restaurant_address_latitude))) AS distance"))
                 // ->having('distance', '<', $distance)
                 ->groupBy("order_id")
                 ->orderBy("created_at","DESC")
+                ->where("rider_id",null)
                 ->whereIn("order_status_id",["3","5"])
                 ->where("order_type","food")
                 ->get();
@@ -685,7 +686,7 @@ class RiderApicontroller extends Controller
                     $messages2="Your order is accepted by rider! He is taking your food!";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -706,7 +707,7 @@ class RiderApicontroller extends Controller
                     curl_close($curl_session2);
                 }
                 elseif($order_status_id=="10"){
-                    
+
                     $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
                     $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
                     $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
@@ -737,7 +738,7 @@ class RiderApicontroller extends Controller
                     $title2="Rider Arrived to Restaurant";
                     $messages2="Rider arrived to restaurant! He is taking food to you!";
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -788,7 +789,7 @@ class RiderApicontroller extends Controller
                     $title2="Rider Start Delivery";
                     $messages2="Rider starts delivery! He is coming!";
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -862,7 +863,7 @@ class RiderApicontroller extends Controller
                     $title2="Order Finished";
                     $messages2="Good Day! Your order is finished. Thanks very much!";
                     $message2 = strip_tags($messages2);
-                    
+
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
                     $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
@@ -942,7 +943,7 @@ class RiderApicontroller extends Controller
                     $messages2="Your order is accepted by rider! He is coming!";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -992,7 +993,7 @@ class RiderApicontroller extends Controller
                     $messages2="Rider arrived to pick up parcel order!";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -1042,7 +1043,7 @@ class RiderApicontroller extends Controller
                     $messages2="Rider picked up your parcel order";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -1092,7 +1093,7 @@ class RiderApicontroller extends Controller
                     $messages2="Your order is started delivery! He is going to drop address!";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -1144,7 +1145,7 @@ class RiderApicontroller extends Controller
                     $messages2="Your parcel order is accepted by recipient! Order Finished! Good Day!";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -1196,7 +1197,7 @@ class RiderApicontroller extends Controller
                     $messages2="New order is canceled by the Rider!";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -1248,7 +1249,7 @@ class RiderApicontroller extends Controller
                     $messages2="Rider Not Found";
 
                     $message2 = strip_tags($messages2);
-                    
+
 
                     $fcm_token2=array();
                     array_push($fcm_token2, $order->customer->fcm_token);
@@ -1362,7 +1363,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Your order is accepted by rider! He is taking your food!";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1383,7 +1384,7 @@ class RiderApicontroller extends Controller
     //                 curl_close($curl_session2);
     //             }
     //             elseif($order_status_id=="10"){
-                    
+
     //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
     //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
     //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
@@ -1414,7 +1415,7 @@ class RiderApicontroller extends Controller
     //                 $title2="Rider Arrived to Restaurant";
     //                 $messages2="Rider arrived to restaurant! He is taking food to you!";
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1465,7 +1466,7 @@ class RiderApicontroller extends Controller
     //                 $title2="Rider Start Delivery";
     //                 $messages2="Rider starts delivery! He is coming!";
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1539,7 +1540,7 @@ class RiderApicontroller extends Controller
     //                 $title2="Order Finished";
     //                 $messages2="Good Day! Your order is finished. Thanks very much!";
     //                 $message2 = strip_tags($messages2);
-                    
+
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
     //                 $notification2 = array('title' => $title2, 'body' => $message2);
@@ -1610,7 +1611,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Your order is accepted by rider! He is coming!";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1660,7 +1661,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Rider arrived to pick up parcel order!";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1710,7 +1711,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Rider picked up your parcel order";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1760,7 +1761,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Your order is started delivery! He is going to drop address!";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1812,7 +1813,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Your parcel order is accepted by recipient! Order Finished! Good Day!";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1864,7 +1865,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="New order is canceled by the Rider!";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -1916,7 +1917,7 @@ class RiderApicontroller extends Controller
     //                 $messages2="Rider Not Found";
 
     //                 $message2 = strip_tags($messages2);
-                    
+
 
     //                 $fcm_token2=array();
     //                 array_push($fcm_token2, $order->customer->fcm_token);
@@ -2002,7 +2003,7 @@ class RiderApicontroller extends Controller
     //         //         $messages2="Your order accept from rider! He take your food!";
 
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2023,7 +2024,7 @@ class RiderApicontroller extends Controller
     //         //         curl_close($curl_session2);
     //         //     }
     //         //     elseif($order_status_id=="10"){
-                    
+
     //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
     //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
     //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
@@ -2054,7 +2055,7 @@ class RiderApicontroller extends Controller
     //         //         $title2="Rider Arrived to Restaurant";
     //         //         $messages2="Rider arrived to restaurant! he take to your food order";
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2105,7 +2106,7 @@ class RiderApicontroller extends Controller
     //         //         $title2="Rider start delivery to your place";
     //         //         $messages2="Rider start delivery to your place! He take to your food order";
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2177,7 +2178,7 @@ class RiderApicontroller extends Controller
     //         //         $title2="Your Order Finished";
     //         //         $messages2="Good Day! We gave your order.Thanks!";
     //         //         $message2 = strip_tags($messages2);
-                    
+
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
     //         //         $notification2 = array('title' => $title2, 'body' => $message2);
@@ -2245,7 +2246,7 @@ class RiderApicontroller extends Controller
     //         //         $messages2="Your order accept from rider! He pickup your parcel!";
 
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2295,7 +2296,7 @@ class RiderApicontroller extends Controller
     //         //         $messages2="Rider arrived to pickup address for check and pickup your parcel order";
 
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2345,7 +2346,7 @@ class RiderApicontroller extends Controller
     //         //         $messages2="Rider pickup your parcel order";
 
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2395,7 +2396,7 @@ class RiderApicontroller extends Controller
     //         //         $messages2="Your order start delivery from rider! He got to drop address!";
 
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2445,7 +2446,7 @@ class RiderApicontroller extends Controller
     //         //         $messages2="Your parcel order accept from recipent! So Order Finished! Good Day!";
 
     //         //         $message2 = strip_tags($messages2);
-                    
+
 
     //         //         $fcm_token2=array();
     //         //         array_push($fcm_token2, $order->customer->fcm_token);
@@ -2506,7 +2507,7 @@ class RiderApicontroller extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>'Error! order_type is empty']);
         }
-    
+
     }
 
     public function order_details(Request $request)
@@ -2542,7 +2543,7 @@ class RiderApicontroller extends Controller
             $value->distance=$kilometer;
             array_push($this_week_data,$value);
         }
-           
+
         $this_month=CustomerOrder::with(['rider'=>function($foods){
             $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
         $this_month_data=[];
