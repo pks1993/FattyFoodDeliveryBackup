@@ -139,13 +139,23 @@ class RecommendRestaurantController extends Controller
 
         $recommend=RecommendRestaurant::find($id);
 
-        $restaurant=Restaurant::find($recommend->restaurant_id);
-        $restaurant->is_recommend=0;
-        $restaurant->update();
+        if($recommend){
+            $restaurant=Restaurant::find($recommend->restaurant_id);
+            $restaurant->is_recommend=0;
+            $restaurant->update();
 
-        $recommend->delete();
+            $recommendRes=RecommendRestaurant::where('sort_id','>',$recommend->sort_id)->get();
+            foreach($recommendRes as $value){
+                $sort_id=$value->sort_id-1;
+                $recommend_restaurant_id=$value->recommend_restaurant_id;
+                RecommendRestaurant::where('recommend_restaurant_id',$recommend_restaurant_id)->update(['sort_id'=>$sort_id]);
+            }
 
-        $request->session()->flash('alert-danger', 'successfully delete recommend restaurant!');
-        return redirect('fatty/main/admin/recommend_restaurants');
+            $recommend->delete();
+
+            $request->session()->flash('alert-danger', 'successfully delete recommend restaurant!');
+            return redirect('fatty/main/admin/recommend_restaurants');
+        }
+
     }
 }

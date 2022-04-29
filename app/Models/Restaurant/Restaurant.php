@@ -64,4 +64,12 @@ class Restaurant extends Model
     {
         return $this->hasMany('App\Models\Order\CustomerOrder','restaurant_id');
     }
+    public function up_ads()
+    {
+        return $this->belongsTo('App\Models\Ads\UpAds','restaurant_id','restaurant_id');
+    }
+    public function down_ads()
+    {
+        return $this->belongsTo('App\Models\Ads\DownAds','restaurant_id','restaurant_id');
+    }
 }

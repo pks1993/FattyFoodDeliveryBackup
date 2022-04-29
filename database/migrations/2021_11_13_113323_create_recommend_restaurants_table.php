@@ -16,7 +16,7 @@ class CreateRecommendRestaurantsTable extends Migration
         Schema::create('recommend_restaurants', function (Blueprint $table) {
             $table->id('recommend_restaurant_id');
             $table->unsignedBigInteger('restaurant_id')->nullable();
-            $table->int('sort_id')->nullable()->default(0);
+            $table->bigInteger('sort_id')->nullable()->default(0);
             $table->timestamps();
         });
     }

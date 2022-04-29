@@ -1,6 +1,16 @@
 @extends('admin.layouts.master')
 
 @section('css')
+<style>
+    .field-icon {
+        float: right;
+        margin-left: -25px;
+        margin-top: -27px;
+        position: relative;
+        z-index: 2;
+        padding-right: 20px;
+    }
+    </style>
 @endsection
 @section('content')
     <section class="content-header">
@@ -46,6 +56,22 @@
                             <form method="POST" action="{{ route('fatty.admin.down_ads.store') }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group row">
+                                    <label for="restaurant_id" class="col-md-12 col-form-label">{{ __('Restaurant Name') }} </label>
+                                    <div class="col-md-12">
+                                        <select style="height: auto;" id="restaurant_id" class="form-control @error('restaurant_id') is-invalid @enderror" name="restaurant_id" autocomplete="restaurant_id">
+                                            <option value="">Choose Restaurant</option>
+                                            @foreach ($restaurants  as $value)
+                                                <option value="{{ $value->restaurant_id }}">{{ $value->restaurant_name_mm }} ({{ $value->restaurant_name_en }})</option>
+                                            @endforeach
+                                        </select>
+                                        @error('restaurant_id')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label for="image" class="col-md-12 col-form-label">{{ __('Ads Image') }} </label>
                                     <div class="col-md-6">
                                         <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image" autocomplete="image" onchange="loadFileImage(event)">
@@ -83,7 +109,9 @@
 
 @endsection
 @section('script')
+
 <script type="text/javascript">
+    $('#restaurant_id').select2();
 //Image Show
 var loadFileImage= function(event) {
     var image = document.getElementById('imageOne');

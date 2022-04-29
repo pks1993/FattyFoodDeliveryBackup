@@ -33,8 +33,8 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-6">
-                                <a href="{{route('fatty.admin.recommend_restaurants.create')}}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-plus-circle"></i> Add Recommend Restaurant</a>
+                                {{-- <a href="{{route('fatty.admin.recommend_restaurants.create')}}" class="btn btn-primary btn-sm">
+                                <i class="fa fa-plus-circle"></i> Add Recommend Restaurant</a> --}}
                             </div>
                             <div class="col-md-6" style="text-align: right;">
                                 <h4><b>{{ "Recommend Restaurant" }}</b></h4>
@@ -45,9 +45,9 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane table-responsive active" id="Admin">
-                                <div class="pagination">
+                                {{-- <div class="pagination">
                                     {{ $recommend_restaurants->appends(request()->input())->links() }}
-                                </div>
+                                </div> --}}
                                 <table id="recommend_restaurants" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
@@ -125,7 +125,7 @@
 </script>
 <script type="text/javascript">
     $(function () {
-      $("#recommend_restaurants").DataTable();
+    //   $("#recommend_restaurants").DataTable();
 
       $( "#tablecontents" ).sortable({
         items: "tr",

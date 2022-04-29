@@ -287,6 +287,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('ads/up_ads/edit/{up_ads_id}','Admin\Ads\UpAdsController@edit')->name('up_ads.edit');
     Route::post('ads/up_ads/update/{up_ads_id}','Admin\Ads\UpAdsController@update')->name('up_ads.update');
     Route::delete('ads/up_ads/delete/{up_ads_id}','Admin\Ads\UpAdsController@destroy')->name('up_ads.destroy');
+    Route::post('ads/up_ads/sort_update','Admin\Ads\UpAdsController@sort_update');
+
 
     //DownAds
     Route::get('ads/down_ads','Admin\Ads\DownAdsController@index');
@@ -294,6 +296,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('ads/down_ads/store','Admin\Ads\DownAdsController@store')->name('down_ads.store');
     Route::get('ads/down_ads/edit/{down_ads_id}','Admin\Ads\DownAdsController@edit')->name('down_ads.edit');
     Route::post('ads/down_ads/update/{down_ads_id}','Admin\Ads\DownAdsController@update')->name('down_ads.update');
+    Route::delete('ads/down_ads/delete/{down_ads_id}','Admin\Ads\DownAdsController@destroy')->name('down_ads.destroy');
+    Route::post('ads/down_ads/sort_update','Admin\Ads\DownAdsController@sort_update');
 
     //Order
     Route::get('foods/orders/lists','Admin\Order\OrderController@index');
