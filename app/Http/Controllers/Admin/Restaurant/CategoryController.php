@@ -21,10 +21,24 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories=RestaurantCategory::orderBy('restaurant_category_id')->orderBy('sort_id','desc')->get();
+        $categories=RestaurantCategory::orderBy('restaurant_category_id')->get();
         return view('admin.category.index',compact('categories'));
     }
 
+    public function sort_update(Request $request)
+    {
+        $posts = RestaurantCategory::all();
+
+        foreach ($posts as $post) {
+            foreach ($request->order as $order) {
+                if($order['id'] == $post->restaurant_category_id) {
+                    $post->update(['sort_id'=>$order['position']]);
+                }
+            }
+        }
+        $request->session()->flash('alert-success', 'successfully change sort number!');
+        return response()->json(['status'=>'success']);
+    }
     /**
      * Show the form for creating a new resource.
      *

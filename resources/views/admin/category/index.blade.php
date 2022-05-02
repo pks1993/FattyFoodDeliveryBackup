@@ -35,7 +35,7 @@
                         <div class="col-md-6">
                             <!-- Button trigger modal -->
                             <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#category"><i class="fa fa-plus"></i> add category</a>
-                            
+
                             <!-- Modal -->
                             <div class="modal fade" id="category" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -117,9 +117,9 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
-                            <div class="pagination">
+                            {{-- <div class="pagination">
                                 {{ $categories->appends(request()->input())->links() }}
-                            </div>
+                            </div> --}}
                             <table id="categories" class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr class="text-center">
@@ -147,7 +147,7 @@
                                         </td>
                                         <td class="btn-group" style="text-align: left;">
                                             <a href="#"class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#type{{ $category->restaurant_category_id }}"><i class="fa fa-edit"></i></a>
-                                            
+
                                             <!-- Modal -->
                                             <div class="modal fade" id="type{{ $category->restaurant_category_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
@@ -162,10 +162,32 @@
                                                             <div class="modal-body">
                                                                 @csrf
                                                                 <div class="form-group row">
-                                                                    <label for="category_name" class="col-md-12 col-form-label">{{ __('Category Name') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                                                    <label for="restaurant_category_name_mm" class="col-md-12 col-form-label">{{ __('Category Name Myanmar') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                                                     <div class="col-md-12">
-                                                                        <input id="category_name" type="text" class="form-control @error('category_name') is-invalid @enderror" name="category_name" value="{{$category->restaurant_category_name}}" autocomplete="category_name" autofocus required='true'>
-                                                                        @error('category_name')
+                                                                        <input id="restaurant_category_name_mm" type="text" class="form-control @error('restaurant_category_name_mm') is-invalid @enderror" name="restaurant_category_name_mm" value="{{ $category->restaurant_category_name_mm }}" placeholder="{{ "Enter Category Name By Myanmar" }}" autocomplete="restaurant_category_name_mm" autofocus required='true'>
+                                                                        @error('restaurant_category_name_mm')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="restaurant_category_name_en" class="col-md-12 col-form-label">{{ __('Category Name English') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                                                    <div class="col-md-12">
+                                                                        <input id="restaurant_category_name_en" type="text" class="form-control @error('restaurant_category_name_en') is-invalid @enderror" name="restaurant_category_name_en" value="{{ $category->restaurant_category_name_en }}" placeholder="{{ "Enter Category Name By English" }}" autocomplete="restaurant_category_name_en" autofocus required='true'>
+                                                                        @error('restaurant_category_name_en')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="restaurant_category_name_ch" class="col-md-12 col-form-label">{{ __('Category Name China') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                                                    <div class="col-md-12">
+                                                                        <input id="restaurant_category_name_ch" type="text" class="form-control @error('restaurant_category_name_ch') is-invalid @enderror" name="restaurant_category_name_ch" value="{{ $category->restaurant_category_name_ch }}" placeholder="{{ "Enter Category Name By China" }}" autocomplete="restaurant_category_name_ch" autofocus required='true'>
+                                                                        @error('restaurant_category_name_ch')
                                                                         <span class="invalid-feedback" role="alert">
                                                                             <strong>{{ $message }}</strong>
                                                                         </span>
@@ -201,7 +223,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <form action="{{route('fatty.admin.restaurant_categories.destroy', $category->restaurant_category_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                                 @csrf
                                                 @method('delete')
@@ -224,13 +246,17 @@
 <script type="text/javascript">
     $(function () {
         $("#categories").DataTable({
-            // "lengthMenu": [[10,25,50, 100, 250,500, -1], [10,25,50,100, 250, 500, "All"]],
-            "paging": false, // Allow data to be paged
-            "lengthChange": false,
-            "searching": false, // Search box and search function will be actived
-            "info": false,
-            "autoWidth": true,
-            "processing": false,  // Show processing
+            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+                "paging": true, // Allow data to be paged
+                "lengthChange": true,
+                "searching": true, // Search box and search function will be actived
+                "info": true,
+                "autoWidth": true,
+                "processing": true,  // Show processing
+                dom: 'lBfrtip',
+                buttons: [
+                 'excel', 'pdf', 'print'
+                ],
         });
         $("#restaurant_id").select2();
     });
