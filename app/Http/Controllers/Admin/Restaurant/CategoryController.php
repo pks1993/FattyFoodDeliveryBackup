@@ -21,7 +21,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories=RestaurantCategory::orderBy('restaurant_category_id')->get();
+        $categories=RestaurantCategory::orderBy('restaurant_category_id','desc')->get();
         return view('admin.category.index',compact('categories'));
     }
 
