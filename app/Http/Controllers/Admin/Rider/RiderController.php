@@ -6,9 +6,85 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rider\Rider;
 use Yajra\DataTables\DataTables;
+use App\Models\State\State;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class RiderController extends Controller
 {
+    public function admin_approved(Request $request,$id)
+    {
+        $rider=Rider::find($id);
+        if($rider){
+            if($rider->is_admin_approved==1){
+                $rider->is_admin_approved=0;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Reject by Admin!');
+            }else{
+                $rider->is_admin_approved=1;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Approved by Admin!');
+            }
+            return redirect('fatty/main/admin/riders');
+        }else{
+            return response()->json(['success'=>false,'message'=>'rider id not found']);
+        }
+    }
+    public function daily_admin_approved(Request $request,$id)
+    {
+        $rider=Rider::find($id);
+        if($rider){
+            if($rider->is_admin_approved==1){
+                $rider->is_admin_approved=0;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Reject by Admin!');
+            }else{
+                $rider->is_admin_approved=1;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Approved by Admin!');
+            }
+            return redirect('fatty/main/admin/daily_100_riders');
+        }else{
+            return response()->json(['success'=>false,'message'=>'rider id not found']);
+        }
+    }
+    public function monthly_admin_approved(Request $request,$id)
+    {
+        $rider=Rider::find($id);
+        if($rider){
+            if($rider->is_admin_approved==1){
+                $rider->is_admin_approved=0;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Reject by Admin!');
+            }else{
+                $rider->is_admin_approved=1;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Approved by Admin!');
+            }
+            return redirect('fatty/main/admin/monthly_100_riders');
+        }else{
+            return response()->json(['success'=>false,'message'=>'rider id not found']);
+        }
+    }
+    public function yearly_admin_approved(Request $request,$id)
+    {
+        $rider=Rider::find($id);
+        if($rider){
+            if($rider->is_admin_approved==1){
+                $rider->is_admin_approved=0;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Reject by Admin!');
+            }else{
+                $rider->is_admin_approved=1;
+                $rider->update();
+                $request->session()->flash('alert-success', 'Successfully Approved by Admin!');
+            }
+            return redirect('fatty/main/admin/yearly_100_riders');
+        }else{
+            return response()->json(['success'=>false,'message'=>'rider id not found']);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,11 +102,16 @@ class RiderController extends Controller
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
             $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            if ($post->is_admin_approved == 0) {
+                $btn = $btn.'<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $btn = $btn.'<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
             
             return $btn;
         })
@@ -46,15 +127,19 @@ class RiderController extends Controller
             $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
-        ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved == 0) {
-                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            return $is_admin_approved;
+        // ->addColumn('is_admin_approved', function(Rider $item){
+        //     if ($item->is_admin_approved == 0) {
+        //         $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+        //     } else {
+        //         $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+        //     };
+        //     return $is_admin_approved;
+        // })
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->rawColumns(['rider_image','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -69,11 +154,16 @@ class RiderController extends Controller
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
             $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            if ($post->is_admin_approved == 0) {
+                $btn = $btn.'<a href="/fatty/main/admin/daily_100_riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $btn = $btn.'<a href="/fatty/main/admin/daily_100_riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
             
             return $btn;
         })
@@ -89,15 +179,19 @@ class RiderController extends Controller
             $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
-        ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved == 0) {
-                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            return $is_admin_approved;
+        // ->addColumn('is_admin_approved', function(Rider $item){
+        //     if ($item->is_admin_approved == 0) {
+        //         $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+        //     } else {
+        //         $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+        //     };
+        //     return $is_admin_approved;
+        // })
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->rawColumns(['rider_image','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -115,11 +209,16 @@ class RiderController extends Controller
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
             $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            if ($post->is_admin_approved == 0) {
+                $btn = $btn.'<a href="/fatty/main/admin/monthly_100_riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $btn = $btn.'<a href="/fatty/main/admin/monthly_100_riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
             
             return $btn;
         })
@@ -135,15 +234,19 @@ class RiderController extends Controller
             $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
-        ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved == 0) {
-                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            return $is_admin_approved;
+        // ->addColumn('is_admin_approved', function(Rider $item){
+        //     if ($item->is_admin_approved == 0) {
+        //         $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+        //     } else {
+        //         $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+        //     };
+        //     return $is_admin_approved;
+        // })
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->rawColumns(['rider_image','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -160,11 +263,16 @@ class RiderController extends Controller
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
             $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            if ($post->is_admin_approved == 0) {
+                $btn = $btn.'<a href="/fatty/main/admin/yearly_100_riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $btn = $btn.'<a href="/fatty/main/admin/yearly_100_riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
             
             return $btn;
         })
@@ -180,15 +288,19 @@ class RiderController extends Controller
             $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
-        ->addColumn('is_admin_approved', function(Rider $item){
-            if ($item->is_admin_approved == 0) {
-                $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            return $is_admin_approved;
+        // ->addColumn('is_admin_approved', function(Rider $item){
+        //     if ($item->is_admin_approved == 0) {
+        //         $is_admin_approved = '<a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+        //     } else {
+        //         $is_admin_approved = '<a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+        //     };
+        //     return $is_admin_approved;
+        // })
+        ->addColumn('state', function(Rider $item){
+            $state = $item->state->state_name_mm;
+            return $state;
         })
-        ->rawColumns(['rider_image','is_admin_approved','action','register_date'])
+        ->rawColumns(['rider_image','action','register_date','state'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -225,7 +337,8 @@ class RiderController extends Controller
      */
     public function create()
     {
-        //
+        $states=State::all();
+        return view('admin.rider.create',compact('states'));
     }
 
     /**
@@ -236,7 +349,29 @@ class RiderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'rider_user_name' => 'required',
+            'rider_user_phone' => 'required',
+            'state_id' => 'required',
+            'rider_user_password' => 'required|min:6|same:password_confirmation',
+        ]);
+        $photoname=time();
+        $riders=new Rider();
+
+        if(!empty($request['rider_image'])){
+            $img_name=$photoname.'.'.$request->file('rider_image')->getClientOriginalExtension();
+            $riders->rider_image=$img_name;
+            Storage::disk('Rider')->put($img_name, File::get($request['rider_image']));
+        }
+        $riders->rider_user_name=$request['rider_user_name'];
+        $riders->rider_user_phone=$request['rider_user_phone'];
+        $riders->state_id=$request['state_id'];
+        $riders->rider_user_password=$request['rider_user_password'];
+        $riders->is_admin_approved=$request['is_admin_approved'];
+        $riders->save();
+
+        $request->session()->flash('alert-success', 'successfully store rider!');
+        return redirect('fatty/main/admin/riders');
     }
 
     /**

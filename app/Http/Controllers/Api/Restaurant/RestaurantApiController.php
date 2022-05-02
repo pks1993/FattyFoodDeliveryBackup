@@ -13,13 +13,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use App\Models\Food\FoodSubItemData;
 use App\Models\Restaurant\Restaurant;
-use App\Models\Food\FoodAvailableTime;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Restaurant\RestaurantUser;
 use App\Models\Restaurant\RestaurantAvailableTime;
 use App\Models\Order\CustomerOrder;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 
 
 
@@ -67,6 +65,33 @@ class RestaurantApiController extends Controller
         $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereDate('created_at',$current_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
 
         $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at',$current_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
+
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
+    }
+
+    public function restaurant_insight_v1(Request $request)
+    {
+        $restaurant_id=$request['restaurant_id'];
+        $current_date=$request['start_date'];
+        $next_date=$request['end_date'];
+        $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
+        $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+        // $tt=Date(Carbon::today());
+
+        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->get();
+        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','1')->count();
+        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','2')->count();
+        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','3')->count();
+        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+
+        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+
+        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+
+        //OrderShow
+        $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+
+        $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
 
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
     }
@@ -147,7 +172,7 @@ class RestaurantApiController extends Controller
         }
     }
 
-   public function user_register(Request $request) 
+   public function user_register(Request $request)
    {
     $restaurant_user_phone=$request['restaurant_user_phone'];
     $restaurant_user_password=$request['restaurant_user_password'];
@@ -171,7 +196,7 @@ class RestaurantApiController extends Controller
     public function restaurant_register(Request $request)
     {
         $restaurant_user_id=$request['restaurant_user_id'];
-        $check=RestaurantUser::where('restaurant_user_id',$restaurant_user_id)->where('is_admin_approved','1')->first();
+        $check=RestaurantUser::where('restaurant_user_id',$restaurant_user_id)->where('is_admin_approved',0)->first();
         $check_restaurant=Restaurant::where('restaurant_user_id',$restaurant_user_id)->first();
 
         $restaurant_name_mm=$request['restaurant_name_mm'];
@@ -312,14 +337,11 @@ class RestaurantApiController extends Controller
         if($restaurants){
             if($average_time > 59 || $rush_hour_time > 59){
                 return response()->json(['success'=>false,'message' => 'over define minutes is 59! minutes is less than 59']);
-            }elseif(!empty($average_time)){
+            }elseif(!empty($average_time) && !empty($rush_hour_time)){
                 $restaurants->average_time=$average_time;
-                $restaurants->update();
-                return response()->json(['success'=>true,'message'=>'successfull preparing start time define','data'=>$restaurants]);
-            }elseif(!empty($rush_hour_time)){
                 $restaurants->rush_hour_time=$rush_hour_time;
                 $restaurants->update();
-                return response()->json(['success'=>true,'message'=>'successfull preparing end time define','data'=>$restaurants]);
+                return response()->json(['success'=>true,'message'=>'successfull preparing start and end time define','data'=>$restaurants]);
             }else{
                 return response()->json(['success'=>false,'message' => 'preparing time not found!']);
             }
@@ -420,7 +442,7 @@ class RestaurantApiController extends Controller
             $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food','menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();
             },'menu.food.sub_item.option'])->where('restaurant_id',$restaurant_id)->select('restaurant_id','restaurant_name_mm as restaurant_name','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_latitude','restaurant_longitude','restaurant_address_mm as restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status')->first();
-        
+
         return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>['restaurant'=>$restaurant]]);
     }
 
@@ -482,15 +504,17 @@ class RestaurantApiController extends Controller
 
     public function food_menus_delete(Request $request){
         $food_menu_id=$request['food_menu_id'];
-        $menus=FoodMenu::where('food_menu_id',$food_menu_id)->first();
+        $menus=FoodMenu::withCount(['food'])->where('food_menu_id',$food_menu_id)->first();
 
         if(!empty($menus)){
-            $menus->delete();
-
-            $data['food_menu']=$menus;
-            return response()->json(['success'=>true,'message'=>'successfull delete restaurant food menu','data'=>$data]);
+            if($menus->food_count==0){
+                $menus->delete();
+                return response()->json(['success'=>true,'message'=>'successfull delete restaurant food menu','data'=>['food_menu'=>$menus]]);
+            }else{
+                return response()->json(['success'=>false,'message'=>'food menu id have foods!']);
+            }
         }else{
-            return response()->json(['success'=>false,'message'=>'food menu id not found!',]);
+            return response()->json(['success'=>false,'message'=>'food menu id not found!']);
         }
     }
 
@@ -558,7 +582,7 @@ class RestaurantApiController extends Controller
                 // }
 
                 $option=$list['option'];
-                
+
 
                 foreach ($option as $key=>$value1){
                     $item_name_mm=$value1['item_name_mm'];
@@ -580,36 +604,9 @@ class RestaurantApiController extends Controller
                 }
             }
         }
-        
 
-        $available_datetime=$request->availableTime;
 
-        if($available_datetime){
-            $availabel_list=json_decode($available_datetime,true);
-            foreach($availabel_list as $list){
-                $day=$list['day'];
-                if(!empty($list['on_off'])){
-                    $on_off=$list['on_off'];
-                }else{
-                    $on_off=1;
-                }
-                $opening_time=$list['opening_time'];
-                $closing_time=$list['closing_time'];
-
-                $time=FoodAvailableTime::create([
-                    "day"=>$day,
-                    "on_off"=>$on_off,
-                    "opening_time"=>$opening_time,
-                    "closing_time"=>$closing_time,
-                    "food_id"=>$food_id,
-                ]);
-
-            }
-        }else{
-            return response()->json(['success'=>false,'message'=>'check availableTime']);
-        }
-
-        $foods=Food::with(['available_time','sub_item'=>function($sub_item){
+        $foods=Food::with(['sub_item'=>function($sub_item){
                 $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
             },'sub_item.option' => function($option){
                 $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
@@ -730,49 +727,8 @@ class RestaurantApiController extends Controller
                     }
                 }
             }
-            
 
-            $available_datetime=$request->availableTime;
-
-            if($available_datetime){
-                $availabel_list=json_decode($available_datetime,true);
-                foreach($availabel_list as $list){
-                    $food_available_time_id=$list['food_available_time_id'];
-                    $day=$list['day'];
-                    // $on_off=$list['on_off'];
-                    if(!empty($list['on_off'])){
-                        $on_off=$list['on_off'];
-                    }else{
-                        $on_off=1;
-                    }
-                    $opening_time=$list['opening_time'];
-                    $closing_time=$list['closing_time'];
-
-                    if($food_available_time_id=="0"){
-                        $time=FoodAvailableTime::create([
-                            "day"=>$day,
-                            "on_off"=>$on_off,
-                            "opening_time"=>$opening_time,
-                            "closing_time"=>$closing_time,
-                            "food_id"=>$food_id,
-                        ]);
-                    }else{
-                        $time=FoodAvailableTime::where('food_available_time_id',$food_available_time_id)->update([
-                            "day"=>$day,
-                            "on_off"=>$on_off,
-                            "opening_time"=>$opening_time,
-                            "closing_time"=>$closing_time,
-                            "food_id"=>$food_id,
-                        ]);
-
-                    }
-
-                }
-            }else{
-                return response()->json(['success'=>false,'message'=>'check availableTime']);
-            }
-
-            $foods=Food::with(['available_time','sub_item'=>function($sub_item){
+            $foods=Food::with(['sub_item'=>function($sub_item){
                     $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
                 },'sub_item.option' => function($option){
                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
@@ -789,209 +745,6 @@ class RestaurantApiController extends Controller
         }
 
     }
-
-    // public function food_update(Request $request)
-    // {
-    //     $food_id=$request['food_id'];
-    //     $restaurant_id=$request['restaurant_id'];
-    //     $food_name_mm=$request['food_name_mm'];
-    //     $food_name_en=$request['food_name_en'];
-    //     $food_name_ch=$request['food_name_ch'];
-    //     $food_menu_id=$request['food_menu_id'];
-    //     $food_price=$request['food_price'];
-    //     $food_description=$request['food_description'];
-    //     $food_emergency_status=$request['food_emergency_status'];
-    //     $food_recommend_status=$request['food_recommend_status'];
-
-    //     $validated=Validator::make($request->all(),[
-    //         'food_id' => 'required',
-    //         'restaurant_id' => 'required',
-    //         'food_name_mm' => 'required',
-    //         'food_name_en' => 'required',
-    //         'food_name_ch' => 'required',
-    //         'food_menu_id' => 'required',
-    //         'food_price' => 'required',
-    //         'food_description' => 'required',
-    //         'food_emergency_status' => 'required',
-    //         'food_recommend_status' => 'required',
-    //     ]);
-
-    //     if($validated->fails()) {
-    //       return response()->json(['success'=>false,'message'=>'Error! food required field','required'=>['food_id','restaurant_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','food_price','food_description','food_emergency_status','food_recommend_status']]);
-    //     }else{
-    //         $food_image=$request->file('food_image');
-    //         $photoname=time();
-
-    //         if(!empty($food_id)){
-    //             $foods=Food::where('food_id',$food_id)->first();
-    //             if($food_image){
-    //                 if($foods->food_image){
-    //                     Storage::disk('Foods')->delete($foods->food_image);
-    //                 }
-    //                 $img_name=$photoname.'.'.$food_image->getClientOriginalExtension();
-    //                 $foods->food_image=$img_name;
-    //                 Storage::disk('Foods')->put($img_name, File::get($food_image));
-    //             }
-
-
-    //             $foods->food_name_mm=$food_name_mm;
-    //             $foods->food_name_en=$food_name_en;
-    //             $foods->food_name_ch=$food_name_ch;
-    //             $foods->food_menu_id=$food_menu_id;
-    //             $foods->restaurant_id=$restaurant_id;
-    //             $foods->food_price=$food_price;
-    //             $foods->food_description=$food_description;
-    //             $foods->food_emergency_status=$food_emergency_status;
-    //             $foods->food_recommend_status=$food_recommend_status;
-    //             // $foods->update();
-            
-    //             $subitem_list=$request->add_on_list;
-    //             if($subitem_list){
-    //                 $item_lists=json_decode($subitem_list,true);
-    //                  $rules = array(
-    //         'food_sub_item_id' => 'required',
-    //         'section_name_mm' => 'required',
-    //         'section_name_en' => 'required',
-    //         'section_name_ch' => 'required',
-    //         'required_type' => 'required',
-    //         );
-    //                  $validation = Validator::make($form, $rules);
-
-    //     if ($validation->fails()) {
-    //         return Response::make(['error' => $validation->errors()], 400);
-    //     }
-    //                 foreach ($item_lists as $list) {
-    //                     // $food_sub_item_id=$list['food_sub_item_id'];
-                        
-    //                     if(empty($list['food_sub_item_id'])){
-    //                         $food_sub_item_id=$list['food_sub_item_id'];
-    //                     }else{
-    //                         return response()->json(['success'=>false,'message'=>'food_sub_item_id not found'],400);
-    //                         $food_sub_item_id=$list['food_sub_item_id'];
-    //                     }
-    //                     dd($food_sub_item_id);
-    //                     $section_name_mm=$list['section_name_mm'];
-    //                     $section_name_en=$list['section_name_en'];
-    //                     $section_name_ch=$list['section_name_ch'];
-    //                     $required_type=$list['required_type'];
-
-    //                     if($food_sub_item_id=="0"){
-    //                         $food_subitem=new FoodSubItem();
-    //                         $food_subitem->section_name_mm=$section_name_mm;
-    //                         $food_subitem->section_name_en=$section_name_en;
-    //                         $food_subitem->section_name_ch=$section_name_ch;
-    //                         $food_subitem->required_type=$required_type;
-    //                         $food_subitem->food_id=$food_id;
-    //                         $food_subitem->restaurant_id=$restaurant_id;
-    //                         // $food_subitem->save();
-    //                     }else{
-    //                         $food_subitem=FoodSubItem::where('food_sub_item_id',$food_sub_item_id)->first();
-    //                         $food_subitem->section_name_mm=$section_name_mm;
-    //                         $food_subitem->section_name_en=$section_name_en;
-    //                         $food_subitem->section_name_ch=$section_name_ch;
-    //                         $food_subitem->required_type=$required_type;
-    //                         $food_subitem->food_id=$food_id;
-    //                         $food_subitem->restaurant_id=$restaurant_id;
-    //                         // $food_subitem->update();
-    //                     }
-
-
-    //                     $option=$list['option'];
-    //                     foreach ($option as $key=>$value1){
-    //                         $food_sub_item_data_id=$value1['food_sub_item_data_id'];
-    //                         $item_name_mm=$value1['item_name_mm'];
-    //                         $item_name_en=$value1['item_name_en'];
-    //                         $item_name_ch=$value1['item_name_ch'];
-    //                         $item_price=$value1['food_sub_item_price'];
-    //                         $instock=$value1['instock'];
-
-    //                         // if($food_sub_item_data_id=="0"){
-    //                         //     FoodSubItemData::create([
-    //                         //         "food_sub_item_id"=>$food_subitem->food_sub_item_id,
-    //                         //         "item_name_mm"=>$item_name_mm,
-    //                         //         "item_name_en"=>$item_name_en,
-    //                         //         "item_name_ch"=>$item_name_ch,
-    //                         //         "food_sub_item_price"=>$item_price,
-    //                         //         "instock"=>$instock,
-    //                         //         "food_id"=>$food_id,
-    //                         //         "restaurant_id"=>$restaurant_id,
-    //                         //     ]);
-    //                         // }else{
-    //                         //     FoodSubItemData::where('food_sub_item_data_id',$food_sub_item_data_id)->update([
-    //                         //         "food_sub_item_id"=>$food_subitem->food_sub_item_id,
-    //                         //         "item_name_mm"=>$item_name_mm,
-    //                         //         "item_name_en"=>$item_name_en,
-    //                         //         "item_name_ch"=>$item_name_ch,
-    //                         //         "food_sub_item_price"=>$item_price,
-    //                         //         "instock"=>$instock,
-    //                         //         "food_id"=>$food_id,
-    //                         //         "restaurant_id"=>$restaurant_id,
-    //                         //     ]);
-    //                         // }
-
-    //                     }
-    //                 }
-    //             }else{
-    //                 return response()->json(['success'=>false,'message'=>'add_on_list is not define']);
-    //             }
-                
-
-    //             $available_datetime=$request->availableTime;
-
-    //             if($available_datetime){
-    //                 $availabel_list=json_decode($available_datetime,true);
-    //                 foreach($availabel_list as $list){
-    //                     $food_available_time_id=$list['food_available_time_id'];
-    //                     $day=$list['day'];
-    //                     if(!empty($list['on_off'])){
-    //                         $on_off=$list['on_off'];
-    //                     }else{
-    //                         $on_off=1;
-    //                     }
-    //                     $opening_time=$list['opening_time'];
-    //                     $closing_time=$list['closing_time'];
-
-    //                     if($food_available_time_id=="0"){
-    //                         $time=FoodAvailableTime::create([
-    //                             "day"=>$day,
-    //                             "on_off"=>$on_off,
-    //                             "opening_time"=>$opening_time,
-    //                             "closing_time"=>$closing_time,
-    //                             "food_id"=>$food_id,
-    //                         ]);
-    //                     }else{
-    //                         $time=FoodAvailableTime::where('food_available_time_id',$food_available_time_id)->update([
-    //                             "day"=>$day,
-    //                             "on_off"=>$on_off,
-    //                             "opening_time"=>$opening_time,
-    //                             "closing_time"=>$closing_time,
-    //                             "food_id"=>$food_id,
-    //                         ]);
-
-    //                     }
-
-    //                 }
-    //             }else{
-    //                 return response()->json(['success'=>false,'message'=>'check availableTime']);
-    //             }
-
-    //             $foods=Food::with(['available_time','sub_item'=>function($sub_item){
-    //                     $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
-    //                 },'sub_item.option' => function($option){
-    //                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
-    //                 },'restaurant'=>function ($restaurant){
-    //                     $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id')->get();
-    //                 },'restaurant.category' => function ($category){
-    //                     $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
-    //                 },'restaurant.available_time'])->where('restaurant_id',$restaurant_id)->orderby('created_at','DESC')->first();
-    //             $food['foods']=$foods;
-
-    //             return response()->json(['success'=>true,'message'=>'successfull update foods','data'=>$food]);
-    //         }else{
-    //             return response()->json(['success'=>false,'message'=>'food id not found']);
-    //         }
-    //     }
-    // }
 
     public function food_search(Request $request)
     {
@@ -1027,10 +780,10 @@ class RestaurantApiController extends Controller
             $result=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
             $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
-            ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+            ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
@@ -1079,7 +832,7 @@ class RestaurantApiController extends Controller
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>[]]);
         }
         else{
-            return response()->json(['success'=>false,'message'=>'Something Error!']);   
+            return response()->json(['success'=>false,'message'=>'Something Error!']);
         }
     }
 
@@ -1100,10 +853,10 @@ class RestaurantApiController extends Controller
         $restaurants=Restaurant::with(['category'=> function($category){
         $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
         $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
-        ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+        ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         ->whereIn('restaurant_category_id',$category_id)
@@ -1131,14 +884,13 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
-                $data=[];
-                
+
                 if($value->wishlist==1){
                     $value->is_wish=true;
                 }else{
                     $value->is_wish=false;
                 }
-                
+
                 $value->distance=(float)$kilometer;
                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
                 $value->delivery_fee=$delivery_fee;
@@ -1147,7 +899,7 @@ class RestaurantApiController extends Controller
             }
 
 
-        
+
         return response()->json(['success'=>true,'message'=>'this is restaurant','data'=>$restaurants]);
     }
 
@@ -1178,6 +930,53 @@ class RestaurantApiController extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>'food id not found']);
         }
+    }
+
+    public function available_create(){
+        $restaurant=Restaurant::all();
+        foreach($restaurant as $value){
+            $id=$value['restaurant_id'];
+            $collect=array([
+                'day'=>"Monday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Tuesday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Wednesday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Thursday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Friday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Saturday",
+                'on_off'=>0
+            ]
+            ,[
+                'day'=>"Sunday",
+                'on_off'=>0
+            ]
+        );
+
+        foreach($collect as $value1){
+            $day=$value1['day'];
+            $on_off=$value1['on_off'];
+            RestaurantAvailableTime::create([
+                    "day"=>$day,
+                    "on_off"=>$on_off,
+                    "restaurant_id"=>$id,
+                ]);
+        }
+        }
+        return response()->json(['success'=>true]);
     }
 
 }

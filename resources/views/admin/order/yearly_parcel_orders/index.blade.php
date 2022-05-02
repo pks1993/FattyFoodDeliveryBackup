@@ -75,7 +75,7 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>CustomerOrderId</th>
-                                        <th>BookingId</th>
+                                        <th>CustomerBookingId</th>
                                         <th>OrdereDate</th>
                                         <th>OrderTime</th>
                                         <th>OrderStatus</th>

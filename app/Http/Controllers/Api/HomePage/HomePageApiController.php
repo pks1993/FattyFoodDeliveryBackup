@@ -66,10 +66,10 @@ class HomePageApiController extends Controller
         ->select('category_assigns.category_assign_id','category_assigns.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image')
         ->get();
 
-        $recommend=RecommendRestaurant::select('recommend_restaurant_id','recommend_restaurants.restaurant_id','restaurants.restaurant_name_mm','restaurants.restaurant_name_en','restaurants.restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+        $recommend=RecommendRestaurant::select('recommend_restaurant_id','recommend_restaurants.restaurant_id','restaurants.restaurant_name_mm','restaurants.restaurant_name_en','restaurants.restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         // ->orderBy('distance','ASC')
@@ -92,11 +92,11 @@ class HomePageApiController extends Controller
 
         $up_ads=UpAds::orderBy('created_at','DESC')->select('up_ads_id','restaurant_id','image')->get();
         $down_ads=DownAds::orderBy('created_at','DESC')->select('down_ads_id','restaurant_id','image')->get();
-        
-        $near_restaurant=Restaurant::select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+
+        $near_restaurant=Restaurant::select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         ->orderBy('distance','ASC')
@@ -140,7 +140,7 @@ class HomePageApiController extends Controller
                 array_push($restaurants_val,$value);
 
             }
-        
+
             return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$near_restaurant,'categories'=>$assign,'recommend_restaurant'=>$recommend,'up_ads'=>$up_ads,'down_ads'=>$down_ads]);
     }
 
@@ -160,10 +160,10 @@ class HomePageApiController extends Controller
         if(!empty($check_customer)){
             $recommend=RecommendRestaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
-            $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])->select('recommend_restaurants.restaurant_id','restaurants.restaurant_name_mm','restaurants.restaurant_name_en','restaurants.restaurant_name_ch','restaurants.restaurant_category_id','restaurants.city_id','restaurants.state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+            $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])->select('recommend_restaurants.restaurant_id','restaurants.restaurant_name_mm','restaurants.restaurant_name_en','restaurants.restaurant_name_ch','restaurants.restaurant_category_id','restaurants.city_id','restaurants.state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             // ->having('distance','<',500)
             ->orderBy('distance','ASC')
@@ -221,10 +221,10 @@ class HomePageApiController extends Controller
 
         $restaurants=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
-            $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+            $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         ->orderBy('distance','ASC')
@@ -311,7 +311,7 @@ class HomePageApiController extends Controller
             }
             array_push($data,$restaurants);
 
-        return response()->json(['success'=>true,'message'=>'this is menu data','data'=>$restaurants]);        
+        return response()->json(['success'=>true,'message'=>'this is menu data','data'=>$restaurants]);
     }
 
     /**

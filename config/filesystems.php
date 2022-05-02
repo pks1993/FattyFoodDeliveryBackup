@@ -64,6 +64,27 @@ return [
             'url' => env('AWS_URL'),
         ],
 
+        // 'ftp' => [
+        //     'driver' => 'ftp',
+        //     'host' =>'159.223.74.206',
+        //     'username' =>'ftpuser',
+        //     'password' => 'Fatty@Orikino#412FData',
+        //     'root' => '/fatty/uploads/user',
+        //     'port' => 21,
+        //     'passive' => true,
+        //     'ssl' => true,
+        //     'timeout' => 30,
+        // ],
+
+        'ftp' => [
+            'driver' => 'ftp',
+            'host' => env('FTP_HOST'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+            'root' => '/fatty/uploads/user' // for example: /public_html/images
+        ],
+
+
         'uploads' => [
             'driver' => 'local',
             'root'   => public_path('uploads'),

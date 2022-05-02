@@ -8,6 +8,8 @@ use App\Models\Restaurant\RecommendRestaurant;
 use App\Models\Restaurant\Restaurant;
 use App\Models\State\State;
 use App\Models\City\City;
+// use Yajra\DataTables\DataTables;
+
 
 class RecommendRestaurantController extends Controller
 {
@@ -18,8 +20,23 @@ class RecommendRestaurantController extends Controller
      */
     public function index()
     {
-        $recommend_restaurants=RecommendRestaurant::orderBy('created_at','DESC')->paginate(10);
+        $recommend_restaurants=RecommendRestaurant::orderBy('sort_id')->paginate(50);
         return view('admin.restaurant.recommend.index',compact('recommend_restaurants'));
+    }
+
+    public function sort_update(Request $request)
+    {
+        $posts = RecommendRestaurant::all();
+
+        foreach ($posts as $post) {
+            foreach ($request->order as $order) {
+                if ($order['id'] == $post->recommend_restaurant_id) {
+                    $post->update(['sort_id' => $order['position']]);
+                }
+            }
+        }
+        $request->session()->flash('alert-success', 'successfully sort number!');
+        return response()->json(['status'=>'success']);
     }
 
     public function city_list($id)
@@ -117,9 +134,28 @@ class RecommendRestaurantController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        RecommendRestaurant::destroy($id);
-        return redirect('fatty/main/admin/recommend_restaurants');
+
+        $recommend=RecommendRestaurant::find($id);
+
+        if($recommend){
+            $restaurant=Restaurant::find($recommend->restaurant_id);
+            $restaurant->is_recommend=0;
+            $restaurant->update();
+
+            $recommendRes=RecommendRestaurant::where('sort_id','>',$recommend->sort_id)->get();
+            foreach($recommendRes as $value){
+                $sort_id=$value->sort_id-1;
+                $recommend_restaurant_id=$value->recommend_restaurant_id;
+                RecommendRestaurant::where('recommend_restaurant_id',$recommend_restaurant_id)->update(['sort_id'=>$sort_id]);
+            }
+
+            $recommend->delete();
+
+            $request->session()->flash('alert-danger', 'successfully delete recommend restaurant!');
+            return redirect('fatty/main/admin/recommend_restaurants');
+        }
+
     }
 }

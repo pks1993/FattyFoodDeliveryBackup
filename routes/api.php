@@ -22,15 +22,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Route::post('auth_login','Api\Auth\AuthApiController@index');
 
 
-//Customer Api
+//Customer Api //one device login
 Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiController@index');
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
+Route::post('fatty/202221/lashio/main/admin/customers/login/v2','Api\Customer\CustomerApiController@login_version_two');
 Route::post('fatty/202221/lashio/main/admin/customers/otp_send','Api\Customer\CustomerApiController@otp_send');
 Route::post('fatty/202221/lashio/main/admin/customers/otp_check','Api\Customer\CustomerApiController@otp_check');
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
+Route::post('fatty/202221/lashio/main/admin/customers/one_device/login','Api\Customer\CustomerApiController@one_device_login');
+Route::post('fatty/202221/lashio/main/admin/customers/logout','Api\Customer\CustomerApiController@logout');
+
 
 //Customer Notification
 Route::get('fatty/202221/lashio/main/admin/customers/notifications','Api\Notification\NotificationApiController@index');
@@ -68,7 +72,6 @@ Route::post('fatty/202221/lashio/main/admin/restaurants/opening/create','Api\Res
 Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/define','Api\Restaurant\RestaurantApiController@preparing_store');
 Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/list','Api\Restaurant\RestaurantApiController@preparing_list');
 Route::post('fatty/202221/lashio/main/admin/restaurants/details','Api\Restaurant\RestaurantApiController@restaurant_details');
-
 
 //Food Menu Api
 Route::post('fatty/202221/lashio/main/admin/restaurants/menus','Api\Restaurant\RestaurantApiController@restaurant_menu');
@@ -125,6 +128,9 @@ Route::post('fatty/202221/lashio/main/admin/customers/orders/cancel','Api\Order\
 Route::post('fatty/202221/lashio/main/admin/customers/orders/v1/cancel','Api\Order\OrderApiController@cancle_order_v1');
 Route::post('fatty/202221/lashio/main/admin/riders/send/noti/to/customers','Api\Order\OrderApiController@send_noti_to_customer');
 
+//kpay close api
+Route::post('fatty/202221/lashio/main/admin/customers/ios/payment/list','Api\Order\OrderApiController@kpay_close');
+
 
 
 //Restaurant Order
@@ -161,11 +167,14 @@ Route::post('fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiCo
 Route::post('fatty/202221/lashio/main/admin/rider/insight','Api\Rider\RiderApiController@rider_insight');
 //insightRestaurant
 Route::post('fatty/202221/lashio/main/admin/restaurants/insight','Api\Restaurant\RestaurantApiController@restaurant_insight');
+Route::post('fatty/202221/lashio/main/admin/restaurants/insight/v1','Api\Restaurant\RestaurantApiController@restaurant_insight_v1');
 
 //Testing
 Route::post('rider/test/store','Api\Rider\RiderApiController@test_store');
 Route::post('fatty/202221/lashio/main/admin/testing','Api\Rider\RiderApiController@index');
 Route::get('fatty/202221/lashio/main/admin/customers/food/orders/delivery/Hello','Api\Order\OrderApiController@Test');
+Route::get('restaurant/available/create/all','Api\Restaurant\RestaurantApiController@available_create');
+
 
 //parcel
 Route::post('fatty/202221/lashio/main/admin/customers/parcels/type/store','Api\Order\ParcelOrderApiController@create');
@@ -188,6 +197,9 @@ Route::post('fatty/202221/lashio/main/admin/customers/food/orders/delivery/fee',
 //Notify url
 Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\NotificationApiController@notify_url');
 
+//force update
+Route::get('fatty/main/admin/android/version/check','Api\Notification\NotificationApiController@android_version_check');
+Route::get('fatty/main/admin/ios/version/check','Api\Notification\NotificationApiController@ios_version_check');
 
 
 

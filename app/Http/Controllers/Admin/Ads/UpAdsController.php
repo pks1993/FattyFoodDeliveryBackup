@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Ads\UpAds;
+use App\Models\Restaurant\Restaurant;
 
 class UpAdsController extends Controller
 {
@@ -17,9 +18,25 @@ class UpAdsController extends Controller
      */
     public function index()
     {
-        $up_ads=UpAds::orderBy('created_at','DESC')->paginate(10);
+        $up_ads=UpAds::orderBy('sort_id')->get();
         return view('admin.Ads.up.index',compact('up_ads'));
     }
+
+    public function sort_update(Request $request)
+    {
+        $posts = UpAds::all();
+
+        foreach ($posts as $post) {
+            foreach ($request->order as $order) {
+                if($order['id'] == $post->up_ads_id) {
+                    $post->update(['sort_id'=>$order['position']]);
+                }
+            }
+        }
+        $request->session()->flash('alert-success', 'successfully change sort number!');
+        return response()->json(['status'=>'success']);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -28,7 +45,8 @@ class UpAdsController extends Controller
      */
     public function create()
     {
-        return view('admin.Ads.up.create');
+        $restaurants=Restaurant::doesnthave('up_ads')->get();
+        return view('admin.Ads.up.create',compact('restaurants'));
     }
 
     /**
@@ -40,11 +58,14 @@ class UpAdsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
+            'restaurant_id' => 'required',
             'image' => 'required',
 
         ]);
+        $restaurant_id=$request['restaurant_id'];
         $image=$request->file('image');
         $name=time();
+        $count=UpAds::count();
 
         $up_ads=new UpAds();
         if($image){
@@ -52,6 +73,8 @@ class UpAdsController extends Controller
             $up_ads->image=$image_name;
             Storage::disk('Up_Ads')->put($image_name, File::get($image));
         }
+        $up_ads->restaurant_id=$restaurant_id;
+        $up_ads->sort_id=$count+1;
         $up_ads->save();
         $request->session()->flash('alert-success', 'successfully create up ads!');
         return redirect('fatty/main/admin/ads/up_ads');
@@ -77,7 +100,9 @@ class UpAdsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $up_ads=UpAds::find($id);
+        $restaurants=Restaurant::doesnthave('up_ads')->get();
+        return view('admin.Ads.up.edit',compact('restaurants','up_ads'));
     }
 
     /**
@@ -89,10 +114,7 @@ class UpAdsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'image' => 'required',
-
-        ]);
+        $restaurant_id=$request['restaurant_id'];
         $image=$request->file('image');
         $name=time();
 
@@ -103,7 +125,9 @@ class UpAdsController extends Controller
             $up_ads->image=$image_name;
             Storage::disk('Up_Ads')->put($image_name, File::get($image));
         }
+        $up_ads->restaurant_id=$restaurant_id;
         $up_ads->update();
+
         $request->session()->flash('alert-success', 'successfully create up ads!');
         return redirect('fatty/main/admin/ads/up_ads');
     }
@@ -114,13 +138,27 @@ class UpAdsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        $up_ads=UpAds::where('up_ads_id',$id)->FirstOrFail();
-        Storage::disk('Up_Ads')->delete($up_ads->image);
-        $up_ads->delete();
+        $up_ads=UpAds::where('up_ads_id',$id)->first();
+        if($up_ads){
+            $sortId=UpAds::where('sort_id','>',$up_ads->sort_id)->get();
+            foreach($sortId as $value){
+                $sort_id=$value->sort_id-1;
+                $up_ads_id=$value->up_ads_id;
 
-        $request->session()->flash('alert-danger', 'successfully delete up ads!');
-        return redirect('fatty/main/admin/ads/up_ads');
+                UpAds::where('up_ads_id',$up_ads_id)->update(['sort_id'=>$sort_id]);
+            }
+
+            Storage::disk('Up_Ads')->delete($up_ads->image);
+            $up_ads->delete();
+
+            $request->session()->flash('alert-danger', 'successfully delete up ads!');
+            return redirect('fatty/main/admin/ads/up_ads');
+        }else{
+            $request->session()->flash('alert-warning', 'up ads id is not define!');
+            return redirect('fatty/main/admin/ads/up_ads');
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-@extends('admin.layouts.master')
+{{-- @extends('admin.layouts.master')
 
 @section('css')
 @endsection
@@ -89,4 +89,139 @@
         $('#successMessage').fadeOut('fast');
     }, 2000);
 </script>
-@endpush
+@endpush --}}
+
+{{-- <iframe 
+  width="300" 
+  height="170" 
+  frameborder="0" 
+  scrolling="no" 
+  marginheight="0" 
+  marginwidth="0" 
+  src="https://maps.google.com/maps?q='+YOUR_LAT+','+YOUR_LON+'&hl=es&z=14&amp;output=embed"
+ > --}}
+
+ {{-- <iframe width="100%" 
+ height="100%" 
+ frameborder="0" 
+ scrolling="no" 
+ marginheight="0" 
+ marginwidth="0" 
+src = "https://maps.google.com/maps?q=21.9293083,96.1116005&hl=es;z=14&amp;output=embed"></iframe> --}}
+{{-- <iframe width="100%" height="100%" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" style="border:0" src="https://maps.google.com/maps?saddr=21.9339885,96.110661&daddr=21.938852968794,96.136361720505%20to:21.929273415891313,96.1115577444434&hl=es;z=19&amp;output=embed" allowfullscreen></iframe> --}}
+{{-- <iframe width="100%" 
+        height="100%" 
+        frameborder="0" 
+        scrolling="no" 
+        marginheight="0" 
+        marginwidth="0" 
+        src="https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=333+E+34th+St,+New+York,+NY&aq=1&oq=333&sll=37.269174,-119.306607&sspn=16.742323,33.815918&ie=UTF8&hq=&hnear=333+E+34th+St,+New+York,+10016&t=m&z=14&ll=40.744403,-73.974467&output=embed">
+</iframe> --}}
+
+{{-- <script
+src="http://maps.googleapis.com/maps/api/js">
+</script>
+<script>
+function initialize() {
+    var latitude = 21.9293083;
+    var longitude = 96.1116005;
+    var zoom = 14;
+
+    var LatLng = new google.maps.LatLng(latitude, longitude);
+
+  var mapProp = {
+    center: LatLng,
+    zoom:14,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+  var map=new google.maps.Map(document.getElementById("googleMap"), mapProp);
+  var marker = new google.maps.Marker({
+      position: LatLng,
+      map: map,
+      title: 'Customer',
+      draggable: true
+    });
+  google.maps.event.addListener(marker, 'Customer', function(event) {
+
+      document.getElementById('la').value = event.latLng.lat();
+      document.getElementById('lo').value = event.latLng.lng();
+
+
+
+});
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+        <div id="googleMap" style="width:auto;height:400px;"></div>
+
+        <input type="hidden" id="la" name="la">
+        <input type="hidden" id="lo" name="lo"> --}}
+
+        
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Marker Labels</title>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+            <link rel="stylesheet" type="text/css" href="./style.css" />
+            <script src="./index.js"></script>
+            <style>
+                /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+#map {
+  height: 100%;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+            </style>
+          </head>
+          <body>
+            <div id="map"></div>
+        
+            <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+            <script
+              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKbibh4Mr7_vpm2f-n0lo48TPbQKv2JHI&callback=initMap&v=weekly"
+              async
+            ></script>
+            <script>
+                // In the following example, markers appear when the user clicks on the map.
+// Each marker is labeled with a single alphabetical character.
+const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let labelIndex = 0;
+
+function initMap() {
+  const bangalore = { lat: 12.97, lng: 77.59 };
+  const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 12,
+    center: bangalore,
+  });
+
+  // This event listener calls addMarker() when the map is clicked.
+  google.maps.event.addListener(map, "click", (event) => {
+    addMarker(event.latLng, map);
+  });
+  // Add a marker at the center of the map.
+  addMarker(bangalore, map);
+}
+
+// Adds a marker to the map.
+function addMarker(location, map) {
+  // Add the marker at the clicked location, and add the next-available label
+  // from the array of alphabetical characters.
+  new google.maps.Marker({
+    position: location,
+    label: labels[labelIndex++ % labels.length],
+    map: map,
+  });
+}
+            </script>
+          </body>
+        </html>

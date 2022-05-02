@@ -40,7 +40,8 @@ class ParcelStateController extends Controller
     public function store(Request $request)
     {
         ParcelState::create($request->all());
-        return redirect('admin/about');
+        $request->session()->flash('alert-success', 'successfully store parcel state!');
+        return redirect('fatty/main/admin/parcel_states');
     }
 
     /**
@@ -74,7 +75,9 @@ class ParcelStateController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        ParcelState::find($id)->update($request->all());
+        $request->session()->flash('alert-success', 'successfully update parcel state!');
+        return redirect('fatty/main/admin/parcel_states');
     }
 
     /**
@@ -83,8 +86,10 @@ class ParcelStateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+        ParcelState::destroy($id);
+        $request->session()->flash('alert-success', 'successfully delete parcel state!');
+        return redirect('fatty/main/admin/parcel_states');
     }
 }

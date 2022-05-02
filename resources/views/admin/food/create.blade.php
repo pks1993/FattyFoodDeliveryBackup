@@ -55,23 +55,8 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label for="restaurant_id" class="col-md-12 col-form-label">{{ __('Restaurant Name') }} <span  style="color: #990000;font-weight:700;">*</span></label>
-                                    <div class="col-md-12">
-                                        <select id="restaurant_id" style="width: 100%;" class="form-control @error('restaurant_id') is-invalid @enderror" name="restaurant_id" value="{{ old('restaurant_id') }}" autocomplete="restaurant_id">
-                                            <option value="">Choose Restaurant</option>
-                                            @foreach($restaurants as $value)
-                                                <option value="{{ $value->restaurant_id }}">{{ $value->restaurant_name }} ( {{ $value->zone->zone_name }} )</option>
-                                            @endforeach
-                                        </select>
-                                        @error('restaurant_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- <div class="form-group row">
+
+                                <!-- {{-- <div class="form-group row">
                                     <label for="food_category_id" class="col-md-12 col-form-label">{{ __('Food Category') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="food_category_id" style="width: 100%;" class="form-control @error('food_category_id') is-invalid @enderror" name="food_category_id" value="{{ old('food_category_id') }}" autocomplete="food_category_id" autofocus>
@@ -82,7 +67,7 @@
                                             </span>
                                         @enderror
                                     </div>
-                                </div> --}}
+                                </div> --}} -->
                                 <div class="form-group row">
                                     <label for="food_menu_id" class="col-md-12 col-form-label">{{ __('Food Menu') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -128,9 +113,9 @@
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fa fa-save"></i> {{ __('Create') }}
                                         </button>
-                                        <a href="{{url('fatty/main/admin/zones')}}" class="btn btn-secondary btn-sm">
+                                        <!-- <a href="{{url('fatty/main/admin/zones')}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
-                                        </a>
+                                        </a> -->
                                     </div>
                                 </div>
                             </form>
@@ -154,15 +139,15 @@ $(document).ready(function () {
             $.ajax({
                 type: 'get',
                 url: '/fatty/main/admin/foods/menu/list/'+id,
-                success: function(data){ 
+                success: function(data){
                     $('#food_menu_id').append(`<option value="">Choose Menu</option>`);
                     $.each(data, function(index,value) {
                         $('#food_menu_id').append('<option value='+value.food_menu_id+'>'+value.food_menu_name+'</option>');
                     });
                 }
-            });  
+            });
         }
-    }); 
+    });
     $('#food_menu_id').select2();
     // $('#food_category_id').select2();
     $('#restaurant_id').select2();

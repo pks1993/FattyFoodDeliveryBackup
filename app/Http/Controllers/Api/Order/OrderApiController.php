@@ -15,6 +15,7 @@ use App\Models\Food\Food;
 use App\Models\Food\FoodSubItem;
 use App\Models\Food\FoodSubItemData;
 use App\Models\Order\PaymentMethod;
+use App\Models\Order\PaymentMethodClose;
 use App\Models\Customer\Customer;
 use App\Models\Rider\Rider;
 use DB;
@@ -54,10 +55,10 @@ class OrderApiController extends Controller
         $result = curl_exec($curl_session);
         // if ($result === FALSE) {
         //     die('Curl failed: ' . curl_error($ch));
-        // }      
+        // }
         curl_close($curl_session);
 
-        return response()->json($customer_check);   
+        return response()->json($customer_check);
 
     }
 
@@ -166,63 +167,15 @@ class OrderApiController extends Controller
         $check_customer=Customer::where('customer_id',$customer_id)->first();
         if(!empty($check_customer)){
             if($order_type=="food"){
-                // $active_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereRaw('order_status_id','1')->orwhere('order_status_id','3')->orwhere('order_status_id','4')->orwhere('order_status_id','5')->orwhere('order_status_id','6')->orwhere('order_status_id','10')->where('order_type','food')->get();
+                $active_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->get();
 
-                $active_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->get();
-                $active=[];
-                foreach($active_order as $value){
-                    if($value->customer_address_id != 0){
-                        if($value->customer_address->is_default==1){
-                            $value->customer_address->is_default=true;
-                        }else{
-                            $value->customer_address->is_default=false;
-                        }
-                        array_push($active,$value);
-                    }
-                }
-
-                // $past_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->where('order_status_id','7')->orwhere('order_status_id','2')->orwhere('order_status_id','8')->orwhere('order_status_id','9')->where('order_type','food')->get();
-
-                $past_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->get();
-                $past=[];
-                foreach($past_order as $value){
-                    if($value->customer_address_id != 0){
-                        if($value->customer_address->is_default==1){
-                            $value->customer_address->is_default=true;
-                        }else{
-                            $value->customer_address->is_default=false;
-                        }
-                        array_push($past,$value);
-                    }
-                }
+                $past_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->get();
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order ,'past_order'=>$past_order]);
             }elseif($order_type=="parcel"){
                 $active_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->get();
-                $active=[];
-                foreach($active_order as $value){
-                    if($value->customer_address_id != 0){
-                        if($value->customer_address->is_default==1){
-                            $value->customer_address->is_default=true;
-                        }else{
-                            $value->customer_address->is_default=false;
-                        }
-                        array_push($active,$value);
-                    }
-                }
-
                 $past_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->get();
-                $past=[];
-                foreach($past_order as $value){
-                    if($value->customer_address_id != 0){
-                        if($value->customer_address->is_default==1){
-                            $value->customer_address->is_default=true;
-                        }else{
-                            $value->customer_address->is_default=false;
-                        }
-                        array_push($past,$value);
-                    }
-                }
+
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order]);
             }else{
@@ -478,11 +431,11 @@ class OrderApiController extends Controller
                         $customer_orders->order_status_id=9;
                         $customer_orders->update();
 
-                        if(!isset($_SESSION)) 
-                        { 
-                            session_start(); 
-                        } 
-                    
+                        if(!isset($_SESSION))
+                        {
+                            session_start();
+                        }
+
                         $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                         $_SESSION['customer_orders']=$customer_orders;
 
@@ -540,14 +493,14 @@ class OrderApiController extends Controller
         $restaurant_remark = $request['restaurant_remark'];
         $order_food_id=$request->order_food_id;
         // $result = json_decode($order_food_id);
-       
-        
+
+
 
         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
         $check_order=CustomerOrder::where('order_id',$order_id)->first();
-        
+
         if($check_order){
             if ($cancle_type == 'other') {
                 CustomerOrder::where('order_id',$order_id)->update([
@@ -562,7 +515,7 @@ class OrderApiController extends Controller
                 array_push($fcm_token, $check_order->customer->fcm_token);
                 $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
                 $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
-    
+
                 $playLoad = json_encode($field);
                 $curl_session = curl_init();
                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
@@ -580,7 +533,7 @@ class OrderApiController extends Controller
                 foreach ($order_food_id as $value) {
                     $of_id[] = $value['order_food_id'];
                 }
-            
+
                 $check_order_food=OrderFoods::whereIn('order_food_id',$of_id)->pluck('food_id');
                 CustomerOrder::where('order_id',$order_id)->update([
                     'order_status_id'=>2,
@@ -588,7 +541,7 @@ class OrderApiController extends Controller
                 Food::whereIn('food_id',$check_order_food)->update([
                     'food_emergency_status'=>1,
                 ]);
-    
+
                  //Customer
                  $title="Order Canceled by Restaurant";
                  $messages="It’s sorry as your order is canceled by restaurant!";
@@ -597,7 +550,7 @@ class OrderApiController extends Controller
                  array_push($fcm_token, $check_order->customer->fcm_token);
                  $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
                  $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
-     
+
                  $playLoad = json_encode($field);
                  $curl_session = curl_init();
                  curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
@@ -615,7 +568,7 @@ class OrderApiController extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>'order id not found']);
         }
-        
+
     }
 
     public function restaurant_cancel_order_v1(Request $request)
@@ -630,7 +583,7 @@ class OrderApiController extends Controller
         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
         $check_order=CustomerOrder::where('order_id',$order_id)->first();
-        
+
         if($check_order){
             if($check_order->order_status_id==19){
                 if ($cancel_type == 'other') {
@@ -643,7 +596,7 @@ class OrderApiController extends Controller
                     foreach ($order_food_id as $value) {
                         $of_id[] = $value['order_food_id'];
                     }
-                
+
                     $check_order_food=OrderFoods::whereIn('order_food_id',$of_id)->pluck('food_id');
                     CustomerOrder::where('order_id',$order_id)->update([
                         'order_status_id'=>2,
@@ -660,7 +613,7 @@ class OrderApiController extends Controller
                 $fcm_token=array();
                 array_push($fcm_token, $check_order->restaurant->restaurant_fcm_token);
                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
-        
+
                 $playLoad = json_encode($field);
                 $curl_session = curl_init();
                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
@@ -673,12 +626,12 @@ class OrderApiController extends Controller
                 $result = curl_exec($curl_session);
                 curl_close($curl_session);
 
-                if(!isset($_SESSION)) 
-                { 
-                    session_start(); 
-                } 
+                if(!isset($_SESSION))
+                {
+                    session_start();
+                }
                 $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
-                        
+
                 $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                 $_SESSION['customer_orders']=$customer_orders;
 
@@ -694,7 +647,7 @@ class OrderApiController extends Controller
                     foreach ($order_food_id as $value) {
                         $of_id[] = $value['order_food_id'];
                     }
-                
+
                     $check_order_food=OrderFoods::whereIn('order_food_id',$of_id)->pluck('food_id');
                     CustomerOrder::where('order_id',$order_id)->update([
                         'order_status_id'=>2,
@@ -711,7 +664,7 @@ class OrderApiController extends Controller
                 $fcm_token=array();
                 array_push($fcm_token, $check_order->restaurant->restaurant_fcm_token);
                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
-        
+
                 $playLoad = json_encode($field);
                 $curl_session = curl_init();
                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
@@ -730,7 +683,7 @@ class OrderApiController extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>'order id not found']);
         }
-        
+
     }
 
     public function restaurant_status_v1(Request $request)
@@ -739,7 +692,7 @@ class OrderApiController extends Controller
         if(!empty($order_id)){
             $order_status_id=(int)$request['order_status_id'];
             $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-            
+
             if($customer_orders){
                 $customer_address_latitude=$customer_orders->customer_address_latitude;
                 $customer_address_longitude=$customer_orders->customer_address_longitude;
@@ -787,10 +740,10 @@ class OrderApiController extends Controller
 
                     //rider
                     $riders=DB::table("riders")->select("riders.rider_id"
-                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . ")) 
-                    * cos(radians(riders.rider_latitude)) 
-                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . ")) 
-                    + sin(radians(" .$customer_address_latitude. ")) 
+                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+                    * cos(radians(riders.rider_latitude))
+                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
+                    + sin(radians(" .$customer_address_latitude. "))
                     * sin(radians(riders.rider_latitude))) AS distance"))
                     // ->having('distance', '<', $distance)
                     ->groupBy("riders.rider_id")
@@ -930,7 +883,7 @@ class OrderApiController extends Controller
         if(!empty($order_id)){
             $order_status_id=$request['order_status_id'];
             $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-            
+
             if($customer_orders){
                 $customer_address_latitude=$customer_orders->customer_address_latitude;
                 $customer_address_longitude=$customer_orders->customer_address_longitude;
@@ -978,10 +931,10 @@ class OrderApiController extends Controller
 
                     //rider
                     $riders=DB::table("riders")->select("riders.rider_id"
-                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . ")) 
-                    * cos(radians(riders.rider_latitude)) 
-                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . ")) 
-                    + sin(radians(" .$customer_address_latitude. ")) 
+                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+                    * cos(radians(riders.rider_latitude))
+                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
+                    + sin(radians(" .$customer_address_latitude. "))
                     * sin(radians(riders.rider_latitude))) AS distance"))
                     // ->having('distance', '<', $distance)
                     ->groupBy("riders.rider_id")
@@ -1114,6 +1067,7 @@ class OrderApiController extends Controller
         }
     }
 
+
     public function customer_order_click(Request $request)
     {
         $order_id=$request['order_id'];
@@ -1136,9 +1090,22 @@ class OrderApiController extends Controller
     }
 
 
-    public function payment_list(Request $request)
+    public function payment_list()
     {
         $payment_list=PaymentMethod::orderBy('created_at','DESC')->get();
+        return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
+    }
+
+    public function kpay_close(Request $request)
+    {
+        $version=$request['version'];
+        $kpay=PaymentMethodClose::find(1);
+        if($version==$kpay->version){
+            $payment_list=PaymentMethod::orderBy('created_at','DESC')->where('payment_method_id','!=',2)->get();
+        }else{
+            $payment_list=PaymentMethod::orderBy('created_at','DESC')->get();
+
+        }
         return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
     }
 
@@ -1193,7 +1160,7 @@ class OrderApiController extends Controller
 
         $booking_count=CustomerOrder::count();
         $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
-        
+
         $customer_order_id=(1+$order_count);
 
         if($state_id==15){
@@ -1284,7 +1251,7 @@ class OrderApiController extends Controller
                     "restaurant_id"=>$restaurant_id,
                 ]);
                 }else{
-                    return response()->json(['success'=>false,'message'=>'food sub item id not found!']);       
+                    return response()->json(['success'=>false,'message'=>'food sub item id not found!']);
                 }
 
                 $option=$item['option'];
@@ -1312,13 +1279,13 @@ class OrderApiController extends Controller
                         "restaurant_id"=>$restaurant_id,
                     ]);
                     }else{
-                        return response()->json(['success'=>false,'message'=>'food sub item data id not found!']);       
+                        return response()->json(['success'=>false,'message'=>'food sub item data id not found!']);
                     }
 
 
                 }
             }
-            
+
         }
         $check=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('customer_order_id',$customer_order_id)->first();
 
@@ -1410,7 +1377,7 @@ class OrderApiController extends Controller
 
         $booking_count=CustomerOrder::count();
         $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
-        
+
         $customer_order_id=(1+$order_count);
 
         if($state_id==15){
@@ -1508,7 +1475,7 @@ class OrderApiController extends Controller
                     "restaurant_id"=>$restaurant_id,
                 ]);
                 }else{
-                    return response()->json(['success'=>false,'message'=>'food sub item id not found!']);       
+                    return response()->json(['success'=>false,'message'=>'food sub item id not found!']);
                 }
 
                 $option=$item['option'];
@@ -1536,13 +1503,13 @@ class OrderApiController extends Controller
                         "restaurant_id"=>$restaurant_id,
                     ]);
                     }else{
-                        return response()->json(['success'=>false,'message'=>'food sub item data id not found!']);       
+                        return response()->json(['success'=>false,'message'=>'food sub item data id not found!']);
                     }
 
 
                 }
             }
-            
+
         }
         $check=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('order_id',$customer_orders->order_id)->first();
         $data=[];
@@ -1562,10 +1529,10 @@ class OrderApiController extends Controller
                 $check->merch_order_id=$merchOrderId;
                 $check->update();
 
-                if(!isset($_SESSION)) 
+                if(!isset($_SESSION))
                 {
-                    session_start(); 
-                } 
+                    session_start();
+                }
                 $_SESSION['check']=$check;
                 $_SESSION['merchOrderId']=$merchOrderId;
                 $_SESSION['tradeType']="APP";
@@ -1631,7 +1598,7 @@ class OrderApiController extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>"Error! not define orders"]);
         }
-       
+
 
 
     }

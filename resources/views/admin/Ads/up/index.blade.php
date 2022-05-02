@@ -4,29 +4,32 @@
 @endsection
 
 @section('content')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-7">
-                    <div class="flash-message" id="successMessage">
-                        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-                            @if(Session::has('alert-' . $msg))
-                                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-                <div class="col-sm-5">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Ads</li>
-                        <li class="breadcrumb-item active">Up Ads</li>
-                        <li class="breadcrumb-item active">Lists</li>
-                    </ol>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-sm-7" style="height: 20px;">
+                <div class="flash-message" id="successMessage">
+                    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                        @if(Session::has('alert-' . $msg))
+                            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                        @endif
+                    @endforeach
                 </div>
             </div>
+            <div class="col-sm-5">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Ads</li>
+                    <li class="breadcrumb-item active">Up Ads</li>
+                    <li class="breadcrumb-item active">Lists</li>
+                </ol>
+            </div>
+            <div class="col-md-12">
+
+            </div>
         </div>
-    </section>
+    </div>
+</section>
     <section class="content">
         <div class="row">
             <div class="col-md-12">
@@ -38,7 +41,7 @@
                                 <a href="{{ route('fatty.admin.up_ads.create') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus-circle"></i> add up ads</a>
                             </div>
                             <div class="col-md-6" style="text-align: right;">
-                                <h4><b>{{ "Restaurant Type Information" }}</b></h4>
+                                <h4><b>{{ "Up Ads Information" }}</b></h4>
                             </div>
                         </div>
                     </div>
@@ -46,26 +49,29 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane table-responsive active" id="Admin">
-                                <div class="pagination">
-                                    {{ $up_ads->appends(request()->input())->links() }}
-                                </div>
-                                <table id="up_ads" class="table table-bordered  table-hover">
+                                <table id="up_ads" class="table table-bordered table-hover">
                                     <thead>
                                     <tr class="text-center">
-                                        <th>No.</th>
+                                        <th>#</th>
+                                        <th>Sort</th>
+                                        <th>#Id</th>
+                                        <th>Restaurant</th>
                                         <th>Image</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tablecontents">
                                         @foreach($up_ads as $ads)
-                                            <tr class="text-center">
-                                                <td>{{ $loop->iteration }}</td>
+                                            <tr class="row1 text-center" data-id="{{ $ads->up_ads_id }}">
+                                                <td class="pl-3" width="20px"><i class="fa fa-sort"></i></td>
+                                                <td>{{ $ads->sort_id }}</td>
+                                                <td>{{ $ads->up_ads_id }}</td>
+                                                <td class="text-left">{{ $ads->restaurant->restaurant_name_mm }} ({{ $ads->restaurant->restaurant_name_en }})</td>
                                                 <td>
                                                     @if($ads->image)
-                                                        <img src="/uploads/up_ads/{{$ads->image}}" class="img-rounded" style="width: 100%;height: 220px;">
+                                                        <img src="/uploads/up_ads/{{$ads->image}}" class="img-rounded" style="width: 100%;height: 100px;">
                                                     @else
-                                                        <img src="{{asset('../image/available.png')}}" class="img-rounded" style="width: 100%;height: 220px;">
+                                                        <img src="{{asset('../image/available.png')}}" class="img-rounded" style="width: 100%;height: 100px;">
                                                     @endif
                                                 </td>
                                                 <td class="btn-group" style="text-align: left;">
@@ -93,18 +99,61 @@
 <script type="text/javascript">
     $(function () {
         $("#up_ads").DataTable({
-            // "lengthMenu": [[10,25,50, 100, 250,500, -1], [10,25,50,100, 250, 500, "All"]],
-            "paging": false, // Allow data to be paged
-            "lengthChange": false,
-            "searching": false, // Search box and search function will be actived
-            "info": false,
-            "autoWidth": true,
-            "processing": false,  // Show processing
+            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+                "paging": true, // Allow data to be paged
+                "lengthChange": true,
+                "searching": true, // Search box and search function will be actived
+                "info": true,
+                "autoWidth": true,
+                "processing": true,  // Show processing
+                dom: 'lBfrtip',
+                buttons: [
+                 'excel', 'pdf', 'print'
+                ],
         });
-        $("#restaurant_id").select2();
     });
     setTimeout(function() {
         $('#successMessage').fadeOut('fast');
     }, 2000);
 </script>
+
+<script type="text/javascript">
+    $(function () {
+      $( "#tablecontents" ).sortable({
+        items: "tr",
+        cursor: 'move',
+        opacity: 0.6,
+        update: function() {
+            sendOrderToServer();
+        }
+      });
+
+      function sendOrderToServer() {
+          var order = [];
+          var token = $('meta[name="csrf-token"]').attr('content');
+          $('tr.row1').each(function(index,element) {
+            order.push({
+              id: $(this).attr('data-id'),
+              position: index+1
+            });
+          });
+          $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "{{ url('fatty/main/admin/ads/up_ads/sort_update') }}",
+                data: {
+                    order: order,
+                    _token: token
+                },
+            success: function(response) {
+                if (response.status == "success") {
+                    location.reload();
+                } else {
+                    location.reload();
+                }
+            }
+          });
+        }
+      });
+  </script>
 @endpush

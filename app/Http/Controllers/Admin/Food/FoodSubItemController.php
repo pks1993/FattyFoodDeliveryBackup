@@ -21,10 +21,10 @@ class FoodSubItemController extends Controller
      */
     public function index($id)
     {
-        $food_id=$id;
-        $food_subitem=FoodSubItem::where('food_id',$id)->orderBy('required_type','DESC')->paginate(10);
-        $food_subitem_data=FoodSubItemData::where('food_id',$id)->orderBy('food_sub_item_id','DESC')->paginate(10);
-        return view('admin.food.sub_item.index',compact('food_subitem','food_subitem_data','food_id'));
+        $foods=Food::find($id);
+        $food_subitem=FoodSubItem::where('food_id',$id)->orderBy('required_type','DESC')->paginate(20);
+        $food_subitem_data=FoodSubItemData::where('food_id',$id)->orderByRaw('(food_sub_item_id - created_at) desc')->paginate(20);
+        return view('admin.food.sub_item.index',compact('food_subitem','food_subitem_data','foods'));
     }
 
     /**
@@ -35,7 +35,7 @@ class FoodSubItemController extends Controller
     public function create($id)
     {
         $food_id=Food::where('food_id',$id)->first();
-        return view('admin.food.sub_item.create',compact('food_id'));   
+        return view('admin.food.sub_item.create',compact('food_id'));
     }
 
     /**
@@ -47,38 +47,48 @@ class FoodSubItemController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'section_name' => 'required',
+            'section_name_mm' => 'required',
             'required_type' => 'required',
             'food_id' => 'required',
             'restaurant_id' => 'required',
         ]);
         $food_sub_item=FoodSubItem::create([
-            'section_name' => $request['section_name'],
+            'section_name_mm' => $request['section_name_mm'],
+            'section_name_en' => $request['section_name_en'],
+            'section_name_ch' => $request['section_name_ch'],
             'required_type' => $request['required_type'],
             'food_id' => $request['food_id'],
             'restaurant_id' => $request['restaurant_id']
         ]);
 
-        $data=$request['item_name'];
-        $item_price=$request['food_sub_item_price'];
-        $instock=$request['instock'];
+        $item_name_mm=$request['item_name_mm'];
+        if($item_name_mm!=null){
+            $count=count($item_name_mm);
+            $item_name_en=$request['item_name_en'];
+            $item_name_ch=$request['item_name_ch'];
+            $item_price=$request['food_sub_item_price'];
+            $instock=$request['instock'];
 
-        if(!empty($data)&&@empty($item_price)&&@empty($instock)){
-            for($i=0;$i<count($data);$i++){
-                $item_name=$data[$i];
-                $price=$item_price[$i];
-                $inst=$instock[$i];
-                FoodSubItemData::create([
-                    'food_sub_item_id' => $food_sub_item->food_sub_item_id,
-                    'item_name' => $item_name,
-                    'food_sub_item_price' => $price,
-                    'instock' => $inst,
-                    'food_id' => $request['food_id'],
-                    'restaurant_id' => $request['restaurant_id'],
-                ]);
+            if(!empty($item_name_mm)){
+                for($i=0;$i<$count;$i++){
+                    $item_namemm=$item_name_mm[$i];
+                    $item_nameen=$item_name_en[$i];
+                    $item_namech=$item_name_ch[$i];
+                    $price=$item_price[$i];
+                    $inst=$instock[$i];
+                    FoodSubItemData::create([
+                        'food_sub_item_id' => $food_sub_item->food_sub_item_id,
+                        'item_name_mm' => $item_namemm,
+                        'item_name_en' => $item_nameen,
+                        'item_name_ch' => $item_namech,
+                        'food_sub_item_price' => $price,
+                        'instock' => $inst,
+                        'food_id' => $request['food_id'],
+                        'restaurant_id' => $request['restaurant_id'],
+                    ]);
+                }
             }
         }
-
 
         $request->session()->flash('alert-success', 'successfully create food sub_item!');
         return redirect('fatty/main/admin/foods/sub_items/'.$request->food_id);
@@ -115,37 +125,46 @@ class FoodSubItemController extends Controller
 
     public function item_store(Request $request, $id)
     {
-        $this->validate($request, [
-            'section_name' => 'required',
-            'item_name' => 'required',
-            'required_type' => 'required',
-            'instock' => 'required',
-            'food_sub_item_price' => 'required',
-            'food_id' => 'required',
-            'restaurant_id' => 'required',
-        ]);
-        $data=$request['item_name'];
-        $item_price=$request['food_sub_item_price'];
-        $instock=$request['instock'];
+        // $this->validate($request, [
+        //     'item_name_mm' => 'required',
+        //     'required_type' => 'required',
+        //     'instock' => 'required',
+        //     'food_sub_item_price' => 'required',
+        // ]);
 
-        for($i=0;$i<count($data);$i++){
-            $item_name=$data[$i];
-            $price=$item_price[$i];
-            $inst=$instock[$i];
-            FoodSubItemData::create([
-                'food_sub_item_id' => $id,
-                'item_name' => $item_name,
-                'food_sub_item_price' => $price,
-                'instock' => $inst,
-                'food_id' => $request['food_id'],
-                'restaurant_id' => $request['restaurant_id'],
-            ]);
+        if($request['item_name_mm']){
+            $item_name_mm=$request['item_name_mm'];
+            $item_name_en=$request['item_name_en'];
+            $item_name_ch=$request['item_name_ch'];
+            $item_price=$request['food_sub_item_price'];
+            $instock=$request['instock'];
+
+            for($i=0;$i<count($item_name_mm);$i++){
+                $item_namemm=$item_name_mm[$i];
+                $item_nameen=$item_name_en[$i];
+                $item_namech=$item_name_ch[$i];
+                $price=$item_price[$i];
+                $inst=$instock[$i];
+                FoodSubItemData::create([
+                    'food_sub_item_id' => $id,
+                    'item_name_mm' => $item_namemm,
+                    'item_name_en' => $item_nameen,
+                    'item_name_ch' => $item_namech,
+                    'food_sub_item_price' => $price,
+                    'instock' => $inst,
+                    'food_id' => $request['food_id'],
+                    'restaurant_id' => $request['restaurant_id'],
+                ]);
+            }
+            $food=FoodSubItem::where('food_sub_item_id',$id)->first();
+            $request->session()->flash('alert-success', 'successfully update food!');
+            return redirect('fatty/main/admin/foods/sub_items/'.$food->food_id);
+        }else{
+            $request->session()->flash('alert-warning', 'Need Option Name!');
+            return redirect()->back();
         }
 
 
-        $food=FoodSubItem::where('food_sub_item_id',$id)->first();
-        $request->session()->flash('alert-success', 'successfully update food!');
-        return redirect('fatty/main/admin/foods/sub_items/'.$food->food_id);
     }
 
     /**
@@ -158,7 +177,9 @@ class FoodSubItemController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'section_name' => 'required',
+            'section_name_mm' => 'required',
+            'section_name_en' => 'required',
+            'section_name_ch' => 'required',
             'required_type' => 'required',
             'food_id' => 'required',
             'restaurant_id' => 'required',
@@ -179,6 +200,9 @@ class FoodSubItemController extends Controller
     public function destroy(Request $request,$id)
     {
         $food=FoodSubItem::where('food_sub_item_id','=',$id)->FirstOrFail();
+        if($food){
+            FoodSubItemData::where('food_sub_item_id',$id)->delete();
+        }
         $food->delete();
         $request->session()->flash('alert-danger', 'successfully delete food sub item!');
         return redirect()->back();

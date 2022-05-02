@@ -1,48 +1,19 @@
 @extends('admin.layouts.master')
 
 @section('css')
-<style>
-    form>.fa {
-        display: none;
-    }
-    .dt-buttons>button{
-        border-radius: revert; 
-        margin-top: 15px;
-        margin-right: 5px;
-    }
-    .dataTables_length >label {
-        margin-right: 15px !important;
-        margin-top: 15px;
-    }
-    .number {
-        text-align: center;
-    }
-    .order_amount {
-        text-align: center;
-    }
-    .order_count {
-        text-align: center;
-    }
-    .action {
-        text-align: center;
-    }
-    .register_date {
-        text-align: center;
-    }
 
-</style>
 @endsection
 
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="height: 20px;">
                 <div class="flash-message" id="successMessage">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-                    @if(Session::has('alert-' . $msg))
-                    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-                    @endif
+                        @if(Session::has('alert-' . $msg))
+                            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                        @endif
                     @endforeach
                 </div>
             </div>
@@ -69,7 +40,6 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
           <div class="form-group">
             <label for="state_name" class="col-form-label">Show State Name:</label>
             <input type="text" class="form-control" name="state_name">
@@ -79,12 +49,11 @@
             <select class="form-control" name="state_id" id="state_id">
                 <option value="">Select State</option>
                 @foreach($states as $st)
-                    <option value="{{$st->state_id}}">{{$st->state_name_mm}}</option>}
+                    <option value="{{$st->state_id}}">{{$st->state_name_mm}} ( {{ $st->state_name_en }} )</option>}
                 @endforeach
                 option
             </select>
           </div>
-        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -107,7 +76,8 @@
                                         <th class="text-center">No.</th>
                                         <th class="text-left">Show Name</th>
                                         <th class="text-left">State Name</th>
-                                        <th class="text-center">Action</th>
+                                        <th class="text-center">Edit</th>
+                                        <th class="text-center">Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -115,8 +85,54 @@
                                     <tr class="text-center">
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $parcel->state_name }}</td>
-                                        <td class="text-left">{{ $parcel->states->state_name_mm }}</td>
-                                        <td></td>
+                                        <td class="text-left">{{ $parcel->states->state_name_mm }} ( {{ $parcel->states->state_name_en }} )</td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#q{{ $parcel->parcel_state_id }}"><i class="fa fa-edit"></i></button>
+                                            <form method="post" action="{{route('fatty.admin.parcel_state.update',$parcel->parcel_state_id)}}" id="form">
+                                            @csrf
+                                            <div class="modal fade" id="q{{ $parcel->parcel_state_id }}" tabindex="-1" role="dialog" aria-labelledby="new_state" aria-hidden="true" style="text-align: left;">
+                                              <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="new_state">New Parcel State</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                      <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    <form>
+                                                      <div class="form-group">
+                                                        <label for="state_name" class="col-form-label">Show State Name:</label>
+                                                        <input type="text" class="form-control" value="{{ $parcel->state_name }}" name="state_name">
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="state_id_edit" class="col-form-label">Message:</label>
+                                                        <select class="form-control" name="state_id" id="state_id_edit">
+                                                            <option value="{{ $parcel->state_id }}">{{ $parcel->states->state_name_mm }} ( {{ $parcel->states->state_name_en }} )</option>
+                                                            @foreach($states as $st)
+                                                                <option value="{{$st->state_id}}">{{$st->state_name_mm}} ( {{ $st->state_name_en }} )</option>}
+                                                            @endforeach
+                                                            option
+                                                        </select>
+                                                      </div>
+                                                    </form>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Create</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <form action="{{route('fatty.admin.parcel_state.destroy', $parcel->parcel_state_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
+                                                @csrf
+                                                @method('delete')
+                                                <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                            </form>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -153,6 +169,9 @@
         $('#state_id').select2({
             theme: 'bootstrap4'
         });
+        // $('#state_id_edit').select2({
+        //     theme: 'bootstrap4'
+        // });
     });
 </script>
 @endpush

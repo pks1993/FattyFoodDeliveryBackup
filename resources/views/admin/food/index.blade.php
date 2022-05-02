@@ -61,16 +61,16 @@
                                         <a href="{{url('fatty/main/admin/foods/sub_items',['food_id'=>$food->food_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-plus-circle"></i></a>
 
                                         <a href="{{route('fatty.admin.foods.edit',['food_id'=>$food->food_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                    
+
                                         <form action="{{route('fatty.admin.foods.destroy', $food->food_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                             @csrf
                                             @method('delete')
                                             <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
                                         </form>
                                     </td>
-                                    <td class="text-left">{{$food->food_name}}</td>
-                                    <td class="text-left">{{$food->menu->food_menu_name}}</td>
-                                    <td class="text-left">{{$food->restaurant->restaurant_name}}</td>
+                                    <td class="text-left">{{$food->food_name_mm}}</td>
+                                    <td class="text-left">{{$food->menu->food_menu_name_mm}}</td>
+                                    <td class="text-left">{{$food->restaurant->restaurant_name_mm}}</td>
                                     <td>{{$food->food_price}}</td>
                                     <td>
                                         @if($food->food_image)

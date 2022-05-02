@@ -15,7 +15,9 @@ class CreateUpAdsTable extends Migration
     {
         Schema::create('up_ads', function (Blueprint $table) {
             $table->id('up_ads_id');
+            $table->unsignedBigInteger('restaurant_id')->nullable()->default(0);
             $table->string('image')->nullable();
+            $table->bigInteger('sort_id')->nullable()->default(0);
             $table->timestamps();
         });
     }

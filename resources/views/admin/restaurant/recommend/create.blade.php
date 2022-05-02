@@ -131,29 +131,29 @@
                 $.ajax({
                     type: 'get',
                     url: '/fatty/main/admin/restaurants/city/list/'+id,
-                    success: function(data){ 
+                    success: function(data){
                         $('#city_id').append(`<option value="">မြို့နယ်</option>`);
                         $.each(data, function(index,value) {
                             $('#city_id').append('<option value='+value.city_id+'>'+value.city_name_mm + ' ( '+value.city_name_en+' ) '+'</option>');
                         });
                     }
-                });  
+                });
             }
 
             // if(id){
             //     $.ajax({
             //         type: 'get',
             //         url: '/fatty/main/admin/restaurants/list/'+id,
-            //         success: function(data){ 
+            //         success: function(data){
             //             $('#restaurant_id').append(`<option value="">Choose Restaurant</option>`);
             //             $.each(data, function(index,value) {
             //                 $('#restaurant_id').append('<option value='+value.restaurant_id+'>'+value.restaurant_name+'</option>');
             //             });
             //         }
-            //     });  
+            //     });
             // }
         });
-    }); 
+    });
     $('#city_id').select2();
     $('#state_id').select2();
     $('#restaurant_id').select2();

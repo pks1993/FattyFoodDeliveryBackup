@@ -108,8 +108,8 @@
                                             <th class="text-left">CityName</th>
                                             <th class="text-left">StateName</th>
                                             <th class="text-left">UserName</th>
-                                            <th class="text-left">Open/Close</th>
-                                            <th class="text-left">Approved</th>
+                                            {{-- <th class="text-left">Open/Close</th> --}}
+                                            {{-- <th class="text-left">Approved</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -164,7 +164,7 @@
                 ajax: "/fatty/main/admin/restaurants/datatable/hundredrestaurantajax",
                 columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
+                {data: 'action', name: 'action', orderable: false, searchable: false,className: "btn-group"},
                 {data: 'restaurant_image', name:'restaurant_image',className: "restaurant_image"},
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'restaurant_name_mm', name:'restaurant_name_mm'},
@@ -175,8 +175,8 @@
                 {data: 'city_name_mm', name:'city_name_mm',className: "city_name_mm"},
                 {data: 'state_name_mm', name:'state_name_mm',className: "state_name_mm"},
                 {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "restaurant_user_phone"},
-                {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "restaurant_emergency_status"},
-                {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
+                // {data: 'restaurant_emergency_status', name:'restaurant_emergency_status',className: "restaurant_emergency_status"},
+                // {data: 'is_admin_approved', name:'is_admin_approved',className: "is_admin_approved"},
                 
                 ],
                 dom: 'lBfrtip',

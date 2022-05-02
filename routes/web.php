@@ -88,6 +88,14 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Riders
     Route::get('riders','Admin\Rider\RiderController@index');
+    Route::get('riders/create','Admin\Rider\RiderController@create')->name('riders.create');
+    Route::post('riders/store','Admin\Rider\RiderController@store')->name('riders.store');
+    Route::get('riders/admin/approved/update/{rider}','Admin\Rider\RiderController@admin_approved');
+    Route::get('daily_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@daily_admin_approved');
+    Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
+    Route::get('yearly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@yearly_admin_approved');
+
+
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
 
@@ -111,9 +119,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('yearly_ordered_customers','Admin\Customer\CustomerController@yearlyorderedindex');
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
-
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
+    //customer
     Route::get('customers/create','Admin\Customer\CustomerController@create')->name('customers.create');
     Route::get('customers/view/{customer_id}','Admin\Customer\CustomerController@show')->name('customers.view');
     Route::post('customers/store','Admin\Customer\CustomerController@store')->name('customers.store');
@@ -155,22 +163,60 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('rider_group/delete/{rider_group_id}','Admin\RiderGroup\RiderGroupController@destroy')->name('rider_group.destroy');
     Route::get('all_user/list/{id}','Admin\RiderGroup\RiderGroupController@user_list');
 
-    //Restaurant
+    //Restaurant Start//
+    //CRUD
     Route::get('restaurants','Admin\Restaurant\RestaurantController@index');
     Route::get('restaurants/datatable/restaurantajax','Admin\Restaurant\RestaurantController@restaurantajax');
-    Route::get('restaurant_chart','Admin\Restaurant\RestaurantController@restaurantchart');
-
-    Route::get('restaurants/create','Admin\Restaurant\RestaurantController@create')->name('restaurants.create');
+    Route::get('restaurants/view/{restaurant_id}','Admin\Restaurant\RestaurantController@show')->name('restaurants.view');
+    // Route::get('restaurants/create','Admin\Restaurant\RestaurantController@create')->name('restaurants.create');
     Route::post('restaurants/store','Admin\Restaurant\RestaurantController@store')->name('restaurants.store');
     Route::get('restaurants/edit/{restaurant_id}','Admin\Restaurant\RestaurantController@edit')->name('restaurants.edit');
     Route::post('restaurants/update/{restaurant_id}','Admin\Restaurant\RestaurantController@update')->name('restaurants.update');
     Route::delete('restaurants/delete/{restaurant_id}','Admin\Restaurant\RestaurantController@destroy')->name('restaurants.destroy');
+
+    //openingtime
+    Route::get('restaurants/openingtime/view/{restaurant_id}','Admin\Restaurant\RestaurantController@openingtime_view')->name('restaurants.openingtime.view');
+    Route::post('restaurants/openingtime/update/{restaurant_id}','Admin\Restaurant\RestaurantController@openingtime_update')->name('restaurants_openingtime.update');
+    //recommend_restaurant
+    Route::get('restaurants/recommends/update/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_recommend_update')->name('restaurants_recommend.update');
+
+    //menu
+    Route::get('restaurants/menu/list/{restaurant_id}','Admin\Restaurant\RestaurantController@menu_list')->name('restaurants_menu.list');
+    Route::get('restaurants/menu/list/datatable/menuajax/{restaurant_id}','Admin\Restaurant\RestaurantController@menu_list_data');
+    Route::post('restaurants/menu/store','Admin\Restaurant\RestaurantController@menu_store')->name('restaurants_menu.store');
+    Route::get('restaurants/menu/edit/{menu_id}','Admin\Restaurant\RestaurantController@menu_edit');
+    Route::post('restaurants/menu/update/{menu_id}','Admin\Restaurant\RestaurantController@menu_update')->name('restaurants_menu.update');
+    Route::delete('restaurants/menu/delete/{menu_id}','Admin\Restaurant\RestaurantController@menu_destroy')->name('restaurants_menu.destroy');
+
+    //restaurant_user
+    Route::get('restaurants/user/create','Admin\Restaurant\RestaurantController@user_create')->name('restaurants_user.create');
+    Route::post('restaurants/user/store','Admin\Restaurant\RestaurantController@user_store')->name('restaurants_user.store');
+
+    //restaurant_food
+    Route::get('restaurants/food/detail/view/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_view')->name('restaurants_food.view');
+    Route::get('restaurants/food/list/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_food_list')->name('restaurants_food.list');
+    Route::get('restaurants/food/list/datatable/foodlistajax/{restaurant_id}','Admin\Restaurant\RestaurantController@foodlistajax');
+    Route::get('restaurants/food/create/{restaurant_id}','Admin\Restaurant\RestaurantController@restauant_food_create')->name('restaurants_food.create');
+    Route::post('restaurants/food/store','Admin\Restaurant\RestaurantController@restaurant_food_store')->name('restaurants_food.store');
+    Route::get('restaurants/food/edit/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_edit');
+    Route::post('restaurants/food/update/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_update')->name('restaurants_food.update');
+    Route::delete('restaurants/food/delete/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_destroy')->name('restaurants_food.destroy');
+
+
+
+    //chart
+    Route::get('restaurant_chart','Admin\Restaurant\RestaurantController@restaurantchart');
     Route::get('restaurants/city/list/{id}','Admin\Restaurant\RestaurantController@city_list1');
     Route::get('restaurants/state/list/{id}','Admin\Restaurant\RestaurantController@state_list');
-
+    //approved and opening
+    Route::get('restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update');
+    Route::get('restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update');
     //100 Restaurant
     Route::get('100_restaurants','Admin\Restaurant\RestaurantController@hundredIndex');
     Route::get('restaurants/datatable/hundredrestaurantajax','Admin\Restaurant\RestaurantController@hundredrestaurantajax');
+    Route::get('100_restaurants/approved/update/{restaurant_id}','Admin\Restaurant\RestaurantController@approved_update_100');
+    Route::get('100_restaurants/opening/update/{restaurant_id}','Admin\Restaurant\RestaurantController@opening_update_100');
+    //Restaurant End//
 
     //Recommend Restaurant
     Route::get('recommend_restaurants','Admin\Restaurant\RecommendRestaurantController@index');
@@ -181,6 +227,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('recommend_restaurants/delete/{recommend_restaurant_id}','Admin\Restaurant\RecommendRestaurantController@destroy')->name('recommend_restaurants.destroy');
     Route::get('restaurants/city/list/{id}','Admin\Restaurant\RecommendRestaurantController@city_list');
     Route::get('restaurants/list/{id}','Admin\Restaurant\RecommendRestaurantController@restaurant_list');
+    Route::post('recommend_restaurants/sort/update','Admin\Restaurant\RecommendRestaurantController@sort_update');
 
     Route::post('restaurants/list','Admin\Restaurant\RecommendRestaurantController@restaurant_list')->name('recommend_restaurants.show');
 
@@ -224,13 +271,14 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('foods/sub_items/data/create/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_create')->name('foods.sub_items.data.create');
     Route::post('foods/sub_items/data/store/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_store')->name('foods.sub_items.data.update');
+    Route::get('foods/sub_items/data/edit/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_edit')->name('foods.sub_items.data.edit');
+    Route::post('foods/sub_items/data/update/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_update')->name('foods.sub_items.data.update');
+    Route::delete('foods/sub_items/data/delete/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_destroy')->name('foods.sub_items.data.destroy');
 
-    // Route::get('foods/sub_items/data/create/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_create')->name('foods.sub_items.data.create');
-    // Route::post('foods/sub_items/data/store/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_store')->name('foods.sub_items.data.update');
-    // Route::delete('foods/sub_items/delete/{food_sub_item_id}','Admin\Food\FoodSubItemController@destroy')->name('foods.sub_items.destroy');
 
     //testing
     Route::get('golocation','Admin\About\AboutController@golocation');
+    Route::get('golocation','Admin\About\AboutController@index');
 
     //UpAds
     Route::get('ads/up_ads','Admin\Ads\UpAdsController@index');
@@ -239,6 +287,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('ads/up_ads/edit/{up_ads_id}','Admin\Ads\UpAdsController@edit')->name('up_ads.edit');
     Route::post('ads/up_ads/update/{up_ads_id}','Admin\Ads\UpAdsController@update')->name('up_ads.update');
     Route::delete('ads/up_ads/delete/{up_ads_id}','Admin\Ads\UpAdsController@destroy')->name('up_ads.destroy');
+    Route::post('ads/up_ads/sort_update','Admin\Ads\UpAdsController@sort_update');
+
 
     //DownAds
     Route::get('ads/down_ads','Admin\Ads\DownAdsController@index');
@@ -246,6 +296,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('ads/down_ads/store','Admin\Ads\DownAdsController@store')->name('down_ads.store');
     Route::get('ads/down_ads/edit/{down_ads_id}','Admin\Ads\DownAdsController@edit')->name('down_ads.edit');
     Route::post('ads/down_ads/update/{down_ads_id}','Admin\Ads\DownAdsController@update')->name('down_ads.update');
+    Route::delete('ads/down_ads/delete/{down_ads_id}','Admin\Ads\DownAdsController@destroy')->name('down_ads.destroy');
+    Route::post('ads/down_ads/sort_update','Admin\Ads\DownAdsController@sort_update');
 
     //Order
     Route::get('foods/orders/lists','Admin\Order\OrderController@index');
@@ -281,5 +333,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('parcel_states','Admin\Parcel\ParcelStateController@index');
     Route::post('store/parcel_states','Admin\Parcel\ParcelStateController@store')->name('parcel_state.store');;
+    Route::post('parcel_states/update/{parcel_state_id}','Admin\Parcel\ParcelStateController@update')->name('parcel_state.update');
+    Route::delete('parcel_states/delete/{parcel_states_id}','Admin\Parcel\ParcelStateController@destroy')->name('parcel_state.destroy');
 
 });
