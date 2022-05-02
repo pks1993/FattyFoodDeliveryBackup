@@ -21,7 +21,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories=RestaurantCategory::orderBy('created_at','DESC')->paginate(15);
+        $categories=RestaurantCategory::orderBy('restaurant_category_id')->orderBy('sort_id','desc')->get();
         return view('admin.category.index',compact('categories'));
     }
 
@@ -97,9 +97,6 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'category_name' => 'required',
-        ]);
         $category =RestaurantCategory::where('restaurant_category_id',$id)->first();
         $photoname=time();
 
@@ -109,7 +106,9 @@ class CategoryController extends Controller
             $category->restaurant_category_image=$img_name;
             Storage::disk('Category')->put($img_name, File::get($request['image_edit']));
         }
-        $category->restaurant_category_name=$request['category_name'];
+        $category->restaurant_category_name_mm=$request['restaurant_category_name_mm'];
+        $category->restaurant_category_name_en=$request['restaurant_category_name_en'];
+        $category->restaurant_category_name_ch=$request['restaurant_category_name_ch'];
         $category->update();
 
         $request->session()->flash('alert-success', 'successfully update category!');
@@ -127,6 +126,7 @@ class CategoryController extends Controller
         $category=RestaurantCategory::where('restaurant_category_id','=',$id)->FirstOrFail();
         Storage::disk('Category')->delete($category->restaurant_category_image);
         $category->delete();
+
         $request->session()->flash('alert-danger', 'successfully delete Category!');
         return redirect()->back();
     }

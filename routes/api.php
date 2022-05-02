@@ -27,8 +27,8 @@ Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiC
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
 Route::post('fatty/202221/lashio/main/admin/customers/login/v2','Api\Customer\CustomerApiController@login_version_two');
-Route::post('fatty/202221/lashio/main/admin/customers/otp_send','Api\Customer\CustomerApiController@otp_send');
-Route::post('fatty/202221/lashio/main/admin/customers/otp_check','Api\Customer\CustomerApiController@otp_check');
+Route::post('fatty/202221/lashio/main/admin/customers/request_otp','Api\Customer\CustomerApiController@otp_send');
+Route::post('fatty/202221/lashio/main/admin/customers/verify_otp','Api\Customer\CustomerApiController@otp_check');
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
