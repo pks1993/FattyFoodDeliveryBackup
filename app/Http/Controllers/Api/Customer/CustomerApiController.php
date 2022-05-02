@@ -313,12 +313,9 @@ class CustomerApiController extends Controller
 
         if($customer){
             if ($customer->otp == $otp) {
-                $headers = $request->header('device_id');
-                if($headers){
-                    $device_id=$headers;
-                }else{
-                    return response()->json(['success'=>false,'message'=>'device id not found']);
-                }
+                $headers = getallheaders();
+                $device_id=$headers['device_id'];
+
                 $fcm_token=$request['fcm_token'];
                 $os_type=(int)$request['os_type'];
 
