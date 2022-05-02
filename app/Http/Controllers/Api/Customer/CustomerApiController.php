@@ -69,16 +69,16 @@ class CustomerApiController extends Controller
         // foreach($headers as $value){
         //     $device_id=$value['device_id'];
         // }
-        // $headers= getallheaders();
-        // if(count($headers)==10){
-        //     $device_id=$headers['device_id'];
-        // }else{
-        //     return response()->json(['success'=>false,'message'=>'you need device_id']);
-        // }
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
+        $headers= getallheaders();
+        if(count($headers)==10){
+            $device_id=$headers['device_id'];
+        }else{
+            return response()->json(['success'=>false,'message'=>'you need device_id']);
         }
+        // $headers[] = getallheaders();
+        // foreach($headers as $value){
+        //     $device_id=$value['device_id'];
+        // }
         $customer_id=$request['customer_id'];
         $customer=Customer::where('customer_id',$customer_id)->first();
 
