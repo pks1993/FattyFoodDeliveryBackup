@@ -21,23 +21,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories=RestaurantCategory::orderBy('restaurant_category_id','desc')->get();
+        $categories=RestaurantCategory::with(['category_assign'])->orderBy('restaurant_category_id','desc')->get();
+        // return response()->json($categories);
+
         return view('admin.category.index',compact('categories'));
-    }
-
-    public function sort_update(Request $request)
-    {
-        $posts = RestaurantCategory::all();
-
-        foreach ($posts as $post) {
-            foreach ($request->order as $order) {
-                if($order['id'] == $post->restaurant_category_id) {
-                    $post->update(['sort_id'=>$order['position']]);
-                }
-            }
-        }
-        $request->session()->flash('alert-success', 'successfully change sort number!');
-        return response()->json(['status'=>'success']);
     }
     /**
      * Show the form for creating a new resource.
@@ -154,8 +141,23 @@ class CategoryController extends Controller
     public function assign_list()
     {
         $categories=RestaurantCategory::orderBy('created_at','DESC')->get();
-        $category_assign=CategoryAssign::orderBy('created_at','ASC')->get();
+        $category_assign=CategoryAssign::orderBy('sort_id')->get();
         return view('admin.category.category_assign',compact('category_assign','categories'));
+    }
+
+    public function sort_update(Request $request)
+    {
+        $posts = CategoryAssign::all();
+
+        foreach ($posts as $post) {
+            foreach ($request->order as $order) {
+                if($order['id'] == $post->category_assign_id) {
+                    $post->update(['sort_id'=>$order['position']]);
+                }
+            }
+        }
+        $request->session()->flash('alert-success', 'successfully change sort number!');
+        return response()->json(['status'=>'success']);
     }
 
     /**

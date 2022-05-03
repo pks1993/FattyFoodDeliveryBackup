@@ -124,6 +124,7 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>No.</th>
+                                        <th class="text-center">Assign</th>
                                         <th class="text-left">CategoryNameMM</th>
                                         <th class="text-left">CategoryNameEN</th>
                                         <th class="text-left">CategoryNameCh</th>
@@ -135,6 +136,17 @@
                                     @foreach($categories as $category)
                                     <tr class="text-center">
                                         <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            @if($category->category_assign->category_type_id==1)
+                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</a>
+                                            @elseif($category->category_assign->category_type_id==2)
+                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-danger" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</a>
+                                            @elseif($category->category_assign->category_type_id==3)
+                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</a>
+                                            @else
+                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign">Empty Assign</a>
+                                            @endif
+                                        </td>
                                         <td class="text-left">{{ $category->restaurant_category_name_mm }}</td>
                                         <td class="text-left">{{ $category->restaurant_category_name_en }}</td>
                                         <td class="text-left">{{ $category->restaurant_category_name_ch }}</td>
