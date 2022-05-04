@@ -124,10 +124,11 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>No.</th>
-                                        <th class="text-center">Assign</th>
+                                        <th class="text-center">CategoryType</th>
                                         <th class="text-left">CategoryNameMM</th>
                                         <th class="text-left">CategoryNameEN</th>
                                         <th class="text-left">CategoryNameCh</th>
+                                        <th>Assign</th>
                                         <th>Image</th>
                                         <th>Action</th>
                                     </tr>
@@ -137,19 +138,31 @@
                                     <tr class="text-center">
                                         <td>{{ $loop->iteration }}</td>
                                         <td>
-                                            @if($category->category_assign->category_type_id==1)
-                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</a>
-                                            @elseif($category->category_assign->category_type_id==2)
-                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-danger" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</a>
-                                            @elseif($category->category_assign->category_type_id==3)
-                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</a>
+                                            @if($category->category_assign)
+                                                @if($category->category_assign->category_type_id==1)
+                                                    <p style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</p>
+                                                @elseif($category->category_assign->category_type_id==2)
+                                                    <p style="width: 100px;" class="btn btn-sm btn-danger" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</p>
+                                                @elseif($category->category_assign->category_type_id==3)
+                                                    <p style="width: 100px;" class="btn btn-sm btn-primary" style="color: white" onclick="return confirm(\'Are you sure want to close assign status this category?\')" title="Category Assign">{{ $category->category_assign->category_type->category_type_name }}</p>
+                                                @else
+                                                    <p style="width: 100px;" class="btn btn-sm btn-secondary" style="color: white" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign">Empty Assign</p>
+                                                @endif
                                             @else
-                                                <a href="#" style="width: 100px;" class="btn btn-sm btn-success" style="color: white" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign">Empty Assign</a>
+                                                <p style="width: 100px;" class="btn btn-sm btn-secondary" style="color: white" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign">Empty Assign</p>
                                             @endif
                                         </td>
                                         <td class="text-left">{{ $category->restaurant_category_name_mm }}</td>
                                         <td class="text-left">{{ $category->restaurant_category_name_en }}</td>
                                         <td class="text-left">{{ $category->restaurant_category_name_ch }}</td>
+                                        <td>
+                                            @if($category->category_assign)
+                                                <a href="{{ url('fatty/main/admin/restaurant/categories/assign/edit',$category->category_assign->category_assign_id) }}" class="btn btn-sm btn-primary" style="color: white;width: 45px;" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign Edit">Edit</a>
+                                                {{-- <a href="#" class="btn btn-sm btn-primary" style="color: white;width: 45px;" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign Edit">Edit</a> --}}
+                                            @else
+                                                <a href="{{ url('fatty/main/admin/restaurant/categories/assign/create',$category->restaurant_category_id) }}" class="btn btn-sm btn-success" style="color: white;width: 45px;" onclick="return confirm(\'Are you sure want to create assign status this category?\')" title="Category Assign Create">Add</a>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($category->restaurant_category_image)
                                             <img src="/uploads/category/{{$category->restaurant_category_image}}" class="img-rounded" style="width: 55px;height: 45px;">

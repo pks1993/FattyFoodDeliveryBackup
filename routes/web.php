@@ -239,11 +239,13 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Category assign
     Route::get('restaurant/categories/assign','Admin\Restaurant\CategoryController@assign_list');
+    Route::get('restaurant/categories/assign/create/{restaurant_category_id}','Admin\Restaurant\CategoryController@assign_create')->name('assign_categories.create');
     Route::post('restaurant/categories/assign/store','Admin\Restaurant\CategoryController@assign_store')->name('assign_categories.store');
     Route::get('restaurant/categories/assign/edit/{category_assign_id}','Admin\Restaurant\CategoryController@assign_edit')->name('assign_categories.edit');
+    // Route::get('restaurant/categories/assign/edit/{category_assign_id}','Admin\Restaurant\CategoryController@assign_edit')->name('assign_categories.edit');
     Route::post('restaurant/categories/assign/update/{category_assign_id}','Admin\Restaurant\CategoryController@assign_update')->name('assign_categories.update');
     Route::post('restaurant/categories/assign/sort/update','Admin\Restaurant\CategoryController@sort_update');
-    Route::post('restaurant/categories/assign/store','Admin\Restaurant\CategoryController@sort_update');
+    Route::delete('restaurant/categories/assign/delete/{caegory_assign_id}','Admin\Restaurant\CategoryController@assign_destroy')->name('assign_categorises.destroy');
 
 
     //Food

@@ -58,11 +58,11 @@
                                                 <td class="text-center">{{ $category->category->restaurant_category_name_mm }}</td>
                                                 <td class="text-center">
                                                     @if($category->category_type_id==1)
-                                                        <p style="width: 100px;" class="btn btn-sm btn-primary">{{ $category->category_type->category_type_name }}</p>
+                                                        <p style="width: 100px;" class="btn btn-sm btn-success">{{ $category->category_type->category_type_name }}</p>
                                                     @elseif($category->category_type_id==2)
-                                                        <p style="width: 100px;" class="btn btn-sm btn-info">{{ $category->category_type->category_type_name }}</p>
+                                                        <p style="width: 100px;" class="btn btn-sm btn-danger">{{ $category->category_type->category_type_name }}</p>
                                                     @elseif($category->category_type_id==3)
-                                                        <p style="width: 100px;" class="btn btn-sm btn-warning">{{ $category->category_type->category_type_name }}</p>
+                                                        <p style="width: 100px;" class="btn btn-sm btn-primary">{{ $category->category_type->category_type_name }}</p>
                                                     @else
                                                         <p style="width: 100px;" class="btn btn-sm btn-secondary">Empty</p>
                                                     @endif
@@ -75,11 +75,16 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    @if($category->restaurant_category_id==8)
+                                                    <form action="{{route('fatty.admin.assign_categorises.destroy', $category->category_assign_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                    {{-- @if($category->restaurant_category_id==8)
                                                         <a href="{{ route('fatty.admin.assign_categories.edit',$category->category_assign_id) }}"class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
                                                     @else
                                                         <a href="{{ route('fatty.admin.assign_categories.edit',$category->category_assign_id) }}"class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                                    @endif
+                                                    @endif --}}
                                                 </td>
                                             </tr>
                                         @endforeach

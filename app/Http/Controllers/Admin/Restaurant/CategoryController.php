@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Restaurant\RestaurantCategory;
 use App\Models\Category\CategoryAssign;
-
+use App\Models\Restaurant\CategoryType;
+use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class CategoryController extends Controller
 {
@@ -46,9 +47,8 @@ class CategoryController extends Controller
     {
         $this->validate($request, [
             'restaurant_category_name_mm' => 'required',
-            'restaurant_category_name_en' => 'required',
-            'restaurant_category_name_ch' => 'required',
-            'restaurant_category_image' => 'required',
+            // 'restaurant_category_name_en' => 'required',
+            // 'restaurant_category_name_ch' => 'required',
         ]);
 
         $category = new RestaurantCategory();
@@ -126,6 +126,7 @@ class CategoryController extends Controller
     {
         $category=RestaurantCategory::where('restaurant_category_id','=',$id)->FirstOrFail();
         Storage::disk('Category')->delete($category->restaurant_category_image);
+        CategoryAssign::where('restaurant_category_id',$id)->delete();
         $category->delete();
 
         $request->session()->flash('alert-danger', 'successfully delete Category!');
@@ -143,6 +144,24 @@ class CategoryController extends Controller
         $categories=RestaurantCategory::orderBy('created_at','DESC')->get();
         $category_assign=CategoryAssign::orderBy('sort_id')->get();
         return view('admin.category.category_assign',compact('category_assign','categories'));
+    }
+
+    public function assign_create(Request $request,$id)
+    {
+        $category_type=CategoryType::all();
+        $restaurant_category=RestaurantCategory::where('restaurant_category_id',$id)->first();
+        return view('admin.category.category_assign_create',compact('restaurant_category','category_type'));
+    }
+
+    public function assign_store(Request $request)
+    {
+        $category = new CategoryAssign();
+        $category->restaurant_category_id=$request['restaurant_category_id'];
+        $category->category_type_id=$request['category_type_id'];
+        $category->save();
+
+        $request->session()->flash('alert-success', 'successfully create category assign!');
+        return redirect('fatty/main/admin/restaurant/categories');
     }
 
     public function sort_update(Request $request)
@@ -169,8 +188,9 @@ class CategoryController extends Controller
     public function assign_edit($id)
     {
         $category_assign=CategoryAssign::where('category_assign_id',$id)->first();
-        $categories=RestaurantCategory::where('restaurant_category_id','!=',$category_assign->restaurant_category_id)->get();
-        return view('admin.category.category_assign_edit',compact('category_assign','categories'));
+        $restaurant_category=RestaurantCategory::where('restaurant_category_id','!=',$category_assign->restaurant_category_id)->get();
+        $category_type=CategoryType::where('category_type_id','!=',$category_assign->category_type_id)->get();
+        return view('admin.category.category_assign_edit',compact('category_assign','restaurant_category','category_type'));
     }
 
 
@@ -183,18 +203,28 @@ class CategoryController extends Controller
      */
     public function assign_update(Request $request, $id)
     {
-        $this->validate($request, [
-            'restaurant_category_id' => 'required',
-        ]);
-        $assign=CategoryAssign::where('restaurant_category_id',$request['restaurant_category_id'])->first();
-        if($assign){
-            $request->session()->flash('alert-warning', 'warining your select category is already exit!');
-            return redirect()->back();
-        }
-        else{
-            CategoryAssign::find($id)->update($request->all());
-            $request->session()->flash('alert-success', 'successfully update category!');
-            return redirect('fatty/main/admin/restaurant/categories/assign');
-        }
-    }
+        CategoryAssign::find($id)->update($request->all());
+        $request->session()->flash('alert-success', 'successfully update category!');
+        return redirect('fatty/main/admin/restaurant/categories');
+        // $this->validate($request, [
+        //     'restaurant_category_id' => 'required',
+        // ]);
+        // $assign=CategoryAssign::where('restaurant_category_id',$request['restaurant_category_id'])->first();
+        // if($assign){
+            //     $request->session()->flash('alert-warning', 'warining your select category is already exit!');
+            //     return redirect()->back();
+            // }
+            // else{
+                //     CategoryAssign::find($id)->update($request->all());
+                //     $request->session()->flash('alert-success', 'successfully update category!');
+                //     return redirect('fatty/main/admin/restaurant/categories/assign');
+                // }
+            }
+            public function assign_destroy(Request $request,$id)
+            {
+                CategoryAssign::where('category_assign_id',$id)->delete();
+
+                $request->session()->flash('alert-danger', 'successfully delete Assign Category!');
+                return redirect()->back();
+            }
 }
