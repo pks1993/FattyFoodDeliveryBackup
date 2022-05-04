@@ -42,8 +42,8 @@
                                     <tr>
                                         <th class="text-center">#</th>
                                         <th class="text-center">SortNo.</th>
-                                        <th class="text-center">ID.</th>
-                                        <th class="text-center">CategoryName</th>
+                                        <th class="text-center">#ID</th>
+                                        <th>CategoryName</th>
                                         <th class="text-center">Type.</th>
                                         <th class="text-center">Image</th>
                                         <th class="text-center">Action</th>
@@ -55,7 +55,7 @@
                                                 <td class="pl-3" width="20px"><i class="fa fa-sort"></i></td>
                                                 <td class="text-center">{{ $category->sort_id }}</td>
                                                 <td class="text-center">{{ $category->category_assign_id }}</td>
-                                                <td class="text-center">{{ $category->category->restaurant_category_name_mm }}</td>
+                                                <td class="text-left">{{ $category->category->restaurant_category_name_mm }} ({{ $category->category->restaurant_category_name_en }})</td>
                                                 <td class="text-center">
                                                     @if($category->category_type_id==1)
                                                         <p style="width: 100px;" class="btn btn-sm btn-success">{{ $category->category_type->category_type_name }}</p>
@@ -103,7 +103,7 @@
 <script type="text/javascript">
     $(function () {
         $("#categories").DataTable({
-            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+            "lengthMenu": [[50, 100, 250, -1], [50,100, 250, "All"]],
                 "paging": true, // Allow data to be paged
                 "lengthChange": true,
                 "searching": true, // Search box and search function will be actived

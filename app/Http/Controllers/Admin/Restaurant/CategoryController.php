@@ -155,9 +155,12 @@ class CategoryController extends Controller
 
     public function assign_store(Request $request)
     {
+        $count=CategoryAssign::count();
+
         $category = new CategoryAssign();
         $category->restaurant_category_id=$request['restaurant_category_id'];
         $category->category_type_id=$request['category_type_id'];
+        $category->sort_id=$count+1;
         $category->save();
 
         $request->session()->flash('alert-success', 'successfully create category assign!');
@@ -219,12 +222,25 @@ class CategoryController extends Controller
                 //     $request->session()->flash('alert-success', 'successfully update category!');
                 //     return redirect('fatty/main/admin/restaurant/categories/assign');
                 // }
-            }
-            public function assign_destroy(Request $request,$id)
-            {
-                CategoryAssign::where('category_assign_id',$id)->delete();
+    }
+    public function assign_destroy(Request $request,$id)
+    {
+        // CategoryAssign::where('category_assign_id',$id)->delete();
+        $assign=CategoryAssign::find($id);
 
-                $request->session()->flash('alert-danger', 'successfully delete Assign Category!');
-                return redirect()->back();
+        if($assign){
+
+            $cat_assign=CategoryAssign::where('sort_id','>',$assign->sort_id)->get();
+            foreach($cat_assign as $value){
+                $sort_id=$value->sort_id-1;
+                $category_assign_id=$value->category_assign_id;
+                CategoryAssign::where('category_assign_id',$category_assign_id)->update(['sort_id'=>$sort_id]);
             }
+            $assign->delete();
+
+            $request->session()->flash('alert-danger', 'successfully delete Assign Category!');
+            return redirect()->back();
+        }
+
+    }
 }

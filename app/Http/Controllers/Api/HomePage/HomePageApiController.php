@@ -64,6 +64,7 @@ class HomePageApiController extends Controller
         $assign=DB::table('category_assigns')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','category_assigns.restaurant_category_id')
         ->select('category_assigns.category_assign_id','category_assigns.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image')
+        ->orderBy('sort_id')
         ->get();
 
         $recommend=RecommendRestaurant::select('recommend_restaurant_id','recommend_restaurants.restaurant_id','restaurants.restaurant_name_mm','restaurants.restaurant_name_en','restaurants.restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
@@ -78,6 +79,7 @@ class HomePageApiController extends Controller
         ->join('states','states.state_id','=','restaurants.state_id')
         ->join('cities','cities.city_id','=','restaurants.city_id')
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])
+        ->orderBy('sort_id')
         ->limit(20)
         ->get();
         $recommend_data=[];
@@ -90,8 +92,8 @@ class HomePageApiController extends Controller
             array_push($recommend_data,$data);
         }
 
-        $up_ads=UpAds::orderBy('created_at','DESC')->select('up_ads_id','restaurant_id','image')->get();
-        $down_ads=DownAds::orderBy('created_at','DESC')->select('down_ads_id','restaurant_id','image')->get();
+        $up_ads=UpAds::orderBy('sort_id')->select('up_ads_id','restaurant_id','image')->get();
+        $down_ads=DownAds::orderBy('sort_id')->select('down_ads_id','restaurant_id','image')->get();
 
         $near_restaurant=Restaurant::select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
                 * cos(radians(restaurant_latitude))
@@ -166,7 +168,8 @@ class HomePageApiController extends Controller
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             // ->having('distance','<',500)
-            ->orderBy('distance','ASC')
+            // ->orderByRaw('(distance - sort_id) desc')
+            ->orderBy('sort_id')
             ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
             ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])

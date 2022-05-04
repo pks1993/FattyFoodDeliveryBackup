@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Storage;
 
 class RiderController extends Controller
 {
+    public function location($id)
+    {
+        return view('admin.rider.location');
+    }
     public function admin_approved(Request $request,$id)
     {
         $rider=Rider::find($id);
@@ -101,19 +105,21 @@ class RiderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
-            $btn = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-2" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
+            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2" title="Rider Detail"><i class="fas fa-eye"></i></a>';
             if ($post->is_admin_approved == 0) {
-                $btn = $btn.'<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+                $update = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
             } else {
-                $btn = $btn.'<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+                $update = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
             };
+            $value=$view.$location.$update;
             // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
             // '.csrf_field().'
             // '.method_field("DELETE").'
             // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             // </form>';
-            
-            return $btn;
+
+            return $value;
         })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
@@ -164,7 +170,7 @@ class RiderController extends Controller
             // '.method_field("DELETE").'
             // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             // </form>';
-            
+
             return $btn;
         })
         ->addColumn('rider_image', function(Rider $item){
@@ -195,8 +201,8 @@ class RiderController extends Controller
         ->searchPane('model', $model)
         ->make(true);
     }
-    
-    
+
+
 
     public function hundredMonthlyIndex()
     {
@@ -219,7 +225,7 @@ class RiderController extends Controller
             // '.method_field("DELETE").'
             // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             // </form>';
-            
+
             return $btn;
         })
         ->addColumn('rider_image', function(Rider $item){
@@ -273,7 +279,7 @@ class RiderController extends Controller
             // '.method_field("DELETE").'
             // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             // </form>';
-            
+
             return $btn;
         })
         ->addColumn('rider_image', function(Rider $item){
@@ -308,28 +314,28 @@ class RiderController extends Controller
     public function riderchart()
     {
         $m= date("m");
-        
+
         $de= date("d");
-        
+
         $y= date("Y");
-        
+
         for($i=0; $i<10; $i++){
-            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y)); 
-            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y)); 
+            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y));
+            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y));
             $daily_riders[]=Rider::withCount(['rider_order_daily as count'])->has('rider_order_daily')->orderBy('count','DESC')->whereDate('created_at', '=', $format_date)->count();
-            
-            
-            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y)); 
-            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y)); 
+
+
+            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y));
+            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y));
             $monthly_riders[] = Rider::withCount(['rider_order_monthly as count'])->has('rider_order_monthly')->orderBy('count','DESC')->whereMonth('created_at','=',$format_month)->count();
-            
+
             $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $yearly_riders[] = Rider::withCount(['rider_order_yearly as count'])->has('rider_order_yearly')->orderBy('count','DESC')->whereYear('created_at','=',$format_year)->count();
         }
-        return view('admin.rider.rider_chart.index')->with('days',$days)->with('daily_riders',$daily_riders)->with('months',$months)->with('monthly_riders',$monthly_riders)->with('years',$years)->with('yearly_riders',$yearly_riders);    
+        return view('admin.rider.rider_chart.index')->with('days',$days)->with('daily_riders',$daily_riders)->with('months',$months)->with('monthly_riders',$monthly_riders)->with('years',$years)->with('yearly_riders',$yearly_riders);
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
