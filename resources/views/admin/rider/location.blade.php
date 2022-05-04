@@ -5,37 +5,20 @@
 @endsection
 
 @section('content')
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-7" style="height: 20px;">
-                <div class="flash-message" id="successMessage">
-                    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-                    @if(Session::has('alert-' . $msg))
-                    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-                    @endif
-                    @endforeach
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Riders</li>
-                    <li class="breadcrumb-item active">Location</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</section>
 <section class="content">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    "hello"
-                </div>
-            </div>
+    <div class="col-md-12">
+        <div class="text-center"><h5>Rider <b>"{{ $rider->rider_user_name }}'s"</b> Current Location</h5></div>
+        <div class="row mt-2 mb-2" style="border-style:solid">
+            <iframe width="100%"
+                height="450px"
+                frameborder="0"
+                scrolling="no"
+                marginheight="0"
+                marginwidth="0"
+                src = "https://maps.google.com/maps?q={{ $rider->rider_latitude }},{{ $rider->rider_longitude }}&hl=es;z=14&amp;output=embed">
+            </iframe>
         </div>
+        <a href="{{url('fatty/main/admin/riders')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>Rider lists</span></a>
     </div>
 </section>
 @endsection

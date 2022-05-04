@@ -14,7 +14,8 @@ class RiderController extends Controller
 {
     public function location($id)
     {
-        return view('admin.rider.location');
+        $rider=Rider::find($id);
+        return view('admin.rider.location',compact('rider'));
     }
     public function admin_approved(Request $request,$id)
     {

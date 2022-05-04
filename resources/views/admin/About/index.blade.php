@@ -160,7 +160,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
         <input type="hidden" id="lo" name="lo"> --}}
 
 
-        <!DOCTYPE html>
+        {{-- <!DOCTYPE html>
         <html>
           <head>
             <title>Marker Labels</title>
@@ -224,4 +224,4 @@ function addMarker(location, map) {
 }
             </script>
           </body>
-        </html>
+        </html> --}}
