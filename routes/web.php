@@ -88,13 +88,13 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Riders
     Route::get('riders','Admin\Rider\RiderController@index');
+    Route::get('riders/check/location/{rider_id}','Admin\Rider\RiderController@location')->name('riders.location');
     Route::get('riders/create','Admin\Rider\RiderController@create')->name('riders.create');
     Route::post('riders/store','Admin\Rider\RiderController@store')->name('riders.store');
     Route::get('riders/admin/approved/update/{rider}','Admin\Rider\RiderController@admin_approved');
     Route::get('daily_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@daily_admin_approved');
     Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
     Route::get('yearly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@yearly_admin_approved');
-
 
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
@@ -239,9 +239,16 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Category assign
     Route::get('restaurant/categories/assign','Admin\Restaurant\CategoryController@assign_list');
+    Route::get('restaurant/categories/assign/create/{restaurant_category_id}','Admin\Restaurant\CategoryController@assign_create')->name('assign_categories.create');
     Route::post('restaurant/categories/assign/store','Admin\Restaurant\CategoryController@assign_store')->name('assign_categories.store');
     Route::get('restaurant/categories/assign/edit/{category_assign_id}','Admin\Restaurant\CategoryController@assign_edit')->name('assign_categories.edit');
+    // Route::get('restaurant/categories/assign/edit/{category_assign_id}','Admin\Restaurant\CategoryController@assign_edit')->name('assign_categories.edit');
     Route::post('restaurant/categories/assign/update/{category_assign_id}','Admin\Restaurant\CategoryController@assign_update')->name('assign_categories.update');
+    Route::post('restaurant/categories/assign/sort/update','Admin\Restaurant\CategoryController@sort_update');
+    Route::delete('restaurant/categories/assign/delete/{caegory_assign_id}','Admin\Restaurant\CategoryController@assign_destroy')->name('assign_categorises.destroy');
+
+    //Ctegory assign Sort
+    Route::get('restaurant/categories/assign_sort','Admin\Restaurant\CategoryController@assign_sort_list');
 
     //Food
     Route::get('foods','Admin\Food\FoodController@index');

@@ -243,7 +243,6 @@ class RestaurantApiController extends Controller
         }else{
             return response()->json(['success'=>false,'message' => 'restaurant user id not found!']);
         }
-
     }
 
     public function opening_list(Request $request)
@@ -251,7 +250,7 @@ class RestaurantApiController extends Controller
         $restaurant_id=$request['restaurant_id'];
         $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
         if($check_restaurant){
-            $check_time=RestaurantAvailableTime::where('restaurant_id',$restaurant_id)->get();
+            $check_time=RestaurantAvailableTime::where('restaurant_id',$restaurant_id)->where('opening_time','!=',null)->get();
             return response()->json(['success'=>true,'message' => 'successfully restaurant create','data'=>$check_time]);
         }else{
             return response()->json(['success'=>false,'message' => 'restaurant id not found!']);

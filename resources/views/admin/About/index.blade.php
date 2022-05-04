@@ -59,7 +59,7 @@
                                     <td class="text-left">{{$bra->user->name}}</td>
                                     <td class="btn-group">
                                         <a href="{{route('fatty.admin.branch.edit',['branch_id'=>$bra->branch_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                    
+
                                         <form action="{{route('fatty.admin.branch.destroy', $bra->branch_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                             @csrf
                                             @method('delete')
@@ -91,30 +91,30 @@
 </script>
 @endpush --}}
 
-{{-- <iframe 
-  width="300" 
-  height="170" 
-  frameborder="0" 
-  scrolling="no" 
-  marginheight="0" 
-  marginwidth="0" 
+{{-- <iframe
+  width="300"
+  height="170"
+  frameborder="0"
+  scrolling="no"
+  marginheight="0"
+  marginwidth="0"
   src="https://maps.google.com/maps?q='+YOUR_LAT+','+YOUR_LON+'&hl=es&z=14&amp;output=embed"
  > --}}
 
- {{-- <iframe width="100%" 
- height="100%" 
- frameborder="0" 
- scrolling="no" 
- marginheight="0" 
- marginwidth="0" 
+ {{-- <iframe width="100%"
+ height="100%"
+ frameborder="0"
+ scrolling="no"
+ marginheight="0"
+ marginwidth="0"
 src = "https://maps.google.com/maps?q=21.9293083,96.1116005&hl=es;z=14&amp;output=embed"></iframe> --}}
 {{-- <iframe width="100%" height="100%" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0" style="border:0" src="https://maps.google.com/maps?saddr=21.9339885,96.110661&daddr=21.938852968794,96.136361720505%20to:21.929273415891313,96.1115577444434&hl=es;z=19&amp;output=embed" allowfullscreen></iframe> --}}
-{{-- <iframe width="100%" 
-        height="100%" 
-        frameborder="0" 
-        scrolling="no" 
-        marginheight="0" 
-        marginwidth="0" 
+{{-- <iframe width="100%"
+        height="100%"
+        frameborder="0"
+        scrolling="no"
+        marginheight="0"
+        marginwidth="0"
         src="https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=333+E+34th+St,+New+York,+NY&aq=1&oq=333&sll=37.269174,-119.306607&sspn=16.742323,33.815918&ie=UTF8&hq=&hnear=333+E+34th+St,+New+York,+10016&t=m&z=14&ll=40.744403,-73.974467&output=embed">
 </iframe> --}}
 
@@ -159,8 +159,8 @@ google.maps.event.addDomListener(window, 'load', initialize);
         <input type="hidden" id="la" name="la">
         <input type="hidden" id="lo" name="lo"> --}}
 
-        
-        <!DOCTYPE html>
+
+        {{-- <!DOCTYPE html>
         <html>
           <head>
             <title>Marker Labels</title>
@@ -185,7 +185,7 @@ body {
           </head>
           <body>
             <div id="map"></div>
-        
+
             <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
             <script
               src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKbibh4Mr7_vpm2f-n0lo48TPbQKv2JHI&callback=initMap&v=weekly"
@@ -224,4 +224,4 @@ function addMarker(location, map) {
 }
             </script>
           </body>
-        </html>
+        </html> --}}

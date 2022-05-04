@@ -19,6 +19,7 @@ class CreateRestaurantCategoriesTable extends Migration
             $table->string('category_name_en')->nullable();
             $table->string('category_name_ch')->nullable();
             $table->string('restaurant_category_image')->nullable();
+            $table->unsignedBigInteger('category_page_id')->nullable();
             $table->timestamps();
         });
     }

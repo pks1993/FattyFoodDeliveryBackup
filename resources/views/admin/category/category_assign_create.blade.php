@@ -31,7 +31,7 @@
               <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
               <li class="breadcrumb-item active">Category</li>
               <li class="breadcrumb-item active">Assign</li>
-              <li class="breadcrumb-item active">Edit</li>
+              <li class="breadcrumb-item active">Add</li>
             </ol>
           </div>
         </div>
@@ -45,7 +45,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h2 class="card-title" style="font-size: 25px;"><b>Edit Category Assign</b></h2>
+                                    <h2 class="card-title" style="font-size: 25px;"><b>Add A New Category Assign</b></h2>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
                                     <a href="{{url('fatty/main/admin/restaurant/categories')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
@@ -53,13 +53,13 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('fatty.admin.assign_categories.update',$category_assign->category_assign_id) }}" autocomplete="off" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('fatty.admin.assign_categories.store') }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group row">
-                                    <label for="restaurant_category_id" class="col-md-12 col-form-label">{{ __('Restaurant Category Name') }} </label>
+                                    <label for="restaurant_category_id" class="col-md-12 col-form-label">{{ __('Restaurant Name') }} </label>
                                     <div class="col-md-12">
                                         <select style="height: auto;" id="restaurant_category_id" class="form-control @error('restaurant_category_id') is-invalid @enderror" name="restaurant_category_id" autocomplete="restaurant_category_id">
-                                            <option value="{{ $category_assign->restaurant_category_id }}">{{ $category_assign->category->restaurant_category_name_mm }} ( {{ $category_assign->category->restaurant_category_name_en }} )</option>
+                                            <option value="{{ $restaurant_category->restaurant_category_id }}">{{ $restaurant_category->restaurant_category_name_mm }} ( {{ $restaurant_category->restaurant_category_name_en }} )</option>
                                         </select>
                                         @error('restaurant_category_id')
                                             <span class="invalid-feedback" role="alert">
@@ -73,7 +73,7 @@
                                     <label for="category_type_id" class="col-md-12 col-form-label">{{ __('Category Type Name') }} </label>
                                     <div class="col-md-12">
                                         <select style="height: auto;" id="category_type_id" class="form-control @error('category_type_id') is-invalid @enderror" name="category_type_id" autocomplete="category_type_id">
-                                            <option value="{{ $category_assign->category_type_id }}">{{ $category_assign->category_type->category_type_name }}</option>
+                                            <option value="">Choose Category Type</option>
                                             @foreach ($category_type as $value)
                                                 <option value="{{ $value->category_type_id }}">{{ $value->category_type_name }}</option>
                                             @endforeach
@@ -89,7 +89,7 @@
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-save"></i> {{ __('Update') }}
+                                            <i class="fa fa-save"></i> {{ __('Create') }}
                                         </button>
                                         <a href="{{url('fatty/main/admin/restaurant/categories')}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
