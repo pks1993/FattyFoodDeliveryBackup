@@ -247,6 +247,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('restaurant/categories/assign/sort/update','Admin\Restaurant\CategoryController@sort_update');
     Route::delete('restaurant/categories/assign/delete/{caegory_assign_id}','Admin\Restaurant\CategoryController@assign_destroy')->name('assign_categorises.destroy');
 
+    //Ctegory assign Sort
+    Route::get('restaurant/categories/assign_sort','Admin\Restaurant\CategoryController@assign_sort_list');
 
     //Food
     Route::get('foods','Admin\Food\FoodController@index');

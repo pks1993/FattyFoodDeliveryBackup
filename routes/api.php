@@ -35,6 +35,8 @@ Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\Cus
 Route::post('fatty/202221/lashio/main/admin/customers/one_device/login','Api\Customer\CustomerApiController@one_device_login');
 Route::post('fatty/202221/lashio/main/admin/customers/logout','Api\Customer\CustomerApiController@logout');
 
+Route::post('fatty/202221/lashio/main/admin/customers/notification/token/update','Api\Customer\CustomerApiController@fcm_token_update');
+
 
 //Customer Notification
 Route::get('fatty/202221/lashio/main/admin/customers/notifications','Api\Notification\NotificationApiController@index');

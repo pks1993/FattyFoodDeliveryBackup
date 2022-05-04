@@ -371,6 +371,21 @@ class CustomerApiController extends Controller
 
     }
 
+    public function fcm_token_update(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $fcm_token=$request['fcm_token'];
+        $customers=Customer::where('customer_id',$customer_id)->first();
+        if($customers){
+            $customers->fcm_token=$fcm_token;
+            $customers->update();
+
+            return response()->json(['success'=>true,'message' => 'the customer fcm token update','data'=>$customers]);
+        }else{
+            return response()->json(['success'=>false,'message' => 'the customer phone number not found','data'=>null]);
+        }
+    }
+
     /**
     * Display the specified resource.
     *
