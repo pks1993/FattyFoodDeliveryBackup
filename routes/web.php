@@ -9,6 +9,7 @@ Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
 Route::get('/','Admin\Login\LoginController@index')->name('login');
+Route::get('location_check','Admin\Login\LoginController@location_check');
 
 Route::post('fatty/post/login','Admin\Login\LoginController@login')->name('fatty.post.login');
 
@@ -249,6 +250,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Ctegory assign Sort
     Route::get('restaurant/categories/assign_sort','Admin\Restaurant\CategoryController@assign_sort_list');
+    Route::post('restaurant/categories/assign_type/sort/update','Admin\Restaurant\CategoryController@assign_type_sort_update');
 
     //Food
     Route::get('foods','Admin\Food\FoodController@index');

@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function location_check()
+    {
+        return view('admin.rider.location_check');
+    }
     /**
      * Display a listing of the resource.
      *
