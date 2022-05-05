@@ -9,7 +9,7 @@ Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
 Route::get('/','Admin\Login\LoginController@index')->name('login');
-Route::get('location_check','Admin\Login\LoginController@location_check');
+Route::get('data','Admin\Login\LoginController@location_check');
 
 Route::post('fatty/post/login','Admin\Login\LoginController@login')->name('fatty.post.login');
 
