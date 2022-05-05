@@ -9,7 +9,6 @@ Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
 Route::get('/','Admin\Login\LoginController@index')->name('login');
-Route::get('data','Admin\Login\LoginController@location_check');
 
 Route::post('fatty/post/login','Admin\Login\LoginController@login')->name('fatty.post.login');
 
@@ -21,6 +20,7 @@ Route::post('fatty/order/payment/place_order','Admin\Order\PaymentController@cre
 // Auth::routes(['verify'=>true]);
 
 Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['auth']], function(){
+    Route::get('rider_location','Admin\Login\LoginController@location_check');
 
     //Dashboard
     Route::get('dashboard','Admin\Dashboard\DashboardController@index');
