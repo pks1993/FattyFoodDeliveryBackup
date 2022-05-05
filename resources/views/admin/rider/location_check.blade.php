@@ -37,14 +37,14 @@
         //     }
         //  }
       </script>
-      <script type="text/javascript">
+      <!-- <script type="text/javascript">
         setTimeout(function(){
           location = ''
         },15000)
-      </script>
+      </script> -->
    </head>
    <body>
-       <div id="mapholder" style="width: 100%;height:500px"></div>
+       <!-- <div id="mapholder" style="width: 100%;height:500px"></div> -->
        <input type="text" style="font-size: 20px;margin-top:20px" id="demo">
       {{-- <form>
          <input type="button" onclick="getLocation();" value="Get Location"/>

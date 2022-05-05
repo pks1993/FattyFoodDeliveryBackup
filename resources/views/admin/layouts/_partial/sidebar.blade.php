@@ -331,6 +331,12 @@
                             <p>Category Assign List</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/restaurant/categories/assign_sort')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Category Type List</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">
