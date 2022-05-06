@@ -104,7 +104,7 @@
 <script type="text/javascript">
     $(function () {
         $("#categories").DataTable({
-            "lengthMenu": [[50, 100, 250, -1], [50,100, 250, "All"]],
+            "lengthMenu": [[25, 50, 100, 250, -1], [25, 50,100, 250, "All"]],
                 "paging": true, // Allow data to be paged
                 "lengthChange": true,
                 "searching": true, // Search box and search function will be actived
