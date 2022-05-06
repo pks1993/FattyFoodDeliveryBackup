@@ -53,7 +53,8 @@
                                         @foreach($category_assign as $category)
                                             <tr class="row1 text-center" data-id="{{ $category->category_assign_id }}">
                                                 <td class="pl-3" width="20px"><i class="fa fa-sort"></i></td>
-                                                <td class="text-center">{{ $category->sort_id }}</td>
+                                                {{-- <td class="text-center" width="20px;">{{ $category->sort_id }}</td> --}}
+                                                <td class="text-center" width="20px;">{{ $loop->iteration }}</td>
                                                 <td class="text-center">{{ $category->category_assign_id }}</td>
                                                 <td class="text-left">{{ $category->category->restaurant_category_name_mm }} ({{ $category->category->restaurant_category_name_en }})</td>
                                                 <td class="text-center">

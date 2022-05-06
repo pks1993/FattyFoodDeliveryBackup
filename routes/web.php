@@ -20,6 +20,7 @@ Route::post('fatty/order/payment/place_order','Admin\Order\PaymentController@cre
 // Auth::routes(['verify'=>true]);
 
 Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['auth']], function(){
+    Route::get('rider_location','Admin\Login\LoginController@location_check');
 
     //Dashboard
     Route::get('dashboard','Admin\Dashboard\DashboardController@index');
@@ -249,6 +250,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Ctegory assign Sort
     Route::get('restaurant/categories/assign_sort','Admin\Restaurant\CategoryController@assign_sort_list');
+    Route::post('restaurant/categories/assign_type/sort/update','Admin\Restaurant\CategoryController@assign_type_sort_update');
 
     //Food
     Route::get('foods','Admin\Food\FoodController@index');

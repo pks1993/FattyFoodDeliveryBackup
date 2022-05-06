@@ -134,6 +134,34 @@ class CategoryController extends Controller
     }
 
 
+    public function assign_sort_list()
+    {
+        $category_type=CategoryType::orderBy('sort_id')->get();
+        return view('admin.category.category_assign_sort',compact('category_type'));
+    }
+
+    public function assign_type_sort_update(Request $request)
+    {
+        $posts = CategoryType::all();
+
+        foreach ($posts as $post) {
+            foreach ($request->order as $order) {
+                if($order['id'] == $post->category_type_id) {
+                    $post->update(['sort_id'=>$order['position']]);
+                }
+            }
+        }
+        $sort_id=CategoryType::get();
+        foreach($sort_id as $value)
+        {
+            CategoryAssign::where('category_type_id',$value->category_type_id)->update(['category_sort_id'=>$value->sort_id]);
+        }
+
+        $request->session()->flash('alert-success', 'successfully change sort number!');
+        return response()->json(['status'=>'success']);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -142,7 +170,8 @@ class CategoryController extends Controller
     public function assign_list()
     {
         $categories=RestaurantCategory::orderBy('created_at','DESC')->get();
-        $category_assign=CategoryAssign::orderBy('sort_id')->get();
+        $category_assign=CategoryAssign::query()->orderByRaw("category_sort_id,sort_id")->get();
+        // return response()->json($category_assign);
         return view('admin.category.category_assign',compact('category_assign','categories'));
     }
 
