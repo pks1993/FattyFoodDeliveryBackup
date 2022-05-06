@@ -45,7 +45,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h2 class="card-title" style="font-size: 25px;"><b>Add A New Category Assign</b></h2>
+                                    <h2 class="card-title" style="font-size: 20px;"><b>Add NewCategory Assign</b></h2>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
                                     <a href="{{url('fatty/main/admin/restaurant/categories')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>

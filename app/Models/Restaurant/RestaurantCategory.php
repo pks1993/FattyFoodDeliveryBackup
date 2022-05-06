@@ -26,4 +26,9 @@ class RestaurantCategory extends Model
     {
         return $this->belongsTo('App\Models\Category\CategoryAssign','restaurant_category_id','restaurant_category_id');
     }
+    public function restaurant()
+    {
+        return $this->hasOne('App\Models\Restaurant\Restaurant','restaurant_category_id','restaurant_category_id');
+    }
+
 }

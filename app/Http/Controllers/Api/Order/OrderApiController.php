@@ -1092,7 +1092,7 @@ class OrderApiController extends Controller
 
     public function payment_list()
     {
-        $payment_list=PaymentMethod::orderBy('created_at','DESC')->get();
+        $payment_list=PaymentMethod::orderBy('created_at')->get();
         return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
     }
 
@@ -1101,9 +1101,9 @@ class OrderApiController extends Controller
         $version=$request['version'];
         $kpay=PaymentMethodClose::find(1);
         if($version==$kpay->version){
-            $payment_list=PaymentMethod::orderBy('created_at','DESC')->where('payment_method_id','!=',2)->get();
+            $payment_list=PaymentMethod::orderBy('created_at')->where('payment_method_id','!=',2)->get();
         }else{
-            $payment_list=PaymentMethod::orderBy('created_at','DESC')->get();
+            $payment_list=PaymentMethod::orderBy('created_at')->get();
 
         }
         return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
