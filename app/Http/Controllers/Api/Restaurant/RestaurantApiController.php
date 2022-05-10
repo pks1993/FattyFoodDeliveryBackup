@@ -745,6 +745,81 @@ class RestaurantApiController extends Controller
 
     }
 
+    public function food_search_v1(Request $request)
+    {
+        $search_name=$request['search_name'];
+        $customer_id=$request['customer_id'];
+        $latitude=$request['latitude'];
+        $longitude=$request['longitude'];
+
+        $food=Food::with(['sub_item'=>function($sub_item){
+            $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
+        },'sub_item.option' => function($option){
+            $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
+        },'restaurant'=>function ($restaurant){
+            $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch')->get();
+        },'restaurant.category' => function ($category){
+            $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
+        }])
+        ->orwhere("food_name_mm","LIKE","%$search_name%")
+        ->orwhere("food_name_en","LIKE","%$search_name%")
+        ->orwhere("food_name_ch","LIKE","%$search_name%")
+        ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
+        ->get()->toArray();
+        $restaurant=Restaurant::with(['category'=> function($category){
+        $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
+        $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
+        ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
+            * cos(radians(restaurant_latitude))
+            * cos(radians(restaurant_longitude) - radians($longitude))
+            + sin(radians($latitude))
+            * sin(radians(restaurant_latitude))) AS distance"))
+        ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
+        ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
+        ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
+        // ->having('distance','<',500)
+        ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
+        // foreach($result as $value){
+        //     array_push($result1,$value);
+        // }
+        return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>$food,'restaurant'=>$restaurant]]);
+
+
+            // $restaurants_val=[];
+
+            // foreach($result as $value){
+            //     $distance=$value->distance;
+            //     $kilometer= number_format((float)$distance, 1, '.', '');
+
+            //     if($kilometer <= 3 ){
+            //         $delivery_fee=1000;
+            //     }
+            //     else{
+            //         $number=explode('.', $kilometer);
+            //         $addOneKilometer=$number[0] - 3;
+            //         $folat_number=$number[1];
+            //         if($folat_number=="0"){
+            //             $delivery_fee=$addOneKilometer * 300 + 1000;
+            //         }else{
+            //             if($folat_number <= 5){
+            //                 $delivery_fee=($addOneKilometer * 300) + 150 + 1000;
+            //             }else{
+            //                 $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
+            //             }
+            //         }
+            //     }
+            //     if($value->wishlist==1){
+            //         $value->is_wish=true;
+            //     }else{
+            //         $value->is_wish=false;
+            //     }
+            //     $value->distance=(float)$kilometer;
+            //     $value->distance_time=(int)$kilometer*2 + $value->average_time;
+            //     $value->delivery_fee=$delivery_fee;
+            //     array_push($restaurants_val,$value);
+
+            // }
+    }
     public function food_search(Request $request)
     {
         $search_name=$request['search_name'];
