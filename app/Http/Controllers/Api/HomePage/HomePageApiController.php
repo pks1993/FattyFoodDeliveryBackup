@@ -43,23 +43,23 @@ class HomePageApiController extends Controller
 
         $check_customer=Customer::where('customer_id',$customer_id)->first();
 
-        if($customer_id != "0"){
-            $states=State::whereRaw('LOWER(`state_name_en`) LIKE ? ',[trim(strtolower($name)).'%'])->first();
-            $state=$check_customer->state_id;
-            if(!empty($check_customer)){
-                if(!empty($states)){
-                    $check_customer->state_id=$states->state_id;
-                    $check_customer->update();
-                }else{
-                    $city=City::whereRaw('LOWER(`city_name_en`) LIKE ? ',[trim(strtolower($name)).'%'])->first();
-                    $check_customer->state_id=$city->state_id;
-                    $check_customer->update();
-                }
-            }else{
-                return response()->json(['success'=>false,'message' => 'customer_id not found!']);
-            }
+        // if($customer_id != "0"){
+        //     $states=State::whereRaw('LOWER(`state_name_en`) LIKE ? ',[trim(strtolower($name)).'%'])->first();
+        //     $state=$check_customer->state_id;
+        //     if(!empty($check_customer)){
+        //         if(!empty($states)){
+        //             $check_customer->state_id=$states->state_id;
+        //             $check_customer->update();
+        //         }else{
+        //             $city=City::whereRaw('LOWER(`city_name_en`) LIKE ? ',[trim(strtolower($name)).'%'])->first();
+        //             $check_customer->state_id=$city->state_id;
+        //             $check_customer->update();
+        //         }
+        //     }else{
+        //         return response()->json(['success'=>false,'message' => 'customer_id not found!']);
+        //     }
 
-        }
+        // }
 
         $assign=DB::table('category_assigns')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','category_assigns.restaurant_category_id')

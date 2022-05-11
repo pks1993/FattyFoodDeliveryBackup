@@ -384,6 +384,29 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;text-align: left;">
+                            <i class="fas fa-money" style="font-size: 90%;" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Billing</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/restaurants_billing/list') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Restaurant Billing</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;text-align: left;">
                             <!-- <i class="fas fa-store-alt" style="font-size: 90%;" aria-hidden="true"></i> -->
                             <i class="fas fa-ad" aria-hidden="true"></i>
                         </div>

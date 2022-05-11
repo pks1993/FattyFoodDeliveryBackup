@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Restaurant\Restaurant;
 use App\Models\Restaurant\RestaurantUser;
+use App\Models\Restaurant\RestaurantPayment;
 use App\Models\Restaurant\RestaurantCategory;
 use App\Models\State\State;
 use App\Models\City\City;
-// use App\Models\Order\CustomerOrder;
+use App\Models\Order\CustomerOrder;
 use App\Models\Restaurant\RestaurantAvailableTime;
 use App\Models\Food\Food;
 use App\Models\Food\FoodMenu;
@@ -23,10 +24,19 @@ use App\Models\Wishlist\Wishlist;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use DB;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
+use Carbon\Carbon;
 
 
 class RestaurantController extends Controller
 {
+    public function restaurant_billing_list_url($id)
+    {
+        $restaurant_payment=RestaurantPayment::where('restaurant_id',$id)->orderBy('created_at','DESC')->first();
+        return view('admin.restaurant.restaurant_billing.restaurant_view',compact('restaurant_payment'));
+    }
+
     public function restaurant_recommend_update(Request $request,$id)
     {
         $restaurant=Restaurant::find($id);
@@ -127,6 +137,78 @@ class RestaurantController extends Controller
             return response()->json(['success'=>false,'message'=>'restaurant id not found']);
         }
     }
+
+    public function restaurant_billing_list(Request $request)
+    {
+        $start_date=$request['min'];
+        $end_date=$request['max'];
+        // $end_date="";
+        $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
+        $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
+
+        $first_date=Carbon::parse($from_date);
+        $days = $first_date->diffInDays($to_date);
+        // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
+
+        $cus_order_list=CustomerOrder::whereDoesntHave('restaurant_payment',function($payment) use ($from_date){
+            $payment->whereDate('last_offered_date','>',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(bill_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->get();
+
+        $data=[];
+        foreach($cus_order_list as $value){
+            $payment=RestaurantPayment::where('restaurant_id',$value->restaurant_id)->orderBy('created_at')->first();
+            if($payment){
+                $last_date=date('Y-m-d 00:00:00', strtotime($payment->last_offered_date));
+            }else{
+                $last_date= "Empty";
+            }
+            $value->last_offered_date=$last_date;
+            $value->duration=$days;
+            $value->percentage=$value->restaurant->percentage;
+            $value->pay_amount=(int)$value->total_amount - $value->total_amount*$value->restaurant->percentage/100;
+            array_push($data,$value);
+        }
+
+        $cus_order_offered=RestaurantPayment::where('status','0')->get();
+        $cus_order_done=RestaurantPayment::where('status','1')->get();
+
+        return view('admin.restaurant.restaurant_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done'));
+
+    }
+
+    public function restaurant_billing_store(Request $request,$id)
+    {
+        $data=json_decode($id);
+        foreach($data as $value){
+            $pay_amount=$value->pay_amount;
+            $restaurant_id=$value->restaurant_id;
+            $total_amount=$value->total_amount;
+            $percentage=$value->percentage;
+            $duration=$value->duration;
+        }
+        RestaurantPayment::create([
+            "restaurant_id"=>$restaurant_id,
+            "total_amount"=>$total_amount,
+            "percentage"=>$percentage,
+            "pay_amount"=>$pay_amount,
+            "duration"=>$duration,
+            "last_offered_date"=>now(),
+            "status"=>0,
+        ]);
+
+        // $request->session()->flash('alert-success', 'successfullyt!');
+        return redirect()->back();
+
+    }
+
+    public function restaurant_billing_update(Request $request, $id)
+    {
+        RestaurantPayment::where('restaurant_payment_id',$id)->update([
+            "status"=>1,
+        ]);
+        // $request->session()->flash('alert-success', 'successfullyt!');
+        return redirect()->back();
+    }
+
 
     /**
      * Display a listing of the resource.

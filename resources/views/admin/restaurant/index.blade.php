@@ -30,7 +30,6 @@
         text-align: center;
     }
 </style>
-<link rel="stylesheet" href="{{asset('/plugins/fontawesome/css/fontawesome.min.css')}}">
 
 @endsection
 
