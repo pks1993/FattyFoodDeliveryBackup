@@ -7,8 +7,12 @@
     <title>Restaurant Billing</title>
     @include('admin.layouts._partial.css')
     <style>
+        body{
+            background-color: #e2e1e1;
+        }
         .nav-pills li>#list-tab.active,.nav-pills li>#offered-tab.active,.nav-pills li>#history-tab.active, .nav-pills .show>.nav-link {
-            background-color: greenyellow !important;
+            background-color: #bde000 !important;
+            color: #FFFFFF !important;
         }
         .tab-pane{
             display : none;
@@ -20,14 +24,14 @@
 </head>
 <body>
 <div class="container">
-    <div class="row" style="height: 25px;margin-top: 10px;">
+    <div class="row" style="padding-top: 10px;">
         <div class="col">
             <ul class="nav nav-pills">
                 <li class="nav-item col btn">
-                    <a class="nav-link active" style="width: 100%;background:rgb(178, 176, 176);color: #000000;font-size:15px;border-radius:5px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">Offered List</a>
+                    <a class="nav-link active" style="background-color:#FFFFFF;width: 100%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">Offered List</a>
                 </li>
                 <li class="nav-item col btn">
-                    <a class="nav-link" style="width: 100%;background:rgb(178, 176, 176);color: #000000;font-size:15px;border-radius:5px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a>
+                    <a class="nav-link" style="background-color:#FFFFFF;width: 100%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a>
                 </li>
             </ul>
         </div>
@@ -37,8 +41,8 @@
 <div class="container mt-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
     <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col">
-            <div class="card-body" style="width: 100%;background:rgb(178, 176, 176);color: #000000;font-size:15px;border-radius:5px;padding:10px;">
-                <div class="col text-center" style="font-size: 20px;">
+            <div class="card-body" style="width: 100%;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">
+                <div class="col text-center" style="font-size: 20px;font-weight:510">
                     Comfirmation!
                 </div>
                 <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
@@ -71,7 +75,7 @@
                 <div class="row">
                     <div class="col text-center" style="margin-top:50px;margin-bottom:10px;">
                         {{-- <a href="{{ route('fatty.admin.restaurants_billing.update',$restaurant_payment->restaurant_payment_id) }}" class="btn btn-sm btn-danger" style="width: 80%;">Accept</a> --}}
-                        <a href="#" class="btn btn-sm btn-danger" style="width: 80%;">Accept</a>
+                        <a href="#" class="btn btn-sm" style="width: 80%;background-color:#bde000;color:#FFFFFF;font-weight:510;">Accept</a>
                     </div>
                 </div>
             </div>
@@ -79,10 +83,10 @@
     </div>
     <div class="row tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
         <div class="col">
-            <a class="btn" style="width: 45%;height:100%;background:#000000;color:white;font-size:15px;border-radius:5px;">Calendar</a>
+            <a class="btn" style="width: 45%;height:100%;background:#bde000;color:white;font-size:15px;border-radius:5px;">Calendar</a>
         </div>
         <div class="col mt-4">
-            <div class="row" style="width: 100%;height:100%;background:rgb(178, 176, 176);color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
+            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
                 <div class="col-5" style="padding: 10px;">
                     V004
                 </div>
@@ -96,7 +100,7 @@
             </div>
         </div>
         <div class="col mt-3">
-            <div class="row" style="width: 100%;height:100%;background:rgb(178, 176, 176);color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
+            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
                 <div class="col-5" style="padding: 10px;">
                     V004
                 </div>
@@ -109,7 +113,7 @@
             </div>
         </div>
         <div class="col mt-3">
-            <div class="row" style="width: 100%;height:100%;background:rgb(178, 176, 176);color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
+            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
                 <div class="col-5" style="padding: 10px;">
                     V004
                 </div>
@@ -122,7 +126,7 @@
             </div>
         </div>
         <div class="col mt-3">
-            <div class="row" style="width: 100%;height:100%;background:rgb(178, 176, 176);color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
+            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
                 <div class="col-5" style="padding: 10px;">
                     V004
                 </div>
