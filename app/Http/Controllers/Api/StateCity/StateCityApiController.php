@@ -32,7 +32,7 @@ class StateCityApiController extends Controller
             if($default){
                 return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['default_address'=>$default,'recent_cities'=>$cities,'city_lists'=>$cities]]);
             }else{
-                return response()->json(['success'=>false,'message'=>'customer default address not found','data'=>['default_address'=>null,'recent_cities'=>$cities,'city_lists'=>$cities]]);
+                return response()->json(['success'=>true,'message'=>'customer default address not found','data'=>['default_address'=>null,'recent_cities'=>$cities,'city_lists'=>$cities]]);
             }
         }else{
             return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['default_address'=>null,'recent_cities'=>[],'city_lists'=>[]]]);
