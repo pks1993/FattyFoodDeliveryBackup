@@ -31,7 +31,7 @@
                     <a class="nav-link active" style="background-color:#FFFFFF;width: 100%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">Offered List</a>
                 </li>
                 <li class="nav-item col btn">
-                    <a class="nav-link" style="background-color:#FFFFFF;width: 100%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a>
+                    <a href="{{ url('fatty/main/admin/restaurant_billing/data_history/'.$restaurant_id) }}" class="nav-link" style="background-color:#FFFFFF;width: 100%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px;">History</a>
                 </li>
             </ul>
         </div>
@@ -75,77 +75,18 @@
                     </div>
                     <div class="row">
                         <div class="col text-center" style="margin-top:50px;margin-bottom:10px;">
-                            <a href="{{ route('fatty.admin.restaurants_billing.update',$restaurant_payment->restaurant_payment_id) }}"  class="btn btn-sm" style="width: 80%;background-color:#bde000;color:#FFFFFF;font-weight:510;">Accept</a>
+                            <a href="{{ url('fatty/main/admin/restaurants_billing/update',$restaurant_payment->restaurant_payment_id) }}"  class="btn btn-sm" style="width: 80%;background-color:#bde000;color:#FFFFFF;font-weight:510;">Accept</a>
                         </div>
                     </div>
                 </div>
             @else
-            <div class="card-body" style="width: 100%;height:200px;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">
-                <div class="col text-center" style="padding:70px 0px;">
-                    <h4 style="font-weight:500;color:red;"> Empty Billing Voucher! </h4>
+                <div class="card-body" style="width: 100%;height:200px;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">
+                    <div class="col text-center" style="padding:70px 0px;">
+                        <h4 style="font-weight:500;color:red;"> Empty Billing Voucher! </h4>
+                    </div>
                 </div>
-            </div>
             @endif
         </div>
-    </div>
-    <div class="row tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-        <div class="col">
-            <a class="btn" style="width: 45%;height:100%;background:#bde000;color:white;font-size:15px;border-radius:5px;">Calendar</a>
-        </div>
-        <div class="col mt-4">
-            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
-                <div class="col-5" style="padding: 10px;">
-                    V004
-                </div>
-                <div class="col-6 text-right" style="padding: 10px;">
-                    {{-- {{ $restaurant_payment->pay_amount }} Ks --}}
-                    90,000 Ks
-                </div>
-                <div class="col-1" style="padding: 11px;">
-                    <i class="fas fa-angle-right" style="font-size: 20px;color: rgb(74, 67, 67)"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col mt-3">
-            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
-                <div class="col-5" style="padding: 10px;">
-                    V004
-                </div>
-                <div class="col-6 text-right" style="padding: 10px;">
-                    90,000 Ks
-                </div>
-                <div class="col-1" style="padding: 11px;">
-                    <i class="fas fa-angle-right" style="font-size: 20px;color: rgb(74, 67, 67)"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col mt-3">
-            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
-                <div class="col-5" style="padding: 10px;">
-                    V004
-                </div>
-                <div class="col-6 text-right" style="padding: 10px;">
-                    90,000 Ks
-                </div>
-                <div class="col-1" style="padding: 11px;">
-                    <i class="fas fa-angle-right" style="font-size: 20px;color: rgb(74, 67, 67)"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col mt-3">
-            <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
-                <div class="col-5" style="padding: 10px;">
-                    V004
-                </div>
-                <div class="col-6 text-right" style="padding: 10px;">
-                    90,000 Ks
-                </div>
-                <div class="col-1" style="padding: 11px;">
-                    <i class="fas fa-angle-right" style="font-size: 20px;color: rgb(74, 67, 67)"></i>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 @include('admin.layouts._partial.script')

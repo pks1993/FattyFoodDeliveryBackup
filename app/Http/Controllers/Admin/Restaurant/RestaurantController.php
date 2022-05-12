@@ -33,8 +33,17 @@ class RestaurantController extends Controller
 {
     public function restaurant_billing_list_url($id)
     {
-        $restaurant_payment=RestaurantPayment::where('restaurant_id',$id)->orderBy('created_at','DESC')->first();
-        return view('admin.restaurant.restaurant_billing.restaurant_view',compact('restaurant_payment'));
+        $restaurant_id=$id;
+        $restaurant_payment=RestaurantPayment::where('restaurant_id',$id)->orderBy('created_at','DESC')->where('status',0)->first();
+        return view('admin.restaurant.restaurant_billing.restaurant_view',compact('restaurant_id','restaurant_payment'));
+    }
+
+    public function restaurant_billing_history_url($id)
+    {
+        $restaurant_id=$id;
+        $restaurant_payment=RestaurantPayment::where('restaurant_id',$restaurant_id)->orderBy('created_at','DESC')->where('status',1)->get();
+        $check=RestaurantPayment::where('restaurant_id',$restaurant_id)->orderBy('created_at','DESC')->where('status',1)->first();
+        return view('admin.restaurant.restaurant_billing.restaurant_history',compact('restaurant_payment','restaurant_id','check'));
     }
 
     public function restaurant_recommend_update(Request $request,$id)
@@ -205,8 +214,9 @@ class RestaurantController extends Controller
         RestaurantPayment::where('restaurant_payment_id',$id)->update([
             "status"=>1,
         ]);
+        $restaurant_payment=RestaurantPayment::where('restaurant_payment_id',$id)->first();
         // $request->session()->flash('alert-success', 'successfullyt!');
-        return redirect()->back();
+        return redirect('fatty/main/admin/restaurant_billing/data_history/'.$restaurant_payment->restaurant_id);
     }
 
 
