@@ -151,7 +151,7 @@ class RestaurantController extends Controller
         // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
 
         $cus_order_list=CustomerOrder::whereDoesntHave('restaurant_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(bill_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->get();
+            $payment->whereDate('last_offered_date','>',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(bill_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->where('order_type','food')->where('order_status_id','7')->get();
 
         $data=[];
         foreach($cus_order_list as $value){

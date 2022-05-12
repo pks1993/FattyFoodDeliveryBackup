@@ -85,6 +85,8 @@ Route::post('fatty/202221/lashio/main/admin/states','Api\StateCity\StateCityApiC
 Route::post('fatty/202221/lashio/main/admin/parcels/states','Api\StateCity\StateCityApiController@parcel_state');
 Route::post('fatty/202221/lashio/main/admin/parcels/states/v1','Api\StateCity\StateCityApiController@parcel_state_version1');
 
+Route::post('fatty/202221/lashio/main/admin/parcels/choose_address','Api\StateCity\StateCityApiController@parcel_choose_address');
+
 //Search
 //Food
 Route::post('fatty/202221/lashio/main/admin/customers/search','Api\Restaurant\RestaurantApiController@food_search');

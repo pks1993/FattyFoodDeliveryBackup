@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\City\City;
 use App\Models\State\State;
 use App\Models\Order\ParcelState;
+use App\Models\City\ParcelCity;
+use App\Models\Customer\CustomerAddress;
 
 class StateCityApiController extends Controller
 {
@@ -20,11 +22,28 @@ class StateCityApiController extends Controller
         $states=State::with('city')->get();
         return response()->json(['success'=>true,'message'=>'sate and city all data','data'=>$states]);
     }
+    public function parcel_choose_address(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $state_id=$request['state_id'];
+        if($customer_id && $state_id){
+            $default=CustomerAddress::where('customer_id',$customer_id)->where('is_default',1)->first();
+            if($default){
+                $city=ParcelCity::where('state_id',$state_id)->get();
+
+                return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['default_address'=>$default,'recent_cities'=>$city,'city_lists'=>$city]]);
+            }else{
+                return response()->json(['success'=>false,'message'=>'customer default address not found','data'=>['default_address'=>null,'recent_cities'=>[],'city_lists'=>[]]]);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['default_address'=>null,'recent_cities'=>[],'city_lists'=>[]]]);
+        }
+    }
 
     public function parcel_state()
     {
         $states=State::with('city')->whereIn('state_id',['2','15'])->get();
-        return response()->json(['success'=>true,'message'=>'sate and city all data','data'=>$states]);   
+        return response()->json(['success'=>true,'message'=>'sate and city all data','data'=>$states]);
     }
 
     public function parcel_state_version1()
