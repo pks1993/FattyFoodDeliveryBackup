@@ -184,9 +184,9 @@ class ParcelOrderApiController extends Controller
         //rider
         $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
-        * cos(radians(riders.rider_latitude)) 
-        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . ")) 
-        + sin(radians(" .$from_pickup_latitude. ")) 
+        * cos(radians(riders.rider_latitude))
+        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+        + sin(radians(" .$from_pickup_latitude. "))
         * sin(radians(riders.rider_latitude))) AS distance"))
         ->groupBy("riders.rider_id")
         ->where('is_order','0')
@@ -230,7 +230,7 @@ class ParcelOrderApiController extends Controller
             }
             $orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                 return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
-                
+
         }else{
             $orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
             return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
@@ -353,7 +353,7 @@ class ParcelOrderApiController extends Controller
                 }
                 $orders=CustomerOrder::with(['order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                     return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
-                    
+
             }else{
                 $orders=CustomerOrder::with(['order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                 return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
@@ -398,10 +398,10 @@ class ParcelOrderApiController extends Controller
         }
 
         if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00)
-        {    
+        {
             return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>[['weight'=>'1kg','delivery_fee'=>500],['weight'=>'2kg','delivery_fee'=>1000],['weight'=>"3kg",'delivery_fee'=>1500],['weight'=>"About 3kg",'delivery_fee'=>2000]],'estimated_cost'=>null]]);
         }
-        elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00) 
+        elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
         {
             $theta = $from_pickup_longitude - $to_drop_longitude;
             $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));

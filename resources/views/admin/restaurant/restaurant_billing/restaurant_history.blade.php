@@ -45,7 +45,7 @@
         </div>
         @if($check)
             @foreach ($restaurant_payment as $value)
-                <div class="col mt-3">
+                <a href="{{ url('fatty/main/admin/restaurant_billing/data_history/detail/'.$value->restaurant_payment_id) }}" class="col mt-3">
                     <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
                         <div class="col-5" style="padding: 10px;">
                             {{ $value->payment_voucher }}
@@ -57,7 +57,7 @@
                             <i class="fas fa-angle-right" style="font-size: 20px;color: rgb(74, 67, 67)"></i>
                         </div>
                     </div>
-                </div>
+                </a>
             @endforeach
         @else
             <div class="card-body mt-3" style="width: 100%;height:100%;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">

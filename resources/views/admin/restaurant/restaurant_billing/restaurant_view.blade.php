@@ -38,47 +38,51 @@
     </div>
 </div>
 
-<div class="container mt-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
+<div class="container mt-5 mb-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
     <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col">
-            @if($restaurant_payment)
-                <div class="card-body" style="width: 100%;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">
-                    <div class="col text-center" style="font-size: 20px;font-weight:510">
-                        Comfirmation!
-                    </div>
-                    <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
-                        <div class="col" style="height: 10px;font-weight:510;">Start Date</div>
-                        <div class="col text-right" style="height: 10px;">{{ date('d M Y', strtotime($restaurant_payment->start_offered_date)) }}</div>
-                        <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
-                    </div>
-                    <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
-                        <div class="col" style="height: 10px;font-weight:510;">End Date</div>
-                        <div class="col text-right" style="height: 10px;">{{ date('d M Y', strtotime($restaurant_payment->last_offered_date)) }}</div>
-                        <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
-                    </div>
-                    <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
-                        <div class="col" style="height: 10px;font-weight:510;">Amount</div>
-                        <div class="col text-right" style="height: 10px;">{{ number_format($restaurant_payment->total_amount) }} ks</div>
-                        {{-- <div class="col text-right" style="height: 10px;">100,000 ks</div> --}}
-                        <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
-                    </div>
-                    <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
-                        <div class="col" style="height: 10px;font-weight:510;">Percentage({{ $restaurant_payment->percentage }}%)</div>
-                        <div class="col text-right" style="height: 10px;"> - {{ $restaurant_payment->total_amount*$restaurant_payment->percentage/100 }} ks</div>
-                        {{-- <div class="col text-right" style="height: 10px;">10 %</div> --}}
-                        <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
-                    </div>
-                    <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
-                        <div class="col" style="height: 10px;font-weight:510;">Total</div>
-                        <div class="col text-right" style="height: 10px;">{{ number_format($restaurant_payment->pay_amount) }} ks</div>
-                        {{-- <div class="col text-right" style="height: 10px;">90,000 ks</div> --}}
-                    </div>
-                    <div class="row">
-                        <div class="col text-center" style="margin-top:50px;margin-bottom:10px;">
-                            <a href="{{ url('fatty/main/admin/restaurants_billing/update',$restaurant_payment->restaurant_payment_id) }}"  class="btn btn-sm" style="width: 80%;background-color:#bde000;color:#FFFFFF;font-weight:510;">Accept</a>
+            @if($check)
+                @foreach ($restaurant_payments as $restaurant_payment)
+                    @if($restaurant_payment)
+                        <div class="card-body mt-4" style="width: 100%;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">
+                            <div class="col text-center" style="font-size: 20px;font-weight:510">
+                                Comfirmation!
+                            </div>
+                            <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
+                                <div class="col" style="height: 10px;font-weight:510;">Start Date</div>
+                                <div class="col text-right" style="height: 10px;">{{ date('d M Y', strtotime($restaurant_payment->start_offered_date)) }}</div>
+                                <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
+                            </div>
+                            <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
+                                <div class="col" style="height: 10px;font-weight:510;">End Date</div>
+                                <div class="col text-right" style="height: 10px;">{{ date('d M Y', strtotime($restaurant_payment->last_offered_date)) }}</div>
+                                <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
+                            </div>
+                            <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
+                                <div class="col" style="height: 10px;font-weight:510;">Amount</div>
+                                <div class="col text-right" style="height: 10px;">{{ number_format($restaurant_payment->total_amount) }} ks</div>
+                                {{-- <div class="col text-right" style="height: 10px;">100,000 ks</div> --}}
+                                <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
+                            </div>
+                            <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
+                                <div class="col" style="height: 10px;font-weight:510;">Percentage({{ $restaurant_payment->percentage }}%)</div>
+                                <div class="col text-right" style="height: 10px;"> - {{ $restaurant_payment->total_amount*$restaurant_payment->percentage/100 }} ks</div>
+                                {{-- <div class="col text-right" style="height: 10px;">10 %</div> --}}
+                                <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
+                            </div>
+                            <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
+                                <div class="col" style="height: 10px;font-weight:510;">Total</div>
+                                <div class="col text-right" style="height: 10px;">{{ number_format($restaurant_payment->pay_amount) }} ks</div>
+                                {{-- <div class="col text-right" style="height: 10px;">90,000 ks</div> --}}
+                            </div>
+                            <div class="row">
+                                <div class="col text-center" style="margin-top:50px;margin-bottom:10px;">
+                                    <a href="{{ url('fatty/main/admin/restaurant_billing/update',$restaurant_payment->restaurant_payment_id) }}"  class="btn btn-sm" style="width: 80%;background-color:#bde000;color:#FFFFFF;font-weight:510;">Accept</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    @endif
+                @endforeach
             @else
                 <div class="card-body" style="width: 100%;height:200px;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#bde000;background-color:#FFFFFF">
                     <div class="col text-center" style="padding:70px 0px;">
