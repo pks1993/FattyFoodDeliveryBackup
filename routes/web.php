@@ -8,6 +8,7 @@ Route::get('/', function () {
 //Billing
 Route::get('fatty/main/admin/restaurant_billing/data_list/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_list_url');
 Route::get('fatty/main/admin/restaurant_billing/data_history/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_url');
+Route::get('fatty/main/admin/restaurant_billing/data_history/search/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_search')->name('restaurant_billing_history.search');
 Route::get('fatty/main/admin/restaurant_billing/update/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_update');
 Route::get('fatty/main/admin/restaurant_billing/data_history/detail/{restaurant_payment_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_detail_url');
 

@@ -60,8 +60,7 @@
                 </div>
                 <div class="row">
                     <div class="col text-center" style="margin-top:50px;margin-bottom:10px;">
-                        <a href="{{ url('fatty/main/admin/restaurant_billing/data_history',$restaurant_payment->restaurant_id) }}"  class="btn btn-sm" style="width: 80%;background-color:red;color:#FFFFFF;font-weight:510;">Back</a>
-                        {{-- <a href="{{ url('fatty/main/admin/restaurants_billing/update',$restaurant_payment->restaurant_payment_id) }}"  class="btn btn-sm" style="width: 80%;background-color:#bde000;color:#FFFFFF;font-weight:510;">Accept</a> --}}
+                        <a href="{{ url()->previous() }}"  class="btn btn-sm" style="width: 80%;background-color:red;color:#FFFFFF;font-weight:510;">Back</a>
                     </div>
                 </div>
             </div>

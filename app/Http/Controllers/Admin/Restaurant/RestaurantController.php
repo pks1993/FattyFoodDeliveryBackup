@@ -42,9 +42,18 @@ class RestaurantController extends Controller
     public function restaurant_billing_history_url($id)
     {
         $restaurant_id=$id;
-        $restaurant_payment=RestaurantPayment::where('restaurant_id',$restaurant_id)->orderBy('created_at','DESC')->where('status',1)->get();
+        $restaurant_payment=RestaurantPayment::where('restaurant_id',$restaurant_id)->orderBy('created_at','DESC')->where('status',1)->limit(3)->get();
         $check=RestaurantPayment::where('restaurant_id',$restaurant_id)->orderBy('created_at','DESC')->where('status',1)->first();
-        return view('admin.restaurant.restaurant_billing.restaurant_history',compact('restaurant_payment','restaurant_id','check'));
+        return view('admin.restaurant.restaurant_billing.restaurant_history',compact('restaurant_payment','restaurant_id','check','restaurant_id'));
+    }
+
+    public function restaurant_billing_history_search(Request $request,$id)
+    {
+        $restaurant_id=$id;
+        $current_date= $from_date=date('Y-m-d 00:00:00', strtotime($request['current_date']));
+        $restaurant_payment=RestaurantPayment::where('restaurant_id',$restaurant_id)->whereDate('last_offered_date',$current_date)->orderBy('created_at','DESC')->where('status',1)->get();
+        $check=RestaurantPayment::where('restaurant_id',$restaurant_id)->whereDate('last_offered_date',$current_date)->orderBy('created_at','DESC')->where('status',1)->first();
+        return view('admin.restaurant.restaurant_billing.restaurant_history',compact('restaurant_payment','restaurant_id','check','restaurant_id'));
     }
 
     public function restaurant_billing_history_detail_url($id)

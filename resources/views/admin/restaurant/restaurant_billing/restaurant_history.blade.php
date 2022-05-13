@@ -41,7 +41,10 @@
 <div class="container mt-4" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
     <div class="row tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
         <div class="col">
-            <a class="btn mb-1" style="width: 45%;height:100%;background:#bde000;color:white;font-size:15px;border-radius:5px;">Calendar</a>
+            <form action="{{ route('restaurant_billing_history.search',$restaurant_id) }}">
+                <input type="date" name="current_date" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                <button type="submit" class="btn mb-1" style="height:100%;background:#bde000;color:white;font-size:15px;border-radius:5px;">Search</button>
+            </form>
         </div>
         @if($check)
             @foreach ($restaurant_payment as $value)
