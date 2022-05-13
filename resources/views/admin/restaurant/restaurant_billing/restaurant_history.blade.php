@@ -42,7 +42,7 @@
     <div class="row tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
         <div class="col">
             <form action="{{ route('restaurant_billing_history.search',$restaurant_id) }}">
-                <input type="date" name="current_date" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                <input type="date" name="current_date" placeholder="mm/dd/yyyy" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#bde000;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                 <button type="submit" class="btn mb-1" style="height:100%;background:#bde000;color:white;font-size:15px;border-radius:5px;">Search</button>
             </form>
         </div>
