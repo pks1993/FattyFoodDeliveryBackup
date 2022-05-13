@@ -30,6 +30,14 @@ class StateCityApiController extends Controller
             $default=CustomerAddress::where('customer_id',$customer_id)->where('is_default',1)->first();
             $cities=ParcelCity::where('state_id',$state_id)->get();
             if($default){
+                $data=[];
+                if($default->is_default==1){
+                    $default->is_default=true;
+                }else{
+                    $default->is_default=false;
+                }
+                array_push($data,$default);
+
                 return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['default_address'=>$default,'recent_cities'=>$cities,'city_lists'=>$cities]]);
             }else{
                 return response()->json(['success'=>true,'message'=>'customer default address not found','data'=>['default_address'=>null,'recent_cities'=>$cities,'city_lists'=>$cities]]);
