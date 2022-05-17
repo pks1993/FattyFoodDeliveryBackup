@@ -18,7 +18,7 @@ class CustomerAddressApiController extends Controller
     {
         $customer_id=$request['customer_id'];
         if(!empty($customer_id)){
-            $customer=CustomerAddress::with(['state'])->orderBy('is_default','DESC')->where('customer_id',$customer_id)->get();
+            $customer=CustomerAddress::orderBy('is_default','DESC')->where('customer_id',$customer_id)->get();
 
             $data=[];
             foreach($customer as $value){
@@ -29,7 +29,7 @@ class CustomerAddressApiController extends Controller
                 }
                 array_push($data,$value);
             }
-            return response()->json(['success'=>true,'message'=>'this is address of customer','data'=>$customer]);    
+            return response()->json(['success'=>true,'message'=>'this is address of customer','data'=>$customer]);
         }else{
             return response()->json(['success'=>false,'message'=>'customer id not define!']);
         }
@@ -64,10 +64,11 @@ class CustomerAddressApiController extends Controller
             $customer_address->current_address=$request['current_address'];
             $customer_address->building_system=$request['building_system'];
             $customer_address->address_type=$request['address_type'];
+            $customer_address->customer_phone=$request['customer_phone'];
             $customer_address->state_id=$customer_check->state_id;
             $customer_address->save();
 
-            $address=CustomerAddress::with(['state'])->where('customer_address_id',$customer_address->customer_address_id)->first();
+            $address=CustomerAddress::where('customer_address_id',$customer_address->customer_address_id)->first();
             $data=[];
             if($address->is_default==1){
                 $address->is_default=true;
@@ -102,7 +103,7 @@ class CustomerAddressApiController extends Controller
                 ]);
             }
 
-            $address=CustomerAddress::with(['state'])->where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->get();
+            $address=CustomerAddress::where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->get();
             $data=[];
             foreach ($address as $value) {
                 if($value->is_default==1){
@@ -197,9 +198,10 @@ class CustomerAddressApiController extends Controller
             $customer_address->building_system=$request['building_system'];
             $customer_address->address_type=$request['address_type'];
             $customer_address->state_id=$customer_check->state_id;
+            $customer_address->customer_phone=$request['customer_phone'];
             $customer_address->update();
 
-            $address=CustomerAddress::with(['state'])->where('customer_address_id',$customer_address_id)->first();
+            $address=CustomerAddress::where('customer_address_id',$customer_address_id)->first();
             $data=[];
             if($address->is_default==1){
                 $address->is_default=true;
@@ -228,7 +230,7 @@ class CustomerAddressApiController extends Controller
         if(!empty($check_address)){
             CustomerAddress::destroy($customer_address_id);
 
-            $address=CustomerAddress::with(['state'])->where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->get();
+            $address=CustomerAddress::where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->get();
             $data=[];
             foreach ($address as $value) {
                 if($value->is_default==1){

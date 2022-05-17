@@ -5,6 +5,14 @@ Route::get('/', function () {
     return view('admin.layouts.login_master');
 });
 
+//Billing
+Route::get('fatty/main/admin/restaurant_billing/data_list/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_list_url');
+Route::get('fatty/main/admin/restaurant_billing/data_history/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_url');
+Route::get('fatty/main/admin/restaurant_billing/data_history/search/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_search')->name('restaurant_billing_history.search');
+Route::get('fatty/main/admin/restaurant_billing/update/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_update');
+Route::get('fatty/main/admin/restaurant_billing/data_history/detail/{restaurant_payment_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_detail_url');
+
+
 Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
@@ -203,6 +211,12 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('restaurants/food/update/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_update')->name('restaurants_food.update');
     Route::delete('restaurants/food/delete/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_destroy')->name('restaurants_food.destroy');
 
+    //restaurant billing
+    Route::get('restaurants_billing/list','Admin\Restaurant\RestaurantController@restaurant_billing_list')->name('restaurants_billing.list');
+    Route::get('restaurants_billing/store/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_store')->name('restaurants_billing.store');
+
+    Route::get('restaurants_billing/offered','Admin\Restaurant\RestaurantController@restaurant_billing_offered')->name('restaurants_billing.offered');
+    // Route::get('restaurants_billing/update/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_update')->name('restaurants_billing.update');
 
 
     //chart

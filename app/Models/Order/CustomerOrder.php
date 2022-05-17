@@ -47,7 +47,7 @@ class CustomerOrder extends Model
     {
         return $this->hasOne('App\Models\Order\ParcelExtraCover','parcel_extra_cover_id','parcel_extra_cover_id');
     }
-    
+
     public function parcel_images()
     {
         return $this->hasMany('App\Models\Order\ParcelImage','order_id','order_id');
@@ -56,6 +56,11 @@ class CustomerOrder extends Model
     public function order_history()
     {
         return $this->hasOne('App\Models\Order\CustomerOrderHistory','order_id','order_id');
+    }
+
+    public function restaurant_payment()
+    {
+        return $this->hasOne('App\Models\Restaurant\RestaurantPayment','restaurant_id','restaurant_id');
     }
 
 }
