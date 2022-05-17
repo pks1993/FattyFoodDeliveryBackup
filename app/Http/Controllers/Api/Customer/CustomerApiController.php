@@ -320,7 +320,7 @@ class CustomerApiController extends Controller
     public function resend_request_otp(Request $request)
     {
         $customer_phone=$request['customer_phone'];
-        $customer=Customer::where('customer_phone','=',$customer_phone)->first();
+        $customer=Customer::where('customer_phone',$customer_phone)->first();
         $otp = sprintf("%06d", mt_rand(1, 999999));
 
 
@@ -350,31 +350,35 @@ class CustomerApiController extends Controller
                     return response()->json(['success'=>true,'message' => 'Success OTP','data'=>null]);
             }
         }else{
-                $customers=new Customer();
-                $customers->customer_phone=$customer_phone;
-                $customers->otp=$otp;
-                $customers->save();
+               if($customer_phone){
+                    $customers=new Customer();
+                    $customers->customer_phone=$customer_phone;
+                    $customers->otp=$otp;
+                    $customers->save();
 
-                ActiveCustomer::create([
-                    "customer_id"=>$customers->customer_id,
-                ]);
+                    ActiveCustomer::create([
+                        "customer_id"=>$customers->customer_id,
+                    ]);
 
-                $client = new Client();
-                $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
-                $url = "https://smspoh.com/api/v2/send";
-                $response = $client->post($url,[
-                    'headers' => ['Content-type' => 'application/json',
-                    'Authorization' => 'Bearer ' .$token],
+                    $client = new Client();
+                    $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+                    $url = "https://smspoh.com/api/v2/send";
+                    $response = $client->post($url,[
+                        'headers' => ['Content-type' => 'application/json',
+                        'Authorization' => 'Bearer ' .$token],
 
-                    'json' => [
-                        "to"=>$customer_phone,
-                        "message"=>$customers->otp." is your verification code for fatty application login",
-                        "sender"=>"Fatty"
-                    ],
-                ]);
+                        'json' => [
+                            "to"=>$customer_phone,
+                            "message"=>$customers->otp." is your verification code for fatty application login",
+                            "sender"=>"Fatty"
+                        ],
+                    ]);
 
-                // $result = json_decode($response->getBody());
-                return response()->json(['success'=>true,'message' => 'Success OTP','data'=>null]);
+                    // $result = json_decode($response->getBody());
+                    return response()->json(['success'=>true,'message' => 'Success OTP','data'=>null]);
+               }else{
+                   return response()->json(['success'=>false,'message'=>'Customer phone is Empty!','data'=>null]);
+               }
             }
     }
 
