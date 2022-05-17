@@ -72,6 +72,8 @@
                                         <th></th>
                                         <th>#Id.</th>
                                         <th class="text-left">Restaurant</th>
+                                        <th class="text-left">Start_Date</th>
+                                        <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
                                         <th class="text-left">Amonut</th>
@@ -86,6 +88,8 @@
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</tdclass=>
+                                        <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
+                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ $value->total_amount }}</td>
@@ -217,25 +221,21 @@
         $('#successMessage').fadeOut('fast');
     }, 3000);
     $(document).ready(function() {
+        $("#min").datepicker({ changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+        $("#max").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
+        $('#restaurants').DataTable( {
         // Create date inputs
-        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
-
-        (document).ready(function() {
-            $('#restaurants').DataTable( {
-                columnDefs: [ {
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets:   0
-                } ],
-                select: {
-                    style:'os',
-                    selector:'td:first-child'
-                },
-                order: [[ 1, 'asc' ]]
-            } );
+            columnDefs: [ {
+                orderable: false,
+                className: 'select-checkbox',
+                targets:   0
+            } ],
+            select: {
+                style:'os',
+                selector:'td:first-child'
+            },
+            order: [[ 1, 'asc' ]]
         } );
-
-    });
+    } );
 </script>
 @endpush

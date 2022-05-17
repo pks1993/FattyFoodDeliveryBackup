@@ -182,9 +182,9 @@ class RestaurantController extends Controller
         foreach($cus_order_list as $value){
             $payment=RestaurantPayment::where('restaurant_id',$value->restaurant_id)->orderBy('created_at')->first();
             if($payment){
-                $last_date=date('Y-m-d 00:00:00', strtotime($payment->last_offered_date));
+                $last_date=date('d/M/Y', strtotime($payment->last_offered_date));
             }else{
-                $last_date= "Empty";
+                $last_date= "Empty Date";
             }
             $value->last_offered_date=$last_date;
             $value->duration=$days;
@@ -196,7 +196,7 @@ class RestaurantController extends Controller
         $cus_order_offered=RestaurantPayment::where('status','0')->get();
         $cus_order_done=RestaurantPayment::where('status','1')->get();
 
-        return view('admin.restaurant.restaurant_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done'));
+        return view('admin.restaurant.restaurant_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done','from_date','to_date'));
 
     }
 
@@ -218,6 +218,7 @@ class RestaurantController extends Controller
             "duration"=>$duration,
             "last_offered_date"=>now(),
             "status"=>0,
+            "payment_voucher"
         ]);
 
         // $request->session()->flash('alert-success', 'successfullyt!');

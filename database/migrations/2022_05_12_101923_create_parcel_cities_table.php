@@ -16,6 +16,8 @@ class CreateParcelCitiesTable extends Migration
         Schema::create('parcel_cities', function (Blueprint $table) {
             $table->id('parcel_city_id');
             $table->unsignedBigInteger('state_id');
+            $table->double('latitude')->nullable()->default("22.01212");
+            $table->double('longitude')->nullable()->default(("97.0121"));
             $table->string('city_name');
             $table->timestamps();
         });

@@ -27,8 +27,15 @@ Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiC
 Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
 Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
 Route::post('fatty/202221/lashio/main/admin/customers/login/v2','Api\Customer\CustomerApiController@login_version_two');
-Route::post('fatty/202221/lashio/main/admin/customers/request_otp','Api\Customer\CustomerApiController@otp_send');
-Route::post('fatty/202221/lashio/main/admin/customers/verify_otp','Api\Customer\CustomerApiController@otp_check');
+
+Route::post('fatty/202221/lashio/main/admin/customers/request_otp','Api\Customer\CustomerApiController@request_otp');
+Route::post('fatty/202221/lashio/main/admin/customers/verify_otp','Api\Customer\CustomerApiController@verify_otp');
+
+Route::post('fatty/202221/lashio/main/admin/customers/resend_request_otp','Api\Customer\CustomerApiController@resend_request_otp');
+Route::post('fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api\Customer\CustomerApiController@resend_verify_otp');
+
+
+
 Route::post('fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
 Route::post('fatty/202221/lashio/main/admin/customers/location','Api\Customer\CustomerApiController@location');
 Route::post('fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
@@ -205,6 +212,8 @@ Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\Notification
 //force update
 Route::get('fatty/main/admin/android/version/check','Api\Notification\NotificationApiController@android_version_check');
 Route::get('fatty/main/admin/ios/version/check','Api\Notification\NotificationApiController@ios_version_check');
+Route::get('fatty/main/admin/restaurant/version/check','Api\Notification\NotificationApiController@restaurant_version_check');
+Route::get('fatty/main/admin/rider/version/check','Api\Notification\NotificationApiController@rider_version_check');
 
 
 

@@ -16,6 +16,7 @@ class CreateRestaurantPaymentsTable extends Migration
         Schema::create('restaurant_payments', function (Blueprint $table) {
             $table->id('restaurant_payment_id');
             $table->unsignedBigInteger('restaurant_id')->nullable();
+            $table->string('payment_voucher')->nullable()->default("V001");
             $table->double('amount')->nullable();
             $table->float('percentage')->nullable();
             $table->float('total_amount')->nullable();

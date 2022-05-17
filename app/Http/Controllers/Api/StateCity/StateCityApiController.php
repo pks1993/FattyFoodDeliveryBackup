@@ -29,6 +29,7 @@ class StateCityApiController extends Controller
         if($customer_id && $state_id){
             $default=CustomerAddress::where('customer_id',$customer_id)->where('is_default',1)->first();
             $cities=ParcelCity::where('state_id',$state_id)->get();
+            $recent=ParcelCity::where('state_id',$state_id)->limit(3)->get();
             if($default){
                 $data=[];
                 if($default->is_default==1){
@@ -38,9 +39,9 @@ class StateCityApiController extends Controller
                 }
                 array_push($data,$default);
 
-                return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['default_address'=>$default,'recent_cities'=>$cities,'city_lists'=>$cities]]);
+                return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['default_address'=>$default,'recent_cities'=>$recent,'city_lists'=>$cities]]);
             }else{
-                return response()->json(['success'=>true,'message'=>'customer default address not found','data'=>['default_address'=>null,'recent_cities'=>$cities,'city_lists'=>$cities]]);
+                return response()->json(['success'=>true,'message'=>'customer default address not found','data'=>['default_address'=>null,'recent_cities'=>$recent,'city_lists'=>$cities]]);
             }
         }else{
             return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['default_address'=>null,'recent_cities'=>[],'city_lists'=>[]]]);

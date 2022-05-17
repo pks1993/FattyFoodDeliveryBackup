@@ -26,6 +26,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->string('estimated_start_time')->nullable();
             $table->string('estimated_end_time')->nullable();
             $table->bigInteger('delivery_fee')->nullable();
+            $table->bigInteger('rider_delivery_fee')->nullable();
             $table->bigInteger('item_total_price')->nullable();
             $table->bigInteger('bill_total_price')->nullable();
             $table->longText('current_address')->nullable();

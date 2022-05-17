@@ -93,8 +93,8 @@ class HomePageApiController extends Controller
             array_push($recommend_data,$data);
         }
 
-        $up_ads=UpAds::orderBy('sort_id')->select('up_ads_id','restaurant_id','image')->get();
-        $down_ads=DownAds::orderBy('sort_id')->select('down_ads_id','restaurant_id','image')->get();
+        $up_ads=UpAds::orderBy('sort_id')->select('up_ads_id','restaurant_id','image','image_mm','image_en','image_ch')->get();
+        $down_ads=DownAds::orderBy('sort_id')->select('down_ads_id','restaurant_id','image','image_mm','image_en','image_ch')->get();
 
         $near_restaurant=Restaurant::select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
                 * cos(radians(restaurant_latitude))

@@ -129,30 +129,64 @@ class OrderApiController extends Controller
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
         $kilometer=$miles * 1.609344;
-        // $kilometer=6;
-        $kilometer= number_format((float)$kilometer, 1, '.', '');
+        $distances=(float) number_format((float)$kilometer, 1, '.', '');
 
-        $delivery_fee=100;
+        if($distances < 8){
+            $delivery_fee=0;
+        }elseif($distances==8){
+            $delivery_fee=2200;
+        }elseif($distances > 8 && $distances < 9.5){
+            $delivery_fee=2400;
+        }elseif($distances==9.5){
+            $delivery_fee=2600;
+        }elseif($distances > 9.5 && $distances < 11){
+            $delivery_fee=2800;
+        }elseif($distances==11){
+            $delivery_fee=3000;
+        }elseif($distances > 11 && $distances < 12.5){
+            $delivery_fee=3200;
+        }elseif($distances==12.5){
+            $delivery_fee=3400;
+        }elseif($distances > 12.5 && $distances < 14){
+            $delivery_fee=3600;
+        }elseif($distances==14){
+            $delivery_fee=3800;
+        }elseif($distances > 14 && $distances < 15.5){
+            $delivery_fee=4100;
+        }elseif($distances==15.5){
+            $delivery_fee=4400;
+        }elseif($distances > 15.5 && $distances < 17){
+            $delivery_fee=4700;
+        }elseif($distances==17){
+            $delivery_fee=5000;
+        }elseif($distances > 17 && $distances < 18.5){
+            $delivery_fee=5300;
+        }elseif($distances==18.5){
+            $delivery_fee=5600;
+        }elseif($distances > 18.5 && $distances < 20){
+            $delivery_fee=5900;
+        }elseif($distances==20){
+            $delivery_fee=6200;
+        }elseif($distances > 20 && $distances < 21.5){
+            $delivery_fee=6500;
+        }elseif($distances==21.5){
+            $delivery_fee=6800;
+        }elseif($distances > 21.5 && $distances < 23){
+            $delivery_fee=7100;
+        }elseif($distances==23){
+            $delivery_fee=7400;
+        }elseif($distances > 23 && $distances < 24.5){
+            $delivery_fee=7700;
+        }elseif($distances==24.5){
+            $delivery_fee=8000;
+        }elseif($distances > 24.5 && $distances < 26){
+            $delivery_fee=8300;
+        }elseif($distances >= 26){
+            $delivery_fee=8600;
+        }else{
+            $delivery_fee=8600;
+        }
 
-        // if($kilometer <= 3 ){
-        //     $delivery_fee=1000;
-        // }
-        // else{
-        //     $number=explode('.', $kilometer);
-        //     $addOneKilometer=$number[0] - 3;
-        //     $folat_number=$number[1];
-        //     if($folat_number=="0"){
-        //         $delivery_fee=$addOneKilometer * 300 + 1000;
-        //     }else{
-        //         if($folat_number <= 5){
-        //             $delivery_fee=($addOneKilometer * 300) + 150 + 1000;
-        //         }else{
-        //             $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
-        //         }
-        //     }
-        // }
-
-        // return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
         return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
     }
     /**
@@ -1374,6 +1408,73 @@ class OrderApiController extends Controller
         }else{
             $order_status_id="18";
         }
+
+
+        $theta = $customer_address_longitude - $restaurant->restaurant_longitude;
+        $dist = sin(deg2rad($customer_address_latitude)) * sin(deg2rad($restaurant->restaurant_latitude)) +  cos(deg2rad($customer_address_latitude)) * cos(deg2rad($restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+        $kilometer=$miles * 1.609344;
+        $distances=(float) number_format((float)$kilometer, 1, '.', '');
+
+        if($distances < 8){
+            $delivery_fee=0;
+        }elseif($distances==8){
+            $delivery_fee=2200;
+        }elseif($distances > 8 && $distances < 9.5){
+            $delivery_fee=2400;
+        }elseif($distances==9.5){
+            $delivery_fee=2600;
+        }elseif($distances > 9.5 && $distances < 11){
+            $delivery_fee=2800;
+        }elseif($distances==11){
+            $delivery_fee=3000;
+        }elseif($distances > 11 && $distances < 12.5){
+            $delivery_fee=3200;
+        }elseif($distances==12.5){
+            $delivery_fee=3400;
+        }elseif($distances > 12.5 && $distances < 14){
+            $delivery_fee=3600;
+        }elseif($distances==14){
+            $delivery_fee=3800;
+        }elseif($distances > 14 && $distances < 15.5){
+            $delivery_fee=4100;
+        }elseif($distances==15.5){
+            $delivery_fee=4400;
+        }elseif($distances > 15.5 && $distances < 17){
+            $delivery_fee=4700;
+        }elseif($distances==17){
+            $delivery_fee=5000;
+        }elseif($distances > 17 && $distances < 18.5){
+            $delivery_fee=5300;
+        }elseif($distances==18.5){
+            $delivery_fee=5600;
+        }elseif($distances > 18.5 && $distances < 20){
+            $delivery_fee=5900;
+        }elseif($distances==20){
+            $delivery_fee=6200;
+        }elseif($distances > 20 && $distances < 21.5){
+            $delivery_fee=6500;
+        }elseif($distances==21.5){
+            $delivery_fee=6800;
+        }elseif($distances > 21.5 && $distances < 23){
+            $delivery_fee=7100;
+        }elseif($distances==23){
+            $delivery_fee=7400;
+        }elseif($distances > 23 && $distances < 24.5){
+            $delivery_fee=7700;
+        }elseif($distances==24.5){
+            $delivery_fee=8000;
+        }elseif($distances > 24.5 && $distances < 26){
+            $delivery_fee=8300;
+        }elseif($distances >= 26){
+            $delivery_fee=8600;
+        }else{
+            $delivery_fee=8600;
+        }
+
+
 
         $booking_count=CustomerOrder::count();
         $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
