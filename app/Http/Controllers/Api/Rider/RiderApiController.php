@@ -882,27 +882,6 @@ class RiderApicontroller extends Controller
                     $result = curl_exec($curl_session2);
                     curl_close($curl_session2);
 
-                    //Distance Calculate
-                    // $lat1=$order->customer_address_latitude;
-                    // $lon1=$order->customer_address_longitude;
-                    // $lat2=$order->restaurant_address_latitude;
-                    // $lon2=$order->restaurant_address_longitude;
-                    // if (($lat1 == $lat2) && ($lon1 == $lon2)) {
-                    //     $miles=0;
-                    // }
-                    // else {
-                    //     $theta = $lon1 - $lon2;
-                    //     $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-                    //     $dist = acos($dist);
-                    //     $dist = rad2deg($dist);
-                    //     $mile = $dist * 60 * 1.1515;
-                    //     $miles= number_format((float)$mile, 1, '.', '');
-                    // }
-                    // // $distance=($order->rider_restaurant_distance)+$miles;
-                    // // $order->rider_restaurant_distance=$distance;
-                    // $order->rider_restaurant_distance=$miles;
-                    // $order->update();
-
                     $count=Customer::where('customer_id',$order->customer_id)->first();
                     Customer::where('customer_id',$order->customer_id)->update([
                         'order_count'=>$count->order_count+1,
