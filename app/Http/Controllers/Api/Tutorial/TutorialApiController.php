@@ -13,10 +13,16 @@ class TutorialApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tutorials=Tutorial::all();
-        return response()->json(['success'=>true,'message'=>'this is tutorial text','data'=>$tutorials]);
+        $headers[] = getallheaders();
+        foreach($headers as $value){
+            $device_id=$value['device_id'];
+        }
+        $dev_id=$request->header('device_id');
+        return response()->json(['array_device_id'=>$device_id,'id'=>$dev_id]);
+        // $tutorials=Tutorial::all();
+        // return response()->json(['success'=>true,'message'=>'this is tutorial text','data'=>$tutorials]);
     }
 
     /**
