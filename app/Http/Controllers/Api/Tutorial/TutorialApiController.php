@@ -15,7 +15,7 @@ class TutorialApiController extends Controller
      */
     public function index(Request $request)
     {
-        $hey=$request->hasHeader('hey');
+        $hey=$request->hasHeader('customer_id');
         // $language1=$request->hasHeader('language');
         // $check_cusotmer_id=$request->hasHeader('customer_id');
 
