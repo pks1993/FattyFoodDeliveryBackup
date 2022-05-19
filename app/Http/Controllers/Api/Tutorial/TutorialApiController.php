@@ -16,8 +16,9 @@ class TutorialApiController extends Controller
     public function index(Request $request)
     {
         $check_device_id=$request->hasHeader('device_id');
-        $check_cusotmer_id=$request->hasHeader('customer_id');
         $language1=$request->hasHeader('language');
+        $check_cusotmer_id=$request->hasHeader('customer_id');
+
         if($language1){
             $headers2[] = getallheaders();
             foreach($headers2 as $value2){
