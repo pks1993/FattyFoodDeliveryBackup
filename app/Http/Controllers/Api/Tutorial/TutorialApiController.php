@@ -15,16 +15,16 @@ class TutorialApiController extends Controller
      */
     public function index(Request $request)
     {
-        $deviceid=$request->hasHeader('Deviceid');
+        $deviceid=$request->hasHeader('device-id');
         $customerid=$request->hasHeader('customerid');
         $language=$request->hasHeader('language');
 
-        $device=$request->header('Deviceid');
+        $device=$request->header('device-id');
 
         if($deviceid){
             $headers[] = getallheaders();
             foreach($headers as $value){
-                $device_id=$value['Deviceid'];
+                $device_id=$value['device-id'];
             }
         }else{
             $device_id=null;
