@@ -401,6 +401,12 @@
                             <p>Restaurant Billing</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/riders_billing/list') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Rider Billing</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">

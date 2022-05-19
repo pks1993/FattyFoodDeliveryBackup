@@ -209,16 +209,21 @@ class RestaurantController extends Controller
             $total_amount=$value->total_amount;
             $percentage=$value->percentage;
             $duration=$value->duration;
+            $start_date=$value->start_date;
+            $end_date=$value->end_date;
         }
+        $count1=RestaurantPayment::where('restaurant_id',$restaurant_id)->count();
+        $count=$count1+1;
         RestaurantPayment::create([
             "restaurant_id"=>$restaurant_id,
             "total_amount"=>$total_amount,
             "percentage"=>$percentage,
             "pay_amount"=>$pay_amount,
             "duration"=>$duration,
-            "last_offered_date"=>now(),
+            "start_offered_date"=>$start_date,
+            "last_offered_date"=>$end_date,
             "status"=>0,
-            "payment_voucher"
+            "payment_voucher"=>"V00".$count,
         ]);
 
         // $request->session()->flash('alert-success', 'successfullyt!');

@@ -7,7 +7,7 @@
     }
     .nav-pills li>#list-tab.active,.nav-pills li>#offered-tab.active,.nav-pills li>#history-tab.active, .nav-pills .show>.nav-link {
         color: #fff !important;
-        background-color: greenyellow !important;
+        background-color: #00dfc2 !important;
     }
 </style>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
@@ -46,7 +46,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <form action="{{ route('fatty.admin.restaurants_billing.list') }}" method="get">
+                    <form action="{{ route('fatty.admin.riders_billing.list') }}" method="get">
                         @csrf
                         <div class="row">
                             <div class="col-md-3 mt-1">
@@ -66,19 +66,17 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="table-responsive">
-                            <table id="restaurants" class="table table-hover table-bordered">
+                            <table id="riders" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
                                         <th></th>
                                         <th>#Id.</th>
-                                        <th class="text-left">Restaurant</th>
+                                        <th class="text-left">RiderName</th>
                                         <th class="text-left">Start_Date</th>
                                         <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
-                                        <th class="text-left">Amonut</th>
-                                        <th>Percentage</th>
-                                        <th class="text-left">Total</th>
+                                        <th class="text-left">TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -87,16 +85,14 @@
                                     <tr>
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</td>
+                                        <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
                                         <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
-                                        <td class="text-left">{{ $value->total_amount }}</td>
-                                        <td>{{ $value->percentage }} %</td>
-                                        <td class="text-left">{{ $value->pay_amount }}</td>
+                                        <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
-                                            <a href="{{ url('fatty/main/admin/restaurants_billing/store','[{"restaurant_id":'.$value->restaurant_id.',"total_amount":'.$value->total_amount.',"percentage":'.$value->percentage.',"pay_amount":'.$value->pay_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
+                                            <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -127,12 +123,12 @@
                                     <tr>
                                         <th></th>
                                         <th>#Id.</th>
-                                        <th class="text-left">Restaurant</th>
+                                        <th class="text-left">RiderName</th>
+                                        <th class="text-left">Start_Date</th>
+                                        <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
-                                        <th class="text-left">Amonut</th>
-                                        <th>Percentage</th>
-                                        <th class="text-left">Total</th>
+                                        <th class="text-left">TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -141,14 +137,13 @@
                                     <tr>
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->restaurant_id }}</td>
-                                        <td>{{ date('d M Y', strtotime($value->last_offered_date)) }}</td>
+                                        <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
+                                        <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
+                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
+                                        <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
-                                        <td class="text-left">{{ $value->total_amount }}</td>
-                                        <td>{{ $value->percentage }} %</td>
-                                        <td class="text-left">{{ $value->pay_amount }}</td>
+                                        <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
-                                            {{-- <a href="{{ route('fatty.admin.restaurants_billing.update',$value->restaurant_payment_id) }}" class="btn btn-sm btn-danger" style="width: 80px;">Call</a> --}}
                                             <p class="btn btn-sm btn-danger" style="width: 80px;">Call</p>
                                         </td>
                                     </tr>
@@ -180,12 +175,12 @@
                                     <tr>
                                         <th></th>
                                         <th>#Id.</th>
-                                        <th class="text-left">Restaurant</th>
+                                        <th class="text-left">RiderName</th>
+                                        <th class="text-left">Start_Date</th>
+                                        <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
-                                        <th class="text-left">Amonut</th>
-                                        <th>Percentage</th>
-                                        <th class="text-left">Total</th>
+                                        <th class="text-left">TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -194,12 +189,12 @@
                                     <tr>
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->restaurant_id }}</td>
-                                        <td>{{ date('d M Y', strtotime($value->last_offered_date)) }}</td>
+                                        <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
+                                        <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
+                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
+                                        <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
-                                        <td class="text-left">{{ $value->total_amount }}</td>
-                                        <td>{{ $value->percentage }} %</td>
-                                        <td class="text-left">{{ $value->pay_amount }}</td>
+                                        <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
                                             <p class="btn btn-sm btn-success" style="width: 80px;">Done</p>
                                         </td>

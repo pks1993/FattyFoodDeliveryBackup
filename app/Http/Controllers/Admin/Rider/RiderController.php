@@ -5,13 +5,121 @@ namespace App\Http\Controllers\Admin\Rider;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rider\Rider;
+use App\Models\Rider\RiderPayment;
 use Yajra\DataTables\DataTables;
 use App\Models\State\State;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use DB;
+use App\Models\Order\CustomerOrder;
 
 class RiderController extends Controller
 {
+    public function rider_billing_list_url($id)
+    {
+        $rider_id=$id;
+        $rider_payments=RiderPayment::where('rider_id',$id)->orderBy('created_at','DESC')->where('status',0)->get();
+        $check=RiderPayment::where('rider_id',$id)->orderBy('created_at','DESC')->where('status',0)->first();
+        return view('admin.rider.rider_billing.rider_view',compact('rider_id','rider_payments','check'));
+    }
+
+    public function rider_billing_history_url($id)
+    {
+        $rider_id=$id;
+        $rider_payment=RiderPayment::where('rider_id',$rider_id)->orderBy('created_at','DESC')->where('status',1)->limit(3)->get();
+        $check=RiderPayment::where('rider_id',$rider_id)->orderBy('created_at','DESC')->where('status',1)->first();
+        return view('admin.rider.rider_billing.rider_history',compact('rider_payment','rider_id','check','rider_id'));
+    }
+
+    public function rider_billing_history_search(Request $request,$id)
+    {
+        $rider_id=$id;
+        $current_date= $from_date=date('Y-m-d 00:00:00', strtotime($request['current_date']));
+        $rider_payment=RiderPayment::where('rider_id',$rider_id)->whereDate('last_offered_date',$current_date)->orderBy('created_at','DESC')->where('status',1)->get();
+        $check=RiderPayment::where('rider_id',$rider_id)->whereDate('last_offered_date',$current_date)->orderBy('created_at','DESC')->where('status',1)->first();
+        return view('admin.rider.rider_billing.rider_history',compact('rider_payment','rider_id','check','rider_id'));
+    }
+
+    public function rider_billing_history_detail_url($id)
+    {
+        $rider_payment=RiderPayment::where('rider_payment_id',$id)->first();
+        return view('admin.rider.rider_billing.rider_history_detail',compact('rider_payment'));
+    }
+
+    public function rider_billing_list(Request $request)
+    {
+        $start_date=$request['min'];
+        $end_date=$request['max'];
+        // $end_date="";
+        $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
+        $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
+
+        $first_date=Carbon::parse($from_date);
+        $days = $first_date->diffInDays($to_date);
+        // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
+
+        $cus_order_list=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
+            $payment->whereDate('last_offered_date','>',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(rider_delivery_fee) as rider_delivery_fee"))->whereBetween('created_at',[$from_date,$to_date])->whereIn('order_status_id',['7','15'])->get();
+
+        $data=[];
+        foreach($cus_order_list as $value){
+            $payment=RiderPayment::where('rider_id',$value->rider_id)->orderBy('created_at')->first();
+            if($payment){
+                $last_date=date('d/M/Y', strtotime($payment->last_offered_date));
+            }else{
+                $last_date= "Empty Date";
+            }
+            $value->last_offered_date=$last_date;
+            $value->duration=$days;
+            $value->total_amount=(int)$value->rider_delivery_fee;
+            array_push($data,$value);
+        }
+
+        $cus_order_offered=RiderPayment::where('status','0')->get();
+        $cus_order_done=RiderPayment::where('status','1')->get();
+
+        return view('admin.rider.rider_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done','from_date','to_date'));
+
+    }
+
+    public function rider_billing_store(Request $request,$id)
+    {
+        $data=json_decode($id);
+        foreach($data as $value){
+            $rider_id=$value->rider_id;
+            $total_amount=$value->total_amount;
+            $duration=$value->duration;
+            $start_date=$value->start_date;
+            $end_date=$value->end_date;
+        }
+        $count1=RiderPayment::where('rider_id',$rider_id)->count();
+        $count=$count1+1;
+        RiderPayment::create([
+            "rider_id"=>$rider_id,
+            "total_amount"=>$total_amount,
+            "start_offered_date"=>$start_date,
+            "last_offered_date"=>$end_date,
+            "duration"=>$duration,
+            "status"=>0,
+            "payment_voucher"=>"V00".$count,
+        ]);
+
+        // $request->session()->flash('alert-success', 'successfullyt!');
+        return redirect()->back();
+
+    }
+
+    public function rider_billing_update(Request $request, $id)
+    {
+        RiderPayment::where('rider_payment_id',$id)->update([
+            "status"=>1,
+        ]);
+        $rider_payment=RiderPayment::where('rider_payment_id',$id)->first();
+        // $request->session()->flash('alert-success', 'successfullyt!');
+        return redirect('fatty/main/admin/rider_billing/data_history/'.$rider_payment->rider_id);
+    }
+
     public function location($id)
     {
         $rider=Rider::find($id);

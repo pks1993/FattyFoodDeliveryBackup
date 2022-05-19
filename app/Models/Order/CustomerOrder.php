@@ -62,5 +62,9 @@ class CustomerOrder extends Model
     {
         return $this->hasOne('App\Models\Restaurant\RestaurantPayment','restaurant_id','restaurant_id');
     }
+    public function rider_payment()
+    {
+        return $this->hasOne('App\Models\Rider\RiderPayment','rider_id','rider_id');
+    }
 
 }

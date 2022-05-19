@@ -78,7 +78,7 @@ class Handler extends ExceptionHandler
         // }
 
         // $response['status'] = $statusCode;
-        
+
         // if (config('app.debug')) {
         //     $response['trace'] = $exception->getTrace();
         //     $response['code'] = $exception->getCode();
