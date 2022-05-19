@@ -15,24 +15,36 @@ class TutorialApiController extends Controller
      */
     public function index(Request $request)
     {
-        $hey=$request->hasHeader('customerid');
-        // $language1=$request->hasHeader('language');
-        // $check_cusotmer_id=$request->hasHeader('customer_id');
+        $deviceid=$request->hasHeader('deviceid');
+        $customerid=$request->hasHeader('customerid');
+        $language=$request->hasHeader('language');
 
-        // if($language1){
-        //     $headers2[] = getallheaders();
-        //     foreach($headers2 as $value2){
-        //         $device_id=$value2['device_id'];
-        //         $language=$value2['language'];
-        //         $customer_id=$value2['customer_id'];
-        //     }
-        // }else{
-        //     $device_id=null;
-        //     $language=null;
-        //     $customer_id=null;
-        // }
+        if($deviceid){
+            $headers[] = getallheaders();
+            foreach($headers as $value){
+                $device_id=$value['device_id'];
+            }
+        }else{
+            $device_id=null;
+        }
+        if($customerid){
+            $headers[] = getallheaders();
+            foreach($headers as $value){
+                $customer_id=$value['customer_id'];
+            }
+        }else{
+            $customer_id=null;
+        }
+        if($language){
+            $headers[] = getallheaders();
+            foreach($headers as $value){
+                $language=$value['language'];
+            }
+        }else{
+            $language=null;
+        }
 
-        return response()->json(['hey'=>$hey]);
+        return response()->json(['language'=>$language,'device_id'=>$device_id,'customer_id'=>$customer_id]);
 
         // $tutorials=Tutorial::all();
         // return response()->json(['success'=>true,'message'=>'this is tutorial text','data'=>$tutorials]);
