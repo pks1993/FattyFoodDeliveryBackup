@@ -30,7 +30,7 @@ class TutorialApiController extends Controller
         if($customerid){
             $headers[] = getallheaders();
             foreach($headers as $value){
-                $customer_id=$value['customer_id'];
+                $customer_id=$value['customerid'];
             }
         }else{
             $customer_id=null;
