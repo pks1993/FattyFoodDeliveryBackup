@@ -15,12 +15,36 @@ class TutorialApiController extends Controller
      */
     public function index(Request $request)
     {
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
+        $device_id=$request->hasHeader('device_id');
+        $customer_id=$request->hasHeader('customer_id');
+        $language=$request->hasHeader('language');
+        if($device_id){
+            $headers[] = getallheaders();
+            foreach($headers as $value){
+                $device_id=$value['device_id'];
+            }
+        }else{
+            $device_id=null;
         }
-        $dev_id=$request->header('device_id');
-        return response()->json(['array_device_id'=>$device_id,'id'=>$dev_id]);
+        if($customer_id){
+            $headers[] = getallheaders();
+            foreach($headers as $value){
+                $customer_id=$value['customer_id'];
+            }
+        }else{
+            $customer_id=null;
+        }
+        if($language){
+            $headers[] = getallheaders();
+            foreach($headers as $value){
+                $language=$value['language'];
+            }
+        }else{
+            $language=null;
+        }
+
+        return response()->json(['customer_id'=>$customer_id,'device_id'=>$device_id,'language'=>$language]);
+
         // $tutorials=Tutorial::all();
         // return response()->json(['success'=>true,'message'=>'this is tutorial text','data'=>$tutorials]);
     }
