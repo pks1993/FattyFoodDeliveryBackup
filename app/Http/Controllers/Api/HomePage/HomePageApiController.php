@@ -160,7 +160,7 @@ class HomePageApiController extends Controller
         $longitude=$request['longitude'];
         $check_customer=Customer::where('customer_id',$customer_id)->first();
 
-        if(!empty($check_customer)){
+        if(!empty($check_customer) || $customer_id==0){
             $recommend=RecommendRestaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
             $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])->select('recommend_restaurants.restaurant_id','restaurants.restaurant_name_mm','restaurants.restaurant_name_en','restaurants.restaurant_name_ch','restaurants.restaurant_category_id','restaurants.city_id','restaurants.state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
