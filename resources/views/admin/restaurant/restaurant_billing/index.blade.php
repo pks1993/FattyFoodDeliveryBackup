@@ -141,7 +141,7 @@
                                     <tr>
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->restaurant_id }}</td>
+                                        <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</td>
                                         <td>{{ date('d M Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ $value->total_amount }}</td>
@@ -194,7 +194,7 @@
                                     <tr>
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->restaurant_id }}</td>
+                                        <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</td>
                                         <td>{{ date('d M Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ $value->total_amount }}</td>
