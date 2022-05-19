@@ -22,7 +22,7 @@ class TutorialApiController extends Controller
         if($deviceid){
             $headers[] = getallheaders();
             foreach($headers as $value){
-                $device_id=$value['device_id'];
+                $device_id=$value['deviceid'];
             }
         }else{
             $device_id=null;
