@@ -19,20 +19,20 @@ class TutorialApiController extends Controller
         $language1=$request->hasHeader('language');
         $check_cusotmer_id=$request->hasHeader('customer_id');
 
-        if($language1){
-            $headers2[] = getallheaders();
-            foreach($headers2 as $value2){
-                $language=$value2['language'];
-                $device_id=$value2['device_id'];
-                $customer_id=$value2['customer_id'];
-            }
-        }else{
-            $language=null;
-            $device_id=null;
-            $customer_id=null;
-        }
+        // if($language1){
+        //     $headers2[] = getallheaders();
+        //     foreach($headers2 as $value2){
+        //         $device_id=$value2['device_id'];
+        //         $language=$value2['language'];
+        //         $customer_id=$value2['customer_id'];
+        //     }
+        // }else{
+        //     $device_id=null;
+        //     $language=null;
+        //     $customer_id=null;
+        // }
 
-        return response()->json(['check_dev'=>$check_device_id,'check_cus'=>$check_cusotmer_id,'customer_id'=>$customer_id,'device_id'=>$device_id,'language'=>$language]);
+        return response()->json(['check_language'=>$language1,'check_dev'=>$check_device_id,'check_cus'=>$check_cusotmer_id]);
 
         // $tutorials=Tutorial::all();
         // return response()->json(['success'=>true,'message'=>'this is tutorial text','data'=>$tutorials]);
