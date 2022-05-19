@@ -15,9 +15,9 @@ class TutorialApiController extends Controller
      */
     public function index(Request $request)
     {
-        $check_device_id=$request->hasHeader('device_id');
-        $language1=$request->hasHeader('language');
-        $check_cusotmer_id=$request->hasHeader('customer_id');
+        $hey=$request->hasHeader('hey');
+        // $language1=$request->hasHeader('language');
+        // $check_cusotmer_id=$request->hasHeader('customer_id');
 
         // if($language1){
         //     $headers2[] = getallheaders();
@@ -32,7 +32,7 @@ class TutorialApiController extends Controller
         //     $customer_id=null;
         // }
 
-        return response()->json(['check_language'=>$language1,'check_dev'=>$check_device_id,'check_cus'=>$check_cusotmer_id]);
+        return response()->json(['hey'=>$hey]);
 
         // $tutorials=Tutorial::all();
         // return response()->json(['success'=>true,'message'=>'this is tutorial text','data'=>$tutorials]);
