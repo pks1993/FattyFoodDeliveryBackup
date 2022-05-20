@@ -19,7 +19,7 @@ Route::get('fatty/main/admin/rider_billing/data_history/search/{rider_id}','Admi
 Route::get('fatty/main/admin/rider_billing/update/{id}','Admin\Rider\RiderController@rider_billing_update');
 Route::get('fatty/main/admin/rider_billing/data_history/detail/{Rider_payment_id}','Admin\Rider\RiderController@rider_billing_history_detail_url');
 
-
+//Privacy and Term&Condition
 Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 

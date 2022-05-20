@@ -70,6 +70,8 @@ class ParcelOrderApiController extends Controller
 
     public function order_store(Request $request)
     {
+        $from_parcel_city_id=$request['from_parcel_city_id'];
+        $to_parcel_city_id=$request['to_parcel_city_id'];
         $customer_id=$request['customer_id'];
         $from_sender_name=$request['from_sender_name'];
         $from_sender_phone=$request['from_sender_phone'];
@@ -404,6 +406,8 @@ class ParcelOrderApiController extends Controller
             "order_type"=>"parcel",
             "city_id"=>$city_id,
             "state_id"=>$state_id,
+            "from_parcel_city_id"=>$from_parcel_city_id,
+            "to_parcel_city_id"=>$to_parcel_city_id,
         ]);
 
         //Notification
@@ -479,11 +483,11 @@ class ParcelOrderApiController extends Controller
                     "parcel_image"=>$img_name,
                 ]);
             }
-            $orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+            $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                 return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
 
         }else{
-            $orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+            $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
             return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
         }
 
@@ -508,6 +512,8 @@ class ParcelOrderApiController extends Controller
         $parcel_order_note=$request['parcel_order_note'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
         $bill_total_price=$request['bill_total_price'];
+        $from_parcel_city_id=$request['from_parcel_city_id'];
+        $to_parcel_city_id=$request['to_parcel_city_id'];
         $start_time = Carbon::now()->format('g:i A');
         $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
 
@@ -814,7 +820,11 @@ class ParcelOrderApiController extends Controller
             $parcel_order->order_type=$parcel_order->order_type;
             $parcel_order->city_id=$parcel_order->city_id;
             $parcel_order->state_id=$parcel_order->state_id;
+
+            $parcel_order->from_parcel_city_id=$from_parcel_city_id;
+            $parcel_order->to_parcel_city_id=$to_parcel_city_id;
             $parcel_order->update();
+
             //Notification
             $title="Rider Picked up Order";
             $messages="Rider picked up your parcel order";
@@ -856,11 +866,11 @@ class ParcelOrderApiController extends Controller
                         "parcel_image"=>$img_name,
                     ]);
                 }
-                $orders=CustomerOrder::with(['order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+                $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                     return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
 
             }else{
-                $orders=CustomerOrder::with(['order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+                $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                 return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
             }
 
