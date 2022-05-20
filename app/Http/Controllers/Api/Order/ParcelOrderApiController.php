@@ -483,11 +483,63 @@ class ParcelOrderApiController extends Controller
                     "parcel_image"=>$img_name,
                 ]);
             }
-            $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
-                return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
+            $orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+            $parcel_val=[];
+                    $distance1=$orders->rider_restaurant_distance;
+                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+
+                    $orders->distance=(float) $kilometer1;
+                    $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
+
+                    if($orders->from_parcel_city_id==null){
+                        $orders->from_parcel_city_name=null;
+                        $orders->from_latitude=null;
+                        $orders->from_longitude=null;
+                    }else{
+                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
+                        $orders->from_latitude=$orders->from_parcel_region->latitude;
+                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                    }
+                    if($orders->to_parcel_city_id==null){
+                        $orders->to_parcel_city_name=null;
+                        $orders->to_latitude=null;
+                        $orders->to_longitude=null;
+                    }else{
+                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
+                        $orders->to_latitude=$orders->to_parcel_region->latitude;
+                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                    }
+                    array_push($parcel_val,$orders);
+            return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
 
         }else{
-            $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+            $orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+            $parcel_val=[];
+                    $distance1=$orders->rider_restaurant_distance;
+                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+
+                    $orders->distance=(float) $kilometer1;
+                    $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
+
+                    if($orders->from_parcel_city_id==null){
+                        $orders->from_parcel_city_name=null;
+                        $orders->from_latitude=null;
+                        $orders->from_longitude=null;
+                    }else{
+                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
+                        $orders->from_latitude=$orders->from_parcel_region->latitude;
+                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                    }
+                    if($orders->to_parcel_city_id==null){
+                        $orders->to_parcel_city_name=null;
+                        $orders->to_latitude=null;
+                        $orders->to_longitude=null;
+                    }else{
+                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
+                        $orders->to_latitude=$orders->to_parcel_region->latitude;
+                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                    }
+                    array_push($parcel_val,$orders);
             return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
         }
 
@@ -825,6 +877,7 @@ class ParcelOrderApiController extends Controller
             $parcel_order->to_parcel_city_id=$to_parcel_city_id;
             $parcel_order->update();
 
+
             //Notification
             $title="Rider Picked up Order";
             $messages="Rider picked up your parcel order";
@@ -869,8 +922,61 @@ class ParcelOrderApiController extends Controller
                 $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                     return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
 
+                    $parcel_val=[];
+                    $distance1=$orders->rider_restaurant_distance;
+                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+
+                    $orders->distance=(float) $kilometer1;
+                    $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
+
+                    if($orders->from_parcel_city_id==null){
+                        $orders->from_parcel_city_name=null;
+                        $orders->from_latitude=null;
+                        $orders->from_longitude=null;
+                    }else{
+                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
+                        $orders->from_latitude=$orders->from_parcel_region->latitude;
+                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                    }
+                    if($orders->to_parcel_city_id==null){
+                        $orders->to_parcel_city_name=null;
+                        $orders->to_latitude=null;
+                        $orders->to_longitude=null;
+                    }else{
+                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
+                        $orders->to_latitude=$orders->to_parcel_region->latitude;
+                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                    }
+                    array_push($parcel_val,$orders);
+
             }else{
-                $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+                $orders=CustomerOrder::with(['order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+                $parcel_val=[];
+                    $distance1=$orders->rider_restaurant_distance;
+                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+
+                    $orders->distance=(float) $kilometer1;
+                    $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
+
+                    if($orders->from_parcel_city_id==null){
+                        $orders->from_parcel_city_name=null;
+                        $orders->from_latitude=null;
+                        $orders->from_longitude=null;
+                    }else{
+                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
+                        $orders->from_latitude=$orders->from_parcel_region->latitude;
+                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                    }
+                    if($orders->to_parcel_city_id==null){
+                        $orders->to_parcel_city_name=null;
+                        $orders->to_latitude=null;
+                        $orders->to_longitude=null;
+                    }else{
+                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
+                        $orders->to_latitude=$orders->to_parcel_region->latitude;
+                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                    }
+                    array_push($parcel_val,$orders);
                 return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
             }
 
