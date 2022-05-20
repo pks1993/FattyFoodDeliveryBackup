@@ -8,6 +8,7 @@ use App\Models\Order\CustomerOrder;
 use App\Models\Order\ParcelType;
 use App\Models\Order\ParcelExtraCover;
 use App\Models\Order\ParcelImage;
+use App\Models\City\ParcelCity;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer\Customer;
@@ -496,18 +497,20 @@ class ParcelOrderApiController extends Controller
                         $orders->from_latitude=null;
                         $orders->from_longitude=null;
                     }else{
-                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
-                        $orders->from_latitude=$orders->from_parcel_region->latitude;
-                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->from_parcel_city_name=$city_data->city_name;
+                        $orders->from_latitude=$city_data->latitude;
+                        $orders->from_longitude=$city_data->longitude;
                     }
                     if($orders->to_parcel_city_id==null){
                         $orders->to_parcel_city_name=null;
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
-                        $orders->to_latitude=$orders->to_parcel_region->latitude;
-                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->to_parcel_city_name=$city_data->city_name;
+                        $orders->to_latitude=$city_data->latitude;
+                        $orders->to_longitude=$city_data->longitude;
                     }
                     array_push($parcel_val,$orders);
             return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
@@ -526,18 +529,20 @@ class ParcelOrderApiController extends Controller
                         $orders->from_latitude=null;
                         $orders->from_longitude=null;
                     }else{
-                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
-                        $orders->from_latitude=$orders->from_parcel_region->latitude;
-                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->from_parcel_city_name=$city_data->city_name;
+                        $orders->from_latitude=$city_data->latitude;
+                        $orders->from_longitude=$city_data->longitude;
                     }
                     if($orders->to_parcel_city_id==null){
                         $orders->to_parcel_city_name=null;
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
-                        $orders->to_latitude=$orders->to_parcel_region->latitude;
-                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->to_parcel_city_name=$city_data->city_name;
+                        $orders->to_latitude=$city_data->latitude;
+                        $orders->to_longitude=$city_data->longitude;
                     }
                     array_push($parcel_val,$orders);
             return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
@@ -934,18 +939,20 @@ class ParcelOrderApiController extends Controller
                         $orders->from_latitude=null;
                         $orders->from_longitude=null;
                     }else{
-                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
-                        $orders->from_latitude=$orders->from_parcel_region->latitude;
-                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->from_parcel_city_name=$city_data->city_name;
+                        $orders->from_latitude=$city_data->latitude;
+                        $orders->from_longitude=$city_data->longitude;
                     }
                     if($orders->to_parcel_city_id==null){
                         $orders->to_parcel_city_name=null;
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
-                        $orders->to_latitude=$orders->to_parcel_region->latitude;
-                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->to_parcel_city_name=$city_data->city_name;
+                        $orders->to_latitude=$city_data->latitude;
+                        $orders->to_longitude=$city_data->longitude;
                     }
                     array_push($parcel_val,$orders);
 
@@ -963,18 +970,20 @@ class ParcelOrderApiController extends Controller
                         $orders->from_latitude=null;
                         $orders->from_longitude=null;
                     }else{
-                        $orders->from_parcel_city_name=$orders->from_parcel_region->city_name;
-                        $orders->from_latitude=$orders->from_parcel_region->latitude;
-                        $orders->from_longitude=$orders->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->from_parcel_city_name=$city_data->city_name;
+                        $orders->from_latitude=$city_data->latitude;
+                        $orders->from_longitude=$city_data->longitude;
                     }
                     if($orders->to_parcel_city_id==null){
                         $orders->to_parcel_city_name=null;
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $orders->to_parcel_city_name=$orders->to_parcel_region->city_name;
-                        $orders->to_latitude=$orders->to_parcel_region->latitude;
-                        $orders->to_longitude=$orders->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->to_parcel_city_name=$city_data->city_name;
+                        $orders->to_latitude=$city_data->latitude;
+                        $orders->to_longitude=$city_data->longitude;
                     }
                     array_push($parcel_val,$orders);
                 return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);

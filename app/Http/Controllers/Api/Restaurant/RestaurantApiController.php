@@ -751,7 +751,7 @@ class RestaurantApiController extends Controller
         $customer_id=$request['customer_id'];
         $latitude=$request['latitude'];
         $longitude=$request['longitude'];
-
+        // DB::raw("REPLACE(`restaurant_name_en`, ' ', '') AS name_en") (selece data)
         if($search_name){
             $food=Food::with(['sub_item'=>function($sub_item){
                 $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
@@ -763,7 +763,8 @@ class RestaurantApiController extends Controller
                 $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
             }])
             ->orwhere("food_name_mm","LIKE","%$search_name%")
-            ->orwhere("food_name_en","LIKE","%$search_name%")
+            // ->orwhere("food_name_en","LIKE","%$search_name%")
+            ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere("food_name_ch","LIKE","%$search_name%")
             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
             ->get()->toArray();
@@ -776,7 +777,7 @@ class RestaurantApiController extends Controller
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
-            ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
+            ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
             // ->having('distance','<',500)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
