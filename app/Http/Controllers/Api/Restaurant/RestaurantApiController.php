@@ -780,50 +780,16 @@ class RestaurantApiController extends Controller
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
             // ->having('distance','<',500)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
-            // foreach($result as $value){
-            //     array_push($result1,$value);
-            // }
+            $data=[];
+            foreach($restaurant as $value){
+                $kilometer= number_format((float)$value->distance, 2, '.', '');
+                $value->distance=$kilometer;
+                array_push($data,$value);
+            }
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>$food,'restaurant'=>$restaurant]]);
         }else{
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>[],'restaurant'=>[]]]);
         }
-
-
-
-            // $restaurants_val=[];
-
-            // foreach($result as $value){
-            //     $distance=$value->distance;
-            //     $kilometer= number_format((float)$distance, 1, '.', '');
-
-            //     if($kilometer <= 3 ){
-            //         $delivery_fee=1000;
-            //     }
-            //     else{
-            //         $number=explode('.', $kilometer);
-            //         $addOneKilometer=$number[0] - 3;
-            //         $folat_number=$number[1];
-            //         if($folat_number=="0"){
-            //             $delivery_fee=$addOneKilometer * 300 + 1000;
-            //         }else{
-            //             if($folat_number <= 5){
-            //                 $delivery_fee=($addOneKilometer * 300) + 150 + 1000;
-            //             }else{
-            //                 $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
-            //             }
-            //         }
-            //     }
-            //     if($value->wishlist==1){
-            //         $value->is_wish=true;
-            //     }else{
-            //         $value->is_wish=false;
-            //     }
-            //     $value->distance=(float)$kilometer;
-            //     $value->distance_time=(int)$kilometer*2 + $value->average_time;
-            //     $value->delivery_fee=$delivery_fee;
-            //     array_push($restaurants_val,$value);
-
-            // }
     }
     public function food_search(Request $request)
     {
