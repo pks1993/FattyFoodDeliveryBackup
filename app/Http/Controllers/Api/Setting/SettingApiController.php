@@ -9,9 +9,55 @@ use App\Models\Setting\TermsConditions;
 
 class SettingApiController extends Controller
 {
-    public function customer_privacy()
-    {   
-        $data=Privacy::where('privacy_id','1')->first();
+    public function customer_privacy(Request $request)
+    {
+        //my en zx
+        $language=$request->header('language');
+        $check=Privacy::where('privacy_id','1')->first();
+        if($language==null){
+            if($check->body_en){
+                $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_en as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_mm){
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_mm as body','created_at','updated_at')->first();
+                }else{
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }elseif($language=="my" ){
+            if($check->body_mm){
+                $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_mm as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_en){
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_en as body','created_at','updated_at')->first();
+                }else{
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }elseif($language=="en"){
+            if($check->body_en){
+                $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_en as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_mm){
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_mm as body','created_at','updated_at')->first();
+                }else{
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }elseif($language=="zx"){
+            if($check->body_ch){
+                $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_ch as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_en){
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_en as body','created_at','updated_at')->first();
+                }else{
+                    $data=Privacy::where('privacy_id','1')->select('privacy_id','privacy_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zx']);
+        }
+
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is privacy text','data'=>$data]);
         }else{
@@ -20,7 +66,7 @@ class SettingApiController extends Controller
     }
 
     public function rider_privacy()
-    {   
+    {
         $data=Privacy::where('privacy_id','2')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is privacy text','data'=>$data]);
@@ -30,7 +76,7 @@ class SettingApiController extends Controller
     }
 
     public function restaurant_privacy()
-    {   
+    {
         $data=Privacy::where('privacy_id','3')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is privacy text','data'=>$data]);
@@ -39,18 +85,64 @@ class SettingApiController extends Controller
         }
     }
 
-    public function customer_terms()
-    {   
-        $data=TermsConditions::where('terms_conditions_id','1')->first();
+    public function customer_terms(Request $request)
+    {
+        //my en zx
+        $language=$request->header('language');
+        $check=TermsConditions::where('terms_conditions_id','1')->first();
+        if($language==null){
+            if($check->body_en){
+                $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_en as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_mm){
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_mm as body','created_at','updated_at')->first();
+                }else{
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }elseif($language=="my" ){
+            if($check->body_mm){
+                $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_mm as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_en){
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_en as body','created_at','updated_at')->first();
+                }else{
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }elseif($language=="en"){
+            if($check->body_en){
+                $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_en as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_mm){
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_mm as body','created_at','updated_at')->first();
+                }else{
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }elseif($language=="zx"){
+            if($check->body_ch){
+                $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_ch as body','created_at','updated_at')->first();
+            }else{
+                if($check->body_en){
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_en as body','created_at','updated_at')->first();
+                }else{
+                    $data=TermsConditions::where('terms_conditions_id','1')->select('terms_conditions_id','terms_conditions_type','body_ch as body','created_at','updated_at')->first();
+                }
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zx']);
+        }
+
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is terms & conditions text','data'=>$data]);
         }else{
-            return response()->json(['success'=>false,'message'=>'terms & conditions id not found']);
+            return response()->json(['success'=>false,'message'=>'terms & conditions data not found']);
         }
     }
 
     public function rider_terms()
-    {   
+    {
         $data=TermsConditions::where('terms_conditions_id','2')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is terms & conditions text','data'=>$data]);
@@ -60,7 +152,7 @@ class SettingApiController extends Controller
     }
 
     public function restaurant_terms()
-    {   
+    {
         $data=TermsConditions::where('terms_conditions_id','3')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is terms & conditions text','data'=>$data]);
