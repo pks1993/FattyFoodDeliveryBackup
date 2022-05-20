@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use DB;
 use Carbon\Carbon;
+use App\Models\City\ParcelCity;
 
 
 class RiderApicontroller extends Controller
@@ -477,18 +478,20 @@ class RiderApicontroller extends Controller
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
-                        $value1->from_parcel_city_name=$value1->from_parcel_region->city_name;
-                        $value1->from_latitude=$value1->from_parcel_region->latitude;
-                        $value1->from_longitude=$value1->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $value1->from_parcel_city_name=$city_data->city_name;
+                        $value1->from_latitude=$city_data->latitude;
+                        $value1->from_longitude=$city_data->longitude;
                     }
                     if($value1->to_parcel_city_id==null){
                         $value1->to_parcel_city_name=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
-                        $value1->to_parcel_city_name=$value1->to_parcel_region->city_name;
-                        $value1->to_latitude=$value1->to_parcel_region->latitude;
-                        $value1->to_longitude=$value1->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $value1->to_parcel_city_name=$city_data->city_name;
+                        $value1->to_latitude=$city_data->latitude;
+                        $value1->to_longitude=$city_data->longitude;
                     }
                     array_push($food_val,$value1);
 
@@ -521,18 +524,20 @@ class RiderApicontroller extends Controller
                         $value->from_latitude=null;
                         $value->from_longitude=null;
                     }else{
-                        $value->from_parcel_city_name=$value->from_parcel_region->city_name;
-                        $value->from_latitude=$value->from_parcel_region->latitude;
-                        $value->from_longitude=$value->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                        $value->from_latitude=$city_data->latitude;
+                        $value->from_longitude=$city_data->longitude;
                     }
                     if($value->to_parcel_city_id==null){
                         $value->to_parcel_city_name=null;
                         $value->to_latitude=null;
                         $value->to_longitude=null;
                     }else{
-                        $value->to_parcel_city_name=$value->to_parcel_region->city_name;
-                        $value->to_latitude=$value->to_parcel_region->latitude;
-                        $value->to_longitude=$value->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                        $value->to_latitude=$city_data->latitude;
+                        $value->to_longitude=$city_data->longitude;
                     }
                     array_push($parcel_val,$value);
 
@@ -581,18 +586,20 @@ class RiderApicontroller extends Controller
                         $value->from_latitude=null;
                         $value->from_longitude=null;
                     }else{
-                        $value->from_parcel_city_name=$value->from_parcel_region->city_name;
-                        $value->from_latitude=$value->from_parcel_region->latitude;
-                        $value->from_longitude=$value->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                        $value->from_latitude=$city_data->latitude;
+                        $value->from_longitude=$city_data->longitude;
                     }
                     if($value->to_parcel_city_id==null){
                         $value->to_parcel_city_name=null;
                         $value->to_latitude=null;
                         $value->to_longitude=null;
                     }else{
-                        $value->to_parcel_city_name=$value->to_parcel_region->city_name;
-                        $value->to_latitude=$value->to_parcel_region->latitude;
-                        $value->to_longitude=$value->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                        $value->to_latitude=$city_data->latitude;
+                        $value->to_longitude=$city_data->longitude;
                     }
                     array_push($parcel_val,$value);
 
@@ -609,18 +616,20 @@ class RiderApicontroller extends Controller
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
-                        $value1->from_parcel_city_name=$value1->from_parcel_region->city_name;
-                        $value1->from_latitude=$value1->from_parcel_region->latitude;
-                        $value1->from_longitude=$value1->from_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $value1->from_parcel_city_name=$city_data->city_name;
+                        $value1->from_latitude=$city_data->latitude;
+                        $value1->from_longitude=$city_data->longitude;
                     }
                     if($value1->to_parcel_city_id==null){
                         $value1->to_parcel_city_name=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
-                        $value1->to_parcel_city_name=$value1->to_parcel_region->city_name;
-                        $value1->to_latitude=$value1->to_parcel_region->latitude;
-                        $value1->to_longitude=$value1->to_parcel_region->longitude;
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $value1->to_parcel_city_name=$city_data->city_name;
+                        $value1->to_latitude=$city_data->latitude;
+                        $value1->to_longitude=$city_data->longitude;
                     }
                     array_push($food_val,$value1);
 
