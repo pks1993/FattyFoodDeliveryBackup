@@ -34,10 +34,10 @@ class WishlistApiController extends Controller
         $longitude=$request['longitude'];
 
         $wishlist=Wishlist::with(['restaurant'=>function($q) use ($latitude,$longitude,$customer_id){
-            $q->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude)) 
-                * cos(radians(restaurant_latitude)) 
-                * cos(radians(restaurant_longitude) - radians($longitude)) 
-                + sin(radians($latitude)) 
+            $q->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurants.restaurant_category_id','restaurant_categories.restaurant_category_name_mm','restaurant_categories.restaurant_category_name_en','restaurant_categories.restaurant_category_name_ch','restaurant_categories.restaurant_category_image','restaurants.city_id','cities.city_name_mm','cities.city_name_en','restaurants.state_id','states.state_name_mm','states.state_name_en','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','average_time','rush_hour_time','restaurant_longitude','restaurant_latitude',DB::raw("6371 * acos(cos(radians($latitude))
+                * cos(radians(restaurant_latitude))
+                * cos(radians(restaurant_longitude) - radians($longitude))
+                + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         ->orderBy('distance','ASC')
@@ -56,6 +56,129 @@ class WishlistApiController extends Controller
             }else{
                 $value->restaurant->is_wish=false;
             }
+
+            $distance=$value->restaurant->distance;
+                $distances= number_format((float)$distance, 1, '.', '');
+                $distances_customer_restaurant= number_format((float)$distance, 2, '.', '');
+
+                if($distances < 2) {
+                    $rider_delivery_fee=0;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 2){
+                    $rider_delivery_fee=600;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 2 && $distances < 3.5){
+                    $rider_delivery_fee=700;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 3.5){
+                    $rider_delivery_fee=800;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 3.5 && $distances < 5){
+                    $rider_delivery_fee=900;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 5){
+                    $rider_delivery_fee=1000;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 5 && $distances < 6.5){
+                    $rider_delivery_fee=1100;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 6.5){
+                    $rider_delivery_fee=1200;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 6.5 && $distances < 8){
+                    $rider_delivery_fee=1300;
+                    $customer_delivery_fee=0;
+                }elseif($distances==8){
+                    $rider_delivery_fee=2500;
+                    $customer_delivery_fee=2200;
+                }elseif($distances > 8 && $distances < 9.5){
+                    $rider_delivery_fee=2700;
+                    $customer_delivery_fee=2400;
+                }elseif($distances==9.5){
+                    $rider_delivery_fee=2900;
+                    $customer_delivery_fee=2600;
+                }elseif($distances > 9.5 && $distances < 11){
+                    $rider_delivery_fee=3100;
+                    $customer_delivery_fee=2800;
+                }elseif($distances==11){
+                    $rider_delivery_fee=3300;
+                    $customer_delivery_fee=3000;
+                }elseif($distances > 11 && $distances < 12.5){
+                    $rider_delivery_fee=3500;
+                    $customer_delivery_fee=3200;
+                }elseif($distances==12.5){
+                    $rider_delivery_fee=3700;
+                    $customer_delivery_fee=3400;
+                }elseif($distances > 12.5 && $distances < 14){
+                    $rider_delivery_fee=3900;
+                    $customer_delivery_fee=3600;
+                }elseif($distances==14){
+                    $rider_delivery_fee=4100;
+                    $customer_delivery_fee=3800;
+                }elseif($distances > 14 && $distances < 15.5){
+                    $rider_delivery_fee=4400;
+                    $customer_delivery_fee=4100;
+                }elseif($distances==15.5){
+                    $rider_delivery_fee=4700;
+                    $customer_delivery_fee=4400;
+                }elseif($distances > 15.5 && $distances < 17){
+                    $rider_delivery_fee=5000;
+                    $customer_delivery_fee=4700;
+                }elseif($distances==17){
+                    $rider_delivery_fee=5300;
+                    $customer_delivery_fee=5000;
+                }elseif($distances > 17 && $distances < 18.5){
+                    $rider_delivery_fee=5600;
+                    $customer_delivery_fee=5300;
+                }elseif($distances==18.5){
+                    $rider_delivery_fee=5900;
+                    $customer_delivery_fee=5600;
+                }elseif($distances > 18.5 && $distances < 20){
+                    $rider_delivery_fee=6200;
+                    $customer_delivery_fee=5900;
+                }elseif($distances==20){
+                    $rider_delivery_fee=6500;
+                    $customer_delivery_fee=6200;
+                }elseif($distances > 20 && $distances < 21.5){
+                    $rider_delivery_fee=6800;
+                    $customer_delivery_fee=6500;
+                }elseif($distances==21.5){
+                    $rider_delivery_fee=7100;
+                    $customer_delivery_fee=6800;
+                }elseif($distances > 21.5 && $distances < 23){
+                    $rider_delivery_fee=7400;
+                    $customer_delivery_fee=7100;
+                }elseif($distances==23){
+                    $rider_delivery_fee=7700;
+                    $customer_delivery_fee=7400;
+                }elseif($distances > 23 && $distances < 24.5){
+                    $rider_delivery_fee=8000;
+                    $customer_delivery_fee=7700;
+                }elseif($distances==24.5){
+                    $rider_delivery_fee=8300;
+                    $customer_delivery_fee=8000;
+                }elseif($distances > 24.5 && $distances < 26){
+                    $rider_delivery_fee=8600;
+                    $customer_delivery_fee=8300;
+                }elseif($distances >= 26){
+                    $rider_delivery_fee=8900;
+                    $customer_delivery_fee=8600;
+                }else{
+                    $rider_delivery_fee=8900;
+                    $customer_delivery_fee=8600;
+                }
+
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
+
+                $value->restaurant->distance=(float)$distances_customer_restaurant;
+                $value->restaurant->distance_time=(int)$distances*2 + $value->average_time;
+                $value->restaurant->delivery_fee=$customer_delivery_fee;
+                $value->restaurant->rider_delivery_fee=$rider_delivery_fee;
+
             array_push($data,$value);
         }
         return response()->json(['success'=>true,'message'=>'this is wishlist','data'=>$wishlist]);
