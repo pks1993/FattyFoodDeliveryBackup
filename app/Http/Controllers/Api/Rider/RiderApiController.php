@@ -470,7 +470,7 @@ class RiderApicontroller extends Controller
                 $food_val=[];
                 foreach($rider_orders as $value1){
                     $distance1=$value1->distance;
-                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+                    $kilometer1=number_format((float)$distance1, 2, '.', '');
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
                     if($value1->from_parcel_city_id==null){
@@ -516,7 +516,7 @@ class RiderApicontroller extends Controller
                 $parcel_val=[];
                 foreach($rider_orders as $value){
                     $distance=$value->distance;
-                    $kilometer=number_format((float)$distance, 1, '.', '');
+                    $kilometer=number_format((float)$distance, 2, '.', '');
                     $value->distance=(float) $kilometer;
                     $value->distance_time=(int)$kilometer*2 + $value->average_time;
                     if($value->from_parcel_city_id==null){
@@ -578,7 +578,7 @@ class RiderApicontroller extends Controller
                 $parcel_val=[];
                 foreach($parcels as $value){
                     $distance=$value->distance;
-                    $kilometer=number_format((float)$distance, 1, '.', '');
+                    $kilometer=number_format((float)$distance, 2, '.', '');
                     $value->distance=(float) $kilometer;
                     $value->distance_time=(int)$kilometer*2 + $value->average_time;
                     if($value->from_parcel_city_id==null){
@@ -608,7 +608,7 @@ class RiderApicontroller extends Controller
                 $food_val=[];
                 foreach($foods as $value1){
                     $distance1=$value1->distance;
-                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+                    $kilometer1=number_format((float)$distance1, 2, '.', '');
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
                     if($value1->from_parcel_city_id==null){
