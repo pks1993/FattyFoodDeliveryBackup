@@ -9,6 +9,7 @@ use App\Models\Restaurant\RecommendRestaurant;
 use App\Models\Ads\UpAds;
 use App\Models\Ads\DownAds;
 use App\Models\Restaurant\Restaurant;
+use App\Models\Restaurant\RestaurantAvailableTime;
 use App\Models\Restaurant\RestaurantCategory;
 use App\Models\Food\FoodMenu;
 use App\Models\Food\Food;
@@ -18,6 +19,7 @@ use App\Models\State\State;
 use App\Models\Customer\Customer;
 use App\Models\Wishlist\Wishlist;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Carbon;
 
 
 
@@ -234,9 +236,32 @@ class HomePageApiController extends Controller
                 $value->delivery_fee=$customer_delivery_fee;
                 $value->rider_delivery_fee=$rider_delivery_fee;
 
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
+
                 array_push($restaurants_val,$value);
 
             }
+            // //DESC
+            $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
+                return $value['restaurant_emergency_status'];
+            }));
+
+            // $near_restaurant =  array_reverse(array_sort($near_restaurant, function ($value) {
+            //     return $value['distance'];
+            // }));
+
 
             return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$near_restaurant,'categories'=>$assign,'recommend_restaurant'=>$recommend,'up_ads'=>$up_ads,'down_ads'=>$down_ads]);
     }
