@@ -1245,7 +1245,7 @@ class RiderApicontroller extends Controller
 
                 $orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
-                return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1,'noti_customer'=>$noti_customer]);
+                return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1]);
         }elseif(empty($order)){
             return response()->json(['success'=>false,'message'=>'order id not found!']);
         }elseif(empty($ride)){
