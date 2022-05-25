@@ -1732,7 +1732,7 @@ class OrderApiController extends Controller
                     $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                     $restaurant_client->post($restaurant_url,[
                         'json' => [
-                            "to"=>"97ada3522f9c1ad17e0867",
+                            "to"=>$restaurant_token,
                             "data"=> [
                                 "type"=> "new_order",
                                 "order_id"=>$customer_orders->order_id,
