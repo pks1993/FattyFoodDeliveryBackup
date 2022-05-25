@@ -253,7 +253,7 @@ class RestaurantController extends Controller
     }
 
     public function restaurantajax(){
-        $model =  Restaurant::orderBy('is_recommend','desc')->get();
+        $model =  Restaurant::orderBy('created_at','desc')->get();
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('restaurant_image', function(Restaurant $item){

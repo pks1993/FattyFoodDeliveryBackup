@@ -16,6 +16,7 @@ use App\Models\Rider\Rider;
 use App\Models\Order\OrderReview;
 use DB;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 
 class ParcelOrderApiController extends Controller
 {
@@ -410,33 +411,28 @@ class ParcelOrderApiController extends Controller
             "from_parcel_city_id"=>$from_parcel_city_id,
             "to_parcel_city_id"=>$to_parcel_city_id,
         ]);
-
-        //Notification
-        $title="Order Processing";
-        $messages="Order is processing! Waiting for rider!";
-        $message = strip_tags($messages);
-        $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-        $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-        $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-        //Customer
-        $fcm_token=array();
-        array_push($fcm_token, $customers->fcm_token);
-        $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-        $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$parcel_order->order_id,'order_status_id'=>$parcel_order->order_status_id,'order_type'=>$parcel_order->order_type,'type'=>'new_order','title' => $title, 'body' => $message]);
-
-        $playLoad = json_encode($field);
-        $test=json_decode($playLoad);
-        $curl_session = curl_init();
-        curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-        curl_setopt($curl_session, CURLOPT_POST, true);
-        curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-        $result = curl_exec($curl_session);
-        curl_close($curl_session);
-
+        $cus_client = new Client();
+        if($customers->fcm_oken){
+            $cus_token=$customers->fcm_token;
+            $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+            $cus_client->post($cus_url,[
+                'json' => [
+                    "to"=>$cus_token,
+                    "data"=> [
+                        "type"=> "new_order",
+                        "order_id"=>$parcel_order->order_id,
+                        "order_status_id"=>$parcel_order->order_status_id,
+                        "order_type"=>$parcel_order->order_type,
+                        "title_mm"=> "Order Processing",
+                        "body_mm"=> "Order is processing! Waiting for rider!",
+                        "title_en"=> "Order Processing",
+                        "body_en"=> "Order is processing! Waiting for rider!",
+                        "title_ch"=> "订单正在派送",
+                        "body_ch"=> "正在为您派送！请耐心等待！"
+                    ],
+                ],
+            ]);
+        }
         //rider
         $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
@@ -447,26 +443,35 @@ class ParcelOrderApiController extends Controller
         ->groupBy("riders.rider_id")
         ->where('is_order','0')
         ->get();
-        $fcm_token2=array();
+        $riderFcmToken=array();
         foreach($riders as $rid){
-            $aa=array_push($fcm_token2, $rid->rider_fcm_token);
+            if($rid->rider_fcm_token){
+                array_push($riderFcmToken, $rid->rider_fcm_token);
+            }
         }
-        $title1="New Parcel Order";
-        $messages1="succssfully accept your order confirmed from restaurant! Now, packing or cooking your order";
-        $message2 = strip_tags($messages1);
-        $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$parcel_order->order_id,'order_status_id'=>$parcel_order->order_status_id,'order_type'=>$parcel_order->order_type,'type'=>'new_order','title' => $title1, 'body' => $message2]);
 
-        $playLoad1 = json_encode($field1);
-        $curl_session1 = curl_init();
-        curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-        curl_setopt($curl_session1, CURLOPT_POST, true);
-        curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-        $result = curl_exec($curl_session1);
-        curl_close($curl_session1);
+        $rider_client = new Client();
+        $rider_token=$riderFcmToken;
+        if($rider_token){
+            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                $rider_client->post($cus_url,[
+                    'json' => [
+                        "to"=>$rider_token,
+                        "data"=> [
+                            "type"=> "new_order",
+                            "order_id"=>$parcel_order->order_id,
+                            "order_status_id"=>$parcel_order->order_status_id,
+                            "order_type"=>$parcel_order->order_type,
+                            "title_mm"=> "New Parcel Order",
+                            "body_mm"=> "succssfully accept your order confirmed from restaurant! Now, packing or cooking your order",
+                            "title_en"=> "New Parcel Order",
+                            "body_en"=> "succssfully accept your order confirmed from restaurant! Now, packing or cooking your order",
+                            "title_ch"=> "New Parcel Order",
+                            "body_ch"=> "succssfully accept your order confirmed from restaurant! Now, packing or cooking your order"
+                        ],
+                    ],
+                ]);
+        }
 
         //Image
         $parcel_image_list=$request['parcel_image_list'];
@@ -884,34 +889,56 @@ class ParcelOrderApiController extends Controller
 
 
             //Notification
-            $title="Rider Picked up Order";
-            $messages="Rider picked up your parcel order";
-            $message = strip_tags($messages);
-            $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-            $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-            $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-            //Customer
-            $fcm_token=array();
-            array_push($fcm_token, $customers->fcm_token);
-            $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-            $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$parcel_order->order_id,'order_status_id'=>$parcel_order->order_status_id,'order_type'=>$parcel_order->order_type,'type'=>'rider_start_delivery','title' => $title, 'body' => $message]);
+            // $title="Rider Picked up Order";
+            // $messages="Rider picked up your parcel order";
+            // $message = strip_tags($messages);
+            // $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
+            // $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
+            // $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+            // //Customer
+            // $fcm_token=array();
+            // array_push($fcm_token, $customers->fcm_token);
+            // $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
+            // $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$parcel_order->order_id,'order_status_id'=>$parcel_order->order_status_id,'order_type'=>$parcel_order->order_type,'type'=>'rider_start_delivery','title' => $title, 'body' => $message]);
 
-            $playLoad = json_encode($field);
-            $test=json_decode($playLoad);
-            $curl_session = curl_init();
-            curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-            curl_setopt($curl_session, CURLOPT_POST, true);
-            curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-            curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-            curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-            $result = curl_exec($curl_session);
-            curl_close($curl_session);
+            // $playLoad = json_encode($field);
+            // $test=json_decode($playLoad);
+            // $curl_session = curl_init();
+            // curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
+            // curl_setopt($curl_session, CURLOPT_POST, true);
+            // curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
+            // curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
+            // curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
+            // curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            // curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
+            // $result = curl_exec($curl_session);
+            // curl_close($curl_session);
+            $cus_client = new Client();
+            $cus_token=$customers->fcm_token;
+            if($cus_token){
+                $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "new_order",
+                                "order_id"=>$parcel_order->order_id,
+                                "order_status_id"=>$parcel_order->order_status_id,
+                                "order_type"=>$parcel_order->order_type,
+                                "title_mm"=> "Rider Picked up Order",
+                                "body_mm"=> "Rider picked up your parcel",
+                                "title_en"=> "Rider Picked up Order",
+                                "body_en"=> "Rider picked up your parcel",
+                                "title_ch"=> "骑手已取走包裹",
+                                "body_ch"=> "骑手已取走包裹！"
+                            ],
+                        ],
+                    ]);
+            }
+
             //Image
             $parcel_image_list=$request['parcel_image_list'];
             $imagename=time();
-
             if(!empty($parcel_image_list)){
                 foreach($parcel_image_list as $list){
                     if(!empty($list)){
