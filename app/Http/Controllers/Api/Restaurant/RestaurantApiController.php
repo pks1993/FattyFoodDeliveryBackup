@@ -1229,4 +1229,20 @@ class RestaurantApiController extends Controller
         return response()->json(['success'=>true]);
     }
 
+    public function restaurant_token_update(Request $request)
+    {
+        $restaurant_id=$request['restaurant_id'];
+        $pushy_token=$request['pushy_token'];
+
+        $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        if($check_restaurant){
+            $check_restaurant->restaurant_fcm_token=$pushy_token;
+            $check_restaurant->update();
+            $restaurant=Restaurant::find($restaurant_id);
+            return response()->json(['success'=>true,'message'=>'successfully update pushy token','data'=>$restaurant]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id is empty or not found in database']);
+        }
+    }
+
 }

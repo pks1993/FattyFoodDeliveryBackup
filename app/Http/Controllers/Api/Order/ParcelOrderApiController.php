@@ -411,28 +411,34 @@ class ParcelOrderApiController extends Controller
             "from_parcel_city_id"=>$from_parcel_city_id,
             "to_parcel_city_id"=>$to_parcel_city_id,
         ]);
-        // $cus_client = new Client();
-        // if($customers->fcm_oken){
-        //     $cus_token=$customers->fcm_token;
-        //     $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-        //     $cus_client->post($cus_url,[
-        //         'json' => [
-        //             "to"=>$cus_token,
-        //             "data"=> [
-        //                 "type"=> "new_order",
-        //                 "order_id"=>$parcel_order->order_id,
-        //                 "order_status_id"=>$parcel_order->order_status_id,
-        //                 "order_type"=>$parcel_order->order_type,
-        //                 "title_mm"=> "Order Processing",
-        //                 "body_mm"=> "Order is processing! Waiting for rider!",
-        //                 "title_en"=> "Order Processing",
-        //                 "body_en"=> "Order is processing! Waiting for rider!",
-        //                 "title_ch"=> "订单正在派送",
-        //                 "body_ch"=> "正在为您派送！请耐心等待！"
-        //             ],
-        //         ],
-        //     ]);
-        // }
+
+        //customer
+        $cus_client = new Client();
+        if($customers->fcm_oken){
+            $cus_token=$customers->fcm_token;
+            $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+            $cus_client->post($cus_url,[
+                'json' => [
+                    "to"=>$cus_token,
+                    "data"=> [
+                        "type"=> "new_order",
+                        "order_id"=>$parcel_order->order_id,
+                        "order_status_id"=>$parcel_order->order_status_id,
+                        "order_type"=>$parcel_order->order_type,
+                        "title_mm"=> "Order Processing",
+                        "body_mm"=> "Order is processing! Waiting for rider!",
+                        "title_en"=> "Order Processing",
+                        "body_en"=> "Order is processing! Waiting for rider!",
+                        "title_ch"=> "订单正在派送",
+                        "body_ch"=> "正在为您派送！请耐心等待！"
+                    ],
+                    "notification"=> [
+                        "title"=>"this is a title",
+                        "body"=>"this is a body",
+                    ],
+                ],
+            ]);
+        }
         //rider
         $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
@@ -889,53 +895,33 @@ class ParcelOrderApiController extends Controller
 
 
             //Notification
-            // $title="Rider Picked up Order";
-            // $messages="Rider picked up your parcel order";
-            // $message = strip_tags($messages);
-            // $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-            // $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-            // $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-            // //Customer
-            // $fcm_token=array();
-            // array_push($fcm_token, $customers->fcm_token);
-            // $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-            // $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$parcel_order->order_id,'order_status_id'=>$parcel_order->order_status_id,'order_type'=>$parcel_order->order_type,'type'=>'rider_start_delivery','title' => $title, 'body' => $message]);
-
-            // $playLoad = json_encode($field);
-            // $test=json_decode($playLoad);
-            // $curl_session = curl_init();
-            // curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-            // curl_setopt($curl_session, CURLOPT_POST, true);
-            // curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-            // curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-            // curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-            // curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-            // curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-            // $result = curl_exec($curl_session);
-            // curl_close($curl_session);
-
-            // $cus_client = new Client();
-            // $cus_token=$customers->fcm_token;
-            // if($cus_token){
-            //     $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-            //         $cus_client->post($cus_url,[
-            //             'json' => [
-            //                 "to"=>$cus_token,
-            //                 "data"=> [
-            //                     "type"=> "new_order",
-            //                     "order_id"=>$parcel_order->order_id,
-            //                     "order_status_id"=>$parcel_order->order_status_id,
-            //                     "order_type"=>$parcel_order->order_type,
-            //                     "title_mm"=> "Rider Picked up Order",
-            //                     "body_mm"=> "Rider picked up your parcel",
-            //                     "title_en"=> "Rider Picked up Order",
-            //                     "body_en"=> "Rider picked up your parcel",
-            //                     "title_ch"=> "骑手已取走包裹",
-            //                     "body_ch"=> "骑手已取走包裹！"
-            //                 ],
-            //             ],
-            //         ]);
-            // }
+            //customer
+            $cus_client = new Client();
+            $cus_token=$customers->fcm_token;
+            if($cus_token){
+                $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "new_order",
+                                "order_id"=>$parcel_order->order_id,
+                                "order_status_id"=>$parcel_order->order_status_id,
+                                "order_type"=>$parcel_order->order_type,
+                                "title_mm"=> "Rider Picked up Order",
+                                "body_mm"=> "Rider picked up your parcel",
+                                "title_en"=> "Rider Picked up Order",
+                                "body_en"=> "Rider picked up your parcel",
+                                "title_ch"=> "骑手已取走包裹",
+                                "body_ch"=> "骑手已取走包裹！"
+                            ],
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
+            }
 
             //Image
             $parcel_image_list=$request['parcel_image_list'];

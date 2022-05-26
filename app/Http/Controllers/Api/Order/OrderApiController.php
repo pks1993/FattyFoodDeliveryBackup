@@ -435,28 +435,32 @@ class OrderApiController extends Controller
 
         if(!empty($customer_orders)){
             //Customer
-            // $cus_client = new Client();
-            // $cus_token=$customer_orders->customer->fcm_token;
-            // if($cus_token){
-            //     $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-            //     $cus_client->post($cus_url,[
-            //         'json' => [
-            //             "to"=>$cus_token,
-            //             "data"=> [
-            //                 "type"=> "customer_cancel_order",
-            //                 "order_id"=>$customer_orders->order_id,
-            //                 "order_status_id"=>$customer_orders->order_status_id,
-            //                 "order_type"=>$customer_orders->order_type,
-            //                 "title_mm"=> "Order Canceled!",
-            //                 "body_mm"=> "New order has been canceled by customer!",
-            //                 "title_en"=> "Order Canceled!",
-            //                 "body_en"=> "New order has been canceled by customer!",
-            //                 "title_ch"=> "订单已被用户取消",
-            //                 "body_ch"=> "非常抱歉 用户已取消订单!"
-            //             ],
-            //         ],
-            //     ]);
-            // }
+            $cus_client = new Client();
+            $cus_token=$customer_orders->customer->fcm_token;
+            if($cus_token){
+                $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                $cus_client->post($cus_url,[
+                    'json' => [
+                        "to"=>$cus_token,
+                        "data"=> [
+                            "type"=> "customer_cancel_order",
+                            "order_id"=>$customer_orders->order_id,
+                            "order_status_id"=>$customer_orders->order_status_id,
+                            "order_type"=>$customer_orders->order_type,
+                            "title_mm"=> "Order Canceled!",
+                            "body_mm"=> "New order has been canceled by customer!",
+                            "title_en"=> "Order Canceled!",
+                            "body_en"=> "New order has been canceled by customer!",
+                            "title_ch"=> "订单已被用户取消",
+                            "body_ch"=> "非常抱歉 用户已取消订单!"
+                        ],
+                        "notification"=> [
+                            "title"=>"this is a title",
+                            "body"=>"this is a body",
+                        ],
+                    ],
+                ]);
+            }
 
             if($customer_orders->order_type=="food"){
                 if($customer_orders->order_status_id==19){
@@ -612,11 +616,6 @@ class OrderApiController extends Controller
         $restaurant_remark = $request['restaurant_remark'];
         $order_food_id=$request->order_food_id;
         // $result = json_decode($order_food_id);
-
-        $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-        $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-        $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
         $check_order=CustomerOrder::where('order_id',$order_id)->first();
 
         if($check_order){
@@ -640,6 +639,34 @@ class OrderApiController extends Controller
                         'food_emergency_status'=>1,
                     ]);
                     // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+                }
+
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "customer_cancel_order",
+                                "order_id"=>$check_order->order_id,
+                                "order_status_id"=>$check_order->order_status_id,
+                                "order_type"=>$check_order->order_type,
+                                "title_mm"=> "Order Canceled by Restaurant!",
+                                "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_en"=> "Order Canceled by Restaurant!",
+                                "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_ch"=> "订单已被取消",
+                                "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                            ],
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
                 }
                 //restaurant
                 $res_client = new Client();
@@ -695,6 +722,33 @@ class OrderApiController extends Controller
                         'food_emergency_status'=>1,
                     ]);
                     // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
+                }
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "customer_cancel_order",
+                                "order_id"=>$check_order->order_id,
+                                "order_status_id"=>$check_order->order_status_id,
+                                "order_type"=>$check_order->order_type,
+                                "title_mm"=> "Order Canceled by Restaurant!",
+                                "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_en"=> "Order Canceled by Restaurant!",
+                                "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_ch"=> "订单已被取消",
+                                "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                            ],
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
                 }
                 //Restaurant
                 $res_client = new Client();
@@ -753,29 +807,33 @@ class OrderApiController extends Controller
                 $customer_check=Customer::where('customer_id',$customer_orders->customer_id)->first();
 
                 if($request['order_status_id']=="3"){
-                    //customer
-                    // $cus_client = new Client();
-                    // $cus_token=$customer_check->fcm_token;
-                    // $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-                    // if($cus_token){
-                    //     $cus_client->post($cus_url,[
-                    //         'json' => [
-                    //             "to"=>$cus_token,
-                    //             "data"=> [
-                    //                 "type"=> "restaurant_accept_order",
-                    //                 "order_id"=>$customer_orders->order_id,
-                    //                 "order_status_id"=>$customer_orders->order_status_id,
-                    //                 "order_type"=>$customer_orders->order_type,
-                    //                 "title_mm"=> "Order Accepted",
-                    //                 "body_mm"=> "Your order has been accepted successfully by restaurant! It’s now preparing!",
-                    //                 "title_en"=> "Order Accepted",
-                    //                 "body_en"=> "Your order has been accepted successfully by restaurant! It’s now preparing!",
-                    //                 "title_ch"=> "商家已接单",
-                    //                 "body_ch"=> "商家已接单!正在备餐中！"
-                    //             ],
-                    //         ],
-                    //     ]);
-                    // }
+                    // customer
+                    $cus_client = new Client();
+                    $cus_token=$customer_check->fcm_token;
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    if($cus_token){
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_accept_order",
+                                    "order_id"=>$customer_orders->order_id,
+                                    "order_status_id"=>$customer_orders->order_status_id,
+                                    "order_type"=>$customer_orders->order_type,
+                                    "title_mm"=> "Order Accepted",
+                                    "body_mm"=> "Your order has been accepted successfully by restaurant! It’s now preparing!",
+                                    "title_en"=> "Order Accepted",
+                                    "body_en"=> "Your order has been accepted successfully by restaurant! It’s now preparing!",
+                                    "title_ch"=> "商家已接单",
+                                    "body_ch"=> "商家已接单!正在备餐中！"
+                                ],
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
 
 
                     //rider
@@ -833,7 +891,7 @@ class OrderApiController extends Controller
                     //Customer
                     $cus_client = new Client();
                     $cus_token=$customer_check->fcm_token;
-                    $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
                     if($cus_token){
                         $cus_client->post($cus_url,[
                             'json' => [
@@ -850,6 +908,10 @@ class OrderApiController extends Controller
                                     "title_ch"=> "订单已被取消",
                                     "body_ch"=> "非常抱歉 您的订单已被商家取消!"
                                 ],
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
                             ],
                         ]);
                     }
@@ -858,7 +920,7 @@ class OrderApiController extends Controller
                     //customer
                     $cus_client = new Client();
                     $cus_token=$customer_check->fcm_token;
-                    $cus_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
                     if($cus_token){
                         $cus_client->post($cus_url,[
                             'json' => [
@@ -874,6 +936,10 @@ class OrderApiController extends Controller
                                     "body_en"=> "Your order is ready! Delivering to you soon!",
                                     "title_ch"=> "Order is Ready",
                                     "body_ch"=> "Your order is ready! Delivering to you soon!"
+                                ],
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
                                 ],
                             ],
                         ]);
@@ -1703,7 +1769,7 @@ class OrderApiController extends Controller
                 $cus_client = new Client();
                 $customer_token=$customer_check->fcm_token;
                 if($customer_token){
-                    $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
                         $cus_client->post($cus_url,[
                             'json' => [
                                 "to"=>$customer_token,
@@ -1718,6 +1784,10 @@ class OrderApiController extends Controller
                                     "body_en"=> "==Your order has been confirmed successfully! Please wait for delivery!",
                                     "title_ch"=> "订单通知",
                                     "body_ch"=> "您的订单已确认!"
+                                ],
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
                                 ],
                             ],
                         ]);

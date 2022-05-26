@@ -105,6 +105,7 @@ class HomePageApiController extends Controller
                 * sin(radians(restaurant_latitude))) AS distance"))
         // ->having('distance','<',500)
         ->orderBy('distance','ASC')
+        // ->orderBy('restaurant_emergency_status','ASC')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
         ->join('states','states.state_id','=','restaurants.state_id')
         ->join('cities','cities.city_id','=','restaurants.city_id')
@@ -253,7 +254,7 @@ class HomePageApiController extends Controller
                 array_push($restaurants_val,$value);
 
             }
-            // //DESC
+            //DESC
             $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
                 return $value['restaurant_emergency_status'];
             }));
@@ -263,6 +264,7 @@ class HomePageApiController extends Controller
             // }));
 
 
+            // return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$near_restaurant]);
             return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$near_restaurant,'categories'=>$assign,'recommend_restaurant'=>$recommend,'up_ads'=>$up_ads,'down_ads'=>$down_ads]);
     }
 

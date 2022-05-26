@@ -82,6 +82,8 @@ Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/define','
 Route::post('fatty/202221/lashio/main/admin/restaurants/preparing_time/list','Api\Restaurant\RestaurantApiController@preparing_list');
 Route::post('fatty/202221/lashio/main/admin/restaurants/details','Api\Restaurant\RestaurantApiController@restaurant_details');
 
+Route::post('fatty/202221/lashio/main/admin/restaurants_token/update','Api\Restaurant\RestaurantApiController@restaurant_token_update');
+
 //Food Menu Api
 Route::post('fatty/202221/lashio/main/admin/restaurants/menus','Api\Restaurant\RestaurantApiController@restaurant_menu');
 
@@ -174,6 +176,8 @@ Route::post('fatty/202221/lashio/main/admin/rider/activenow','Api\Rider\RiderApi
 Route::post('fatty/202221/lashio/main/admin/rider/activenow/list','Api\Rider\RiderApiController@rider_activenow_list');
 Route::post('fatty/202221/lashio/main/admin/rider/office/location','Api\Rider\RiderApiController@rider_office_location');
 Route::post('fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiController@rider_details');
+Route::post('fatty/202221/lashio/main/admin/rider_token/update','Api\Rider\RiderApiController@rider_token_update');
+
 
 //insightRider
 Route::post('fatty/202221/lashio/main/admin/rider/insight','Api\Rider\RiderApiController@rider_insight');
