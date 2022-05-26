@@ -238,8 +238,8 @@ class CustomerApiController extends Controller
     {
         $customer_id=$request['customer_id'];
         if($customer_id){
-            Customer::where('customer_id',$customer_id)->update(['device_id'=>null]);
-            // Customer::where('customer_id',$customer_id)->update(['device_id'=>null,'fcm_token'=>null]);
+            // Customer::where('customer_id',$customer_id)->update(['device_id'=>null]);
+            Customer::where('customer_id',$customer_id)->update(['device_id'=>null,'fcm_token'=>null]);
             return response()->json(['success'=>true,'message'=>'successfully logout','data'=>null]);
         }else{
             return response()->json(['success'=>false,'message'=>'empty customer id','data'=>null]);
