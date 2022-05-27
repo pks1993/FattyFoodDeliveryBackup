@@ -250,21 +250,22 @@ class HomePageApiController extends Controller
                         }
                     }
                 }
-
                 array_push($restaurants_val,$value);
-
             }
-            //DESC
-            $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
-                return $value['restaurant_emergency_status'];
-            }));
 
+            $restaurant_emergency_status=$near_restaurant->where('restaurant_emergency_status',1);
+            $near_restaurant=$near_restaurant->where('restaurant_emergency_status',0)->merge($restaurant_emergency_status);
+
+            //DESC
+            // $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
+            //     return $value['distance'];
+            // }));
+            //ASC
             // $near_restaurant =  array_reverse(array_sort($near_restaurant, function ($value) {
             //     return $value['distance'];
             // }));
 
 
-            // return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$near_restaurant]);
             return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$near_restaurant,'categories'=>$assign,'recommend_restaurant'=>$recommend,'up_ads'=>$up_ads,'down_ads'=>$down_ads]);
     }
 
