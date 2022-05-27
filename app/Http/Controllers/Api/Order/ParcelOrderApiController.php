@@ -414,7 +414,7 @@ class ParcelOrderApiController extends Controller
 
         //customer
         $cus_client = new Client();
-        if($customers->fcm_oken){
+        if($customers->fcm_token){
             $cus_token=$customers->fcm_token;
             $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
             $cus_client->post($cus_url,[
@@ -432,6 +432,8 @@ class ParcelOrderApiController extends Controller
                         "title_ch"=> "订单正在派送",
                         "body_ch"=> "正在为您派送！请耐心等待！"
                     ],
+                    "mutable_content" => true ,
+                    "content_available" => true,
                     "notification"=> [
                         "title"=>"this is a title",
                         "body"=>"this is a body",
@@ -915,6 +917,8 @@ class ParcelOrderApiController extends Controller
                                 "title_ch"=> "骑手已取走包裹",
                                 "body_ch"=> "骑手已取走包裹！"
                             ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
                             "notification"=> [
                                 "title"=>"this is a title",
                                 "body"=>"this is a body",

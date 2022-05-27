@@ -706,6 +706,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "骑手已接单",
                                     "body_ch"=> "骑手已接单!正在赶往取餐！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -759,6 +761,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "骑手已到达商家",
                                     "body_ch"=> "骑手已到达商家!正在取餐！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -812,6 +816,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "开始派送",
                                     "body_ch"=> "骑手已开始派送!正在赶来！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -890,6 +896,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "订单已结束",
                                     "body_ch"=> "您的订单已结束! 祝您用餐愉快！再见！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -951,6 +959,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "订单已接受",
                                     "body_ch"=> "骑手已接单！正在赶来!"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1004,6 +1014,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "骑手已到达",
                                     "body_ch"=> "骑手已达到！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1056,6 +1068,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "骑手已取走包裹",
                                     "body_ch"=> "骑手已取走包裹！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1108,6 +1122,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "开始派送",
                                     "body_ch"=> "骑手已开始派送！正在赶往收货地！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1163,6 +1179,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "订单已结束",
                                     "body_ch"=> "您的包裹已送达! 订单结束！再见！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1217,6 +1235,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "订单已结束",
                                     "body_ch"=> "您的包裹已送达! 订单结束！再见！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1272,6 +1292,8 @@ class RiderApicontroller extends Controller
                                     "title_ch"=> "Order Not Found!",
                                     "body_ch"=> "Rider Not Found"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",

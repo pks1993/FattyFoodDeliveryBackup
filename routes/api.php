@@ -47,6 +47,8 @@ Route::post('fatty/202221/lashio/main/admin/customers/notification/token/update'
 
 //Customer Notification
 Route::get('fatty/202221/lashio/main/admin/customers/notifications','Api\Notification\NotificationApiController@index');
+Route::get('fatty/202221/lashio/main/admin/riders/notifications','Api\Notification\NotificationApiController@rider');
+Route::get('fatty/202221/lashio/main/admin/restaurants/notifications','Api\Notification\NotificationApiController@restaurant');
 
 //Customer Home Page Api
 Route::post('fatty/202221/lashio/main/admin/home_page','Api\HomePage\HomePageApiController@home_page');

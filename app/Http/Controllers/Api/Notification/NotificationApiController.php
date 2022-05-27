@@ -22,6 +22,16 @@ class NotificationApiController extends Controller
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
+    public function rider()
+    {
+        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
+    }
+    public function restaurant()
+    {
+        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
+    }
 
     public function android_version_check()
     {

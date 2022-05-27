@@ -454,6 +454,8 @@ class OrderApiController extends Controller
                             "title_ch"=> "订单已被用户取消",
                             "body_ch"=> "非常抱歉 用户已取消订单!"
                         ],
+                        "mutable_content" => true ,
+                        "content_available" => true,
                         "notification"=> [
                             "title"=>"this is a title",
                             "body"=>"this is a body",
@@ -661,6 +663,8 @@ class OrderApiController extends Controller
                                 "title_ch"=> "订单已被取消",
                                 "body_ch"=> "非常抱歉 您的订单已被商家取消!"
                             ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
                             "notification"=> [
                                 "title"=>"this is a title",
                                 "body"=>"this is a body",
@@ -743,6 +747,8 @@ class OrderApiController extends Controller
                                 "title_ch"=> "订单已被取消",
                                 "body_ch"=> "非常抱歉 您的订单已被商家取消!"
                             ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
                             "notification"=> [
                                 "title"=>"this is a title",
                                 "body"=>"this is a body",
@@ -827,6 +833,8 @@ class OrderApiController extends Controller
                                     "title_ch"=> "商家已接单",
                                     "body_ch"=> "商家已接单!正在备餐中！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -908,6 +916,8 @@ class OrderApiController extends Controller
                                     "title_ch"=> "订单已被取消",
                                     "body_ch"=> "非常抱歉 您的订单已被商家取消!"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -937,6 +947,8 @@ class OrderApiController extends Controller
                                     "title_ch"=> "Order is Ready",
                                     "body_ch"=> "Your order is ready! Delivering to you soon!"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1785,6 +1797,8 @@ class OrderApiController extends Controller
                                     "title_ch"=> "订单通知",
                                     "body_ch"=> "您的订单已确认!"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
@@ -1809,11 +1823,11 @@ class OrderApiController extends Controller
                                 "order_status_id"=>$customer_orders->order_status_id,
                                 "order_type"=>$customer_orders->order_type,
                                 "title_mm"=> "Order Notification",
-                                "body_mm"=> "Your order has been confirmed successfully! Please wait for delivery!",
+                                "body_mm"=> "One new order is received! Please check it!",
                                 "title_en"=> "Order Notification",
-                                "body_en"=> "Your order has been confirmed successfully! Please wait for delivery!",
+                                "body_en"=> "One new order is received! Please check it!",
                                 "title_ch"=> "订单通知",
-                                "body_ch"=> "您的订单已确认!"
+                                "body_ch"=> "收到一个新订单!请查看！"
                             ],
                         ],
                     ]);
