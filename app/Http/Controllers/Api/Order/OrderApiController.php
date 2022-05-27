@@ -980,7 +980,7 @@ class OrderApiController extends Controller
                                     "title_mm"=> "Order is Ready to Pick Up",
                                     "body_mm"=> "=Restaurant has prepared the order! Pick it up quickly!",
                                     "title_en"=> "Order is Ready to Pick Up",
-                                    "body_en"=> "=Restaurant has prepared the order! Pick it up quickly!",
+                                    "body_en"=> "Restaurant has prepared the order! Pick it up quickly!",
                                     "title_ch"=> "商家已完成",
                                     "body_ch"=> "商家已完成订单! 请尽快取餐！"
                                 ],

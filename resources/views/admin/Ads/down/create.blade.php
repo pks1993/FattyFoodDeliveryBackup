@@ -72,22 +72,34 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="image" class="col-md-12 col-form-label">{{ __('Ads Image') }} </label>
-                                    <div class="col-md-6">
-                                        <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image" autocomplete="image" onchange="loadFileImage(event)">
+                                    <label for="image" class="col-md-12 col-form-label">{{ __('Ads Image (Please Choose Myanmar / English / China)') }} </label>
+                                    <div class="col-md-12">
+                                        <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image[]" autocomplete="image" onchange="loadFileImageMm(event)" multiple>
                                         @error('image')
                                             <span class="invalid-feedback" role="alert">
                                               <strong>{{ $message }}</strong>
                                             </span>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6 mt-2">
+                                    <div class="col-md-12 mt-3">
+                                        <label for="image_myanmar" class="col-md-12 col-form-label">{{ __('Ads Image Myanmar') }} </label>
                                         <div class="form-group">
-                                            <image src="{{asset('../../../image/available.png')}}" id="imageOne" style="width: 100%;height: 150px;"></image>
+                                            <image src="{{asset('../../../image/available.png')}}" id="imageOne" style="width: 100%;height: 200px;"></image>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 ">
+                                        <label for="image_english" class="col-md-12 col-form-label">{{ __('Ads Image English') }} </label>
+                                        <div class="form-group">
+                                            <image src="{{asset('../../../image/available.png')}}" id="image2" style="width: 100%;height: 200px;"></image>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 ">
+                                        <label for="image_china" class="col-md-12 col-form-label">{{ __('Ads Image China') }} </label>
+                                        <div class="form-group">
+                                            <image src="{{asset('../../../image/available.png')}}" id="image3" style="width: 100%;height: 200px;"></image>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
@@ -112,10 +124,14 @@
 
 <script type="text/javascript">
     $('#restaurant_id').select2();
-//Image Show
-var loadFileImage= function(event) {
-    var image = document.getElementById('imageOne');
-    image.src = URL.createObjectURL(event.target.files[0]);
-};
+    //Image Show
+    var loadFileImageMm= function(event) {
+        var image = document.getElementById('imageOne');
+        image.src = URL.createObjectURL(event.target.files[0]);
+        var image1 = document.getElementById('image2');
+        image1.src = URL.createObjectURL(event.target.files[1]);
+        var image2 = document.getElementById('image3');
+        image2.src = URL.createObjectURL(event.target.files[2]);
+    };
 </script>
 @endsection

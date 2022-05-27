@@ -471,11 +471,11 @@ class ParcelOrderApiController extends Controller
                             "order_status_id"=>$parcel_order->order_status_id,
                             "order_type"=>$parcel_order->order_type,
                             "title_mm"=> "New Parcel Order",
-                            "body_mm"=> "succssfully accept your order confirmed from restaurant! Now, packing or cooking your order",
+                            "body_mm"=> "One new order is received! Please check it!",
                             "title_en"=> "New Parcel Order",
-                            "body_en"=> "succssfully accept your order confirmed from restaurant! Now, packing or cooking your order",
+                            "body_en"=> "One new order is received! Please check it!",
                             "title_ch"=> "New Parcel Order",
-                            "body_ch"=> "succssfully accept your order confirmed from restaurant! Now, packing or cooking your order"
+                            "body_ch"=> "One new order is received! Please check it!"
                         ],
                     ],
                 ]);
