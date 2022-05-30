@@ -460,6 +460,9 @@ class ParcelOrderApiController extends Controller
 
         $rider_client = new Client();
         $rider_token=$riderFcmToken;
+        $orderId=(string)$parcel_order->order_id;
+        $orderstatusId=(string)$parcel_order->order_status_id;
+        $orderType=(string)$parcel_order->order_type;
         if($rider_token){
             $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
                 $rider_client->post($cus_url,[
@@ -467,9 +470,9 @@ class ParcelOrderApiController extends Controller
                         "to"=>$rider_token,
                         "data"=> [
                             "type"=> "new_order",
-                            "order_id"=>$parcel_order->order_id,
-                            "order_status_id"=>$parcel_order->order_status_id,
-                            "order_type"=>$parcel_order->order_type,
+                            "order_id"=>$orderId,
+                            "order_status_id"=>$orderstatusId,
+                            "order_type"=>$orderType,
                             "title_mm"=> "New Parcel Order",
                             "body_mm"=> "One new order is received! Please check it!",
                             "title_en"=> "New Parcel Order",

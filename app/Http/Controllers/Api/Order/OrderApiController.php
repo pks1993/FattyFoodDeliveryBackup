@@ -487,6 +487,9 @@ class OrderApiController extends Controller
 
                         $res_client = new Client();
                         $res_token=$restaurant_check->restaurant_fcm_token;
+                        $orderId=(string)$customer_orders->order_id;
+                        $orderstatusId=(string)$customer_orders->order_status_id;
+                        $orderType=(string)$customer_orders->order_type;
                         $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                         if($res_token){
                             $res_client->post($res_url,[
@@ -494,9 +497,9 @@ class OrderApiController extends Controller
                                     "to"=>$res_token,
                                     "data"=> [
                                         "type"=> "customer_cancel_order",
-                                        "order_id"=>$customer_orders->order_id,
-                                        "order_status_id"=>$customer_orders->order_status_id,
-                                        "order_type"=>$customer_orders->order_type,
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
                                         "title_mm"=> "Order Canceled by Customer",
                                         "body_mm"=> "New order has been canceled by customer!",
                                         "title_en"=> "Order Canceled by Customer",
@@ -675,6 +678,9 @@ class OrderApiController extends Controller
                 //restaurant
                 $res_client = new Client();
                 $res_token=$check_order->restaurant->restaurant_fcm_token;
+                $orderId=(string)$check_order->order_id;
+                $orderstatusId=(string)$check_order->order_status_id;
+                $orderType=(string)$check_order->order_type;
                 $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                 if($res_token){
                     $res_client->post($res_url,[
@@ -682,9 +688,9 @@ class OrderApiController extends Controller
                             "to"=>$res_token,
                             "data"=> [
                                 "type"=> "restaurant_cancel_order",
-                                "order_id"=>$check_order->order_id,
-                                "order_status_id"=>$check_order->order_status_id,
-                                "order_type"=>$check_order->order_type,
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
                                 "title_mm"=> "Succesfully Order Cancel",
                                 "body_mm"=> "You success cancel customer order!",
                                 "title_en"=> "Succesfully Order Cancel",
@@ -759,6 +765,9 @@ class OrderApiController extends Controller
                 //Restaurant
                 $res_client = new Client();
                 $res_token=$check_order->restaurant->restaurant_fcm_token;
+                $orderId=(string)$check_order->order_id;
+                $orderstatusId=(string)$check_order->order_status_id;
+                $orderType=(string)$check_order->order_type;
                 $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                 if($res_token){
                     $res_client->post($res_url,[
@@ -766,9 +775,9 @@ class OrderApiController extends Controller
                             "to"=>$res_token,
                             "data"=> [
                                 "type"=> "restaurant_cancel_order",
-                                "order_id"=>$check_order->order_id,
-                                "order_status_id"=>$check_order->order_status_id,
-                                "order_type"=>$check_order->order_type,
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
                                 "title_mm"=> "Succesfully Order Cancel",
                                 "body_mm"=> "You success cancel customer order!",
                                 "title_en"=> "Succesfully Order Cancel",
@@ -870,6 +879,9 @@ class OrderApiController extends Controller
 
                     $rider_client = new Client();
                     $rider_token=$rider_fcm_token;
+                    $orderId=(string)$customer_orders->order_id;
+                    $orderstatusId=(string)$customer_orders->order_status_id;
+                    $orderType=(string)$customer_orders->order_type;
                     $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
                     if($rider_token){
                         $rider_client->post($url,[
@@ -877,9 +889,9 @@ class OrderApiController extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "new_order",
-                                    "order_id"=>$customer_orders->order_id,
-                                    "order_status_id"=>$customer_orders->order_status_id,
-                                    "order_type"=>$customer_orders->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Incomed",
                                     "body_mm"=> "One new order is incomed! Please check it!",
                                     "title_en"=> "Order Incomed",
@@ -967,6 +979,9 @@ class OrderApiController extends Controller
                     }
                     $rider_client = new Client();
                     $token_rider=$rider_fcm_token;
+                    $orderId=(string)$customer_orders->order_id;
+                    $orderstatusId=(string)$customer_orders->order_status_id;
+                    $orderType=(string)$customer_orders->order_type;
                     $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
                     if($token_rider){
                         $rider_client->post($url,[
@@ -974,9 +989,9 @@ class OrderApiController extends Controller
                                 "to"=>$token_rider,
                                 "data"=> [
                                     "type"=> "ready_pickup_order",
-                                    "order_id"=>$customer_orders->order_id,
-                                    "order_status_id"=>$customer_orders->order_status_id,
-                                    "order_type"=>$customer_orders->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order is Ready to Pick Up",
                                     "body_mm"=> "=Restaurant has prepared the order! Pick it up quickly!",
                                     "title_en"=> "Order is Ready to Pick Up",
@@ -1812,6 +1827,9 @@ class OrderApiController extends Controller
                 $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->first();
                 $restaurant_client = new Client();
                 $restaurant_token=$restaurant_check->restaurant_fcm_token;
+                $orderId=(string)$customer_orders->order_id;
+                $orderstatusId=(string)$customer_orders->order_status_id;
+                $orderType=(string)$customer_orders->order_type;
                 if($restaurant_token){
                     $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                     $restaurant_client->post($restaurant_url,[
@@ -1819,9 +1837,9 @@ class OrderApiController extends Controller
                             "to"=>$restaurant_token,
                             "data"=> [
                                 "type"=> "new_order",
-                                "order_id"=>$customer_orders->order_id,
-                                "order_status_id"=>$customer_orders->order_status_id,
-                                "order_type"=>$customer_orders->order_type,
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
                                 "title_mm"=> "Order Notification",
                                 "body_mm"=> "One new order is received! Please check it!",
                                 "title_en"=> "Order Notification",

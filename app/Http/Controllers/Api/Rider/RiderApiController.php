@@ -635,6 +635,10 @@ class RiderApicontroller extends Controller
                     "order_status_id"=>$order_status_id,
                 ]);
 
+                $orderId=(string)$order->order_id;
+                $orderstatusId=(string)$order->order_status_id;
+                $orderType=(string)$order->order_type;
+
                 if($order_status_id=="4"){
                     $rider->is_order=1;
                     $rider->update();
@@ -648,9 +652,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_accept_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Accepted",
                                     "body_mm"=> "You accept the food order! Go to restaurant quickly!",
                                     "title_en"=> "Order Accepted",
@@ -672,9 +676,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$res_token,
                                 "data"=> [
                                     "type"=> "rider_accept_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Accepted by Rider",
                                     "body_mm"=> "Order is accepted by rider! He is coming!",
                                     "title_en"=> "Order Accepted by Rider",
@@ -727,9 +731,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$res_token,
                                 "data"=> [
                                     "type"=> "rider_arrived",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Rider Arrived",
                                     "body_mm"=> "Rider arrived for taking customer’s order",
                                     "title_en"=> "Rider Arrived",
@@ -782,9 +786,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$res_token,
                                 "data"=> [
                                     "type"=> "rider_start_delivery",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Rider Start Delivery",
                                     "body_mm"=> "Rider start delivery to customer!",
                                     "title_en"=> "Rider Start Delivery",
@@ -840,9 +844,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_order_finished",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Finished",
                                     "body_mm"=> "Good Day! Order is finished.Thanks very much!",
                                     "title_en"=> "Order Finished",
@@ -863,9 +867,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$res_token,
                                 "data"=> [
                                     "type"=> "rider_order_finished",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Finished",
                                     "body_mm"=> "Good Day! Order is finished.Thanks very much!",
                                     "title_en"=> "Order Finished",
@@ -925,9 +929,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_accept_parcel_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Parcel Order Accepted",
                                     "body_mm"=> "You accept the parcel order! Go to pick it up quickly!",
                                     "title_en"=> "Parcel Order Accepted",
@@ -980,9 +984,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_arrived_pickup_address",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Arrived to pick up Parcel",
                                     "body_mm"=> "You arrived pickup address for parcel order!",
                                     "title_en"=> "Arrived to pick up Parcel",
@@ -1034,9 +1038,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_pickup_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Parcel Picked Up",
                                     "body_mm"=> "You has picked up parcel order!",
                                     "title_en"=> "Parcel Picked Up",
@@ -1088,9 +1092,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_start_delivery_parcel",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Start Delivery",
                                     "body_mm"=> "You start delivery parcel order! Go to Drop Address!",
                                     "title_en"=> "Start Delivery",
@@ -1145,9 +1149,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_parcel_order_finished",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Accepted",
                                     "body_mm"=> "You has delivered the parcel order to recipient! Order Finished!",
                                     "title_en"=> "Order Accepted",
@@ -1201,9 +1205,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_parcel_cancel_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Order Canceled",
                                     "body_mm"=> "You has canceled the order successfully!",
                                     "title_en"=> "Order Canceled",
@@ -1215,7 +1219,7 @@ class RiderApicontroller extends Controller
                         ]);
                     }
 
-                    // //customer
+                    //customer
                     $cus_client = new Client();
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
@@ -1258,9 +1262,9 @@ class RiderApicontroller extends Controller
                                 "to"=>$rider_token,
                                 "data"=> [
                                     "type"=> "rider_customer_notfound",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
                                     "title_mm"=> "Customer Not Found",
                                     "body_mm"=> "You not found the customer's plac",
                                     "title_en"=> "Customer Not Found",
@@ -1272,7 +1276,7 @@ class RiderApicontroller extends Controller
                         ]);
                     }
 
-                    // //customer
+                     //customer
                     $cus_client = new Client();
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
