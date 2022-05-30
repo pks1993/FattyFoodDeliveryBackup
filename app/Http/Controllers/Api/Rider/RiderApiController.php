@@ -411,7 +411,7 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->city_name;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
@@ -457,7 +457,7 @@ class RiderApicontroller extends Controller
                         $value->to_latitude=null;
                         $value->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
                         $value->to_parcel_city_name=$city_data->city_name;
                         $value->to_latitude=$city_data->latitude;
                         $value->to_longitude=$city_data->longitude;
@@ -519,7 +519,7 @@ class RiderApicontroller extends Controller
                         $value->to_latitude=null;
                         $value->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
                         $value->to_parcel_city_name=$city_data->city_name;
                         $value->to_latitude=$city_data->latitude;
                         $value->to_longitude=$city_data->longitude;
@@ -549,7 +549,7 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->city_name;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;

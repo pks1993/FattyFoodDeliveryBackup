@@ -75,7 +75,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<',500)
         // ->orderBy('distance','ASC')
         ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
@@ -92,6 +92,19 @@ class HomePageApiController extends Controller
             }else{
                 $data->is_wish=false;
             }
+            if($data->restaurant_emergency_status==0){
+                $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$data->restaurant_id)->first();
+                if($available->on_off==0){
+                    $data->restaurant_emergency_status=1;
+                }else{
+                    $current_time = Carbon::now()->format('H:i:s');
+                    if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                        $data->restaurant_emergency_status=0;
+                    }else{
+                        $data->restaurant_emergency_status=1;
+                    }
+                }
+            }
             array_push($recommend_data,$data);
         }
 
@@ -103,7 +116,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<',500)
         ->orderBy('distance','ASC')
         // ->orderBy('restaurant_emergency_status','ASC')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
@@ -290,7 +303,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-            // ->having('distance','<',500)
+            ->having('distance','<',500)
             // ->orderByRaw('(distance - sort_id) desc')
             ->orderBy('sort_id')
             ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
@@ -422,6 +435,20 @@ class HomePageApiController extends Controller
                 $value->delivery_fee=$customer_delivery_fee;
                 $value->rider_delivery_fee=$rider_delivery_fee;
 
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
+
                 array_push($restaurants_val,$value);
 
             }
@@ -446,7 +473,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<',500)
         ->orderBy('distance','ASC')
         ->join('states','states.state_id','=','restaurants.state_id')
         ->join('cities','cities.city_id','=','restaurants.city_id')
@@ -577,6 +604,20 @@ class HomePageApiController extends Controller
                 $value->distance_time=(int)$distances*2 + $value->average_time;
                 $value->delivery_fee=$customer_delivery_fee;
                 $value->rider_delivery_fee=$rider_delivery_fee;
+
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
                 array_push($restaurants_val,$value);
 
             }
@@ -620,6 +661,20 @@ class HomePageApiController extends Controller
                 $restaurants->is_wish=true;
             }else{
                 $restaurants->is_wish=false;
+            }
+
+            if($restaurants->restaurant_emergency_status==0){
+                $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$restaurants->restaurant_id)->first();
+                if($available->on_off==0){
+                    $restaurants->restaurant_emergency_status=1;
+                }else{
+                    $current_time = Carbon::now()->format('H:i:s');
+                    if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                        $restaurants->restaurant_emergency_status=0;
+                    }else{
+                        $restaurants->restaurant_emergency_status=1;
+                    }
+                }
             }
             array_push($data,$restaurants);
 

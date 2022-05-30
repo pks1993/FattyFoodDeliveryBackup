@@ -768,6 +768,7 @@ class RestaurantApiController extends Controller
             ->orwhere("food_name_ch","LIKE","%$search_name%")
             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
             ->get()->toArray();
+
             $restaurant=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
             $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
@@ -779,7 +780,7 @@ class RestaurantApiController extends Controller
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
-            // ->having('distance','<',500)
+            ->having('distance','<',500)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
             $data=[];
             foreach($restaurant as $value){
@@ -897,6 +898,20 @@ class RestaurantApiController extends Controller
                 $value->distance_time=(int)$distances*2 + $value->average_time;
                 $value->delivery_fee=$customer_delivery_fee;
                 $value->rider_delivery_fee=$rider_delivery_fee;
+
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
 
                 array_push($data,$value);
             }
@@ -1017,7 +1032,7 @@ class RestaurantApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<',500)
         ->whereIn('restaurant_category_id',$category_id)
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
 
@@ -1144,6 +1159,20 @@ class RestaurantApiController extends Controller
                 $value->distance_time=(int)$distances*2 + $value->average_time;
                 $value->delivery_fee=$customer_delivery_fee;
                 $value->rider_delivery_fee=$rider_delivery_fee;
+
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
                 array_push($restaurants_val,$value);
 
             }

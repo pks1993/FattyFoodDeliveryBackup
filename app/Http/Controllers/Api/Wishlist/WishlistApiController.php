@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Wishlist\Wishlist;
 use App\Models\Restaurant\Restaurant;
+use App\Models\Restaurant\RestaurantAvailableTime;
+use Illuminate\Support\Carbon;
 use DB;
 
 class WishlistApiController extends Controller
@@ -178,6 +180,20 @@ class WishlistApiController extends Controller
                 $value->restaurant->distance_time=(int)$distances*2 + $value->average_time;
                 $value->restaurant->delivery_fee=$customer_delivery_fee;
                 $value->restaurant->rider_delivery_fee=$rider_delivery_fee;
+
+                if($value->restaurant->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant->restaurant_emergency_status=1;
+                        }
+                    }
+                }
 
             array_push($data,$value);
         }

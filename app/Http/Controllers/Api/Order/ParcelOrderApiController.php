@@ -520,7 +520,7 @@ class ParcelOrderApiController extends Controller
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->to_parcel_city_id)->first();
                         $orders->to_parcel_city_name=$city_data->city_name;
                         $orders->to_latitude=$city_data->latitude;
                         $orders->to_longitude=$city_data->longitude;
@@ -552,7 +552,7 @@ class ParcelOrderApiController extends Controller
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->to_parcel_city_id)->first();
                         $orders->to_parcel_city_name=$city_data->city_name;
                         $orders->to_latitude=$city_data->latitude;
                         $orders->to_longitude=$city_data->longitude;
@@ -967,7 +967,7 @@ class ParcelOrderApiController extends Controller
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->to_parcel_city_id)->first();
                         $orders->to_parcel_city_name=$city_data->city_name;
                         $orders->to_latitude=$city_data->latitude;
                         $orders->to_longitude=$city_data->longitude;
@@ -998,7 +998,7 @@ class ParcelOrderApiController extends Controller
                         $orders->to_latitude=null;
                         $orders->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->to_parcel_city_id)->first();
                         $orders->to_parcel_city_name=$city_data->city_name;
                         $orders->to_latitude=$city_data->latitude;
                         $orders->to_longitude=$city_data->longitude;
