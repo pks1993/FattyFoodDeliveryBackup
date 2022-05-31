@@ -1289,8 +1289,21 @@ class OrderApiController extends Controller
             }else{
                 $customer_orders->customer_address->is_default=false;
             }
-            array_push($data,$customer_orders);
         }
+        if($customer_orders->from_parcel_city_id==0){
+            $customer_orders->from_parcel_city_name=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$city_data->city_name;
+        }
+        if($customer_orders->to_parcel_city_id==0){
+            $customer_orders->to_parcel_city_name=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$city_data->city_name;
+        }
+        array_push($data,$customer_orders);
+
 
         if($customer_orders){
             return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
