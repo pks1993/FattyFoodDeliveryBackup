@@ -758,7 +758,7 @@ class RestaurantApiController extends Controller
             },'sub_item.option' => function($option){
                 $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
             },'restaurant'=>function ($restaurant){
-                $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch')->get();
+                $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status')->get();
             },'restaurant.category' => function ($category){
                 $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
             }])
@@ -767,7 +767,27 @@ class RestaurantApiController extends Controller
             ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere("food_name_ch","LIKE","%$search_name%")
             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
-            ->get()->toArray();
+            ->get();
+
+            $item=[];
+            foreach($food as $value){
+                if($value->restaurant->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant->restaurant_emergency_status=1;
+                        }
+                    }
+                }
+
+                array_push($item,$value);
+            }
+
 
             $restaurant=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
