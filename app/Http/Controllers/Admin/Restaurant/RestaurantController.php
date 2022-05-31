@@ -167,6 +167,10 @@ class RestaurantController extends Controller
     {
         $start_date=$request['min'];
         $end_date=$request['max'];
+        // if(empty($start_date) && empty($end_date)){
+        //     $start_date=Carbon::now()->subDays(10);
+        //     $end_date=Carbon::now();
+        // }
         // $end_date="";
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
@@ -176,7 +180,7 @@ class RestaurantController extends Controller
         // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
 
         $cus_order_list=CustomerOrder::whereDoesntHave('restaurant_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(bill_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->where('order_type','food')->where('order_status_id','7')->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(item_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->where('order_type','food')->where('order_status_id','7')->get();
 
         $data=[];
         foreach($cus_order_list as $value){
