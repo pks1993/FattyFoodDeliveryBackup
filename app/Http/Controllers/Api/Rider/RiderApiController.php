@@ -396,7 +396,7 @@ class RiderApicontroller extends Controller
                     $kilometer1=number_format((float)$distance1, 2, '.', '');
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
-                    if($value1->from_parcel_city_id==null){
+                    if($value1->from_parcel_city_id==0){
                         $value1->from_parcel_city_name=null;
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
@@ -406,7 +406,7 @@ class RiderApicontroller extends Controller
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
-                    if($value1->to_parcel_city_id==null){
+                    if($value1->to_parcel_city_id==0){
                         $value1->to_parcel_city_name=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
@@ -442,7 +442,7 @@ class RiderApicontroller extends Controller
                     $kilometer=number_format((float)$distance, 2, '.', '');
                     $value->distance=(float) $kilometer;
                     $value->distance_time=(int)$kilometer*2 + $value->average_time;
-                    if($value->from_parcel_city_id==null){
+                    if($value->from_parcel_city_id==0){
                         $value->from_parcel_city_name=null;
                         $value->from_latitude=null;
                         $value->from_longitude=null;
@@ -452,7 +452,7 @@ class RiderApicontroller extends Controller
                         $value->from_latitude=$city_data->latitude;
                         $value->from_longitude=$city_data->longitude;
                     }
-                    if($value->to_parcel_city_id==null){
+                    if($value->to_parcel_city_id==0){
                         $value->to_parcel_city_name=null;
                         $value->to_latitude=null;
                         $value->to_longitude=null;
@@ -504,7 +504,7 @@ class RiderApicontroller extends Controller
                     $kilometer=number_format((float)$distance, 2, '.', '');
                     $value->distance=(float) $kilometer;
                     $value->distance_time=(int)$kilometer*2 + $value->average_time;
-                    if($value->from_parcel_city_id==null){
+                    if($value->from_parcel_city_id==0){
                         $value->from_parcel_city_name=null;
                         $value->from_latitude=null;
                         $value->from_longitude=null;
@@ -514,7 +514,7 @@ class RiderApicontroller extends Controller
                         $value->from_latitude=$city_data->latitude;
                         $value->from_longitude=$city_data->longitude;
                     }
-                    if($value->to_parcel_city_id==null){
+                    if($value->to_parcel_city_id==0){
                         $value->to_parcel_city_name=null;
                         $value->to_latitude=null;
                         $value->to_longitude=null;
@@ -534,7 +534,7 @@ class RiderApicontroller extends Controller
                     $kilometer1=number_format((float)$distance1, 2, '.', '');
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
-                    if($value1->from_parcel_city_id==null){
+                    if($value1->from_parcel_city_id==0){
                         $value1->from_parcel_city_name=null;
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
@@ -544,7 +544,7 @@ class RiderApicontroller extends Controller
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
-                    if($value1->to_parcel_city_id==null){
+                    if($value1->to_parcel_city_id==0){
                         $value1->to_parcel_city_name=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;

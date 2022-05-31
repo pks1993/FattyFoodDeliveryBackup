@@ -21,6 +21,7 @@ use App\Models\Rider\Rider;
 use DB;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use App\Models\City\ParcelCity;
 
 class OrderApiController extends Controller
 {
@@ -209,7 +210,40 @@ class OrderApiController extends Controller
                 return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order ,'past_order'=>$past_order]);
             }elseif($order_type=="parcel"){
                 $active_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->get();
+                $data=[];
+                foreach($active_order as $value){
+                    if($value->from_parcel_city_id==0){
+                        $value->from_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                    }
+                    if($value->to_parcel_city_id==0){
+                        $value->to_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                    }
+                    array_push($data,$value);
+                }
+
                 $past_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->get();
+                $item=[];
+                foreach($past_order as $order){
+                    if($order->from_parcel_city_id==0){
+                        $order->from_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$order->from_parcel_city_id)->first();
+                        $order->from_parcel_city_name=$city_data->city_name;
+                    }
+                    if($order->to_parcel_city_id==0){
+                        $order->to_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
+                        $order->to_parcel_city_name=$city_data->city_name;
+                    }
+                    array_push($item,$order);
+                }
 
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order]);
@@ -821,6 +855,8 @@ class OrderApiController extends Controller
 
                 $customer_check=Customer::where('customer_id',$customer_orders->customer_id)->first();
 
+                // return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
+
                 if($request['order_status_id']=="3"){
                     // customer
                     $cus_client = new Client();
@@ -878,32 +914,66 @@ class OrderApiController extends Controller
                     }
 
                     $rider_client = new Client();
-                    $rider_token=$rider_fcm_token;
-                    $orderId=(string)$customer_orders->order_id;
-                    $orderstatusId=(string)$customer_orders->order_status_id;
-                    $orderType=(string)$customer_orders->order_type;
-                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                    if($rider_token){
-                        $rider_client->post($url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "new_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Incomed",
-                                    "body_mm"=> "One new order is incomed! Please check it!",
-                                    "title_en"=> "Order Incomed",
-                                    "body_en"=> "One new order is incomed! Please check it!",
-                                    "title_ch"=> "订单通知",
-                                    "body_ch"=> "有新订单!请查看！"
+                        $rider_token=$rider_fcm_token;
+                        $orderId=(string)$customer_orders->order_id;
+                        $orderstatusId=(string)$customer_orders->order_status_id;
+                        $orderType=(string)$customer_orders->order_type;
+                        $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        if($rider_token){
+                            $request=$rider_client->post($url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Incomed",
+                                        "body_mm"=> "One new order is incomed! Please check it!",
+                                        "title_en"=> "Order Incomed",
+                                        "body_en"=> "One new order is incomed! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "有新订单!请查看！"
+                                    ],
                                 ],
-                            ],
-                        ]);
-                    }
+                            ]);
+                        }
 
-                    // return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
+
+                    // try {
+                    //     $rider_client = new Client();
+                    //     $rider_token=$rider_fcm_token;
+                    //     $orderId=(string)$customer_orders->order_id;
+                    //     $orderstatusId=(string)$customer_orders->order_status_id;
+                    //     $orderType=(string)$customer_orders->order_type;
+                    //     $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    //     if($rider_token){
+                    //         $request=$rider_client->post($url,[
+                    //             'json' => [
+                    //                 "to"=>$rider_token,
+                    //                 "data"=> [
+                    //                     "type"=> "new_order",
+                    //                     "order_id"=>$orderId,
+                    //                     "order_status_id"=>$orderstatusId,
+                    //                     "order_type"=>$orderType,
+                    //                     "title_mm"=> "Order Incomed",
+                    //                     "body_mm"=> "One new order is incomed! Please check it!",
+                    //                     "title_en"=> "Order Incomed",
+                    //                     "body_en"=> "One new order is incomed! Please check it!",
+                    //                     "title_ch"=> "订单通知",
+                    //                     "body_ch"=> "有新订单!请查看！"
+                    //                 ],
+                    //             ],
+                    //         ]);
+                    //     }
+
+                    //     $response = $request->getBody();
+
+                    // } catch (Throwable $re) {
+                    //     $response=$re;
+                    // }
+
+                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
 
                 }
                 elseif($request['order_status_id']=="2"){
