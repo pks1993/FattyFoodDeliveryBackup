@@ -200,15 +200,15 @@ class CategoryController extends Controller
                 $categoryassign=CategoryAssign::where('category_type_id',$category_sort2->category_type_id)->orderBy('sort_id')->limit($count)->get();
                 $sort_id=$categoryassign[$count_minutes]->sort_id;
                 $assign_id=$categoryassign[$count_minutes]->category_assign_id;
-                // $assign_sort_id=$sort_id+1;
+                $assign_sort_id=$sort_id+1;
 
                 foreach($posts_as as $value){
                     if($value->category_assign_id == 8){
                         $value->update(['category_type_id'=>$category_sort2->category_type_id,'category_sort_id'=>$category_sort2->sort_id,'sort_id'=>$sort_id]);
                     }
-                    // if($assign_id==$value->category_assign_id){
-                    //     $value->update(['sort_id'=>$assign_sort_id]);
-                    // }
+                    if($assign_id==$value->category_assign_id){
+                        $value->update(['sort_id'=>$assign_sort_id]);
+                    }
                 }
             }else{
                 if($count1+$count2+$count3 > 6){
@@ -218,15 +218,15 @@ class CategoryController extends Controller
                     $categoryassign=CategoryAssign::where('category_type_id',$category_sort3->category_type_id)->orderBy('sort_id')->limit($count)->get();
                     $sort_id=$categoryassign[$count_minutes]->sort_id;
                     $assign_id=$categoryassign[$count_minutes]->category_assign_id;
-                    // $assign_sort_id=$sort_id+1;
+                    $assign_sort_id=$sort_id+1;
 
                     foreach($posts_as as $value){
                         if($value->category_assign_id == 8){
                             $value->update(['category_type_id'=>$category_sort3->category_type_id,'category_sort_id'=>$category_sort3->sort_id,'sort_id'=>$sort_id]);
                         }
-                        // if($assign_id==$value->category_assign_id){
-                        //     $value->update(['sort_id'=>$assign_sort_id]);
-                        // }
+                        if($assign_id==$value->category_assign_id){
+                            $value->update(['sort_id'=>$assign_sort_id]);
+                        }
                     }
                 }
             }
