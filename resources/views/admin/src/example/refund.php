@@ -1,8 +1,8 @@
 <?php
-    if(!isset($_SESSION)) 
-    { 
-        session_start(); 
-    } 
+    if(!isset($_SESSION))
+    {
+        session_start();
+    }
 ?>
 
 <?php
@@ -11,16 +11,16 @@ require_once __DIR__ . '/../lib/io/RefundRequest.php';
 require_once __DIR__ . '/../lib/PaymentClient.php';
 
 //uat srver
-$servername = "localhost";
-$username = "root";
-$password = "Fatty@2021";
-$dbname = "FattyApplication";
-
-//production
 // $servername = "localhost";
 // $username = "root";
-// $password = "Fatty@Orikino#412F";
-// $dbname = "FattyDatabase";
+// $password = "Fatty@2021";
+// $dbname = "FattyApplication";
+
+//production
+$servername = "localhost";
+$username = "root";
+$password = "Fatty@Orikino#412F";
+$dbname = "FattyDatabase";
 
 // $servername = "localhost";
 // $username = "sithu";
@@ -52,7 +52,7 @@ try {
         $res = $client->refund($refundRequest);
         $response=$res->Response;
 
-        
+
         if($response->result=="SUCCESS" && $response->code=="0"){
             $order_id=$customer_orders->order_id;
             $result1='"'.$response->result.'"';
@@ -96,7 +96,7 @@ try {
             }
 
             $playLoad1 = json_encode($field1);
-                        
+
             $curl_session1 = curl_init();
             curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
             curl_setopt($curl_session1, CURLOPT_POST, true);
@@ -130,7 +130,7 @@ try {
             $result=json_encode($arrayName);
             echo $result;
         }
-        
+
     } catch (Throwable $e) {
         $sql = "UPDATE customer_orders SET order_status_id=19 WHERE order_id=$customer_orders->order_id;";
         if ($conn->query($sql) === TRUE) {
