@@ -12,25 +12,26 @@ class ExampleConfig implements ConfigInterface
 {
     public function getAppId()
     {
-        return "kpa5230efdfc0b4fc7a69b5ed348b597";
+        // return "kpa5230efdfc0b4fc7a69b5ed348b597";
+        return "kpbdd5ce1083eb4eb0b1d3b1effb0137";
     }
 
     public function getMerchantCode()
     {
-        return "200199";
+        // return "200199";
+        return "200135";
     }
 
     public function getNotifyUrl()
     {
-        return "http://159.223.66.158/api/fatty/main/admin/kbz/pay/notify_url";
-        // return "http://174.138.22.156/api/fatty/main/admin/kbz/pay/notify_url";
-        // return "http://localhost:8083/receive_notify.php";
-        //return "http://test.payment.com/notify";
+        // return "http://159.223.66.158/api/fatty/main/admin/kbz/pay/notify_url";
+        return "http://174.138.22.156/api/fatty/main/admin/kbz/pay/notify_url";
     }
 
     public function getMerchantKey()
     {
-        return "Fattyfood123456";
+        // return "Fattyfood123456";
+        return "85bb9b77fa45f1d85cc3e70ee0e3e97c";
     }
 
     public function getSslKeyPath()
@@ -55,21 +56,20 @@ class ExampleConfig implements ConfigInterface
 
     public function getPlaceOrderUrl()
     {
-     //   return "http://100.100.181.252:9007/payment/gateway/precreate";
-        return "http://api.kbzpay.com/payment/gateway/uat/precreate";
+        // return "http://api.kbzpay.com/payment/gateway/uat/precreate";
+        return "http://api.kbzpay.com/payment/gateway/precreate";
     }
 
     public function getQueryOrderUrl()
     {
-        // return "http://100.100.181.252:9007/payment/gateway/queryorder";
-        return "http://api.kbzpay.com/payment/gateway/uat/queryorder";
+        // return "http://api.kbzpay.com/payment/gateway/uat/queryorder";
+        return "http://api.kbzpay.com/payment/gateway/queryorder";
     }
 
     public function getRefundUrl()
     {
-        // return "https://100.100.181.252:443/payment/gateway/refund";
-        // return "http://api.kbzpay.com/payment/gateway/uat/refund";
-        return "https://api.kbzpay.com:18008/payment/gateway/uat/refund";
+        return "https://api.kbzpay.com:18008/payment/gateway/refund";
+        // return "https://api.kbzpay.com:18008/payment/gateway/uat/refund";
     }
 
 }

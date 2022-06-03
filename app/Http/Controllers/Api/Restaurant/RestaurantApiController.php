@@ -751,22 +751,44 @@ class RestaurantApiController extends Controller
         $customer_id=$request['customer_id'];
         $latitude=$request['latitude'];
         $longitude=$request['longitude'];
-
+        // DB::raw("REPLACE(`restaurant_name_en`, ' ', '') AS name_en") (selece data)
         if($search_name){
             $food=Food::with(['sub_item'=>function($sub_item){
                 $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
             },'sub_item.option' => function($option){
                 $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
             },'restaurant'=>function ($restaurant){
-                $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch')->get();
+                $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status')->get();
             },'restaurant.category' => function ($category){
                 $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
             }])
             ->orwhere("food_name_mm","LIKE","%$search_name%")
-            ->orwhere("food_name_en","LIKE","%$search_name%")
+            // ->orwhere("food_name_en","LIKE","%$search_name%")
+            ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere("food_name_ch","LIKE","%$search_name%")
             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
-            ->get()->toArray();
+            ->get();
+
+            $item=[];
+            foreach($food as $value){
+                if($value->restaurant->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant->restaurant_emergency_status=1;
+                        }
+                    }
+                }
+
+                array_push($item,$value);
+            }
+
+
             $restaurant=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
             $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
@@ -776,54 +798,147 @@ class RestaurantApiController extends Controller
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
-            ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
+            ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
-            // ->having('distance','<',500)
+            ->having('distance','<',500)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
-            // foreach($result as $value){
-            //     array_push($result1,$value);
-            // }
+            $data=[];
+            foreach($restaurant as $value){
+                $distances= number_format((float)$value->distance, 1, '.', '');
+                $distances_customer_restaurant= number_format((float)$value->distance, 2, '.', '');
+
+                if($distances < 2) {
+                    $rider_delivery_fee=0;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 2){
+                    $rider_delivery_fee=600;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 2 && $distances < 3.5){
+                    $rider_delivery_fee=700;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 3.5){
+                    $rider_delivery_fee=800;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 3.5 && $distances < 5){
+                    $rider_delivery_fee=900;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 5){
+                    $rider_delivery_fee=1000;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 5 && $distances < 6.5){
+                    $rider_delivery_fee=1100;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 6.5){
+                    $rider_delivery_fee=1200;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 6.5 && $distances < 8){
+                    $rider_delivery_fee=1300;
+                    $customer_delivery_fee=0;
+                }elseif($distances==8){
+                    $rider_delivery_fee=2500;
+                    $customer_delivery_fee=2200;
+                }elseif($distances > 8 && $distances < 9.5){
+                    $rider_delivery_fee=2700;
+                    $customer_delivery_fee=2400;
+                }elseif($distances==9.5){
+                    $rider_delivery_fee=2900;
+                    $customer_delivery_fee=2600;
+                }elseif($distances > 9.5 && $distances < 11){
+                    $rider_delivery_fee=3100;
+                    $customer_delivery_fee=2800;
+                }elseif($distances==11){
+                    $rider_delivery_fee=3300;
+                    $customer_delivery_fee=3000;
+                }elseif($distances > 11 && $distances < 12.5){
+                    $rider_delivery_fee=3500;
+                    $customer_delivery_fee=3200;
+                }elseif($distances==12.5){
+                    $rider_delivery_fee=3700;
+                    $customer_delivery_fee=3400;
+                }elseif($distances > 12.5 && $distances < 14){
+                    $rider_delivery_fee=3900;
+                    $customer_delivery_fee=3600;
+                }elseif($distances==14){
+                    $rider_delivery_fee=4100;
+                    $customer_delivery_fee=3800;
+                }elseif($distances > 14 && $distances < 15.5){
+                    $rider_delivery_fee=4400;
+                    $customer_delivery_fee=4100;
+                }elseif($distances==15.5){
+                    $rider_delivery_fee=4700;
+                    $customer_delivery_fee=4400;
+                }elseif($distances > 15.5 && $distances < 17){
+                    $rider_delivery_fee=5000;
+                    $customer_delivery_fee=4700;
+                }elseif($distances==17){
+                    $rider_delivery_fee=5300;
+                    $customer_delivery_fee=5000;
+                }elseif($distances > 17 && $distances < 18.5){
+                    $rider_delivery_fee=5600;
+                    $customer_delivery_fee=5300;
+                }elseif($distances==18.5){
+                    $rider_delivery_fee=5900;
+                    $customer_delivery_fee=5600;
+                }elseif($distances > 18.5 && $distances < 20){
+                    $rider_delivery_fee=6200;
+                    $customer_delivery_fee=5900;
+                }elseif($distances==20){
+                    $rider_delivery_fee=6500;
+                    $customer_delivery_fee=6200;
+                }elseif($distances > 20 && $distances < 21.5){
+                    $rider_delivery_fee=6800;
+                    $customer_delivery_fee=6500;
+                }elseif($distances==21.5){
+                    $rider_delivery_fee=7100;
+                    $customer_delivery_fee=6800;
+                }elseif($distances > 21.5 && $distances < 23){
+                    $rider_delivery_fee=7400;
+                    $customer_delivery_fee=7100;
+                }elseif($distances==23){
+                    $rider_delivery_fee=7700;
+                    $customer_delivery_fee=7400;
+                }elseif($distances > 23 && $distances < 24.5){
+                    $rider_delivery_fee=8000;
+                    $customer_delivery_fee=7700;
+                }elseif($distances==24.5){
+                    $rider_delivery_fee=8300;
+                    $customer_delivery_fee=8000;
+                }elseif($distances > 24.5 && $distances < 26){
+                    $rider_delivery_fee=8600;
+                    $customer_delivery_fee=8300;
+                }elseif($distances >= 26){
+                    $rider_delivery_fee=8900;
+                    $customer_delivery_fee=8600;
+                }else{
+                    $rider_delivery_fee=8900;
+                    $customer_delivery_fee=8600;
+                }
+
+                $value->distance=(float)$distances_customer_restaurant;
+                $value->distance_time=(int)$distances*2 + $value->average_time;
+                $value->delivery_fee=$customer_delivery_fee;
+                $value->rider_delivery_fee=$rider_delivery_fee;
+
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
+
+                array_push($data,$value);
+            }
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>$food,'restaurant'=>$restaurant]]);
         }else{
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>[],'restaurant'=>[]]]);
         }
-
-
-
-            // $restaurants_val=[];
-
-            // foreach($result as $value){
-            //     $distance=$value->distance;
-            //     $kilometer= number_format((float)$distance, 1, '.', '');
-
-            //     if($kilometer <= 3 ){
-            //         $delivery_fee=1000;
-            //     }
-            //     else{
-            //         $number=explode('.', $kilometer);
-            //         $addOneKilometer=$number[0] - 3;
-            //         $folat_number=$number[1];
-            //         if($folat_number=="0"){
-            //             $delivery_fee=$addOneKilometer * 300 + 1000;
-            //         }else{
-            //             if($folat_number <= 5){
-            //                 $delivery_fee=($addOneKilometer * 300) + 150 + 1000;
-            //             }else{
-            //                 $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
-            //             }
-            //         }
-            //     }
-            //     if($value->wishlist==1){
-            //         $value->is_wish=true;
-            //     }else{
-            //         $value->is_wish=false;
-            //     }
-            //     $value->distance=(float)$kilometer;
-            //     $value->distance_time=(int)$kilometer*2 + $value->average_time;
-            //     $value->delivery_fee=$delivery_fee;
-            //     array_push($restaurants_val,$value);
-
-            // }
     }
     public function food_search(Request $request)
     {
@@ -867,7 +982,7 @@ class RestaurantApiController extends Controller
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
-            // ->having('distance','<',500)
+            ->having('distance','<',500)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
 
             $restaurants_val=[];
@@ -937,31 +1052,121 @@ class RestaurantApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<',500)
         ->whereIn('restaurant_category_id',$category_id)
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
 
         $restaurants_val=[];
             foreach($restaurants as $value){
                 $distance=$value->distance;
-                $kilometer= number_format((float)$distance, 1, '.', '');
+                $distances= number_format((float)$distance, 1, '.', '');
+                $distances_customer_restaurant= number_format((float)$distance, 2, '.', '');
 
-                if($kilometer <= 3 ){
-                    $delivery_fee=1000;
-                }
-                else{
-                    $number=explode('.', $kilometer);
-                    $addOneKilometer=$number[0] - 3;
-                    $folat_number=$number[1];
-                    if($folat_number=="0"){
-                        $delivery_fee=$addOneKilometer * 300 + 1000;
-                    }else{
-                        if($folat_number <= 5){
-                            $delivery_fee=($addOneKilometer * 300) + 150 + 1000;
-                        }else{
-                            $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
-                        }
-                    }
+                if($distances < 2) {
+                    $rider_delivery_fee=0;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 2){
+                    $rider_delivery_fee=600;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 2 && $distances < 3.5){
+                    $rider_delivery_fee=700;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 3.5){
+                    $rider_delivery_fee=800;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 3.5 && $distances < 5){
+                    $rider_delivery_fee=900;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 5){
+                    $rider_delivery_fee=1000;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 5 && $distances < 6.5){
+                    $rider_delivery_fee=1100;
+                    $customer_delivery_fee=0;
+                }elseif($distances == 6.5){
+                    $rider_delivery_fee=1200;
+                    $customer_delivery_fee=0;
+                }elseif($distances > 6.5 && $distances < 8){
+                    $rider_delivery_fee=1300;
+                    $customer_delivery_fee=0;
+                }elseif($distances==8){
+                    $rider_delivery_fee=2500;
+                    $customer_delivery_fee=2200;
+                }elseif($distances > 8 && $distances < 9.5){
+                    $rider_delivery_fee=2700;
+                    $customer_delivery_fee=2400;
+                }elseif($distances==9.5){
+                    $rider_delivery_fee=2900;
+                    $customer_delivery_fee=2600;
+                }elseif($distances > 9.5 && $distances < 11){
+                    $rider_delivery_fee=3100;
+                    $customer_delivery_fee=2800;
+                }elseif($distances==11){
+                    $rider_delivery_fee=3300;
+                    $customer_delivery_fee=3000;
+                }elseif($distances > 11 && $distances < 12.5){
+                    $rider_delivery_fee=3500;
+                    $customer_delivery_fee=3200;
+                }elseif($distances==12.5){
+                    $rider_delivery_fee=3700;
+                    $customer_delivery_fee=3400;
+                }elseif($distances > 12.5 && $distances < 14){
+                    $rider_delivery_fee=3900;
+                    $customer_delivery_fee=3600;
+                }elseif($distances==14){
+                    $rider_delivery_fee=4100;
+                    $customer_delivery_fee=3800;
+                }elseif($distances > 14 && $distances < 15.5){
+                    $rider_delivery_fee=4400;
+                    $customer_delivery_fee=4100;
+                }elseif($distances==15.5){
+                    $rider_delivery_fee=4700;
+                    $customer_delivery_fee=4400;
+                }elseif($distances > 15.5 && $distances < 17){
+                    $rider_delivery_fee=5000;
+                    $customer_delivery_fee=4700;
+                }elseif($distances==17){
+                    $rider_delivery_fee=5300;
+                    $customer_delivery_fee=5000;
+                }elseif($distances > 17 && $distances < 18.5){
+                    $rider_delivery_fee=5600;
+                    $customer_delivery_fee=5300;
+                }elseif($distances==18.5){
+                    $rider_delivery_fee=5900;
+                    $customer_delivery_fee=5600;
+                }elseif($distances > 18.5 && $distances < 20){
+                    $rider_delivery_fee=6200;
+                    $customer_delivery_fee=5900;
+                }elseif($distances==20){
+                    $rider_delivery_fee=6500;
+                    $customer_delivery_fee=6200;
+                }elseif($distances > 20 && $distances < 21.5){
+                    $rider_delivery_fee=6800;
+                    $customer_delivery_fee=6500;
+                }elseif($distances==21.5){
+                    $rider_delivery_fee=7100;
+                    $customer_delivery_fee=6800;
+                }elseif($distances > 21.5 && $distances < 23){
+                    $rider_delivery_fee=7400;
+                    $customer_delivery_fee=7100;
+                }elseif($distances==23){
+                    $rider_delivery_fee=7700;
+                    $customer_delivery_fee=7400;
+                }elseif($distances > 23 && $distances < 24.5){
+                    $rider_delivery_fee=8000;
+                    $customer_delivery_fee=7700;
+                }elseif($distances==24.5){
+                    $rider_delivery_fee=8300;
+                    $customer_delivery_fee=8000;
+                }elseif($distances > 24.5 && $distances < 26){
+                    $rider_delivery_fee=8600;
+                    $customer_delivery_fee=8300;
+                }elseif($distances >= 26){
+                    $rider_delivery_fee=8900;
+                    $customer_delivery_fee=8600;
+                }else{
+                    $rider_delivery_fee=8900;
+                    $customer_delivery_fee=8600;
                 }
 
                 if($value->wishlist==1){
@@ -970,9 +1175,24 @@ class RestaurantApiController extends Controller
                     $value->is_wish=false;
                 }
 
-                $value->distance=(float)$kilometer;
-                $value->distance_time=(int)$kilometer*2 + $value->average_time;
-                $value->delivery_fee=$delivery_fee;
+                $value->distance=(float)$distances_customer_restaurant;
+                $value->distance_time=(int)$distances*2 + $value->average_time;
+                $value->delivery_fee=$customer_delivery_fee;
+                $value->rider_delivery_fee=$rider_delivery_fee;
+
+                if($value->restaurant_emergency_status==0){
+                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                    if($available->on_off==0){
+                        $value->restaurant_emergency_status=1;
+                    }else{
+                        $current_time = Carbon::now()->format('H:i:s');
+                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                            $value->restaurant_emergency_status=0;
+                        }else{
+                            $value->restaurant_emergency_status=1;
+                        }
+                    }
+                }
                 array_push($restaurants_val,$value);
 
             }
@@ -1056,6 +1276,22 @@ class RestaurantApiController extends Controller
         }
         }
         return response()->json(['success'=>true]);
+    }
+
+    public function restaurant_token_update(Request $request)
+    {
+        $restaurant_id=$request['restaurant_id'];
+        $pushy_token=$request['pushy_token'];
+
+        $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        if($check_restaurant){
+            $check_restaurant->restaurant_fcm_token=$pushy_token;
+            $check_restaurant->update();
+            $restaurant=Restaurant::find($restaurant_id);
+            return response()->json(['success'=>true,'message'=>'successfully update pushy token','data'=>$restaurant]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'restaurant id is empty or not found in database']);
+        }
     }
 
 }

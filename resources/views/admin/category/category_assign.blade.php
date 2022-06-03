@@ -43,6 +43,7 @@
                                         <th class="text-center">#</th>
                                         <th class="text-center">SortNo.</th>
                                         <th class="text-center">#ID</th>
+                                        <th class="text-center">#sortId</th>
                                         <th>CategoryName</th>
                                         <th class="text-center">Type.</th>
                                         <th class="text-center">Image</th>
@@ -56,6 +57,7 @@
                                                 {{-- <td class="text-center" width="20px;">{{ $category->sort_id }}</td> --}}
                                                 <td class="text-center" width="20px;">{{ $loop->iteration }}</td>
                                                 <td class="text-center">{{ $category->category_assign_id }}</td>
+                                                <td class="text-center">{{ $category->sort_id }}</td>
                                                 <td class="text-left">{{ $category->category->restaurant_category_name_mm }} ({{ $category->category->restaurant_category_name_en }})</td>
                                                 <td class="text-center">
                                                     @if($category->category_type_id==1)

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRestaurantPaymentsTable extends Migration
+class CreateRiderTodayPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateRestaurantPaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('restaurant_payments', function (Blueprint $table) {
-            $table->id('restaurant_payment_id');
-            $table->unsignedBigInteger('restaurant_id')->nullable();
+        Schema::create('rider_today_payments', function (Blueprint $table) {
+            $table->id('rider_today_payment_id');
             $table->string('payment_voucher')->nullable()->default("V001");
-            $table->double('amount')->nullable();
-            $table->float('percentage')->nullable();
-            $table->float('total_amount')->nullable();
-            $table->float('pay_amount')->nullable();
-            $table->dateTime('last_offered_date')->nullable();
+            $table->unsignedBigInteger('rider_id')->nullable();
+            $table->integer('total_amount')->nullable();
+            $table->timestamp('start_offered_date')->nullable();
+            $table->timestamp('last_offered_date')->nullable();
             $table->integer('duration')->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();
@@ -35,6 +33,6 @@ class CreateRestaurantPaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('restaurant_payments');
+        Schema::dropIfExists('rider_today_payments');
     }
 }

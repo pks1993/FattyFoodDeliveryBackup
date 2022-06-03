@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use DB;
 use Carbon\Carbon;
+use App\Models\City\ParcelCity;
+use GuzzleHttp\Client;
 
 
 class RiderApicontroller extends Controller
@@ -211,84 +213,6 @@ class RiderApicontroller extends Controller
         // return response()->json(['success'=>true,'message'=>'this is office location','data'=>$location]);
     }
 
-    // public function rider_attendance(Request $request)
-    // {
-    //     $report_type=$request['report_type'];
-    //     $rider_id=(int)$request['rider_id'];
-    //     $latitude=(double)$request['latitude'];
-    //     $longitude=(double)$request['longitude'];
-
-    //     $rider_check=Rider::where('rider_id',$rider_id)->where('is_admin_approved','1')->first();
-
-    //     if(!empty($rider_check)){
-    //         if($report_type=="check_in" && $rider_check->rider_attendance_status=="0"){
-    //             $rider_report_history=new RiderReportHistory();
-    //             $rider_report_history->rider_id=$rider_id;
-    //             $rider_report_history->rider_checkin_latitude=$latitude;
-    //             $rider_report_history->rider_checkin_longitude=$longitude;
-    //             $rider_report_history->rider_checkin_time=now();
-    //             $rider_report_history->report_type=$report_type;
-    //             $rider_report_history->rider_attendance_status=1;
-    //             $rider_report_history->save();
-
-    //             RiderReport::create([
-    //                 "rider_id"=>$rider_id,
-    //                 "rider_checkin_latitude"=>$latitude,
-    //                 "rider_checkin_longitude"=>$longitude,
-    //                 "rider_checkin_time"=>now(),
-    //                 "report_type"=>$report_type,
-    //                 "rider_attendance_status"=>1,
-    //             ]);
-
-    //             $rider_check->rider_attendance_status=1;
-    //             $rider_check->update();
-
-    //             $rider_report=RiderReport::select('rider_report_id','rider_id','rider_checkin_latitude as latitude','rider_checkin_longitude as longitude','rider_checkout_latitude','rider_checkout_longitude',DB::raw("DATE_FORMAT(rider_checkin_time, '%d %b %Y |%h:%i %p') as rider_checkin_time"),DB::raw("DATE_FORMAT(rider_checkout_time, '%d %b %Y |%h:%i %p') as rider_checkout_time"),DB::raw("DATE_FORMAT(rider_checkin_time, '%d %b %Y |%h:%i %p') as current_date_time"),DB::raw("DATE_FORMAT(rider_checkin_time, '%h:%i %p') as clock_in"),DB::raw("DATE_FORMAT(rider_checkout_time, '%h:%i %p') as clock_out"),'rider_attendance_status','report_type','created_at','updated_at')->where('rider_id',$rider_id)->where('rider_attendance_status','1')->whereRaw('Date(rider_checkin_time) = CURDATE()')->orderBy('created_at','DESC')->first();
-
-    //             return response()->json(['success'=>true,'message'=>'successfull checkin rider attendance','data'=>$rider_report]);
-
-    //         }elseif($report_type=="check_out" && $rider_check->rider_attendance_status=="1"){
-    //             $rider_report_history=new RiderReportHistory();
-    //             $rider_report_history->rider_id=$rider_id;
-    //             $rider_report_history->rider_checkout_latitude=$latitude;
-    //             $rider_report_history->rider_checkout_longitude=$longitude;
-    //             $rider_report_history->rider_checkout_time=now();
-    //             $rider_report_history->report_type=$report_type;
-    //             $rider_report_history->rider_attendance_status=0;
-    //             $rider_report_history->save();
-
-    //             $rider_report_data=RiderReport::where('rider_id',$rider_id)->where('rider_attendance_status','1')->whereRaw('Date(rider_checkin_time) = CURDATE()')->orderBy('created_at','DESC')->first();
-    //             if(!empty($rider_report_data)){
-    //                 $rider_report_data->rider_checkout_latitude=$latitude;
-    //                 $rider_report_data->rider_checkout_longitude=$longitude;
-    //                 $rider_report_data->rider_checkout_time=now();
-    //                 $rider_report_data->report_type=$report_type;
-    //                 $rider_report_data->rider_attendance_status=0;
-    //                 $rider_report_data->update();
-    //             }
-
-    //             $rider_check->rider_attendance_status=0;
-    //             $rider_check->update();
-
-    //             $rider_report=RiderReport::select('rider_report_id','rider_id','rider_checkin_latitude','rider_checkin_longitude','rider_checkout_latitude','rider_checkout_longitude',DB::raw("DATE_FORMAT(rider_checkin_time, '%d %b %Y |%h:%i %p') as rider_checkin_time"),DB::raw("DATE_FORMAT(rider_checkout_time, '%d %b %Y |%h:%i %p') as rider_checkout_time"),DB::raw("DATE_FORMAT(rider_checkout_time, '%d %b %Y |%h:%i %p') as current_date_time"),DB::raw("DATE_FORMAT(rider_checkin_time, '%h:%i %p') as clock_in"),DB::raw("DATE_FORMAT(rider_checkout_time, '%h:%i %p') as clock_out"),'rider_attendance_status','report_type','created_at','updated_at')->where('rider_id',$rider_id)->where('rider_attendance_status','0')->whereRaw('Date(rider_checkin_time) = CURDATE()')->orderBy('created_at','DESC')->first();
-
-    //             return response()->json(['success'=>true,'message'=>'successfull checkout rider attendance','data'=>$rider_report]);
-
-    //         }elseif(empty($report_type)){
-    //             return response()->json(['success'=>false,'message'=>'report type not found!']);
-    //         }elseif($report_type=="check_in" && $rider_check->rider_attendance_status=="1"){
-    //             return response()->json(['success'=>false,'message'=>'rider exiting check_in!']);
-    //         }elseif($report_type=="check_out" && $rider_check->rider_attendance_status=="0"){
-    //             return response()->json(['success'=>false,'message'=>'rider exiting check_out!']);
-    //         }else{
-    //             return response()->json(['success'=>false,'message'=>'something erroer! You connect backend developer!']);
-    //         }
-    //     }else{
-    //         return response()->json(['success'=>false,'message'=>'rider id not found!']);
-    //     }
-
-    // }
-
     public function rider_attendance(Request $request)
     {
         $report_type=$request['report_type'];
@@ -455,7 +379,7 @@ class RiderApicontroller extends Controller
 
                 // $rider_orders=CustomerOrder::with(['rider','customer','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->get();
 
-                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
+                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
                 ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
                 * cos(radians(customer_orders.restaurant_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
@@ -469,9 +393,29 @@ class RiderApicontroller extends Controller
                 $food_val=[];
                 foreach($rider_orders as $value1){
                     $distance1=$value1->distance;
-                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+                    $kilometer1=number_format((float)$distance1, 2, '.', '');
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
+                    if($value1->from_parcel_city_id==0){
+                        $value1->from_parcel_city_name=null;
+                        $value1->from_latitude=null;
+                        $value1->from_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $value1->from_parcel_city_name=$city_data->city_name;
+                        $value1->from_latitude=$city_data->latitude;
+                        $value1->from_longitude=$city_data->longitude;
+                    }
+                    if($value1->to_parcel_city_id==0){
+                        $value1->to_parcel_city_name=null;
+                        $value1->to_latitude=null;
+                        $value1->to_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
+                        $value1->to_parcel_city_name=$city_data->city_name;
+                        $value1->to_latitude=$city_data->latitude;
+                        $value1->to_longitude=$city_data->longitude;
+                    }
                     array_push($food_val,$value1);
 
                 }
@@ -481,7 +425,7 @@ class RiderApicontroller extends Controller
 
                 // $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->get();
 
-                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
+                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
                 ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
                 * cos(radians(customer_orders.to_drop_latitude))
                 * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
@@ -495,9 +439,29 @@ class RiderApicontroller extends Controller
                 $parcel_val=[];
                 foreach($rider_orders as $value){
                     $distance=$value->distance;
-                    $kilometer=number_format((float)$distance, 1, '.', '');
+                    $kilometer=number_format((float)$distance, 2, '.', '');
                     $value->distance=(float) $kilometer;
                     $value->distance_time=(int)$kilometer*2 + $value->average_time;
+                    if($value->from_parcel_city_id==0){
+                        $value->from_parcel_city_name=null;
+                        $value->from_latitude=null;
+                        $value->from_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                        $value->from_latitude=$city_data->latitude;
+                        $value->from_longitude=$city_data->longitude;
+                    }
+                    if($value->to_parcel_city_id==0){
+                        $value->to_parcel_city_name=null;
+                        $value->to_latitude=null;
+                        $value->to_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                        $value->to_latitude=$city_data->latitude;
+                        $value->to_longitude=$city_data->longitude;
+                    }
                     array_push($parcel_val,$value);
 
                 }
@@ -507,7 +471,7 @@ class RiderApicontroller extends Controller
                 $rider_longitude=$rider_check->rider_longitude;
                 $distance="1000";
 
-                $parcels=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
+                $parcels=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
                 ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
                 * cos(radians(customer_orders.to_drop_latitude))
                 * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
@@ -520,7 +484,7 @@ class RiderApicontroller extends Controller
                 ->where("order_type","parcel")
                 ->get();
 
-                $foods=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","is_force_assign", "created_at", "updated_at"
+                $foods=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
                 ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
                 * cos(radians(customer_orders.restaurant_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
@@ -537,9 +501,29 @@ class RiderApicontroller extends Controller
                 $parcel_val=[];
                 foreach($parcels as $value){
                     $distance=$value->distance;
-                    $kilometer=number_format((float)$distance, 1, '.', '');
+                    $kilometer=number_format((float)$distance, 2, '.', '');
                     $value->distance=(float) $kilometer;
                     $value->distance_time=(int)$kilometer*2 + $value->average_time;
+                    if($value->from_parcel_city_id==0){
+                        $value->from_parcel_city_name=null;
+                        $value->from_latitude=null;
+                        $value->from_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                        $value->from_latitude=$city_data->latitude;
+                        $value->from_longitude=$city_data->longitude;
+                    }
+                    if($value->to_parcel_city_id==0){
+                        $value->to_parcel_city_name=null;
+                        $value->to_latitude=null;
+                        $value->to_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                        $value->to_latitude=$city_data->latitude;
+                        $value->to_longitude=$city_data->longitude;
+                    }
                     array_push($parcel_val,$value);
 
                 }
@@ -547,9 +531,29 @@ class RiderApicontroller extends Controller
                 $food_val=[];
                 foreach($foods as $value1){
                     $distance1=$value1->distance;
-                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+                    $kilometer1=number_format((float)$distance1, 2, '.', '');
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
+                    if($value1->from_parcel_city_id==0){
+                        $value1->from_parcel_city_name=null;
+                        $value1->from_latitude=null;
+                        $value1->from_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $value1->from_parcel_city_name=$city_data->city_name;
+                        $value1->from_latitude=$city_data->latitude;
+                        $value1->from_longitude=$city_data->longitude;
+                    }
+                    if($value1->to_parcel_city_id==0){
+                        $value1->to_parcel_city_name=null;
+                        $value1->to_latitude=null;
+                        $value1->to_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
+                        $value1->to_parcel_city_name=$city_data->city_name;
+                        $value1->to_latitude=$city_data->latitude;
+                        $value1->to_longitude=$city_data->longitude;
+                    }
                     array_push($food_val,$value1);
 
                 }
@@ -631,277 +635,280 @@ class RiderApicontroller extends Controller
                     "order_status_id"=>$order_status_id,
                 ]);
 
+                $orderId=(string)$order->order_id;
+                $orderstatusId=(string)$order->order_status_id;
+                $orderType=(string)$order->order_type;
+
                 if($order_status_id=="4"){
                     $rider->is_order=1;
                     $rider->update();
                     //for rider
-                    $title="Order Accepted";
-                    $messages="You accept the food order! Go to restaurant quickly!";
-
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_accept_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order Accepted",
+                                    "body_mm"=> "You accept the food order! Go to restaurant quickly!",
+                                    "title_en"=> "Order Accepted",
+                                    "body_en"=> "You accept the food order! Go to restaurant quickly!",
+                                    "title_ch"=> "订单已接受",
+                                    "body_ch"=> "您已接受订单!请尽快赶往商家！"
+                                ],
+                            ],
+                        ]);
+                    }
 
                     //restaurant
-                    $title1="Order Accepted by Rider";
-                    $messages1="Order is accepted by rider! He is coming!";
+                    $res_client = new Client();
+                    if($order->restaurant->restaurant_fcm_token){
+                        $res_token=$order->restaurant->restaurant_fcm_token;
+                        $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        $res_client->post($res_url,[
+                            'json' => [
+                                "to"=>$res_token,
+                                "data"=> [
+                                    "type"=> "rider_accept_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order Accepted by Rider",
+                                    "body_mm"=> "Order is accepted by rider! He is coming!",
+                                    "title_en"=> "Order Accepted by Rider",
+                                    "body_en"=> "Order is accepted by rider! He is coming!",
+                                    "title_ch"=> "骑手已接单",
+                                    "body_ch"=> "骑手已接单!正在赶来！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message1 = strip_tags($messages1);
-
-                    $fcm_token1=array();
-                    array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-                    $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-
-                    //Customer
-                    $title2="Order Accepted by Rider";
-                    $messages2="Your order is accepted by rider! He is taking your food!";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_accept_order",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Order Accepted by Rider",
+                                    "body_mm"=> "Your order is accepted by rider! He is taking your food!",
+                                    "title_en"=> "Order Accepted by Rider",
+                                    "body_en"=> "Your order is accepted by rider! He is taking your food!",
+                                    "title_ch"=> "骑手已接单",
+                                    "body_ch"=> "骑手已接单!正在赶往取餐！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }
                 elseif($order_status_id=="10"){
-
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
                     //restaurant
-                    $title1="Rider Arrived";
-                    $messages1="Rider arrived for taking customer’s order";
+                    $res_client = new Client();
+                    if($order->restaurant->restaurant_fcm_token){
+                        $res_token=$order->restaurant->restaurant_fcm_token;
+                        $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        $res_client->post($res_url,[
+                            'json' => [
+                                "to"=>$res_token,
+                                "data"=> [
+                                    "type"=> "rider_arrived",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Rider Arrived",
+                                    "body_mm"=> "Rider arrived for taking customer’s order",
+                                    "title_en"=> "Rider Arrived",
+                                    "body_en"=> "Rider arrived for taking customer’s order",
+                                    "title_ch"=> "骑手已到达",
+                                    "body_ch"=> "骑手已到达!正在等待取餐！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message1 = strip_tags($messages1);
-
-                    $fcm_token1=array();
-                    array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-                    $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-
-                    //Customer
-                    $title2="Rider Arrived to Restaurant";
-                    $messages2="Rider arrived to restaurant! He is taking food to you!";
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_arrived",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Rider Arrived to Restaurant",
+                                    "body_mm"=> "Rider arrived to restaurant! He is taking food to you!",
+                                    "title_en"=> "Rider Arrived to Restaurant",
+                                    "body_en"=> "Rider arrived to restaurant! He is taking food to you!",
+                                    "title_ch"=> "骑手已到达商家",
+                                    "body_ch"=> "骑手已到达商家!正在取餐！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }
                 elseif($order_status_id=="6"){
-
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
                     //restaurant
-                    $title1="Rider Start Delivery";
-                    $messages1="Rider start delivery to customer!";
+                    $res_client = new Client();
+                    if($order->restaurant->restaurant_fcm_token){
+                        $res_token=$order->restaurant->restaurant_fcm_token;
+                        $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        $res_client->post($res_url,[
+                            'json' => [
+                                "to"=>$res_token,
+                                "data"=> [
+                                    "type"=> "rider_start_delivery",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Rider Start Delivery",
+                                    "body_mm"=> "Rider start delivery to customer!",
+                                    "title_en"=> "Rider Start Delivery",
+                                    "body_en"=> "Rider start delivery to customer!",
+                                    "title_ch"=> "开始派送",
+                                    "body_ch"=> "骑手已开始为用户派送!"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message1 = strip_tags($messages1);
-
-                    $fcm_token1=array();
-                    array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-                    $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-
-                    //Customer
-                    $title2="Rider Start Delivery";
-                    $messages2="Rider starts delivery! He is coming!";
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_start_delivery",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Rider Start Delivery",
+                                    "body_mm"=> "Rider starts delivery! He is coming!",
+                                    "title_en"=> "Rider Start Delivery",
+                                    "body_en"=> "Rider starts delivery! He is coming!",
+                                    "title_ch"=> "开始派送",
+                                    "body_ch"=> "骑手已开始派送!正在赶来！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }
                 elseif($order_status_id=="7"){
                     $rider->is_order=0;
                     $rider->update();
-                    //for rider
-                    $title="Order Finished";
-                    $messages="Good Day! Order is finished.Thanks very much!";
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_order_finished",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order Finished",
+                                    "body_mm"=> "Good Day! Order is finished.Thanks very much!",
+                                    "title_en"=> "Order Finished",
+                                    "body_en"=> "Good Day! Order is finished.Thanks very much!",
+                                    "title_ch"=> "订单已结束",
+                                    "body_ch"=> "您的订单已结束! 再见！"
+                                ],
+                            ],
+                        ]);
+                    }
                     //restaurant
-                    $title1="Order Finished";
-                    $messages1="Good Day! Order is finished.Thanks very much!";
-
-                    $message1 = strip_tags($messages1);
-
-                    $fcm_token1=array();
-                    array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-                    $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-
-                    //Customer
-                    $title2="Order Finished";
-                    $messages2="Good Day! Your order is finished. Thanks very much!";
-                    $message2 = strip_tags($messages2);
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
-
-                    //Distance Calculate
-                    $lat1=$order->customer_address_latitude;
-                    $lon1=$order->customer_address_longitude;
-                    $lat2=$order->restaurant_address_latitude;
-                    $lon2=$order->restaurant_address_longitude;
-                    if (($lat1 == $lat2) && ($lon1 == $lon2)) {
-                        $miles=0;
+                    $res_client = new Client();
+                    if($order->restaurant->restaurant_fcm_token){
+                        $res_token=$order->restaurant->restaurant_fcm_token;
+                        $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        $res_client->post($res_url,[
+                            'json' => [
+                                "to"=>$res_token,
+                                "data"=> [
+                                    "type"=> "rider_order_finished",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order Finished",
+                                    "body_mm"=> "Good Day! Order is finished.Thanks very much!",
+                                    "title_en"=> "Order Finished",
+                                    "body_en"=> "Good Day! Order is finished.Thanks very much!",
+                                    "title_ch"=> "订单已结束",
+                                    "body_ch"=> "订单已结束!"
+                                ],
+                            ],
+                        ]);
                     }
-                    else {
-                        $theta = $lon1 - $lon2;
-                        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-                        $dist = acos($dist);
-                        $dist = rad2deg($dist);
-                        $mile = $dist * 60 * 1.1515;
-                        $miles= number_format((float)$mile, 1, '.', '');
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_order_finished",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Order Finished",
+                                    "body_mm"=> "Good Day! Your order is finished. Thanks very much!",
+                                    "title_en"=> "Order Finished",
+                                    "body_en"=> "Good Day! Your order is finished. Thanks very much!",
+                                    "title_ch"=> "订单已结束",
+                                    "body_ch"=> "您的订单已结束! 祝您用餐愉快！再见！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
                     }
-                    // $distance=($order->rider_restaurant_distance)+$miles;
-                    // $order->rider_restaurant_distance=$distance;
-                    $order->rider_restaurant_distance=$miles;
-                    $order->update();
 
                     $count=Customer::where('customer_id',$order->customer_id)->first();
                     Customer::where('customer_id',$order->customer_id)->update([
@@ -912,362 +919,392 @@ class RiderApicontroller extends Controller
                 }elseif($order_status_id=="12"){
                     $rider->is_order=1;
                     $rider->update();
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_accept_parcel_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Parcel Order Accepted",
+                                    "body_mm"=> "You accept the parcel order! Go to pick it up quickly!",
+                                    "title_en"=> "Parcel Order Accepted",
+                                    "body_en"=> "You accept the parcel order! Go to pick it up quickly!",
+                                    "title_ch"=> "订单已接受",
+                                    "body_ch"=> "您已接受跑腿订单！请尽快取货！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    //for rider
-                    $title="Parcel Order Accepted";
-                    $messages="You accept the parcel order! Go to pick it up quickly!";
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_accept_parcel_order",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Order Accepted",
+                                    "body_mm"=> "Your order is accepted by rider! He is coming!",
+                                    "title_en"=> "Order Accepted",
+                                    "body_en"=> "Your order is accepted by rider! He is coming!",
+                                    "title_ch"=> "订单已接受",
+                                    "body_ch"=> "骑手已接单！正在赶来!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_parcel_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Order Accepted";
-                    $messages2="Your order is accepted by rider! He is coming!";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_parcel_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
                 }elseif($order_status_id=="13"){
-                    //for rider
-                    $title="Arrived to pick up Parcel";
-                    $messages="You arrived pickup address for parcel order!";
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_arrived_pickup_address",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Arrived to pick up Parcel",
+                                    "body_mm"=> "You arrived pickup address for parcel order!",
+                                    "title_en"=> "Arrived to pick up Parcel",
+                                    "body_en"=> "You arrived pickup address for parcel order!",
+                                    "title_ch"=> "已到达取货地",
+                                    "body_ch"=> "您已到达包裹取货地！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived_pickup_address','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Rider Arrived";
-                    $messages2="Rider arrived to pick up parcel order!";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived_pickup_address','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_arrived_pickup_address",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Rider Arrived",
+                                    "body_mm"=> "Rider arrived to pick up parcel order!",
+                                    "title_en"=> "Rider Arrived",
+                                    "body_en"=> "Rider arrived to pick up parcel order!",
+                                    "title_ch"=> "骑手已到达",
+                                    "body_ch"=> "骑手已达到！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }elseif($order_status_id=="17"){
-                    //for rider
-                    $title="Parcel Picked Up";
-                    $messages="You has picked up parcel order!";
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_pickup_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Parcel Picked Up",
+                                    "body_mm"=> "You has picked up parcel order!",
+                                    "title_en"=> "Parcel Picked Up",
+                                    "body_en"=> "You has picked up parcel order!",
+                                    "title_ch"=> "包裹已取走",
+                                    "body_ch"=> "您已取走包裹！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_pickup_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Rider Picked up Order";
-                    $messages2="Rider picked up your parcel order";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2 ,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_pickup_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_pickup_order",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Rider Picked up Order",
+                                    "body_mm"=> "Rider picked up your parcel order",
+                                    "title_en"=> "Rider Picked up Order",
+                                    "body_en"=> "Rider picked up your parcel order",
+                                    "title_ch"=> "骑手已取走包裹",
+                                    "body_ch"=> "骑手已取走包裹！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }elseif($order_status_id=="14"){
-                    //for rider
-                    $title="Start Delivery";
-                    $messages="You start delivery parcel order! Go to Drop Address!";
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_start_delivery_parcel",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Start Delivery",
+                                    "body_mm"=> "You start delivery parcel order! Go to Drop Address!",
+                                    "title_en"=> "Start Delivery",
+                                    "body_en"=> "You start delivery parcel order! Go to Drop Address!",
+                                    "title_ch"=> "开始派送",
+                                    "body_ch"=> "已开始派送！赶往收货地！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery_parcel','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Start Delivery";
-                    $messages2="Your order is started delivery! He is going to drop address!";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery_parcel','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_start_delivery_parcel",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Start Delivery",
+                                    "body_mm"=> "Your order is started delivery! He is going to drop address!",
+                                    "title_en"=> "Start Delivery",
+                                    "body_en"=> "Your order is started delivery! He is going to drop address!",
+                                    "title_ch"=> "开始派送",
+                                    "body_ch"=> "骑手已开始派送！正在赶往收货地！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }elseif($order_status_id=="15"){
                     $rider->is_order=0;
                     $rider->update();
-                    //for rider
-                    $title="Order Accepted";
-                    $messages="You has delivered the parcel order to recipient! Order Finished!";
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_parcel_order_finished",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order Accepted",
+                                    "body_mm"=> "You has delivered the parcel order to recipient! Order Finished!",
+                                    "title_en"=> "Order Accepted",
+                                    "body_en"=> "You has delivered the parcel order to recipient! Order Finished!",
+                                    "title_ch"=> "订单已完成",
+                                    "body_ch"=> "包裹已送达收货地！订单结束！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_order_finished','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Order Finished";
-                    $messages2="Your parcel order is accepted by recipient! Order Finished! Good Day!";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_order_finished','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    // //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_parcel_order_finished",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Order Finished",
+                                    "body_mm"=> "Your parcel order is accepted by recipient! Order Finished! Good Day!",
+                                    "title_en"=> "Order Finished",
+                                    "body_en"=> "Your parcel order is accepted by recipient! Order Finished! Good Day!",
+                                    "title_ch"=> "订单已结束",
+                                    "body_ch"=> "您的包裹已送达! 订单结束！再见！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }elseif($order_status_id=="16"){
                     $rider->is_order=0;
                     $rider->update();
-                    //for rider
-                    $title="Order Canceled";
-                    $messages="You has canceled the order";
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_parcel_cancel_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order Canceled",
+                                    "body_mm"=> "You has canceled the order successfully!",
+                                    "title_en"=> "Order Canceled",
+                                    "body_en"=> "You has canceled the order successfully!",
+                                    "title_ch"=> "订单已取消",
+                                    "body_ch"=> "您已取消订单！"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_cancel_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Order Canceled by Rider";
-                    $messages2="New order is canceled by the Rider!";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_cancel_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                    //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_parcel_cancel_order",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Order Canceled by Rider",
+                                    "body_mm"=> "You has canceled the order successfully!",
+                                    "title_en"=> "Order Canceled by Rider",
+                                    "body_en"=> "You has canceled the order successfully!",
+                                    "title_ch"=> "订单已结束",
+                                    "body_ch"=> "您的包裹已送达! 订单结束！再见！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }elseif($order_status_id=="8"){
                     $rider->is_order=0;
                     $rider->update();
-                    //for rider
-                    $title="Customer Not Found";
-                    $messages="You not found the customer's place";
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+                    //rider
+                    $rider_client = new Client();
+                    $rider_token=$rider->rider_fcm_token;
+                    if($rider_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "rider_customer_notfound",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Customer Not Found",
+                                    "body_mm"=> "You not found the customer's plac",
+                                    "title_en"=> "Customer Not Found",
+                                    "body_en"=> "You not found the customer's plac",
+                                    "title_ch"=> "Customer Not Found",
+                                    "body_ch"=> "You not found the customer's plac"
+                                ],
+                            ],
+                        ]);
+                    }
 
-                    $fcm_token=array();
-                    array_push($fcm_token, $rider->rider_fcm_token);
-                    $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_customer_notfound','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-
-                    //Customer
-                    $title2="Order Not Found!";
-                    $messages2="Rider Not Found";
-
-                    $message2 = strip_tags($messages2);
-
-
-                    $fcm_token2=array();
-                    array_push($fcm_token2, $order->customer->fcm_token);
-                    $notification2 = array('title' => $title2, 'body' => $message2,'sound'=>'default');
-                    $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_customer_notfound','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-                    $playLoad2 = json_encode($field2);
-                    $noti_customer=json_decode($playLoad2);
-                    $curl_session2 = curl_init();
-                    curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session2, CURLOPT_POST, true);
-                    curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-                    $result = curl_exec($curl_session2);
-                    curl_close($curl_session2);
+                     //customer
+                    $cus_client = new Client();
+                    if($order->customer->fcm_token){
+                        $cus_token=$order->customer->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "rider_customer_notfound",
+                                    "order_id"=>$order->order_id,
+                                    "order_status_id"=>$order->order_status_id,
+                                    "order_type"=>$order->order_type,
+                                    "title_mm"=> "Order Not Found!",
+                                    "body_mm"=> "Rider Not Found",
+                                    "title_en"=> "Order Not Found!",
+                                    "body_en"=> "Rider Not Found",
+                                    "title_ch"=> "Order Not Found!",
+                                    "body_ch"=> "Rider Not Found"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }else{
                     return response()->json(['success'=>false,'message'=>'Error! Order status id request do not equal 1,2,3,5,8,9,11 and etc.']);
                 }
@@ -1278,7 +1315,7 @@ class RiderApicontroller extends Controller
 
                 $orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
-                return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1,'noti_customer'=>$noti_customer]);
+                return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1]);
         }elseif(empty($order)){
             return response()->json(['success'=>false,'message'=>'order id not found!']);
         }elseif(empty($ride)){
@@ -1287,1198 +1324,6 @@ class RiderApicontroller extends Controller
 
 
     }
-
-
-    // public function order_status(Request $request)
-    // {
-    //     $rider_id=$request['rider_id'];
-    //     $order_id=$request['order_id'];
-    //     $order_id=(int)$order_id;
-    //     $order_status_id=$request['order_status_id'];
-
-    //     $order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-
-    //     $rider=Rider::where('rider_id',$rider_id)->first();
-
-    //     if(!empty($order) && !empty($rider)){
-    //         if(($order->rider_id == null && ($order->order_status_id==3 || $order->order_status_id==11)) || $order->rider_id==$rider_id){
-    //             $order->rider_id=$rider->rider_id;
-    //             $order->rider_address_latitude=$rider->rider_latitude;
-    //             $order->rider_address_longitude=$rider->rider_longitude;
-    //             $order->order_status_id=$order_status_id;
-    //             $order->update();
-
-    //             if($order_status_id=="4"){
-    //                 $rider->is_order=1;
-    //                 $rider->update();
-    //                 //for rider
-    //                 $title="Order Accepted";
-    //                 $messages="You accept the food order! Go to restaurant quickly!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //restaurant
-    //                 $title1="Order Accepted by Rider";
-    //                 $messages1="Order is accepted by rider! He is coming!";
-
-    //                 $message1 = strip_tags($messages1);
-
-    //                 $fcm_token1=array();
-    //                 array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //                 $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //                 $playLoad1 = json_encode($field1);
-    //                 $curl_session1 = curl_init();
-    //                 curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session1, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //                 $result = curl_exec($curl_session1);
-    //                 curl_close($curl_session1);
-
-    //                 //Customer
-    //                 $title2="Order Accepted by Rider";
-    //                 $messages2="Your order is accepted by rider! He is taking your food!";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }
-    //             elseif($order_status_id=="10"){
-
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 //restaurant
-    //                 $title1="Rider Arrived";
-    //                 $messages1="Rider arrived for taking customer’s order";
-
-    //                 $message1 = strip_tags($messages1);
-
-    //                 $fcm_token1=array();
-    //                 array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //                 $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //                 $playLoad1 = json_encode($field1);
-    //                 $curl_session1 = curl_init();
-    //                 curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session1, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //                 $result = curl_exec($curl_session1);
-    //                 curl_close($curl_session1);
-
-    //                 //Customer
-    //                 $title2="Rider Arrived to Restaurant";
-    //                 $messages2="Rider arrived to restaurant! He is taking food to you!";
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }
-    //             elseif($order_status_id=="6"){
-
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-    //                 //restaurant
-    //                 $title1="Rider Start Delivery";
-    //                 $messages1="Rider start delivery to customer!";
-
-    //                 $message1 = strip_tags($messages1);
-
-    //                 $fcm_token1=array();
-    //                 array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //                 $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //                 $playLoad1 = json_encode($field1);
-    //                 $curl_session1 = curl_init();
-    //                 curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session1, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //                 $result = curl_exec($curl_session1);
-    //                 curl_close($curl_session1);
-
-    //                 //Customer
-    //                 $title2="Rider Start Delivery";
-    //                 $messages2="Rider starts delivery! He is coming!";
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }
-    //             elseif($order_status_id=="7"){
-    //                 $rider->is_order=0;
-    //                 $rider->update();
-    //                 //for rider
-    //                 $title="Order Finished";
-    //                 $messages="Good Day! Order is finished.Thanks very much!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //restaurant
-    //                 $title1="Order Finished";
-    //                 $messages1="Good Day! Order is finished.Thanks very much!";
-
-    //                 $message1 = strip_tags($messages1);
-
-    //                 $fcm_token1=array();
-    //                 array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //                 $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //                 $playLoad1 = json_encode($field1);
-    //                 $curl_session1 = curl_init();
-    //                 curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session1, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //                 $result = curl_exec($curl_session1);
-    //                 curl_close($curl_session1);
-
-    //                 //Customer
-    //                 $title2="Order Finished";
-    //                 $messages2="Good Day! Your order is finished. Thanks very much!";
-    //                 $message2 = strip_tags($messages2);
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-
-    //                 //Distance Calculate
-    //                 $lat1=$order->customer_address_latitude;
-    //                 $lon1=$order->customer_address_longitude;
-    //                 $lat2=$order->restaurant_address_latitude;
-    //                 $lon2=$order->restaurant_address_longitude;
-    //                 if (($lat1 == $lat2) && ($lon1 == $lon2)) {
-    //                     $miles=0;
-    //                 }
-    //                 else {
-    //                     $theta = $lon1 - $lon2;
-    //                     $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-    //                     $dist = acos($dist);
-    //                     $dist = rad2deg($dist);
-    //                     $miles = $dist * 60 * 1.1515;
-    //                 }
-    //                 $distance=($order->rider_restaurant_distance)+$miles;
-    //                 $order->rider_restaurant_distance=$distance;
-    //                 $order->update();
-    //             }elseif($order_status_id=="12"){
-    //                 $rider->is_order=1;
-    //                 $rider->update();
-
-    //                 //for rider
-    //                 $title="Parcel Order Accepted";
-    //                 $messages="You accept the parcel order! Go to pick it up quickly!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_parcel_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Order Accepted";
-    //                 $messages2="Your order is accepted by rider! He is coming!";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_parcel_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }elseif($order_status_id=="13"){
-    //                 //for rider
-    //                 $title="Arrived to pick up Parcel";
-    //                 $messages="You arrived pickup address for parcel order!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived_pickup_address','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Rider Arrived";
-    //                 $messages2="Rider arrived to pick up parcel order!";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived_pickup_address','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }elseif($order_status_id=="17"){
-    //                 //for rider
-    //                 $title="Parcel Picked Up";
-    //                 $messages="You has picked up parcel order!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_pickup_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Rider Picked up Order";
-    //                 $messages2="Rider picked up your parcel order";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_pickup_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }elseif($order_status_id=="14"){
-    //                 //for rider
-    //                 $title="Start Delivery";
-    //                 $messages="You start delivery parcel order! Go to Drop Address!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery_parcel','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Start Delivery";
-    //                 $messages2="Your order is started delivery! He is going to drop address!";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery_parcel','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }elseif($order_status_id=="15"){
-    //                 $rider->is_order=0;
-    //                 $rider->update();
-    //                 //for rider
-    //                 $title="Order Accepted";
-    //                 $messages="You has delivered the parcel order to recipient! Order Finished!";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_order_finished','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Order Finished";
-    //                 $messages2="Your parcel order is accepted by recipient! Order Finished! Good Day!";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_order_finished','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }elseif($order_status_id=="16"){
-    //                 $rider->is_order=0;
-    //                 $rider->update();
-    //                 //for rider
-    //                 $title="Order Canceled";
-    //                 $messages="You has canceled the order";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_cancel_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Order Canceled by Rider";
-    //                 $messages2="New order is canceled by the Rider!";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_cancel_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }elseif($order_status_id=="8"){
-    //                 $rider->is_order=0;
-    //                 $rider->update();
-    //                 //for rider
-    //                 $title="Customer Not Found";
-    //                 $messages="You not found the customer's place";
-
-    //                 $message = strip_tags($messages);
-    //                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //                 $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //                 $fcm_token=array();
-    //                 array_push($fcm_token, $rider->rider_fcm_token);
-    //                 $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_customer_notfound','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //                 $playLoad = json_encode($field);
-    //                 $curl_session = curl_init();
-    //                 curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //                 $result = curl_exec($curl_session);
-    //                 curl_close($curl_session);
-
-    //                 //Customer
-    //                 $title2="Order Not Found!";
-    //                 $messages2="Rider Not Found";
-
-    //                 $message2 = strip_tags($messages2);
-
-
-    //                 $fcm_token2=array();
-    //                 array_push($fcm_token2, $order->customer->fcm_token);
-    //                 $notification2 = array('title' => $title2, 'body' => $message2);
-    //                 $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_customer_notfound','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //                 $playLoad2 = json_encode($field2);
-    //                 $noti_customer=json_decode($playLoad2);
-    //                 $curl_session2 = curl_init();
-    //                 curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //                 curl_setopt($curl_session2, CURLOPT_POST, true);
-    //                 curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //                 curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //                 curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //                 curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //                 curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //                 $result = curl_exec($curl_session2);
-    //                 curl_close($curl_session2);
-    //             }else{
-    //                 return response()->json(['success'=>false,'message'=>'Error! Order status id request do not equal 1,2,3,5,8,9,11 and etc.']);
-    //             }
-
-    //         }else{
-    //             return response()->json(['success'=>false,'message'=>'this order get other rider']);
-    //         }
-
-    //         // $order->rider_id=$rider->rider_id;
-    //         //     $order->rider_address_latitude=$rider->rider_latitude;
-    //         //     $order->rider_address_longitude=$rider->rider_longitude;
-    //         //     $order->order_status_id=$order_status_id;
-    //         //     $order->update();
-
-    //         //     if($order_status_id=="4"){
-    //         //         //for rider
-    //         //         $title="You Accept Food Order";
-    //         //         $messages="You accept customer food order! Go to restaurant";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //restaurant
-    //         //         $title1="Accept Your Order from Rider";
-    //         //         $messages1="Your order accept from rider! He come to your restaurant";
-
-    //         //         $message1 = strip_tags($messages1);
-
-    //         //         $fcm_token1=array();
-    //         //         array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //         //         $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //         //         $playLoad1 = json_encode($field1);
-    //         //         $curl_session1 = curl_init();
-    //         //         curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session1, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //         //         $result = curl_exec($curl_session1);
-    //         //         curl_close($curl_session1);
-
-    //         //         //Customer
-    //         //         $title2="Accept Your Order from Rider";
-    //         //         $messages2="Your order accept from rider! He take your food!";
-
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_order','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }
-    //         //     elseif($order_status_id=="10"){
-
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         //restaurant
-    //         //         $title1="Rider arrived to your restaurant";
-    //         //         $messages1="Rider arrived to your restaurant for take customer order";
-
-    //         //         $message1 = strip_tags($messages1);
-
-    //         //         $fcm_token1=array();
-    //         //         array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //         //         $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //         //         $playLoad1 = json_encode($field1);
-    //         //         $curl_session1 = curl_init();
-    //         //         curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session1, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //         //         $result = curl_exec($curl_session1);
-    //         //         curl_close($curl_session1);
-
-    //         //         //Customer
-    //         //         $title2="Rider Arrived to Restaurant";
-    //         //         $messages2="Rider arrived to restaurant! he take to your food order";
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }
-    //         //     elseif($order_status_id=="6"){
-
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-    //         //         //restaurant
-    //         //         $title1="Rider start delivery to customer";
-    //         //         $messages1="Rider start delivery to customer for your restaurant order";
-
-    //         //         $message1 = strip_tags($messages1);
-
-    //         //         $fcm_token1=array();
-    //         //         array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //         //         $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //         //         $playLoad1 = json_encode($field1);
-    //         //         $curl_session1 = curl_init();
-    //         //         curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session1, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //         //         $result = curl_exec($curl_session1);
-    //         //         curl_close($curl_session1);
-
-    //         //         //Customer
-    //         //         $title2="Rider start delivery to your place";
-    //         //         $messages2="Rider start delivery to your place! He take to your food order";
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }
-    //         //     elseif($order_status_id=="7"){
-    //         //         //for rider
-    //         //         $title="Accept By Customer";
-    //         //         $messages="Customer accept your food order.";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //restaurant
-    //         //         $title1="Your Restaurant Order Finished";
-    //         //         $messages1="Customer accept your restaurant food.";
-
-    //         //         $message1 = strip_tags($messages1);
-
-    //         //         $fcm_token1=array();
-    //         //         array_push($fcm_token1, $order->restaurant->restaurant_fcm_token);
-    //         //         $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title1, 'body' => $message1]);
-
-    //         //         $playLoad1 = json_encode($field1);
-    //         //         $curl_session1 = curl_init();
-    //         //         curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session1, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-    //         //         $result = curl_exec($curl_session1);
-    //         //         curl_close($curl_session1);
-
-    //         //         //Customer
-    //         //         $title2="Your Order Finished";
-    //         //         $messages2="Good Day! We gave your order.Thanks!";
-    //         //         $message2 = strip_tags($messages2);
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_order_finished','order_type'=>'food','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-
-    //         //         //Distance Calculate
-    //         //         $lat1=$order->customer_address_latitude;
-    //         //         $lon1=$order->customer_address_longitude;
-    //         //         $lat2=$order->restaurant_address_latitude;
-    //         //         $lon2=$order->restaurant_address_longitude;
-    //         //         if (($lat1 == $lat2) && ($lon1 == $lon2)) {
-    //         //             $miles=0;
-    //         //         }
-    //         //         else {
-    //         //             $theta = $lon1 - $lon2;
-    //         //             $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-    //         //             $dist = acos($dist);
-    //         //             $dist = rad2deg($dist);
-    //         //             $miles = $dist * 60 * 1.1515;
-    //         //         }
-    //         //         $distance=($order->rider_restaurant_distance)+$miles;
-    //         //         $order->rider_restaurant_distance=$distance;
-    //         //         $order->update();
-    //         //     }elseif($order_status_id=="12"){
-    //         //         //for rider
-    //         //         $title="You Accept Parcel Order";
-    //         //         $messages="You accept customer parcel order! Go to pickup address";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_parcel_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //Customer
-    //         //         $title2="Accept Your Order from Rider";
-    //         //         $messages2="Your order accept from rider! He pickup your parcel!";
-
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_accept_parcel_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }elseif($order_status_id=="13"){
-    //         //         //for rider
-    //         //         $title="You arrived to pickup Parcel";
-    //         //         $messages="You arrived from pickup address for parcel order!";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived_pickup_address','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //Customer
-    //         //         $title2="Rider Arrived to Pickup Your Parcel Order";
-    //         //         $messages2="Rider arrived to pickup address for check and pickup your parcel order";
-
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_arrived_pickup_address','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }elseif($order_status_id=="17"){
-    //         //         //for rider
-    //         //         $title="You Pickup Parcel";
-    //         //         $messages="You pickup parcel order!";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_pickup_order','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //Customer
-    //         //         $title2="Rider Pickup Your Parcel Order";
-    //         //         $messages2="Rider pickup your parcel order";
-
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_pickup_order','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }elseif($order_status_id=="14"){
-    //         //         //for rider
-    //         //         $title="Start Delivery for Parcel";
-    //         //         $messages="You start delivery customer parcel order! Go to Drop Address";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery_parcel','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //Customer
-    //         //         $title2="Start Delivery Your Order by Rider";
-    //         //         $messages2="Your order start delivery from rider! He got to drop address!";
-
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_start_delivery_parcel','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }elseif($order_status_id=="15"){
-    //         //         //for rider
-    //         //         $title="Accept By Recipent";
-    //         //         $messages="You sent pickup customer parcel order to recipent! Order Finished!";
-
-    //         //         $message = strip_tags($messages);
-    //         //         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-    //         //         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-    //         //         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-    //         //         $fcm_token=array();
-    //         //         array_push($fcm_token, $rider->rider_fcm_token);
-    //         //         $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_order_finished','order_type'=>'parcel','title' => $title, 'body' => $message]);
-
-    //         //         $playLoad = json_encode($field);
-    //         //         $curl_session = curl_init();
-    //         //         curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-    //         //         $result = curl_exec($curl_session);
-    //         //         curl_close($curl_session);
-
-    //         //         //Customer
-    //         //         $title2="Your Parcel Order Finished";
-    //         //         $messages2="Your parcel order accept from recipent! So Order Finished! Good Day!";
-
-    //         //         $message2 = strip_tags($messages2);
-
-
-    //         //         $fcm_token2=array();
-    //         //         array_push($fcm_token2, $order->customer->fcm_token);
-    //         //         $notification2 = array('title' => $title2, 'body' => $message2);
-    //         //         $field2=array('registration_ids'=>$fcm_token2,'notification'=>$notification2,'data'=>['order_id'=>$order_id,'order_status_id'=>$order->order_status_id,'type'=>'rider_parcel_order_finished','order_type'=>'parcel','title' => $title2, 'body' => $message2]);
-
-    //         //         $playLoad2 = json_encode($field2);
-    //         //         $noti_customer=json_decode($playLoad2);
-    //         //         $curl_session2 = curl_init();
-    //         //         curl_setopt($curl_session2, CURLOPT_URL, $path_to_fcm);
-    //         //         curl_setopt($curl_session2, CURLOPT_POST, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_HTTPHEADER, $header);
-    //         //         curl_setopt($curl_session2, CURLOPT_RETURNTRANSFER, true);
-    //         //         curl_setopt($curl_session2, CURLOPT_SSL_VERIFYPEER, false);
-    //         //         curl_setopt($curl_session2, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    //         //         curl_setopt($curl_session2, CURLOPT_POSTFIELDS, $playLoad2);
-    //         //         $result = curl_exec($curl_session2);
-    //         //         curl_close($curl_session2);
-    //         //     }
-
-
-    //             $orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-
-    //             return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1,'noti_customer'=>$noti_customer]);
-    //     }elseif(empty($order)){
-    //         return response()->json(['success'=>false,'message'=>'order id not found!']);
-    //     }elseif(empty($ride)){
-    //         return response()->json(['success'=>false,'message'=>'rider id not found!']);
-    //     }
-
-
-    // }
 
     public function order_food_history(Request $request)
     {
@@ -2519,6 +1364,24 @@ class RiderApicontroller extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>'order id not found']);
         }
+    }
+
+    public function rider_getBilling(Request $request)
+    {
+        $rider_id=$request['rider_id'];
+        $current_date=$request['start_date'];
+        $next_date=$request['end_date'];
+        $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
+        $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+
+        $today_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+        $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+
+        //OrderShow
+        $orders=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->get();
+
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$orders]]);
     }
 
     public function rider_insight(Request $request)
@@ -2564,6 +1427,22 @@ class RiderApicontroller extends Controller
 
 
         return response()->json(['success'=>true,'message'=>'this is rider report','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'ranking'=>['today'=>$today,'this_week'=>$this_week,'this_month'=>$this_month]]]);
+    }
+
+    public function rider_token_update(Request $request)
+    {
+        $rider_id=$request['rider_id'];
+        $pushy_token=$request['pushy_token'];
+
+        $check_rider=Rider::where('rider_id',$rider_id)->first();
+        if($check_rider){
+            $check_rider->rider_fcm_token=$pushy_token;
+            $check_rider->update();
+            $rider=Rider::find($rider_id);
+            return response()->json(['success'=>true,'message'=>'successfully update pushy token','data'=>$rider]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'rider id is empty or not found in database']);
+        }
     }
 
     /**

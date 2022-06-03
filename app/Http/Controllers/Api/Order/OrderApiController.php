@@ -20,6 +20,8 @@ use App\Models\Customer\Customer;
 use App\Models\Rider\Rider;
 use DB;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use App\Models\City\ParcelCity;
 
 class OrderApiController extends Controller
 {
@@ -129,30 +131,64 @@ class OrderApiController extends Controller
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
         $kilometer=$miles * 1.609344;
-        // $kilometer=6;
-        $kilometer= number_format((float)$kilometer, 1, '.', '');
+        $distances=(float) number_format((float)$kilometer, 1, '.', '');
 
-        $delivery_fee=100;
+        if($distances < 8){
+            $delivery_fee=0;
+        }elseif($distances==8){
+            $delivery_fee=2200;
+        }elseif($distances > 8 && $distances < 9.5){
+            $delivery_fee=2400;
+        }elseif($distances==9.5){
+            $delivery_fee=2600;
+        }elseif($distances > 9.5 && $distances < 11){
+            $delivery_fee=2800;
+        }elseif($distances==11){
+            $delivery_fee=3000;
+        }elseif($distances > 11 && $distances < 12.5){
+            $delivery_fee=3200;
+        }elseif($distances==12.5){
+            $delivery_fee=3400;
+        }elseif($distances > 12.5 && $distances < 14){
+            $delivery_fee=3600;
+        }elseif($distances==14){
+            $delivery_fee=3800;
+        }elseif($distances > 14 && $distances < 15.5){
+            $delivery_fee=4100;
+        }elseif($distances==15.5){
+            $delivery_fee=4400;
+        }elseif($distances > 15.5 && $distances < 17){
+            $delivery_fee=4700;
+        }elseif($distances==17){
+            $delivery_fee=5000;
+        }elseif($distances > 17 && $distances < 18.5){
+            $delivery_fee=5300;
+        }elseif($distances==18.5){
+            $delivery_fee=5600;
+        }elseif($distances > 18.5 && $distances < 20){
+            $delivery_fee=5900;
+        }elseif($distances==20){
+            $delivery_fee=6200;
+        }elseif($distances > 20 && $distances < 21.5){
+            $delivery_fee=6500;
+        }elseif($distances==21.5){
+            $delivery_fee=6800;
+        }elseif($distances > 21.5 && $distances < 23){
+            $delivery_fee=7100;
+        }elseif($distances==23){
+            $delivery_fee=7400;
+        }elseif($distances > 23 && $distances < 24.5){
+            $delivery_fee=7700;
+        }elseif($distances==24.5){
+            $delivery_fee=8000;
+        }elseif($distances > 24.5 && $distances < 26){
+            $delivery_fee=8300;
+        }elseif($distances >= 26){
+            $delivery_fee=8600;
+        }else{
+            $delivery_fee=8600;
+        }
 
-        // if($kilometer <= 3 ){
-        //     $delivery_fee=1000;
-        // }
-        // else{
-        //     $number=explode('.', $kilometer);
-        //     $addOneKilometer=$number[0] - 3;
-        //     $folat_number=$number[1];
-        //     if($folat_number=="0"){
-        //         $delivery_fee=$addOneKilometer * 300 + 1000;
-        //     }else{
-        //         if($folat_number <= 5){
-        //             $delivery_fee=($addOneKilometer * 300) + 150 + 1000;
-        //         }else{
-        //             $delivery_fee=($addOneKilometer * 300) + (150 * 2) + 1000;
-        //         }
-        //     }
-        // }
-
-        // return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
         return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
     }
     /**
@@ -174,7 +210,40 @@ class OrderApiController extends Controller
                 return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order ,'past_order'=>$past_order]);
             }elseif($order_type=="parcel"){
                 $active_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->get();
+                $data=[];
+                foreach($active_order as $value){
+                    if($value->from_parcel_city_id==0){
+                        $value->from_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                    }
+                    if($value->to_parcel_city_id==0){
+                        $value->to_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                    }
+                    array_push($data,$value);
+                }
+
                 $past_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->get();
+                $item=[];
+                foreach($past_order as $order){
+                    if($order->from_parcel_city_id==0){
+                        $order->from_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$order->from_parcel_city_id)->first();
+                        $order->from_parcel_city_name=$city_data->city_name;
+                    }
+                    if($order->to_parcel_city_id==0){
+                        $order->to_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
+                        $order->to_parcel_city_name=$city_data->city_name;
+                    }
+                    array_push($item,$order);
+                }
 
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order]);
@@ -331,8 +400,8 @@ class OrderApiController extends Controller
             $message = strip_tags($messages);
             $fcm_token=array();
             array_push($fcm_token, $customer_orders->customer->fcm_token);
-                $notification = array('title' => $title, 'body' => $message);
-                $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'order_type'=>$customer_orders->order_type,'type'=>'customer_cancel_order','title' => $title, 'body' => $message]);
+            $notification = array('title' => $title, 'body' => $message);
+            $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'order_type'=>$customer_orders->order_type,'type'=>'customer_cancel_order','title' => $title, 'body' => $message]);
 
                 $playLoad = json_encode($field);
                 $test=json_decode($playLoad);
@@ -399,37 +468,40 @@ class OrderApiController extends Controller
         $customer_orders=CustomerOrder::where('order_id',$order_id)->whereIn('order_status_id',['1','11','19'])->first();
 
         if(!empty($customer_orders)){
-
-            $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-            $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
             //Customer
-            $title="Order Canceled!";
-            $messages="Your order has been canceled successfully!";
-            $message = strip_tags($messages);
-            $fcm_token=array();
-            array_push($fcm_token, $customer_orders->customer->fcm_token);
-                $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-                $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'order_type'=>$customer_orders->order_type,'type'=>'customer_cancel_order','title' => $title, 'body' => $message]);
+            $cus_client = new Client();
+            $cus_token=$customer_orders->customer->fcm_token;
+            if($cus_token){
+                $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                $cus_client->post($cus_url,[
+                    'json' => [
+                        "to"=>$cus_token,
+                        "data"=> [
+                            "type"=> "customer_cancel_order",
+                            "order_id"=>$customer_orders->order_id,
+                            "order_status_id"=>$customer_orders->order_status_id,
+                            "order_type"=>$customer_orders->order_type,
+                            "title_mm"=> "Order Canceled!",
+                            "body_mm"=> "New order has been canceled by customer!",
+                            "title_en"=> "Order Canceled!",
+                            "body_en"=> "New order has been canceled by customer!",
+                            "title_ch"=> "订单已被用户取消",
+                            "body_ch"=> "非常抱歉 用户已取消订单!"
+                        ],
+                        "mutable_content" => true ,
+                        "content_available" => true,
+                        "notification"=> [
+                            "title"=>"this is a title",
+                            "body"=>"this is a body",
+                        ],
+                    ],
+                ]);
+            }
 
-                $playLoad = json_encode($field);
-                $test=json_decode($playLoad);
-                $curl_session = curl_init();
-                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                curl_setopt($curl_session, CURLOPT_POST, true);
-                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                $result = curl_exec($curl_session);
-                curl_close($curl_session);
-
-                if($customer_orders->order_type=="food"){
-                    if($customer_orders->order_status_id==19){
-                        $customer_orders->order_status_id=9;
-                        $customer_orders->update();
+            if($customer_orders->order_type=="food"){
+                if($customer_orders->order_status_id==19){
+                    $customer_orders->order_status_id=9;
+                    $customer_orders->update();
 
                         if(!isset($_SESSION))
                         {
@@ -447,26 +519,31 @@ class OrderApiController extends Controller
                         //restaurant
                         $restaurant_check=Restaurant::where('restaurant_id',$customer_orders->restaurant_id)->first();
 
-                        $title1="Order Canceled by Customer";
-                        $messages1="New order has been canceled by customer!";
-                        $message1 = strip_tags($messages1);
-                        $fcm_token1=array();
-                        array_push($fcm_token1, $restaurant_check->restaurant_fcm_token);
-                        $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'customer_cancel_order','order_type'=>$customer_orders->order_type,'title' => $title1, 'body' => $message1]);
-
-
-                        $playLoad1 = json_encode($field1);
-                        $test1=json_decode($playLoad1);
-                        $curl_session1 = curl_init();
-                        curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                        curl_setopt($curl_session1, CURLOPT_POST, true);
-                        curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                        curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                        curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                        $result = curl_exec($curl_session1);
-                        curl_close($curl_session1);
+                        $res_client = new Client();
+                        $res_token=$restaurant_check->restaurant_fcm_token;
+                        $orderId=(string)$customer_orders->order_id;
+                        $orderstatusId=(string)$customer_orders->order_status_id;
+                        $orderType=(string)$customer_orders->order_type;
+                        $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        if($res_token){
+                            $res_client->post($res_url,[
+                                'json' => [
+                                    "to"=>$res_token,
+                                    "data"=> [
+                                        "type"=> "customer_cancel_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Canceled by Customer",
+                                        "body_mm"=> "New order has been canceled by customer!",
+                                        "title_en"=> "Order Canceled by Customer",
+                                        "body_en"=> "New order has been canceled by customer!",
+                                        "title_ch"=> "订单已被用户取消",
+                                        "body_ch"=> "非常抱歉 用户已取消订单!"
+                                    ],
+                                ],
+                            ]);
+                        }
 
                         return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
                     }
@@ -578,10 +655,6 @@ class OrderApiController extends Controller
         $restaurant_remark = $request['restaurant_remark'];
         $order_food_id=$request->order_food_id;
         // $result = json_decode($order_food_id);
-
-        $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-        $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-        $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
         $check_order=CustomerOrder::where('order_id',$order_id)->first();
 
         if($check_order){
@@ -606,25 +679,62 @@ class OrderApiController extends Controller
                     ]);
                     // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                 }
-                //Restaurant
-                $title="Succesfully Order Cancel";
-                $messages="You success cancel customer order!";
-                $message = strip_tags($messages);
-                $fcm_token=array();
-                array_push($fcm_token, $check_order->restaurant->restaurant_fcm_token);
-                $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
 
-                $playLoad = json_encode($field);
-                $curl_session = curl_init();
-                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                curl_setopt($curl_session, CURLOPT_POST, true);
-                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                $result = curl_exec($curl_session);
-                curl_close($curl_session);
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "customer_cancel_order",
+                                "order_id"=>$check_order->order_id,
+                                "order_status_id"=>$check_order->order_status_id,
+                                "order_type"=>$check_order->order_type,
+                                "title_mm"=> "Order Canceled by Restaurant!",
+                                "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_en"=> "Order Canceled by Restaurant!",
+                                "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_ch"=> "订单已被取消",
+                                "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                            ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
+                }
+                //restaurant
+                $res_client = new Client();
+                $res_token=$check_order->restaurant->restaurant_fcm_token;
+                $orderId=(string)$check_order->order_id;
+                $orderstatusId=(string)$check_order->order_status_id;
+                $orderType=(string)$check_order->order_type;
+                $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                if($res_token){
+                    $res_client->post($res_url,[
+                        'json' => [
+                            "to"=>$res_token,
+                            "data"=> [
+                                "type"=> "restaurant_cancel_order",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "Succesfully Order Cancel",
+                                "body_mm"=> "You success cancel customer order!",
+                                "title_en"=> "Succesfully Order Cancel",
+                                "body_en"=> "You success cancel customer order!",
+                                "title_ch"=> "Succesfully Order Cancel",
+                                "body_ch"=> "You success cancel customer order!!"
+                            ],
+                        ],
+                    ]);
+                }
 
                 if(!isset($_SESSION))
                 {
@@ -657,25 +767,61 @@ class OrderApiController extends Controller
                     ]);
                     // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                 }
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "customer_cancel_order",
+                                "order_id"=>$check_order->order_id,
+                                "order_status_id"=>$check_order->order_status_id,
+                                "order_type"=>$check_order->order_type,
+                                "title_mm"=> "Order Canceled by Restaurant!",
+                                "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_en"=> "Order Canceled by Restaurant!",
+                                "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                "title_ch"=> "订单已被取消",
+                                "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                            ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
+                }
                 //Restaurant
-                $title="Succesfully Order Cancel";
-                $messages="You success cancel customer order!";
-                $message = strip_tags($messages);
-                $fcm_token=array();
-                array_push($fcm_token, $check_order->restaurant->restaurant_fcm_token);
-                $field=array('registration_ids'=>$fcm_token,'data'=>['order_id'=>$order_id,'order_status_id'=>$check_order->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$check_order->order_type,'title' => $title, 'body' => $message]);
-
-                $playLoad = json_encode($field);
-                $curl_session = curl_init();
-                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                curl_setopt($curl_session, CURLOPT_POST, true);
-                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                $result = curl_exec($curl_session);
-                curl_close($curl_session);
+                $res_client = new Client();
+                $res_token=$check_order->restaurant->restaurant_fcm_token;
+                $orderId=(string)$check_order->order_id;
+                $orderstatusId=(string)$check_order->order_status_id;
+                $orderType=(string)$check_order->order_type;
+                $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                if($res_token){
+                    $res_client->post($res_url,[
+                        'json' => [
+                            "to"=>$res_token,
+                            "data"=> [
+                                "type"=> "restaurant_cancel_order",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "Succesfully Order Cancel",
+                                "body_mm"=> "You success cancel customer order!",
+                                "title_en"=> "Succesfully Order Cancel",
+                                "body_en"=> "You success cancel customer order!",
+                                "title_ch"=> "Succesfully Order Cancel",
+                                "body_ch"=> "You success cancel customer order!!"
+                            ],
+                        ],
+                    ]);
+                }
 
                 $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
                 return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_orders]]);
@@ -709,33 +855,38 @@ class OrderApiController extends Controller
 
                 $customer_check=Customer::where('customer_id',$customer_orders->customer_id)->first();
 
+                // return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
+
                 if($request['order_status_id']=="3"){
-                    $title="Order Accepted";
-                    $messages="Your order has been accepted successfully by restaurant! It’s now preparing!";
-
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    //Customer
-                    $fcm_token=array();
-                    array_push($fcm_token, $customer_check->fcm_token);
-                    $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-                    $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'restaurant_accept_order','order_type'=>$customer_orders->order_type,'title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $test=json_decode($playLoad);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
+                    // customer
+                    $cus_client = new Client();
+                    $cus_token=$customer_check->fcm_token;
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    if($cus_token){
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_accept_order",
+                                    "order_id"=>$customer_orders->order_id,
+                                    "order_status_id"=>$customer_orders->order_status_id,
+                                    "order_type"=>$customer_orders->order_type,
+                                    "title_mm"=> "Order Accepted",
+                                    "body_mm"=> "Your order has been accepted successfully by restaurant! It’s now preparing!",
+                                    "title_en"=> "Order Accepted",
+                                    "body_en"=> "Your order has been accepted successfully by restaurant! It’s now preparing!",
+                                    "title_ch"=> "商家已接单",
+                                    "body_ch"=> "商家已接单!正在备餐中！"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
 
 
                     //rider
@@ -755,113 +906,172 @@ class OrderApiController extends Controller
                     }
                     $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
 
-                    $fcm_token2=array();
+                    $rider_fcm_token=array();
                     foreach($riders_check as $rid){
-                        array_push($fcm_token2, $rid->rider_fcm_token);
+                        if($rid->rider_fcm_token){
+                            array_push($rider_fcm_token, $rid->rider_fcm_token);
+                        }
                     }
 
-                    $title1="Order Incomed";
-                    $messages1="One new order is incomed! Please check it!";
-                    $message1 = strip_tags($messages1);
-                    $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'new_order','order_type'=>$customer_orders->order_type,'title' => $title1, 'body' => $message1]);
+                    $rider_client = new Client();
+                        $rider_token=$rider_fcm_token;
+                        $orderId=(string)$customer_orders->order_id;
+                        $orderstatusId=(string)$customer_orders->order_status_id;
+                        $orderType=(string)$customer_orders->order_type;
+                        $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        if($rider_token){
+                            $request=$rider_client->post($url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Incomed",
+                                        "body_mm"=> "One new order is incomed! Please check it!",
+                                        "title_en"=> "Order Incomed",
+                                        "body_en"=> "One new order is incomed! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "有新订单!请查看！"
+                                    ],
+                                ],
+                            ]);
+                        }
 
-                    $playLoad1 = json_encode($field1);
-                    $test1=json_decode($playLoad1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
 
-                    // return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
+                    // try {
+                    //     $rider_client = new Client();
+                    //     $rider_token=$rider_fcm_token;
+                    //     $orderId=(string)$customer_orders->order_id;
+                    //     $orderstatusId=(string)$customer_orders->order_status_id;
+                    //     $orderType=(string)$customer_orders->order_type;
+                    //     $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    //     if($rider_token){
+                    //         $request=$rider_client->post($url,[
+                    //             'json' => [
+                    //                 "to"=>$rider_token,
+                    //                 "data"=> [
+                    //                     "type"=> "new_order",
+                    //                     "order_id"=>$orderId,
+                    //                     "order_status_id"=>$orderstatusId,
+                    //                     "order_type"=>$orderType,
+                    //                     "title_mm"=> "Order Incomed",
+                    //                     "body_mm"=> "One new order is incomed! Please check it!",
+                    //                     "title_en"=> "Order Incomed",
+                    //                     "body_en"=> "One new order is incomed! Please check it!",
+                    //                     "title_ch"=> "订单通知",
+                    //                     "body_ch"=> "有新订单!请查看！"
+                    //                 ],
+                    //             ],
+                    //         ]);
+                    //     }
+
+                    //     $response = $request->getBody();
+
+                    // } catch (Throwable $re) {
+                    //     $response=$re;
+                    // }
+
+                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
 
                 }
                 elseif($request['order_status_id']=="2"){
 
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
                     //Customer
-                    $title="Order Canceled by Restaurant";
-                    $messages="It’s sorry as your order is canceled by restaurant!";
-                    $message = strip_tags($messages);
-                    $fcm_token=array();
-                    array_push($fcm_token, $customer_check->fcm_token);
-                    $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-                    $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'restaurant_cancel_order','order_type'=>$customer_orders->order_type,'title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $test=json_decode($playLoad);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
-                    $test1=null;
+                    $cus_client = new Client();
+                    $cus_token=$customer_check->fcm_token;
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    if($cus_token){
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_cancel_order",
+                                    "order_id"=>$customer_orders->order_id,
+                                    "order_status_id"=>$customer_orders->order_status_id,
+                                    "order_type"=>$customer_orders->order_type,
+                                    "title_mm"=> "Order Canceled by Restaurant",
+                                    "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                    "title_en"=> "Order Canceled by Restaurant",
+                                    "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                    "title_ch"=> "订单已被取消",
+                                    "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
                 }
                 elseif($request['order_status_id']=="5"){
-                    $title="Order is Ready";
-                    $messages="Your order is ready! Delivering to you soon!";
-
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                    //Customer
-                    $fcm_token=array();
-                    array_push($fcm_token, $customer_check->fcm_token);
-                    $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-                    $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'ready_pickup_order','order_type'=>$customer_orders->order_type,'title' => $title, 'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $test=json_decode($playLoad);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-                    curl_close($curl_session);
+                    //customer
+                    $cus_client = new Client();
+                    $cus_token=$customer_check->fcm_token;
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    if($cus_token){
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "ready_pickup_order",
+                                    "order_id"=>$customer_orders->order_id,
+                                    "order_status_id"=>$customer_orders->order_status_id,
+                                    "order_type"=>$customer_orders->order_type,
+                                    "title_mm"=> "Order is Ready",
+                                    "body_mm"=> "Your order is ready! Delivering to you soon!",
+                                    "title_en"=> "Order is Ready",
+                                    "body_en"=> "Your order is ready! Delivering to you soon!",
+                                    "title_ch"=> "Order is Ready",
+                                    "body_ch"=> "Your order is ready! Delivering to you soon!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }
 
                     //rider
                     $riders_check=Rider::where('rider_id',$customer_orders->rider_id)->select('rider_id','rider_fcm_token')->get();
-                    $fcm_token2=array();
+                    $rider_fcm_token=array();
                     foreach($riders_check as $rid){
-                        array_push($fcm_token2, $rid->rider_fcm_token);
+                        if($rid->rider_fcm_token){
+                            array_push($rider_fcm_token, $rid->rider_fcm_token);
+                        }
                     }
-
-                    $title1="Order is Ready to Pick Up";
-                    $messages1="Restaurant has prepared the order! Pick it up quickly!";
-                    $message1 = strip_tags($messages1);
-                    $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'ready_pickup_order','order_type'=>$customer_orders->order_type,'title' => $title1, 'body' => $message1]);
-
-                    $playLoad1 = json_encode($field1);
-                    $test1=json_decode($playLoad1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
+                    $rider_client = new Client();
+                    $token_rider=$rider_fcm_token;
+                    $orderId=(string)$customer_orders->order_id;
+                    $orderstatusId=(string)$customer_orders->order_status_id;
+                    $orderType=(string)$customer_orders->order_type;
+                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    if($token_rider){
+                        $rider_client->post($url,[
+                            'json' => [
+                                "to"=>$token_rider,
+                                "data"=> [
+                                    "type"=> "ready_pickup_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "Order is Ready to Pick Up",
+                                    "body_mm"=> "=Restaurant has prepared the order! Pick it up quickly!",
+                                    "title_en"=> "Order is Ready to Pick Up",
+                                    "body_en"=> "Restaurant has prepared the order! Pick it up quickly!",
+                                    "title_ch"=> "商家已完成",
+                                    "body_ch"=> "商家已完成订单! 请尽快取餐！"
+                                ],
+                            ],
+                        ]);
+                    }
                 }
                 else{
                     return response()->json(['success'=>false,'message'=>'status id not found']);
@@ -1079,8 +1289,21 @@ class OrderApiController extends Controller
             }else{
                 $customer_orders->customer_address->is_default=false;
             }
-            array_push($data,$customer_orders);
         }
+        if($customer_orders->from_parcel_city_id==0){
+            $customer_orders->from_parcel_city_name=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$city_data->city_name;
+        }
+        if($customer_orders->to_parcel_city_id==0){
+            $customer_orders->to_parcel_city_name=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$city_data->city_name;
+        }
+        array_push($data,$customer_orders);
+
 
         if($customer_orders){
             return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
@@ -1323,9 +1546,9 @@ class OrderApiController extends Controller
         $title1="Order Notification";
         $messages1="One new order is received! Please check it!";
         $message1 = strip_tags($messages1);
-        $fcm_token1=array();
-        array_push($fcm_token1, $restaurant_check->restaurant_fcm_token);
-        $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'new_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
+        $restaurant_fcm_token=array();
+        array_push($restaurant_fcm_token, $restaurant_check->restaurant_fcm_token);
+        $field1=array('registration_ids'=>$restaurant_fcm_token,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'new_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
 
 
         $playLoad1 = json_encode($field1);
@@ -1339,6 +1562,32 @@ class OrderApiController extends Controller
         curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
         $result = curl_exec($curl_session1);
         curl_close($curl_session1);
+
+        // $client = new Client();
+        // $token_rider=$restaurant_fcm_token;
+        // $url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+        // // if($token_rider){
+        //     $client->post($url,[
+        //         'json' => [
+        //             "to"=>"5fb9a0da046582f96ecde2",
+        //             "data"=>[
+        //                 "message"=> "Order Notification",
+        //             ],
+        //             "notification"=> [
+        //                 "type"=> "customer_cancel_order",
+        //                 "order_id"=>$customer_orders->order_id,
+        //                 "order_status_id"=>$customer_orders->order_status_id,
+        //                 "order_type"=>$customer_orders->order_type,
+        //                 "title_mm"=> "Order Notification",
+        //                 "body_mm"=> "==Your order has been confirmed successfully! Please wait for delivery!",
+        //                 "title_en"=> "Order Notification",
+        //                 "body_en"=> "==Your order has been confirmed successfully! Please wait for delivery!",
+        //                 "title_ch"=> "订单通知",
+        //                 "body_ch"=> "您的订单已确认!"
+        //             ],
+        //         ],
+        //     ]);
+        // // }
 
         return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>$check,'notification'=>$test]);
     }
@@ -1375,6 +1624,87 @@ class OrderApiController extends Controller
             $order_status_id="18";
         }
 
+
+        $theta = $customer_address_longitude - $restaurant_address_longitude;
+        $dist = sin(deg2rad($customer_address_latitude)) * sin(deg2rad($restaurant_address_latitude)) +  cos(deg2rad($customer_address_latitude)) * cos(deg2rad($restaurant_address_latitude)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+        $kilometer=$miles * 1.609344;
+        $distances=(float) number_format((float)$kilometer, 1, '.', '');
+
+        if($distances < 2) {
+            $rider_delivery_fee=0;
+        }elseif($distances == 2){
+            $rider_delivery_fee=600;
+        }elseif($distances > 2 && $distances < 3.5){
+            $rider_delivery_fee=700;
+        }elseif($distances == 3.5){
+            $rider_delivery_fee=800;
+        }elseif($distances > 3.5 && $distances < 5){
+            $rider_delivery_fee=900;
+        }elseif($distances == 5){
+            $rider_delivery_fee=1000;
+        }elseif($distances > 5 && $distances < 6.5){
+            $rider_delivery_fee=1100;
+        }elseif($distances == 6.5){
+            $rider_delivery_fee=1200;
+        }elseif($distances > 6.5 && $distances < 8){
+            $rider_delivery_fee=1300;
+        }elseif($distances==8){
+            $rider_delivery_fee=2500;
+        }elseif($distances > 8 && $distances < 9.5){
+            $rider_delivery_fee=2700;
+        }elseif($distances==9.5){
+            $rider_delivery_fee=2900;
+        }elseif($distances > 9.5 && $distances < 11){
+            $rider_delivery_fee=3100;
+        }elseif($distances==11){
+            $rider_delivery_fee=3300;
+        }elseif($distances > 11 && $distances < 12.5){
+            $rider_delivery_fee=3500;
+        }elseif($distances==12.5){
+            $rider_delivery_fee=3700;
+        }elseif($distances > 12.5 && $distances < 14){
+            $rider_delivery_fee=3900;
+        }elseif($distances==14){
+            $rider_delivery_fee=4100;
+        }elseif($distances > 14 && $distances < 15.5){
+            $rider_delivery_fee=4400;
+        }elseif($distances==15.5){
+            $rider_delivery_fee=4700;
+        }elseif($distances > 15.5 && $distances < 17){
+            $rider_delivery_fee=5000;
+        }elseif($distances==17){
+            $rider_delivery_fee=5300;
+        }elseif($distances > 17 && $distances < 18.5){
+            $rider_delivery_fee=5600;
+        }elseif($distances==18.5){
+            $rider_delivery_fee=5900;
+        }elseif($distances > 18.5 && $distances < 20){
+            $rider_delivery_fee=6200;
+        }elseif($distances==20){
+            $rider_delivery_fee=6500;
+        }elseif($distances > 20 && $distances < 21.5){
+            $rider_delivery_fee=6800;
+        }elseif($distances==21.5){
+            $rider_delivery_fee=7100;
+        }elseif($distances > 21.5 && $distances < 23){
+            $rider_delivery_fee=7400;
+        }elseif($distances==23){
+            $rider_delivery_fee=7700;
+        }elseif($distances > 23 && $distances < 24.5){
+            $rider_delivery_fee=8000;
+        }elseif($distances==24.5){
+            $rider_delivery_fee=8300;
+        }elseif($distances > 24.5 && $distances < 26){
+            $rider_delivery_fee=8600;
+        }elseif($distances >= 26){
+            $rider_delivery_fee=8900;
+        }else{
+            $rider_delivery_fee=8900;
+        }
+
         $booking_count=CustomerOrder::count();
         $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
 
@@ -1395,8 +1725,11 @@ class OrderApiController extends Controller
         $customer_orders->estimated_start_time=$start_time;
         $customer_orders->estimated_end_time=$end_time;
         $customer_orders->delivery_fee=$delivery_fee;
+        $customer_orders->rider_delivery_fee=$rider_delivery_fee;
+        $customer_orders->rider_restaurant_distance=$distances;
         $customer_orders->item_total_price=$item_total_price;
-        $customer_orders->bill_total_price=$bill_total_price;
+        // $customer_orders->bill_total_price=$bill_total_price;
+        $customer_orders->bill_total_price=1;
         $customer_orders->customer_address_latitude=$customer_address_latitude;
         $customer_orders->customer_address_longitude=$customer_address_longitude;
 
@@ -1543,57 +1876,66 @@ class OrderApiController extends Controller
 
                 return view('admin.src.example.place_order');
             }else{
-                $title="Order Notification";
-                $messages="Your order has been confirmed successfully! Please wait for delivery!";
+                //customer
+                $cus_client = new Client();
+                $customer_token=$customer_check->fcm_token;
+                if($customer_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$customer_token,
+                                "data"=> [
+                                    "type"=> "new_order",
+                                    "order_id"=>$customer_orders->order_id,
+                                    "order_status_id"=>$customer_orders->order_status_id,
+                                    "order_type"=>$customer_orders->order_type,
+                                    "title_mm"=> "Order Notification",
+                                    "body_mm"=> "==Your order has been confirmed successfully! Please wait for delivery!",
+                                    "title_en"=> "Order Notification",
+                                    "body_en"=> "==Your order has been confirmed successfully! Please wait for delivery!",
+                                    "title_ch"=> "订单通知",
+                                    "body_ch"=> "您的订单已确认!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                }
 
-                $message = strip_tags($messages);
-                $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-
-                //Customer
-                $fcm_token=array();
-                array_push($fcm_token, $customer_check->fcm_token);
-                $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-                $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'new_order','order_type'=>'food','title' => $title,'body' => $message]);
-
-                $playLoad = json_encode($field);
-                $test=json_decode($playLoad);
-                $curl_session = curl_init();
-                curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                curl_setopt($curl_session, CURLOPT_POST, true);
-                curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                $result = curl_exec($curl_session);
-
-                curl_close($curl_session);
 
                 //restaurant
                 $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->first();
-                $title1="Order Notification";
-                $messages1="One new order is received! Please check it!";
-                $message1 = strip_tags($messages1);
-                $fcm_token1=array();
-                array_push($fcm_token1, $restaurant_check->restaurant_fcm_token);
-                $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'new_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
+                $restaurant_client = new Client();
+                $restaurant_token=$restaurant_check->restaurant_fcm_token;
+                $orderId=(string)$customer_orders->order_id;
+                $orderstatusId=(string)$customer_orders->order_status_id;
+                $orderType=(string)$customer_orders->order_type;
+                if($restaurant_token){
+                    $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                    $restaurant_client->post($restaurant_url,[
+                        'json' => [
+                            "to"=>$restaurant_token,
+                            "data"=> [
+                                "type"=> "new_order",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "Order Notification",
+                                "body_mm"=> "One new order is received! Please check it!",
+                                "title_en"=> "Order Notification",
+                                "body_en"=> "One new order is received! Please check it!",
+                                "title_ch"=> "订单通知",
+                                "body_ch"=> "收到一个新订单!请查看！"
+                            ],
+                        ],
+                    ]);
+                }
 
-
-                $playLoad1 = json_encode($field1);
-                $curl_session1 = curl_init();
-                curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                curl_setopt($curl_session1, CURLOPT_POST, true);
-                curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                $result = curl_exec($curl_session1);
-                curl_close($curl_session1);
-
-                return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>['response'=>null,'order'=>$check],'notification'=>$result]);
+                return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>['response'=>null,'order'=>$check]]);
             }
         }else{
             return response()->json(['success'=>false,'message'=>"Error! not define orders"]);

@@ -167,6 +167,10 @@ class RestaurantController extends Controller
     {
         $start_date=$request['min'];
         $end_date=$request['max'];
+        // if(empty($start_date) && empty($end_date)){
+        //     $start_date=Carbon::now()->subDays(10);
+        //     $end_date=Carbon::now();
+        // }
         // $end_date="";
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
@@ -176,15 +180,15 @@ class RestaurantController extends Controller
         // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
 
         $cus_order_list=CustomerOrder::whereDoesntHave('restaurant_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(bill_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->where('order_type','food')->where('order_status_id','7')->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('restaurant_id')->select('restaurant_id',DB::raw("SUM(item_total_price) as total_amount"))->whereBetween('created_at',[$from_date,$to_date])->where('order_type','food')->where('order_status_id','7')->get();
 
         $data=[];
         foreach($cus_order_list as $value){
             $payment=RestaurantPayment::where('restaurant_id',$value->restaurant_id)->orderBy('created_at')->first();
             if($payment){
-                $last_date=date('Y-m-d 00:00:00', strtotime($payment->last_offered_date));
+                $last_date=date('d/M/Y', strtotime($payment->last_offered_date));
             }else{
-                $last_date= "Empty";
+                $last_date= "Empty Date";
             }
             $value->last_offered_date=$last_date;
             $value->duration=$days;
@@ -196,7 +200,7 @@ class RestaurantController extends Controller
         $cus_order_offered=RestaurantPayment::where('status','0')->get();
         $cus_order_done=RestaurantPayment::where('status','1')->get();
 
-        return view('admin.restaurant.restaurant_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done'));
+        return view('admin.restaurant.restaurant_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done','from_date','to_date'));
 
     }
 
@@ -209,15 +213,21 @@ class RestaurantController extends Controller
             $total_amount=$value->total_amount;
             $percentage=$value->percentage;
             $duration=$value->duration;
+            $start_date=$value->start_date;
+            $end_date=$value->end_date;
         }
+        $count1=RestaurantPayment::where('restaurant_id',$restaurant_id)->count();
+        $count=$count1+1;
         RestaurantPayment::create([
             "restaurant_id"=>$restaurant_id,
             "total_amount"=>$total_amount,
             "percentage"=>$percentage,
             "pay_amount"=>$pay_amount,
             "duration"=>$duration,
-            "last_offered_date"=>now(),
+            "start_offered_date"=>$start_date,
+            "last_offered_date"=>$end_date,
             "status"=>0,
+            "payment_voucher"=>"V00".$count,
         ]);
 
         // $request->session()->flash('alert-success', 'successfullyt!');
@@ -247,7 +257,7 @@ class RestaurantController extends Controller
     }
 
     public function restaurantajax(){
-        $model =  Restaurant::orderBy('is_recommend','desc')->get();
+        $model =  Restaurant::orderBy('created_at','desc')->get();
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('restaurant_image', function(Restaurant $item){

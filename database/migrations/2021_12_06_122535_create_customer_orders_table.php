@@ -26,6 +26,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->string('estimated_start_time')->nullable();
             $table->string('estimated_end_time')->nullable();
             $table->bigInteger('delivery_fee')->nullable();
+            $table->bigInteger('rider_delivery_fee')->nullable();
             $table->bigInteger('item_total_price')->nullable();
             $table->bigInteger('bill_total_price')->nullable();
             $table->longText('current_address')->nullable();
@@ -49,6 +50,8 @@ class CreateCustomerOrdersTable extends Migration
             $table->double('to_drop_latitude')->nullable();
             $table->double('to_drop_longitude')->nullable();
             $table->unsignedBigInteger('parcel_type_id')->nullable();
+            $table->unsignedBigInteger('from_parcel_city_id')->nullable();
+            $table->unsignedBigInteger('to_parcel_city_id')->nullable();
             $table->bigInteger('total_estimated_weight')->nullable()->default(0);
             $table->bigInteger('item_qty')->nullable()->default(0);
             $table->text('parcel_order_note')->nullable();

@@ -71,11 +71,12 @@
                                         @enderror
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
-                                    <label for="image" class="col-md-12 col-form-label">{{ __('Ads Image') }} </label>
+                                    <label for="image_mm" class="col-md-12 col-form-label">{{ __('Ads Image Myanmar') }} </label>
                                     <div class="col-md-6">
-                                        <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image" autocomplete="image" onchange="loadFileImage(event)">
-                                        @error('image')
+                                        <input type="file" style="height: auto;" id="image_mm" class="form-control @error('image_mm') is-invalid @enderror" name="image_mm" autocomplete="image_mm" onchange="loadFileImageMm(event)">
+                                        @error('image_mm')
                                             <span class="invalid-feedback" role="alert">
                                               <strong>{{ $message }}</strong>
                                             </span>
@@ -83,10 +84,50 @@
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="form-group">
-                                            @if($down_ads->image)
-                                                <image src="../../../../../../uploads/down_ads/{{$down_ads->image}}" id="imageOne" style="width: 100%;height: 150px;"></image>
+                                            @if($down_ads->image_mm)
+                                                <image src="../../../../../../uploads/down_ads/{{$down_ads->image_mm}}" id="imageOne" style="width: 100%;height: 150px;"></image>
                                             @else
                                                 <image src="{{asset('../image/available.png')}}" id="imageOne" style="width: 100%;height: 150px;"></image>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="image_en" class="col-md-12 col-form-label">{{ __('Ads Image English') }} </label>
+                                    <div class="col-md-6">
+                                        <input type="file" style="height: auto;" id="image_en" class="form-control @error('image_en') is-invalid @enderror" name="image_en" autocomplete="image_en" onchange="loadFileImageEn(event)">
+                                        @error('image_en')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <div class="form-group">
+                                            @if($down_ads->image_en)
+                                                <image src="../../../../../../uploads/down_ads/{{$down_ads->image_en}}" id="imageTwo" style="width: 100%;height: 150px;"></image>
+                                            @else
+                                                <image src="{{asset('../image/available.png')}}" id="imageTwo" style="width: 100%;height: 150px;"></image>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="image_ch" class="col-md-12 col-form-label">{{ __('Ads Image China') }} </label>
+                                    <div class="col-md-6">
+                                        <input type="file" style="height: auto;" id="image_ch" class="form-control @error('image_ch') is-invalid @enderror" name="image_ch" autocomplete="image_ch" onchange="loadFileImageCh(event)">
+                                        @error('image_ch')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <div class="form-group">
+                                            @if($down_ads->image_ch)
+                                                <image src="../../../../../../uploads/down_ads/{{$down_ads->image_ch}}" id="imageThree" style="width: 100%;height: 150px;"></image>
+                                            @else
+                                                <image src="{{asset('../image/available.png')}}" id="imageThree" style="width: 100%;height: 150px;"></image>
                                             @endif
                                         </div>
                                     </div>
@@ -117,9 +158,17 @@
 <script type="text/javascript">
     $('#restaurant_id').select2();
 //Image Show
-var loadFileImage= function(event) {
-    var image = document.getElementById('imageOne');
-    image.src = URL.createObjectURL(event.target.files[0]);
+var loadFileImageMm= function(event) {
+    var imagemm = document.getElementById('imageOne');
+    imagemm.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFileImageEn= function(event) {
+    var imageen = document.getElementById('imageTwo');
+    imageen.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFileImageCh= function(event) {
+    var imagech = document.getElementById('imageThree');
+    imagech.src = URL.createObjectURL(event.target.files[0]);
 };
 </script>
 @endsection

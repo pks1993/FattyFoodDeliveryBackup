@@ -131,7 +131,7 @@ setTimeout(function() {
     function( settings, data, dataIndex ) {
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
-        var date = new Date( data[5] );
+        var date = new Date( data[6] );
 
         if (
         ( min === null && max === null ) ||

@@ -22,6 +22,16 @@ class NotificationApiController extends Controller
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
+    public function rider()
+    {
+        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
+    }
+    public function restaurant()
+    {
+        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
+    }
 
     public function android_version_check()
     {
@@ -56,7 +66,41 @@ class NotificationApiController extends Controller
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
     }
-    
+
+    public function rider_version_check()
+    {
+        $value=VersionUpdate::where('os_type','rider')->first();
+        if($value){
+            $data=[];
+            if($value->is_force_update==1){
+                $value->is_force_update=true;
+            }else{
+                $value->is_force_update=false;
+            }
+            array_push($data,$value);
+            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'version data not found']);
+        }
+    }
+
+    public function restaurant_version_check()
+    {
+        $value=VersionUpdate::where('os_type','restaurant')->first();
+        if($value){
+            $data=[];
+            if($value->is_force_update==1){
+                $value->is_force_update=true;
+            }else{
+                $value->is_force_update=false;
+            }
+            array_push($data,$value);
+            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'version data not found']);
+        }
+    }
+
     public function notify_url(Request $request)
     {
         $data=$request->getContent();

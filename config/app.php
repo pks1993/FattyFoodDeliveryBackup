@@ -28,6 +28,7 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
@@ -180,7 +181,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         // Collective\Html\HtmlServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-        
+
 
     ],
 

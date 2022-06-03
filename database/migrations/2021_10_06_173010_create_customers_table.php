@@ -21,6 +21,7 @@ class CreateCustomersTable extends Migration
             $table->bigInteger('longitude')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('customer_type_id')->nullable();
             $table->string('image')->nullable();
             $table->string('device_id')->nullable();
             $table->string('fcm_token')->nullable();

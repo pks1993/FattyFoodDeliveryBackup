@@ -5,14 +5,28 @@ Route::get('/', function () {
     return view('admin.layouts.login_master');
 });
 
-//Billing
+//Billing-restaurant
 Route::get('fatty/main/admin/restaurant_billing/data_list/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_list_url');
 Route::get('fatty/main/admin/restaurant_billing/data_history/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_url');
 Route::get('fatty/main/admin/restaurant_billing/data_history/search/{restaurant_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_search')->name('restaurant_billing_history.search');
 Route::get('fatty/main/admin/restaurant_billing/update/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_update');
 Route::get('fatty/main/admin/restaurant_billing/data_history/detail/{restaurant_payment_id}','Admin\Restaurant\RestaurantController@restaurant_billing_history_detail_url');
 
+//Billing-rider
+Route::get('fatty/main/admin/rider_billing/data_list/{rider_id}','Admin\Rider\RiderController@rider_billing_list_url');
+Route::get('fatty/main/admin/rider_billing/data_history/{rider_id}','Admin\Rider\RiderController@rider_billing_history_url');
+Route::get('fatty/main/admin/rider_billing/data_history/search/{rider_id}','Admin\Rider\RiderController@rider_billing_history_search')->name('rider_billing_history.search');
+Route::get('fatty/main/admin/rider_billing/update/{id}','Admin\Rider\RiderController@rider_billing_update');
+Route::get('fatty/main/admin/rider_billing/data_history/detail/{Rider_payment_id}','Admin\Rider\RiderController@rider_billing_history_detail_url');
 
+//Today Billing-rider
+Route::get('fatty/main/admin/today_rider_billing/data_list/{rider_id}','Admin\Rider\RiderController@today_rider_billing_list_url');
+Route::get('fatty/main/admin/today_rider_billing/data_history/{rider_id}','Admin\Rider\RiderController@today_rider_billing_history_url');
+Route::get('fatty/main/admin/today_rider_billing/data_history/search/{rider_id}','Admin\Rider\RiderController@today_rider_billing_history_search')->name('today_rider_billing_history.search');
+Route::get('fatty/main/admin/today_rider_billing/update/{id}','Admin\Rider\RiderController@today_rider_billing_update');
+Route::get('fatty/main/admin/today_rider_billing/data_history/detail/{Rider_payment_id}','Admin\Rider\RiderController@today_rider_billing_history_detail_url');
+
+//Privacy and Term&Condition
 Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
@@ -217,6 +231,17 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     Route::get('restaurants_billing/offered','Admin\Restaurant\RestaurantController@restaurant_billing_offered')->name('restaurants_billing.offered');
     // Route::get('restaurants_billing/update/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_update')->name('restaurants_billing.update');
+
+    //rider billing
+    Route::get('riders_billing/list','Admin\Rider\RiderController@rider_billing_list')->name('riders_billing.list');
+    Route::get('riders_billing/store/{id}','Admin\Rider\RiderController@rider_billing_store')->name('riders_billing.store');
+    Route::get('riders_billing/offered','Admin\Rider\RiderController@rider_billing_offered')->name('riders_billing.offered');
+    // Route::get('riders_billing/update/{id}','Admin\Rider\RiderController@rider_billing_update')->name('riders_billing.update');
+
+    //Only day rider billing
+    Route::get('today_riders_billing/list','Admin\Rider\RiderController@today_rider_billing_list')->name('today_riders_billing.list');
+    Route::get('today_riders_billing/store/{id}','Admin\Rider\RiderController@today_rider_billing_store')->name('today_riders_billing.store');
+    Route::get('today_riders_billing/offered','Admin\Rider\RiderController@today_rider_billing_offered')->name('today_riders_billing.offered');
 
 
     //chart

@@ -62,5 +62,21 @@ class CustomerOrder extends Model
     {
         return $this->hasOne('App\Models\Restaurant\RestaurantPayment','restaurant_id','restaurant_id');
     }
+    public function rider_payment()
+    {
+        return $this->hasOne('App\Models\Rider\RiderPayment','rider_id','rider_id');
+    }
+    public function today_rider_payment()
+    {
+        return $this->hasOne('App\Models\Rider\RiderTodayPayment','rider_id','rider_id');
+    }
+    public function from_parcel_region()
+    {
+        return $this->belongsTo('App\Models\City\ParcelCity','from_parcel_city_id','parcel_city_id');
+    }
+    public function to_parcel_region()
+    {
+        return $this->belongsTo('App\Models\City\ParcelCity','from_parcel_city_id','parcel_city_id');
+    }
 
 }
