@@ -10,22 +10,12 @@ require_once __DIR__ . '/ExampleConfig.php';
 require_once __DIR__ . '/../lib/io/RefundRequest.php';
 require_once __DIR__ . '/../lib/PaymentClient.php';
 
-//uat srver
-// $servername = "localhost";
-// $username = "root";
-// $password = "Fatty@2021";
-// $dbname = "FattyApplication";
-
 //production
 $servername = "localhost";
 $username = "root";
 $password = "Fatty@Orikino#412F";
 $dbname = "FattyDatabase";
 
-// $servername = "localhost";
-// $username = "sithu";
-// $password = "Sithu@orikino#2022";
-// $dbname = "FattyDatabase";
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
@@ -37,7 +27,7 @@ $merchOrderId=$_SESSION['merchOrderId'];
 $refundReason="Cancel Order By Customer";
 $refundRequestNo='"'.time().'"';
 $customer_orders=$_SESSION['customer_orders'];
-// $restaurant_check=$_SESSION['restaurant_check'];
+$orderId=$customer_orders->order_id;
 
 
 try {
@@ -132,9 +122,9 @@ try {
         }
 
     } catch (Throwable $e) {
-        $sql = "UPDATE customer_orders SET order_status_id=19 WHERE order_id=$customer_orders->order_id;";
-        if ($conn->query($sql) === TRUE) {
-            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!");
+        $sql1 = "UPDATE customer_orders SET order_status_id=19 WHERE order_id=$orderId;";
+        if ($conn->query($sql1) === TRUE) {
+            $arrayName = array('success' =>false,'message'=>"Query Error!");
             $result=json_encode($arrayName);
             echo $result;
         } else {
@@ -143,7 +133,7 @@ try {
             echo $result;
         }
         $conn->close();
-        // var_dump($e);
+        var_dump($e);
     }
 
 ?>
