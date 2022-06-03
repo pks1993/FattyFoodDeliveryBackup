@@ -57,13 +57,13 @@ class ExampleConfig implements ConfigInterface
     public function getPlaceOrderUrl()
     {
         // return "http://api.kbzpay.com/payment/gateway/uat/precreate";
-        return "http://api.kbzpay.com/payment/gateway/precreate";
+        return "https://api.kbzpay.com/payment/gateway/precreate";
     }
 
     public function getQueryOrderUrl()
     {
         // return "http://api.kbzpay.com/payment/gateway/uat/queryorder";
-        return "http://api.kbzpay.com/payment/gateway/queryorder";
+        return "https://api.kbzpay.com/payment/gateway/queryorder";
     }
 
     public function getRefundUrl()
