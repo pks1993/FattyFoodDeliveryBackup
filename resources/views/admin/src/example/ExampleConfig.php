@@ -68,7 +68,7 @@ class ExampleConfig implements ConfigInterface
 
     public function getRefundUrl()
     {
-        return "https://api.kbzpay.com:18008/payment/gateway/refund";
+        return "https://api.kbzpay.com:8008/payment/gateway/refund";
         // return "https://api.kbzpay.com:18008/payment/gateway/uat/refund";
     }
 
