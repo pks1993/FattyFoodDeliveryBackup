@@ -133,7 +133,7 @@ try {
             echo $result;
         }
         $conn->close();
-        var_dump($e);
+        // var_dump($e);
     }
 
 ?>
