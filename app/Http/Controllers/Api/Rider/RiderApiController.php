@@ -1366,6 +1366,24 @@ class RiderApicontroller extends Controller
         }
     }
 
+    public function rider_getBilling(Request $request)
+    {
+        $rider_id=$request['rider_id'];
+        $current_date=$request['start_date'];
+        $next_date=$request['end_date'];
+        $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
+        $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+
+        $today_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+        $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+
+        //OrderShow
+        $orders=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->get();
+
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$orders]]);
+    }
+
     public function rider_insight(Request $request)
     {
         $rider_id=$request['rider_id'];
