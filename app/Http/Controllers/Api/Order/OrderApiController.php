@@ -1728,7 +1728,8 @@ class OrderApiController extends Controller
         $customer_orders->rider_delivery_fee=$rider_delivery_fee;
         $customer_orders->rider_restaurant_distance=$distances;
         $customer_orders->item_total_price=$item_total_price;
-        $customer_orders->bill_total_price=$bill_total_price;
+        // $customer_orders->bill_total_price=$bill_total_price;
+        $customer_orders->bill_total_price=1;
         $customer_orders->customer_address_latitude=$customer_address_latitude;
         $customer_orders->customer_address_longitude=$customer_address_longitude;
 

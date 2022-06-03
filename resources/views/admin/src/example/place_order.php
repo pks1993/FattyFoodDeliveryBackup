@@ -1,8 +1,8 @@
 <?php
-    if(!isset($_SESSION)) 
-    { 
-        session_start(); 
-    } 
+    if(!isset($_SESSION))
+    {
+        session_start();
+    }
 ?>
 <?php
 use App\Models\Order\CustomerOrder;
@@ -43,7 +43,7 @@ try {
             $result=json_encode($arrayName);
             echo $result;
         }
-        
+
     } catch (Throwable $e) {
         $orders=CustomerOrder::where('order_id',$check->order_id)->first();
         $orders->order_status_id=20;
