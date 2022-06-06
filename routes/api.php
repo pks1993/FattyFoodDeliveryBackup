@@ -17,18 +17,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('fatty/202221/lashio/main/admin/customers/request_otp','Api\Customer\CustomerApiController@request_otp');
+Route::post('fatty/202221/lashio/main/admin/customers/verify_otp','Api\Customer\CustomerApiController@verify_otp');
+Route::post('fatty/202221/lashio/main/admin/customers/resend_request_otp','Api\Customer\CustomerApiController@resend_request_otp');
+Route::post('fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api\Customer\CustomerApiController@resend_verify_otp');
+Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
+Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
+Route::post('fatty/202221/lashio/main/admin/customers/login/v2','Api\Customer\CustomerApiController@login_version_two');
+
 Route::middleware('one_device_login')->group(function(){
     //Customer Api //one device login
     Route::get('fatty/202221/lashio/main/admin/customers','Api\Customer\CustomerApiController@index');
-    Route::post('fatty/202221/lashio/main/admin/customers/login','Api\Customer\CustomerApiController@store');
-    Route::post('fatty/202221/lashio/main/admin/customers/v1/login','Api\Customer\CustomerApiController@login_version_one');
-    Route::post('fatty/202221/lashio/main/admin/customers/login/v2','Api\Customer\CustomerApiController@login_version_two');
-
-    Route::post('fatty/202221/lashio/main/admin/customers/request_otp','Api\Customer\CustomerApiController@request_otp');
-    Route::post('fatty/202221/lashio/main/admin/customers/verify_otp','Api\Customer\CustomerApiController@verify_otp');
-
-    Route::post('fatty/202221/lashio/main/admin/customers/resend_request_otp','Api\Customer\CustomerApiController@resend_request_otp');
-    Route::post('fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api\Customer\CustomerApiController@resend_verify_otp');
 
 
 
