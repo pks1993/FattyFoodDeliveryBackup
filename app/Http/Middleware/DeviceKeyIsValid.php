@@ -23,8 +23,8 @@ class DeviceKeyIsValid
 
         if($deviceId && $customerId && $language){
             $customer_id=(int)$request->header('customer-id');
-            $device_id=(int)$request->header('device-id');
-            $language=(int)$request->header('language');
+            $device_id=$request->header('device-id');
+            $language=$request->header('language');
 
             if($customer_id==0){
                 return $next($request);
