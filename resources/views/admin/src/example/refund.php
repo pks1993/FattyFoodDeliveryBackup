@@ -42,23 +42,27 @@ try {
         $res = $client->refund($refundRequest);
         $response=$res->Response;
 
+        $arrayName = array('message' =>$response);
+        $result=json_encode($arrayName);
+        echo $result;
 
-        if($response->result=="SUCCESS" && $response->code=="0"){
-            $order_id=$customer_orders->order_id;
-            $result1='"'.$response->result.'"';
-            $code='"'.$response->code.'"';
-            $msg='"'.$response->msg.'"';
-            $merch_order_id='"'.$response->merch_order_id.'"';
-            $merch_code='"'.$response->merch_code.'"';
-            $trans_order_id='"'.$response->trans_order_id.'"';
-            $refund_status='"'.$response->refund_status.'"';
-            $refund_order_id='"'.$response->refund_order_id.'"';
-            $refund_amount='"'.$response->refund_amount.'"';
-            $refund_currency='"'.$response->refund_currency.'"';
-            $refund_time='"'.$response->refund_time.'"';
-            $nonce_str='"'.$response->nonce_str.'"';
-            $sign_type='"'.$response->sign_type.'"';
-            $sign='"'.$response->sign.'"';
+
+        // if($response->result=="SUCCESS" && $response->code=="0"){
+        //     $order_id=$customer_orders->order_id;
+        //     $result1='"'.$response->result.'"';
+        //     $code='"'.$response->code.'"';
+        //     $msg='"'.$response->msg.'"';
+        //     $merch_order_id='"'.$response->merch_order_id.'"';
+        //     $merch_code='"'.$response->merch_code.'"';
+        //     $trans_order_id='"'.$response->trans_order_id.'"';
+        //     $refund_status='"'.$response->refund_status.'"';
+        //     $refund_order_id='"'.$response->refund_order_id.'"';
+        //     $refund_amount='"'.$response->refund_amount.'"';
+        //     $refund_currency='"'.$response->refund_currency.'"';
+        //     $refund_time='"'.$response->refund_time.'"';
+        //     $nonce_str='"'.$response->nonce_str.'"';
+        //     $sign_type='"'.$response->sign_type.'"';
+        //     $sign='"'.$response->sign.'"';
 
             // $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
             // $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
@@ -98,37 +102,37 @@ try {
             // $result = curl_exec($curl_session1);
             // curl_close($curl_session1);
 
-            $sql="INSERT INTO order_kbz_refunds (order_id,result,code,msg,merch_order_id,merch_code,trans_order_id,refund_status,refund_order_id,refund_amount,refund_currency,refund_time,nonce_str,sign_type,sign_name) VALUES ($order_id,$result1,$code,$msg,$merch_order_id,$merch_code,$trans_order_id,$refund_status,$refund_order_id,$refund_amount,$refund_currency,$refund_time,$nonce_str,$sign_type,$sign)";
+            // $sql="INSERT INTO order_kbz_refunds (order_id,result,code,msg,merch_order_id,merch_code,trans_order_id,refund_status,refund_order_id,refund_amount,refund_currency,refund_time,nonce_str,sign_type,sign_name) VALUES ($order_id,$result1,$code,$msg,$merch_order_id,$merch_code,$trans_order_id,$refund_status,$refund_order_id,$refund_amount,$refund_currency,$refund_time,$nonce_str,$sign_type,$sign)";
 
-            if ($conn->query($sql) === TRUE) {
-                if($customer_orders->order_status_id==9){
-                    $arrayName = array('success' =>true,'message'=>"successfully cancel food order by customer",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
-                    $result=json_encode($arrayName);
-                    echo $result;
-                }elseif($customer_orders->order_status_id==2){
-                    $arrayName = array('success' =>true,'message'=>"successfully cancel order",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
-                    $result=json_encode($arrayName);
-                    echo $result;
-                }
-            } else {
-                $arrayName = array('success' =>false,'message'=>"Store History Error");
-                $result=json_encode($arrayName);
-                echo $result;
-            }
-        }else{
-            $arrayName = array('success' =>false,'message'=>$response->msg);
-            $result=json_encode($arrayName);
-            echo $result;
-        }
+            // if ($conn->query($sql) === TRUE) {
+            //     if($customer_orders->order_status_id==9){
+            //         $arrayName = array('success' =>true,'message'=>"successfully cancel food order by customer",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
+            //         $result=json_encode($arrayName);
+            //         echo $result;
+            //     }elseif($customer_orders->order_status_id==2){
+            //         $arrayName = array('success' =>true,'message'=>"successfully cancel order",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
+            //         $result=json_encode($arrayName);
+            //         echo $result;
+            //     }
+            // } else {
+            //     $arrayName = array('success' =>false,'message'=>"Store History Error");
+            //     $result=json_encode($arrayName);
+            //     echo $result;
+            // }
+        // }else{
+        //     $arrayName = array('success' =>false,'message'=>$response->msg);
+        //     $result=json_encode($arrayName);
+        //     echo $result;
+        // }
 
     } catch (Throwable $e) {
         $sql1 = "UPDATE customer_orders SET order_status_id=19 WHERE order_id=$orderId;";
         if ($conn->query($sql1) === TRUE) {
-            $arrayName = array('success' =>false,'message'=>"Query Error!",'err'=>$response);
+            $arrayName = array('success' =>false,'message'=>"Query Error!");
             $result=json_encode($arrayName);
             echo $result;
         } else {
-            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!",'err'=>$response);
+            $arrayName = array('success' =>false,'message'=>"Internet Connection Error!");
             $result=json_encode($arrayName);
             echo $result;
         }
