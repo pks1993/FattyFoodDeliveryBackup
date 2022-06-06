@@ -40,6 +40,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:1000,1',
             'bindings',
+            // \App\Http\Middleware\DeviceKeyIsValid::class,
             // \App\Library\Cobalt\Http\Middleware\LogMiddleware::class,
         ],
     ];
@@ -63,6 +64,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'one_device_login'=> \App\Http\Middleware\DeviceKeyIsValid::class,
     ];
 
     /**
