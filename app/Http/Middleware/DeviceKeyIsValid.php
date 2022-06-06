@@ -34,15 +34,15 @@ class DeviceKeyIsValid
                     if($check->device_id==$device_id){
                         return $next($request);
                     }else{
-                        return response()->json(['success'=>false,'message'=>'login from another device','error'=>['code'=>406,'message'=>'Not Acceptable']],406);
+                        return response()->json(['success'=>false,'message'=>'login from another device','code'=>406,'error'=>['code'=>406,'message'=>'Not Acceptable']],406);
                     }
                 }else{
-                    return response()->json(['success'=>false,'message'=>'customer id not found in database','error'=>['code'=>409,'message'=>'customer id not found in database']],409);
+                    return response()->json(['success'=>false,'message'=>'customer id not found in database','code'=>409,'error'=>['code'=>409,'message'=>'customer id not found in database']],409);
                 }
             }
 
         }else{
-            return response()->json(['success'=>false,'message'=>'device-id or customer-id or language not found in header','error'=>['code'=>409,'message'=>'device-id or customer-id or language not found in header']],409);
+            return response()->json(['success'=>false,'message'=>'device-id or customer-id or language not found in header','code'=>409,'error'=>['code'=>409,'message'=>'device-id or customer-id or language not found in header']],409);
         }
 
     }
