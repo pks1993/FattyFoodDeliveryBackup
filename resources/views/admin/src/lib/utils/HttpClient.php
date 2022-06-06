@@ -61,11 +61,11 @@ class HttpClient
             curl_setopt($ch, CURLOPT_CAINFO, $this->sslCaInfoPath);
         }
 
-       // $stdErrFile = __DIR__ . '/err.txt';
-       // $errFile = fopen($stdErrFile, "w") or die("Unable to open file!");
-       // curl_setopt($ch, CURLOPT_STDERR, $errFile);
-       // curl_setopt($ch, CURLOPT_VERBOSE, true);
-
+    //    $stdErrFile = __DIR__ . '/err.txt';
+    //    $errFile = fopen($stdErrFile, "w") or die("Unable to open file!");
+    //    curl_setopt($ch, CURLOPT_STDERR, $errFile);
+    //    curl_setopt($ch, CURLOPT_VERBOSE, true);
+        
         $result = curl_exec($ch);
 
 
