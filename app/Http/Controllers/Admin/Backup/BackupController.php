@@ -25,7 +25,7 @@ class BackupController extends Controller
             return Excel::download(new DataExport, 'backup.csv');
         }
 
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     /**

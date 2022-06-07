@@ -17,6 +17,12 @@ use App\Models\Order\CustomerOrder;
 
 class RiderController extends Controller
 {
+    public function rider_print_all_page()
+    {
+        $rider_payment=RiderTodayPayment::where('rider_today_payment_id',1)->first();
+        return view('admin.rider.rider_billing.rider_billing_print',compact('rider_payment'));
+    }
+
     public function rider_billing_list_url($id)
     {
         $rider_id=$id;

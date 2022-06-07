@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -102,7 +102,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -121,7 +121,7 @@
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
         var date = new Date( data[3] );
-        
+
         if (
         ( min === null && max === null ) ||
         ( min === null && date <= max ) ||
@@ -133,14 +133,14 @@
         return false;
     }
     );
-    
-    
+
+
     $(document).ready(function() {
         // Create date inputs
         $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-        
+
         $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
-        
+
         // DataTables initialisation
         var table = $("#customers").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
@@ -165,7 +165,7 @@
             'excel', 'pdf', 'print'
             ],
         });
-        
+
         // Refilter the table
         $('#min, #max').on('change', function () {
             table.draw();
