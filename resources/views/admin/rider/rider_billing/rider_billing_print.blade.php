@@ -25,14 +25,17 @@
                 top: 10px;
                 left: 0px;
                 size: 7.2cm 4in;
-                margin: 0mm;
+                margin: 0;
             }
+            /* body { margin: 1.6cm; } */
         }
     </style>
 </head>
 <body>
 
-<div class="container" style="padding-left: 0px;padding-right:0px;" id="tabcontent">
+    @foreach ($rider_payments as $rider_payment)
+<div class="container" style="padding-left: 0px;padding-right:0px;margin-top:20px;margin-bottom:10px" id="tabcontent">
+
     <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col-5">
             {{-- <div class="card-body" style="width: 100%;height:560px;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#00dfc2;background-color:#FFFFFF"> --}}
@@ -76,19 +79,20 @@
                     <div class="col" style="height: 10px;font-weight:510;">Sign</div>
                     <div class="col text-right" style="height: 10px;">------------------</div>
                 </div>
-                <div class="row" style="padding-top:30px;margin-right:20px;margin-left:20px;margin-top:20px;text-align:center">
+                <div class="row" style="margin-bottom:30px;padding-top:30px;margin-right:20px;margin-left:20px;margin-top:20px;text-align:center">
                     <div class="col" style="height: 10px;font-weight:510;">Hot Line- 09 123 456 789</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endforeach
 @include('admin.layouts._partial.script')
 <script type="text/JavaScript">
 
     window.print()
 
-  </script>
+</script>
 
 </body>
 </html>
