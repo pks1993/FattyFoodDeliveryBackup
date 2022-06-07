@@ -33,18 +33,22 @@ class NotificationApiController extends Controller
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
 
-    public function android_version_check()
+    public function android_version_check(Request $request)
     {
+        $version=$request['version_code'];
         $value=VersionUpdate::where('os_type','android')->first();
         if($value){
-            $data=[];
             if($value->is_force_update==1){
-                $value->is_force_update=true;
+                $is_force_update=true;
             }else{
-                $value->is_force_update=false;
+                $is_force_update=false;
             }
-            array_push($data,$value);
-            return response()->json(['success'=>true,'message'=>'this is current version for android','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+            if($version < $value->current_version){
+                $is_update=true;
+            }else{
+                $is_update=false;
+            }
+            return response()->json(['success'=>true,'message'=>'this is current version for android','data'=>['is_update'=>$is_update,'is_force_update'=>$is_force_update]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
@@ -59,6 +63,9 @@ class NotificationApiController extends Controller
                 $value->is_force_update=true;
             }else{
                 $value->is_force_update=false;
+            }
+            if($value->current_version){
+
             }
             array_push($data,$value);
             return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
