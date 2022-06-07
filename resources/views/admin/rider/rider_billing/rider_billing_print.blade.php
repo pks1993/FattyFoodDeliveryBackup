@@ -24,7 +24,7 @@
             @page {
                 top: 10px;
                 left: 0px;
-                size: 7.2cm 4in;
+                size: 7.24cm 4.3in;
                 margin: 0;
             }
             /* body { margin: 1.6cm; } */
