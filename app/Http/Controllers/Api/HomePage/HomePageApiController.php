@@ -129,7 +129,7 @@ class HomePageApiController extends Controller
             foreach($near_restaurant as $value){
                 $distance=$value->distance;
                 $distances=number_format((float)$distance, 1, '.', '');
-                $distances_customer_restaurant=number_format((float)$distance, 2, '.', '');
+                $distances_customer_restaurant=number_format((float)$distance, 3, '.', '');
 
                 if($distances < 2) {
                     $rider_delivery_fee=0;

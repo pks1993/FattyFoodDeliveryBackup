@@ -75,10 +75,11 @@ class CustomerApiController extends Controller
         // }else{
         //     return response()->json(['success'=>false,'message'=>'you need device_id']);
         // }
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
-        }
+        // $headers[] = getallheaders();
+        // foreach($headers as $value){
+        //     $device_id=$value['device_id'];
+        // }
+        $device_id=$request->header('device-id');
         $customer_id=$request['customer_id'];
         $customer=Customer::where('customer_id',$customer_id)->first();
 
@@ -248,14 +249,14 @@ class CustomerApiController extends Controller
 
     public function request_otp(Request $request)
     {
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
-        }
+        // $headers[] = getallheaders();
+        // foreach($headers as $value){
+        //     $device_id=$value['device_id'];
+        // }
+        $device_id=$request->header('device-id');
         $customer_phone=$request['customer_phone'];
         $customer=Customer::where('customer_phone','=',$customer_phone)->first();
         $otp = sprintf("%06d", mt_rand(1, 999999));
-
 
         if($customer){
             if($customer->customer_phone=="+959778232860"){
@@ -395,8 +396,9 @@ class CustomerApiController extends Controller
 
         if($customer){
             if ($customer->otp == $otp) {
-                $headers = getallheaders();
-                $device_id=$headers['device_id'];
+                // $headers = getallheaders();
+                // $device_id=$headers['device_id'];
+                $device_id=$request->header('device-id');
 
                 $fcm_token=$request['fcm_token'];
                 $os_type=(int)$request['os_type'];
@@ -499,10 +501,11 @@ class CustomerApiController extends Controller
     */
     public function update(Request $request)
     {
-        $headers[] = getallheaders();
-        foreach($headers as $value){
-            $device_id=$value['device_id'];
-        }
+        // $headers[] = getallheaders();
+        // foreach($headers as $value){
+        //     $device_id=$value['device_id'];
+        // }
+        $device_id=$request->header('device-id');
         // $headers= getallheaders();
         // if(count($headers)==10){
         //     $device_id=$headers['device_id'];
