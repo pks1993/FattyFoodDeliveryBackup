@@ -935,7 +935,7 @@ class ParcelOrderApiController extends Controller
     // {
     //     $from_pickup_latitude=$request['from_pickup_latitude'];
     //     $from_pickup_longitude=$request['from_pickup_longitude'];
-    //     $to_drop_latitude=$request['to_drop_latitude'];
+    //     $to_drop_latitude=$request['to_drop_latitude '];
     //     $to_drop_longitude=$request['to_drop_longitude'];
     //     $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
 

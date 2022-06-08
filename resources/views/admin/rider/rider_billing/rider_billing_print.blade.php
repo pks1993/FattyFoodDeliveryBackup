@@ -20,21 +20,19 @@
         .tab-pane.active{
             display : block;
         } */
+
         @@media print {
             @page {
-                top: 10px;
-                left: 0px;
                 size: 7.24cm 4.3in;
                 margin: 0;
             }
-            /* body { margin: 1.6cm; } */
         }
     </style>
 </head>
 <body>
 
     @foreach ($rider_payments as $rider_payment)
-<div class="container" style="padding-left: 0px;padding-right:0px;margin-top:20px;margin-bottom:10px" id="tabcontent">
+<div class="container" style="padding-left: 0px;padding-right:0px;margin-top:0px;margin-bottom:50px" id="tabcontent">
 
     <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col-5">
@@ -75,11 +73,11 @@
                     <div class="col text-right" style="height: 10px;">{{ number_format($rider_payment->total_amount) }} ks</div>
                     <div class="col-12" style="height: 10px;padding-top:25px;"><hr style="border-top: 1px dashed black;"></div>
                 </div>
-                <div class="row" style="padding-top:40px;margin-right:20px;margin-left:20px;margin-top:20px;">
+                <div class="row" style="padding-top:40px;margin-right:20px;margin-left:20px;margin-top:100px;">
                     <div class="col" style="height: 10px;font-weight:510;">Sign</div>
                     <div class="col text-right" style="height: 10px;">------------------</div>
                 </div>
-                <div class="row" style="margin-bottom:30px;padding-top:30px;margin-right:20px;margin-left:20px;margin-top:20px;text-align:center">
+                <div class="row" style="margin-bottom:30px;padding-top:50px;margin-right:20px;margin-left:20px;text-align:center;margin-bottom:50px;">
                     <div class="col" style="height: 10px;font-weight:510;">Hot Line- 09 123 456 789</div>
                 </div>
             </div>
