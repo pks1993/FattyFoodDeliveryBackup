@@ -144,6 +144,8 @@ class CategoryController extends Controller
 
     public function assign_sort_list()
     {
+        // $dkdk=CategoryAssign::where('category_type_id',2)->orderBy('sort_id','desc')->first();
+        // dd($dkdk);
         $category_type=CategoryType::orderBy('sort_id')->whereNotIn('category_type_id',[4])->get();
         return view('admin.category.category_assign_sort',compact('category_type'));
     }
@@ -176,23 +178,55 @@ class CategoryController extends Controller
         $count3=CategoryAssign::where('category_type_id',$category_sort3->category_type_id)->whereNotIn('category_assign_id',[8])->count();
 
         if($count1 > 6){
-            $categoryassign=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->limit(8)->get();
-            $sort_id=$categoryassign[7]->sort_id;
-            $assign_id=$categoryassign[7]->category_assign_id;
-
-            if($assign_id!=8){
-                $assign_sort_id=$sort_id+1;
-
+            if($count1==7){
+                $categoryassign=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->get();
+                $sort_id=$categoryassign[6]->sort_id+1;
                 foreach($posts_as as $value){
                     if($value->category_assign_id == 8){
                         $value->update(['category_type_id'=>$category_sort1->category_type_id,'category_sort_id'=>$category_sort1->sort_id,'sort_id'=>$sort_id]);
                     }
-                    if($assign_id==$value->category_assign_id){
-                        $value->update(['sort_id'=>$assign_sort_id]);
+                }
+            }elseif($count1 > 8){
+                $check_assign_id=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->pluck('category_assign_id')->toArray();
+                if(in_array('8',$check_assign_id)){
+                    // $categoryassign=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->limit(8)->get();
+                    // $sort_id=$categoryassign[7]->sort_id;
+                    // $assign_id=$categoryassign[7]->category_assign_id;
+
+                    // $assign_last=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id','desc')->first();
+                    // $assign_sort_id=$assign_last->sort_id+1;
+
+                    // if($assign_id != 8){
+                    //     foreach($posts_as as $value){
+                    //         if($value->category_assign_id == 8){
+                    //             $value->update(['category_type_id'=>$category_sort1->category_type_id,'category_sort_id'=>$category_sort1->sort_id,'sort_id'=>$sort_id]);
+                    //         }
+                    //         if($assign_id==$value->category_assign_id){
+                    //             $value->update(['sort_id'=>$assign_sort_id]);
+                    //         }
+                    //     }
+                    // }
+
+                }else{
+                    //8 > $count
+                    $categoryassign=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->limit(8)->get();
+                    $sort_id=$categoryassign[7]->sort_id;
+                    $assign_id=$categoryassign[7]->category_assign_id;
+                    $assign_last=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id','desc')->first();
+                    $assign_sort_id=$assign_last->sort_id+1;
+
+                    foreach($posts_as as $value){
+                        if($value->category_assign_id == 8){
+                            $value->update(['category_type_id'=>$category_sort1->category_type_id,'category_sort_id'=>$category_sort1->sort_id,'sort_id'=>$sort_id]);
+                        }
+                        if($assign_id==$value->category_assign_id){
+                            $value->update(['sort_id'=>$assign_sort_id]);
+                        }
                     }
                 }
             }
-        }else{
+        }
+        else{
             if($count1+$count2 > 6){
                 $count=8-$count1;
                 $count_minutes=$count-1;
@@ -200,7 +234,9 @@ class CategoryController extends Controller
                 $categoryassign=CategoryAssign::where('category_type_id',$category_sort2->category_type_id)->orderBy('sort_id')->limit($count)->get();
                 $sort_id=$categoryassign[$count_minutes]->sort_id;
                 $assign_id=$categoryassign[$count_minutes]->category_assign_id;
-                $assign_sort_id=$sort_id+1;
+
+                $assign_last=CategoryAssign::where('category_type_id',$category_sort2->category_type_id)->orderBy('sort_id','desc')->first();
+                $assign_sort_id=$assign_last->sort_id+1;
 
                 foreach($posts_as as $value){
                     if($value->category_assign_id == 8){
@@ -218,7 +254,10 @@ class CategoryController extends Controller
                     $categoryassign=CategoryAssign::where('category_type_id',$category_sort3->category_type_id)->orderBy('sort_id')->limit($count)->get();
                     $sort_id=$categoryassign[$count_minutes]->sort_id;
                     $assign_id=$categoryassign[$count_minutes]->category_assign_id;
-                    $assign_sort_id=$sort_id+1;
+                    // $assign_sort_id=$sort_id+1;
+
+                    $assign_last=CategoryAssign::where('category_type_id',$category_sort3->category_type_id)->orderBy('sort_id','desc')->first();
+                    $assign_sort_id=$assign_last->sort_id+1;
 
                     foreach($posts_as as $value){
                         if($value->category_assign_id == 8){

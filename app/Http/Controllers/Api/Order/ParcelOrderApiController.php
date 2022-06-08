@@ -92,7 +92,7 @@ class ParcelOrderApiController extends Controller
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
         $payment_method_id=$request['payment_method_id'];
         $bill_total_price=$request['bill_total_price'];
-        $delivery_fee=$request['delivery_fee'];
+        $customer_delivery_fee=$request['delivery_fee'];
         $city_id=$request['city_id'];
         $state_id=$request['state_id'];
         $order_time=date('g:i A');
@@ -122,249 +122,75 @@ class ParcelOrderApiController extends Controller
 
         if($distances < 2) {
             $rider_delivery_fee=0;
-            $customer_delivery_fee=0;
         }elseif($distances == 2){
             $rider_delivery_fee=600;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=950;
-            }else{
-                $customer_delivery_fee=1200;
-            }
         }elseif($distances > 2 && $distances < 3.5){
             $rider_delivery_fee=700;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1050;
-            }else{
-                $customer_delivery_fee=1300;
-            }
         }elseif($distances == 3.5){
             $rider_delivery_fee=800;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1150;
-            }else{
-                $customer_delivery_fee=1400;
-            }
         }elseif($distances > 3.5 && $distances < 5){
             $rider_delivery_fee=900;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1250;
-            }else{
-                $customer_delivery_fee=1500;
-            }
         }elseif($distances == 5){
             $rider_delivery_fee=1000;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1350;
-            }else{
-                $customer_delivery_fee=1600;
-            }
         }elseif($distances > 5 && $distances < 6.5){
             $rider_delivery_fee=1100;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1450;
-            }else{
-                $customer_delivery_fee=1700;
-            }
         }elseif($distances == 6.5){
             $rider_delivery_fee=1200;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1550;
-            }else{
-                $customer_delivery_fee=1800;
-            }
         }elseif($distances > 6.5 && $distances < 8){
             $rider_delivery_fee=1300;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=1650;
-            }else{
-                $customer_delivery_fee=1900;
-            }
         }elseif($distances==8){
             $rider_delivery_fee=2500;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=3000;
-            }else{
-                $customer_delivery_fee=3500;
-            }
         }elseif($distances > 8 && $distances < 9.5){
             $rider_delivery_fee=2700;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=3200;
-            }else{
-                $customer_delivery_fee=3700;
-            }
         }elseif($distances==9.5){
             $rider_delivery_fee=2900;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=3400;
-            }else{
-                $customer_delivery_fee=3900;
-            }
         }elseif($distances > 9.5 && $distances < 11){
             $rider_delivery_fee=3100;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=3600;
-            }else{
-                $customer_delivery_fee=4100;
-            }
         }elseif($distances==11){
             $rider_delivery_fee=3300;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=3800;
-            }else{
-                $customer_delivery_fee=4300;
-            }
         }elseif($distances > 11 && $distances < 12.5){
             $rider_delivery_fee=3500;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=4000;
-            }else{
-                $customer_delivery_fee=4500;
-            }
         }elseif($distances==12.5){
             $rider_delivery_fee=3700;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=4200;
-            }else{
-                $customer_delivery_fee=4700;
-            }
         }elseif($distances > 12.5 && $distances < 14){
             $rider_delivery_fee=3900;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=4300;
-            }else{
-                $customer_delivery_fee=4900;
-            }
         }elseif($distances==14){
             $rider_delivery_fee=4100;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=4800;
-            }else{
-                $customer_delivery_fee=5500;
-            }
         }elseif($distances > 14 && $distances < 15.5){
             $rider_delivery_fee=4400;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=5100;
-            }else{
-                $customer_delivery_fee=5800;
-            }
         }elseif($distances==15.5){
             $rider_delivery_fee=4700;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=5400;
-            }else{
-                $customer_delivery_fee=6100;
-            }
         }elseif($distances > 15.5 && $distances < 17){
             $rider_delivery_fee=5000;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=5700;
-            }else{
-                $customer_delivery_fee=6400;
-            }
         }elseif($distances==17){
             $rider_delivery_fee=5300;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=6000;
-            }else{
-                $customer_delivery_fee=6700;
-            }
         }elseif($distances > 17 && $distances < 18.5){
             $rider_delivery_fee=5600;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=6300;
-            }else{
-                $customer_delivery_fee=7000;
-            }
         }elseif($distances==18.5){
             $rider_delivery_fee=5900;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=6600;
-            }else{
-                $customer_delivery_fee=7300;
-            }
         }elseif($distances > 18.5 && $distances < 20){
             $rider_delivery_fee=6200;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=6900;
-            }else{
-                $customer_delivery_fee=7600;
-            }
         }elseif($distances==20){
             $rider_delivery_fee=6500;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=7200;
-            }else{
-                $customer_delivery_fee=7900;
-            }
         }elseif($distances > 20 && $distances < 21.5){
             $rider_delivery_fee=6800;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=7500;
-            }else{
-                $customer_delivery_fee=8200;
-            }
         }elseif($distances==21.5){
             $rider_delivery_fee=7100;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=7800;
-            }else{
-                $customer_delivery_fee=8500;
-            }
         }elseif($distances > 21.5 && $distances < 23){
             $rider_delivery_fee=7400;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=8100;
-            }else{
-                $customer_delivery_fee=8800;
-            }
         }elseif($distances==23){
             $rider_delivery_fee=7700;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=8400;
-            }else{
-                $customer_delivery_fee=9100;
-            }
         }elseif($distances > 23 && $distances < 24.5){
             $rider_delivery_fee=8000;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=8700;
-            }else{
-                $customer_delivery_fee=9400;
-            }
         }elseif($distances==24.5){
             $rider_delivery_fee=8300;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=9000;
-            }else{
-                $customer_delivery_fee=9700;
-            }
         }elseif($distances > 24.5 && $distances < 26){
             $rider_delivery_fee=8600;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=9300;
-            }else{
-                $customer_delivery_fee=10000;
-            }
         }elseif($distances >= 26){
             $rider_delivery_fee=8900;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=9600;
-            }else{
-                $customer_delivery_fee=10300;
-            }
         }else{
             $rider_delivery_fee=8900;
-            if($customers->customer_type_id==2){
-                $customer_delivery_fee=9600;
-            }else{
-                $customer_delivery_fee=10300;
-            }
         }
-
-        // return response()->json(['distance'=>$distances,'delivery_fee'=>$rider_delivery_fee,'customer_delivery_fee'=>$customer_delivery_fee]);
-
 
         $parcel_order=CustomerOrder::create([
             "customer_id"=>$customer_id,
@@ -582,6 +408,7 @@ class ParcelOrderApiController extends Controller
         $parcel_type_id=$request['parcel_type_id'];
         $total_estimated_weight=$request['total_estimated_weight'];
         $item_qty=$request['item_qty'];
+        $customer_delivery_fee=$request['delivery_fee'];
         $parcel_order_note=$request['parcel_order_note'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
         $bill_total_price=$request['bill_total_price'];
@@ -604,250 +431,79 @@ class ParcelOrderApiController extends Controller
             $dist = acos($dist);
             $dist = rad2deg($dist);
             $miles = $dist * 60 * 1.1515;
-            $kilometer=$miles * 1.609344;
-            $distances=(float) number_format((float)$kilometer, 1, '.', '');
+            $distance=$miles * 1.609344;
+            $distances=(float) number_format((float)$distance, 1, '.', '');
 
             if($distances < 2) {
                 $rider_delivery_fee=0;
-                $customer_delivery_fee=0;
             }elseif($distances == 2){
                 $rider_delivery_fee=600;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=950;
-                }else{
-                    $customer_delivery_fee=1200;
-                }
             }elseif($distances > 2 && $distances < 3.5){
                 $rider_delivery_fee=700;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1050;
-                }else{
-                    $customer_delivery_fee=1300;
-                }
             }elseif($distances == 3.5){
                 $rider_delivery_fee=800;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1150;
-                }else{
-                    $customer_delivery_fee=1400;
-                }
             }elseif($distances > 3.5 && $distances < 5){
                 $rider_delivery_fee=900;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1250;
-                }else{
-                    $customer_delivery_fee=1500;
-                }
             }elseif($distances == 5){
                 $rider_delivery_fee=1000;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1350;
-                }else{
-                    $customer_delivery_fee=1600;
-                }
             }elseif($distances > 5 && $distances < 6.5){
                 $rider_delivery_fee=1100;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1450;
-                }else{
-                    $customer_delivery_fee=1700;
-                }
             }elseif($distances == 6.5){
                 $rider_delivery_fee=1200;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1550;
-                }else{
-                    $customer_delivery_fee=1800;
-                }
             }elseif($distances > 6.5 && $distances < 8){
                 $rider_delivery_fee=1300;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=1650;
-                }else{
-                    $customer_delivery_fee=1900;
-                }
             }elseif($distances==8){
                 $rider_delivery_fee=2500;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=3000;
-                }else{
-                    $customer_delivery_fee=3500;
-                }
             }elseif($distances > 8 && $distances < 9.5){
                 $rider_delivery_fee=2700;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=3200;
-                }else{
-                    $customer_delivery_fee=3700;
-                }
             }elseif($distances==9.5){
                 $rider_delivery_fee=2900;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=3400;
-                }else{
-                    $customer_delivery_fee=3900;
-                }
             }elseif($distances > 9.5 && $distances < 11){
                 $rider_delivery_fee=3100;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=3600;
-                }else{
-                    $customer_delivery_fee=4100;
-                }
             }elseif($distances==11){
                 $rider_delivery_fee=3300;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=3800;
-                }else{
-                    $customer_delivery_fee=4300;
-                }
             }elseif($distances > 11 && $distances < 12.5){
                 $rider_delivery_fee=3500;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=4000;
-                }else{
-                    $customer_delivery_fee=4500;
-                }
             }elseif($distances==12.5){
                 $rider_delivery_fee=3700;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=4200;
-                }else{
-                    $customer_delivery_fee=4700;
-                }
             }elseif($distances > 12.5 && $distances < 14){
                 $rider_delivery_fee=3900;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=4300;
-                }else{
-                    $customer_delivery_fee=4900;
-                }
             }elseif($distances==14){
                 $rider_delivery_fee=4100;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=4800;
-                }else{
-                    $customer_delivery_fee=5500;
-                }
             }elseif($distances > 14 && $distances < 15.5){
                 $rider_delivery_fee=4400;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=5100;
-                }else{
-                    $customer_delivery_fee=5800;
-                }
             }elseif($distances==15.5){
                 $rider_delivery_fee=4700;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=5400;
-                }else{
-                    $customer_delivery_fee=6100;
-                }
             }elseif($distances > 15.5 && $distances < 17){
                 $rider_delivery_fee=5000;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=5700;
-                }else{
-                    $customer_delivery_fee=6400;
-                }
             }elseif($distances==17){
                 $rider_delivery_fee=5300;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=6000;
-                }else{
-                    $customer_delivery_fee=6700;
-                }
             }elseif($distances > 17 && $distances < 18.5){
                 $rider_delivery_fee=5600;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=6300;
-                }else{
-                    $customer_delivery_fee=7000;
-                }
             }elseif($distances==18.5){
                 $rider_delivery_fee=5900;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=6600;
-                }else{
-                    $customer_delivery_fee=7300;
-                }
             }elseif($distances > 18.5 && $distances < 20){
                 $rider_delivery_fee=6200;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=6900;
-                }else{
-                    $customer_delivery_fee=7600;
-                }
             }elseif($distances==20){
                 $rider_delivery_fee=6500;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=7200;
-                }else{
-                    $customer_delivery_fee=7900;
-                }
             }elseif($distances > 20 && $distances < 21.5){
                 $rider_delivery_fee=6800;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=7500;
-                }else{
-                    $customer_delivery_fee=8200;
-                }
             }elseif($distances==21.5){
                 $rider_delivery_fee=7100;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=7800;
-                }else{
-                    $customer_delivery_fee=8500;
-                }
             }elseif($distances > 21.5 && $distances < 23){
                 $rider_delivery_fee=7400;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=8100;
-                }else{
-                    $customer_delivery_fee=8800;
-                }
             }elseif($distances==23){
                 $rider_delivery_fee=7700;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=8400;
-                }else{
-                    $customer_delivery_fee=9100;
-                }
             }elseif($distances > 23 && $distances < 24.5){
                 $rider_delivery_fee=8000;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=8700;
-                }else{
-                    $customer_delivery_fee=9400;
-                }
             }elseif($distances==24.5){
                 $rider_delivery_fee=8300;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=9000;
-                }else{
-                    $customer_delivery_fee=9700;
-                }
             }elseif($distances > 24.5 && $distances < 26){
                 $rider_delivery_fee=8600;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=9300;
-                }else{
-                    $customer_delivery_fee=10000;
-                }
             }elseif($distances >= 26){
                 $rider_delivery_fee=8900;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=9600;
-                }else{
-                    $customer_delivery_fee=10300;
-                }
             }else{
                 $rider_delivery_fee=8900;
-                if($customers->customer_type_id==2){
-                    $customer_delivery_fee=9600;
-                }else{
-                    $customer_delivery_fee=10300;
-                }
             }
 
             $parcel_order->customer_id=$parcel_order->customer_id;
@@ -1037,9 +693,7 @@ class ParcelOrderApiController extends Controller
         $to_drop_latitude=$request['to_drop_latitude'];
         $to_drop_longitude=$request['to_drop_longitude'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
-
-        $total_estimated=$request['total_estimated_weight'];
-        $total_estimated_weight= number_format((float)$total_estimated, 1, '.', '');
+        $customer_type_id=$request['customer_type_id'];
 
         $parcel_extra=ParcelExtraCover::where('parcel_extra_cover_id',$parcel_extra_cover_id)->first();
         if($parcel_extra){
@@ -1050,7 +704,7 @@ class ParcelOrderApiController extends Controller
 
         if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00)
         {
-            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>[['weight'=>'1kg','delivery_fee'=>500],['weight'=>'2kg','delivery_fee'=>1000],['weight'=>"3kg",'delivery_fee'=>1500],['weight'=>"About 3kg",'delivery_fee'=>2000]],'estimated_cost'=>null]]);
+            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>0,'extra_coverage'=>$extra_coverage,'total_estimated'=>$extra_coverage]]]);
         }
         elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
         {
@@ -1059,54 +713,301 @@ class ParcelOrderApiController extends Controller
             $dist = acos($dist);
             $dist = rad2deg($dist);
             $miles = $dist * 60 * 1.1515;
-            $kilometer=$miles * 1.609344;
-            // $kilometer=6;
-            $kilometer= number_format((float)$kilometer, 1, '.', '');
+            $distance=$miles * 1.609344;
+            $distances=(float) number_format((float)$distance, 1, '.', '');
 
-            if($kilometer <= 3 ){
-                $delivery_fee=1500;
-            }
-            else{
-                $number=explode('.', $kilometer);
-
-                $addOneKilometer=$number[0] - 3;
-                $folat_number=$number[1];
-
-                if($folat_number=="0"){
-                    $delivery_fee=$addOneKilometer * 500 + 1500;
+            if($distances < 2) {
+                $customer_delivery_fee=0;
+            }elseif($distances == 2){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=950;
                 }else{
-                    if($folat_number <= 5){
-                        $delivery_fee=($addOneKilometer * 500) + 250 + 1500;
-                    }else{
-                        $delivery_fee=($addOneKilometer * 500) + (250 * 2) + 1500;
-                    }
+                    $customer_delivery_fee=1200;
                 }
-
-            }
-
-            if($total_estimated_weight <= 5){
-                $weight_fee=0;
+            }elseif($distances > 2 && $distances < 3.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1050;
+                }else{
+                    $customer_delivery_fee=1300;
+                }
+            }elseif($distances == 3.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1150;
+                }else{
+                    $customer_delivery_fee=1400;
+                }
+            }elseif($distances > 3.5 && $distances < 5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1250;
+                }else{
+                    $customer_delivery_fee=1500;
+                }
+            }elseif($distances == 5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1350;
+                }else{
+                    $customer_delivery_fee=1600;
+                }
+            }elseif($distances > 5 && $distances < 6.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1450;
+                }else{
+                    $customer_delivery_fee=1700;
+                }
+            }elseif($distances == 6.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1550;
+                }else{
+                    $customer_delivery_fee=1800;
+                }
+            }elseif($distances > 6.5 && $distances < 8){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=1650;
+                }else{
+                    $customer_delivery_fee=1900;
+                }
+            }elseif($distances==8){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=3000;
+                }else{
+                    $customer_delivery_fee=3500;
+                }
+            }elseif($distances > 8 && $distances < 9.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=3200;
+                }else{
+                    $customer_delivery_fee=3700;
+                }
+            }elseif($distances==9.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=3400;
+                }else{
+                    $customer_delivery_fee=3900;
+                }
+            }elseif($distances > 9.5 && $distances < 11){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=3600;
+                }else{
+                    $customer_delivery_fee=4100;
+                }
+            }elseif($distances==11){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=3800;
+                }else{
+                    $customer_delivery_fee=4300;
+                }
+            }elseif($distances > 11 && $distances < 12.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=4000;
+                }else{
+                    $customer_delivery_fee=4500;
+                }
+            }elseif($distances==12.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=4200;
+                }else{
+                    $customer_delivery_fee=4700;
+                }
+            }elseif($distances > 12.5 && $distances < 14){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=4300;
+                }else{
+                    $customer_delivery_fee=4900;
+                }
+            }elseif($distances==14){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=4800;
+                }else{
+                    $customer_delivery_fee=5500;
+                }
+            }elseif($distances > 14 && $distances < 15.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=5100;
+                }else{
+                    $customer_delivery_fee=5800;
+                }
+            }elseif($distances==15.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=5400;
+                }else{
+                    $customer_delivery_fee=6100;
+                }
+            }elseif($distances > 15.5 && $distances < 17){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=5700;
+                }else{
+                    $customer_delivery_fee=6400;
+                }
+            }elseif($distances==17){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=6000;
+                }else{
+                    $customer_delivery_fee=6700;
+                }
+            }elseif($distances > 17 && $distances < 18.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=6300;
+                }else{
+                    $customer_delivery_fee=7000;
+                }
+            }elseif($distances==18.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=6600;
+                }else{
+                    $customer_delivery_fee=7300;
+                }
+            }elseif($distances > 18.5 && $distances < 20){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=6900;
+                }else{
+                    $customer_delivery_fee=7600;
+                }
+            }elseif($distances==20){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=7200;
+                }else{
+                    $customer_delivery_fee=7900;
+                }
+            }elseif($distances > 20 && $distances < 21.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=7500;
+                }else{
+                    $customer_delivery_fee=8200;
+                }
+            }elseif($distances==21.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=7800;
+                }else{
+                    $customer_delivery_fee=8500;
+                }
+            }elseif($distances > 21.5 && $distances < 23){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=8100;
+                }else{
+                    $customer_delivery_fee=8800;
+                }
+            }elseif($distances==23){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=8400;
+                }else{
+                    $customer_delivery_fee=9100;
+                }
+            }elseif($distances > 23 && $distances < 24.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=8700;
+                }else{
+                    $customer_delivery_fee=9400;
+                }
+            }elseif($distances==24.5){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=9000;
+                }else{
+                    $customer_delivery_fee=9700;
+                }
+            }elseif($distances > 24.5 && $distances < 26){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=9300;
+                }else{
+                    $customer_delivery_fee=10000;
+                }
+            }elseif($distances >= 26){
+                if($customer_type_id==2){
+                    $customer_delivery_fee=9600;
+                }else{
+                    $customer_delivery_fee=10300;
+                }
             }else{
-                $weight=explode('.', $total_estimated_weight);
-                $first_weight=$weight[0]-5;
-                $second_weight=$weight[1];
-                if($second_weight=="0"){
-                    $weight_fee=$first_weight * 300;
+                if($customer_type_id==2){
+                    $customer_delivery_fee=9600;
                 }else{
-                    if($second_weight <=5 ){
-                        $weight_fee=($first_weight * 300) + 150;
-                    }else{
-                        $weight_fee=($first_weight * 300) + 300;
-                    }
+                    $customer_delivery_fee=10300;
                 }
             }
-            $total_estimated=(int)($delivery_fee + $extra_coverage + $weight_fee);
-            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$delivery_fee,'extra_coverage'=>$extra_coverage,'weight_fee'=>$weight_fee,'total_estimated'=>$total_estimated]]]);
+
+            $total_estimated=(int)($customer_delivery_fee + $extra_coverage);
+            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$customer_delivery_fee,'extra_coverage'=>$extra_coverage,'total_estimated'=>$total_estimated]]]);
         }else{
             return response()->json(['success'=>false,'message'=>'error something']);
         }
 
     }
+    // public function order_estimate_cost(Request $request)
+    // {
+    //     $from_pickup_latitude=$request['from_pickup_latitude'];
+    //     $from_pickup_longitude=$request['from_pickup_longitude'];
+    //     $to_drop_latitude=$request['to_drop_latitude '];
+    //     $to_drop_longitude=$request['to_drop_longitude'];
+    //     $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
+
+    //     $total_estimated=$request['total_estimated_weight'];
+    //     $total_estimated_weight= number_format((float)$total_estimated, 1, '.', '');
+
+    //     $parcel_extra=ParcelExtraCover::where('parcel_extra_cover_id',$parcel_extra_cover_id)->first();
+    //     if($parcel_extra){
+    //         $extra_coverage=(int)$parcel_extra->parcel_extra_cover_price;
+    //     }else{
+    //         $extra_coverage=0;
+    //     }
+
+    //     if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00)
+    //     {
+    //         return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>[['weight'=>'1kg','delivery_fee'=>500],['weight'=>'2kg','delivery_fee'=>1000],['weight'=>"3kg",'delivery_fee'=>1500],['weight'=>"About 3kg",'delivery_fee'=>2000]],'estimated_cost'=>null]]);
+    //     }
+    //     elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
+    //     {
+    //         $theta = $from_pickup_longitude - $to_drop_longitude;
+    //         $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
+    //         $dist = acos($dist);
+    //         $dist = rad2deg($dist);
+    //         $miles = $dist * 60 * 1.1515;
+    //         $kilometer=$miles * 1.609344;
+    //         // $kilometer=6;
+    //         $kilometer= number_format((float)$kilometer, 1, '.', '');
+
+    //         if($kilometer <= 3 ){
+    //             $delivery_fee=1500;
+    //         }
+    //         else{
+    //             $number=explode('.', $kilometer);
+
+    //             $addOneKilometer=$number[0] - 3;
+    //             $folat_number=$number[1];
+
+    //             if($folat_number=="0"){
+    //                 $delivery_fee=$addOneKilometer * 500 + 1500;
+    //             }else{
+    //                 if($folat_number <= 5){
+    //                     $delivery_fee=($addOneKilometer * 500) + 250 + 1500;
+    //                 }else{
+    //                     $delivery_fee=($addOneKilometer * 500) + (250 * 2) + 1500;
+    //                 }
+    //             }
+
+    //         }
+
+    //         if($total_estimated_weight <= 5){
+    //             $weight_fee=0;
+    //         }else{
+    //             $weight=explode('.', $total_estimated_weight);
+    //             $first_weight=$weight[0]-5;
+    //             $second_weight=$weight[1];
+    //             if($second_weight=="0"){
+    //                 $weight_fee=$first_weight * 300;
+    //             }else{
+    //                 if($second_weight <=5 ){
+    //                     $weight_fee=($first_weight * 300) + 150;
+    //                 }else{
+    //                     $weight_fee=($first_weight * 300) + 300;
+    //                 }
+    //             }
+    //         }
+    //         $total_estimated=(int)($delivery_fee + $extra_coverage + $weight_fee);
+    //         return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$delivery_fee,'extra_coverage'=>$extra_coverage,'weight_fee'=>$weight_fee,'total_estimated'=>$total_estimated]]]);
+    //     }else{
+    //         return response()->json(['success'=>false,'message'=>'error something']);
+    //     }
+
+    // }
 
     /**
      * Show the form for creating a new resource.

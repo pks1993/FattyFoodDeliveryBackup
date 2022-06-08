@@ -19,7 +19,7 @@ class FoodController extends Controller
     public function dailyindex()
     {
         $orders=Customer::whereDate('created_at',date('Y-m-d'))->paginate(15);
-        return view('admin.customer.daily_customer.index',compact('orders'));    
+        return view('admin.customer.daily_customer.index',compact('orders'));
     }
 
     public function dailyajax(){
@@ -33,7 +33,7 @@ class FoodController extends Controller
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
-            
+
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
@@ -42,13 +42,13 @@ class FoodController extends Controller
         })
         ->rawColumns(['action','register_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
 
     public function monthlyindex()
     {
         $customers=Customer::whereMonth('created_at',date('m'))->paginate(15);
-        return view('admin.customer.monthly_customer.index',compact('customers'));    
+        return view('admin.customer.monthly_customer.index',compact('customers'));
     }
 
     public function monthlyajax(){
@@ -62,7 +62,7 @@ class FoodController extends Controller
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
-            
+
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
@@ -71,13 +71,13 @@ class FoodController extends Controller
         })
         ->rawColumns(['action','register_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
 
     public function yearlyindex()
     {
         $customers= Customer::whereYear('created_at',date('Y'))->paginate(15);
-        return view('admin.customer.yearly_customer.index',compact('customers'));    
+        return view('admin.customer.yearly_customer.index',compact('customers'));
     }
 
     public function yearlyajax(){
@@ -91,7 +91,7 @@ class FoodController extends Controller
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
-            
+
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
@@ -100,7 +100,7 @@ class FoodController extends Controller
         })
         ->rawColumns(['action','register_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
     /**
      * Display a listing of the resource.
@@ -114,7 +114,7 @@ class FoodController extends Controller
     }
 
     /**
-     *for city list all 
+     *for city list all
     */
     // public function category_list($id)
     // {
@@ -123,7 +123,7 @@ class FoodController extends Controller
     // }
 
     /**
-     *for city list all 
+     *for city list all
     */
     public function menu_list($id)
     {

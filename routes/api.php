@@ -104,7 +104,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api
     Route::post('v1/fatty/202221/lashio/main/admin/customers/orders/reviews','Api\Order\ParcelOrderApiController@order_reviews');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/food/orders/delivery/fee','Api\Order\OrderApiController@deleivery_fee');
     //force update
-    Route::get('v1/fatty/main/admin/android/version/check','Api\Notification\NotificationApiController@android_version_check');
+    Route::post('v1/fatty/main/admin/android/version/check','Api\Notification\NotificationApiController@android_version_check');
     Route::get('v1/fatty/main/admin/ios/version/check','Api\Notification\NotificationApiController@ios_version_check');
 
     //parcel

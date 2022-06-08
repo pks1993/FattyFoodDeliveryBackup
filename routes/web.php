@@ -144,6 +144,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
+    Route::get('rider_billing/print/all_page','Admin\Rider\RiderController@rider_print_all_page');
+
+
+
     //customer
     Route::get('customers/create','Admin\Customer\CustomerController@create')->name('customers.create');
     Route::get('customers/view/{customer_id}','Admin\Customer\CustomerController@show')->name('customers.view');
