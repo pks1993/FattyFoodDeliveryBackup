@@ -24,10 +24,12 @@
                         <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">List</a>
                     </li>
                     <li class="nav-item col-md-4 btn">
-                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="offered-tab" data-toggle="pill" href="#offered" role="tab" aria-controls="offered" aria-selected="true">Offered</a>
+                        {{-- <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="offered-tab" data-toggle="pill" href="#offered" role="tab" aria-controls="offered" aria-selected="true">Offered</a> --}}
+                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/offered') }}">Offered</a>
                     </li>
                     <li class="nav-item col-md-4 btn">
-                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a>
+                        {{-- <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a> --}}
+                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/history') }}">History</a>
                     </li>
                 </ul>
             </div>
@@ -104,7 +106,7 @@
             </div>
         </div>
     </div>
-    <div class="row tab-pane fade" id="offered" role="tabpanel" aria-labelledby="offered-tab">
+    {{-- <div class="row tab-pane fade" id="offered" role="tabpanel" aria-labelledby="offered-tab">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -207,7 +209,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 </section>
 @endsection
 @push('scripts')

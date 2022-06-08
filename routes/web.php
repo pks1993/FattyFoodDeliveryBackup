@@ -144,7 +144,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
-    Route::get('rider_billing/print/all_page','Admin\Rider\RiderController@rider_print_all_page');
+    //test
+    Route::get('rider_get_billing/print/all_page','Admin\Rider\RiderController@rider_print_all_page');
 
 
 
@@ -238,6 +239,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //rider billing
     Route::get('riders_billing/list','Admin\Rider\RiderController@rider_billing_list')->name('riders_billing.list');
+    Route::get('riders_billing/offered','Admin\Rider\RiderController@rider_billing_offered')->name('riders_billing.offered');
+    Route::get('riders_billing/history','Admin\Rider\RiderController@rider_billing_history')->name('riders_billing.history');
     Route::get('riders_billing/store/{id}','Admin\Rider\RiderController@rider_billing_store')->name('riders_billing.store');
     Route::get('riders_billing/offered','Admin\Rider\RiderController@rider_billing_offered')->name('riders_billing.offered');
     // Route::get('riders_billing/update/{id}','Admin\Rider\RiderController@rider_billing_update')->name('riders_billing.update');

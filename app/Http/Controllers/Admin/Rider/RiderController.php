@@ -19,7 +19,7 @@ class RiderController extends Controller
 {
     public function rider_print_all_page()
     {
-        $rider_payments=RiderTodayPayment::all();
+        $rider_payments=RiderPayment::where('status',0)->get();
         return view('admin.rider.rider_billing.rider_billing_print',compact('rider_payments'));
     }
 
@@ -117,11 +117,32 @@ class RiderController extends Controller
             array_push($data,$value);
         }
 
+        // $cus_order_offered=RiderPayment::where('status','0')->get();
+        // $cus_order_done=RiderPayment::where('status','1')->get();
+
+        return view('admin.rider.rider_billing.index',compact('cus_order_list','from_date','to_date'));
+
+    }
+
+    public function rider_billing_offered(Request $request)
+    {
+        $start_date=$request['min'];
+        $end_date=$request['max'];
+        $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
+        $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
+
         $cus_order_offered=RiderPayment::where('status','0')->get();
+        return view('admin.rider.rider_billing.offered',compact('cus_order_offered','from_date','to_date'));
+    }
+    public function rider_billing_history(Request $request)
+    {
+        $start_date=$request['min'];
+        $end_date=$request['max'];
+        $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
+        $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
+
         $cus_order_done=RiderPayment::where('status','1')->get();
-
-        return view('admin.rider.rider_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done','from_date','to_date'));
-
+        return view('admin.rider.rider_billing.history',compact('cus_order_done','from_date','to_date'));
     }
 
     public function today_rider_billing_list(Request $request)
