@@ -39,7 +39,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_request_otp','Ap
 Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api\Customer\CustomerApiController@resend_verify_otp');
 
 
-// Route::middleware('one_device_login')->group(function(){
+Route::middleware('one_device_login')->group(function(){
     //Customer Api
     //one device login
 
@@ -116,7 +116,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/list','Api\Order\ParcelOrderApiController@index');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/store','Api\Order\ParcelOrderApiController@order_store');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@order_estimate_cost');
-// });
+});
 //Login Api
 
 //Rider Notification
@@ -202,6 +202,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/activenow/list','Api\Rider\
 Route::post('v1/fatty/202221/lashio/main/admin/rider/office/location','Api\Rider\RiderApiController@rider_office_location');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiController@rider_details');
 Route::post('v1/fatty/202221/lashio/main/admin/rider_token/update','Api\Rider\RiderApiController@rider_token_update');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@order_estimate_cost');
 
 
 //insightRider

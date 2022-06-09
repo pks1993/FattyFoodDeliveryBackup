@@ -118,7 +118,12 @@ class ParcelOrderApiController extends Controller
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
         $kilometer=$miles * 1.609344;
-        $distances=(float) number_format((float)$kilometer, 1, '.', '');
+
+        if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00){
+            $distances=0;
+        }else{
+            $distances=(float) number_format((float)$kilometer, 1, '.', '');
+        }
 
         if($distances < 2) {
             $rider_delivery_fee=0;

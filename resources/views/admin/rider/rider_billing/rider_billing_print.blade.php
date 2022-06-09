@@ -4,23 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="refresh" content="5; url=http://159.223.66.158/fatty/main/admin/riders_billing/offered">
     <title>Today Rider Billing</title>
     @include('admin.layouts._partial.css')
     <style>
-        /* body{
-            background-color: #e2e1e1;
-        }
-        .nav-pills li>#list-tab.active,.nav-pills li>#offered-tab.active,.nav-pills li>#history-tab.active, .nav-pills .show>.nav-link {
-            background-color: #00dfc2 !important;
-            color: #FFFFFF !important;
-        }
-        .tab-pane{
-            display : none;
-        }
-        .tab-pane.active{
-            display : block;
-        } */
-
         @@media print {
             @page {
                 size: 7.24cm 4.3in;
@@ -39,7 +26,8 @@
             {{-- <div class="card-body" style="width: 100%;height:560px;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#00dfc2;background-color:#FFFFFF"> --}}
             <div class="card-body" style="width: 100%;height:560px;color: #000000;font-size:15px;border-radius:5px;padding:10px;background-color:#FFFFFF">
                 <div class="col text-center" style="font-size: 20px;font-weight:510">
-                    <img src="{{asset('logo/user_logo.png')}}" style="width: 50px;height:50px;border-radius: 50%;" alt="">
+                    <img src="{{asset('logo/user_logo.png')}}" style="width: 50px;height:50px;" alt="">
+                    {{-- <img src="{{asset('logo/user_logo.png')}}" style="width: 50px;height:50px;border-radius: 50%;" alt=""> --}}
                 </div>
                 <div class="col text-center" style="font-size: 20px;font-weight:510">
                     FATTY Food Delivery
@@ -88,7 +76,7 @@
 @include('admin.layouts._partial.script')
 <script type="text/JavaScript">
 
-    window.print()
+    window.print();
 
 </script>
 
