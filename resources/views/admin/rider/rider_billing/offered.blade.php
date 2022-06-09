@@ -50,7 +50,11 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <a href="{{ url('fatty/main/admin/rider_get_billing/print/all_page') }}" class="btn btn-secondary btn-sm">Print</a>
+                            @if(count($cus_order_offered) ==0)
+                                <a aria-disabled="true" class="btn btn-danger btn-sm" style="color: #FFFFFF">Print No Data</a>
+                            @else
+                                <a href="{{ url('fatty/main/admin/rider_get_billing/print/all_page') }}" class="btn btn-secondary btn-sm">Print All</a>
+                            @endif
                         </div>
                         {{-- <div class="col-md-3">
                             <input type="text" id="min" name="min" placeholder="Start Date">
