@@ -735,9 +735,7 @@ class ParcelOrderApiController extends Controller
             $distance=$miles * 1.609344;
             $distances=(float) number_format((float)$distance, 1, '.', '');
 
-            if($distances < 2) {
-                $customer_delivery_fee=0;
-            }elseif($distances == 2){
+           if($distances <= 2){
                 if($customer_type_id==2){
                     $customer_delivery_fee=950;
                 }else{
