@@ -17,6 +17,7 @@ use App\Models\Order\OrderReview;
 use DB;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class ParcelOrderApiController extends Controller
 {
@@ -243,34 +244,39 @@ class ParcelOrderApiController extends Controller
             "to_parcel_city_id"=>$to_parcel_city_id,
         ]);
 
+
         //customer
-        $cus_client = new Client();
         if($customers->fcm_token){
+            $cus_client = new Client();
             $cus_token=$customers->fcm_token;
             $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-            $cus_client->post($cus_url,[
-                'json' => [
-                    "to"=>$cus_token,
-                    "data"=> [
-                        "type"=> "new_order",
-                        "order_id"=>$parcel_order->order_id,
-                        "order_status_id"=>$parcel_order->order_status_id,
-                        "order_type"=>$parcel_order->order_type,
-                        "title_mm"=> "Order Processing",
-                        "body_mm"=> "Order is processing! Waiting for rider!",
-                        "title_en"=> "Order Processing",
-                        "body_en"=> "Order is processing! Waiting for rider!",
-                        "title_ch"=> "订单正在派送",
-                        "body_ch"=> "正在为您派送！请耐心等待！"
+            try {
+                    $cus_client->post($cus_url,[
+                    'headers' => ['Content-type' => 'application/json'],
+                    'json' => [
+                        "to"=>$cus_token,
+                        "data"=> [
+                            "type"=> "new_order",
+                            "order_id"=>$parcel_order->order_id,
+                            "order_status_id"=>$parcel_order->order_status_id,
+                            "order_type"=>$parcel_order->order_type,
+                            "title_mm"=> "Order Processing",
+                            "body_mm"=> "Order is processing! Waiting for rider!",
+                            "title_en"=> "Order Processing",
+                            "body_en"=> "Order is processing! Waiting for rider!",
+                            "title_ch"=> "订单正在派送",
+                            "body_ch"=> "正在为您派送！请耐心等待！"
+                        ],
+                        "mutable_content" => true ,
+                        "content_available" => true,
+                        "notification"=> [
+                            "title"=>"this is a title",
+                            "body"=>"this is a body",
+                        ],
                     ],
-                    "mutable_content" => true ,
-                    "content_available" => true,
-                    "notification"=> [
-                        "title"=>"this is a title",
-                        "body"=>"this is a body",
-                    ],
-                ],
-            ]);
+                ]);
+            } catch (ClientException $e) {
+            }
         }
         //rider
         $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
@@ -289,13 +295,14 @@ class ParcelOrderApiController extends Controller
             }
         }
 
-        $rider_client = new Client();
         $rider_token=$riderFcmToken;
         $orderId=(string)$parcel_order->order_id;
         $orderstatusId=(string)$parcel_order->order_status_id;
         $orderType=(string)$parcel_order->order_type;
         if($rider_token){
+            $rider_client = new Client();
             $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+            try{
                 $rider_client->post($cus_url,[
                     'json' => [
                         "to"=>$rider_token,
@@ -313,6 +320,9 @@ class ParcelOrderApiController extends Controller
                         ],
                     ],
                 ]);
+            }catch(ClientException $e){
+
+            }
         }
 
         //Image
@@ -566,6 +576,7 @@ class ParcelOrderApiController extends Controller
             $cus_token=$customers->fcm_token;
             if($cus_token){
                 $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                try{
                     $cus_client->post($cus_url,[
                         'json' => [
                             "to"=>$cus_token,
@@ -589,6 +600,9 @@ class ParcelOrderApiController extends Controller
                             ],
                         ],
                     ]);
+                }catch(ClientException $e){
+
+                }
             }
 
             //Image

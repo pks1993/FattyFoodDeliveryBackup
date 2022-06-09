@@ -767,6 +767,7 @@ class RestaurantApiController extends Controller
             ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere("food_name_ch","LIKE","%$search_name%")
             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
+            ->limit(100)
             ->get();
 
             $item=[];
@@ -800,7 +801,8 @@ class RestaurantApiController extends Controller
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
-            ->having('distance','<',500)
+            // ->having('distance','<',500)
+            ->limit(100)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
             $data=[];
             foreach($restaurant as $value){
@@ -982,7 +984,7 @@ class RestaurantApiController extends Controller
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhere('restaurant_name_en',"LIKE","%$search_name%")
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
-            ->having('distance','<',500)
+            // ->having('distance','<',500)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
 
             $restaurants_val=[];
@@ -1052,7 +1054,7 @@ class RestaurantApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        ->having('distance','<',500)
+        // ->having('distance','<',500)
         ->whereIn('restaurant_category_id',$category_id)
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
 
