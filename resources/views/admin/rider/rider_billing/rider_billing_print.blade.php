@@ -75,7 +75,7 @@
 @include('admin.layouts._partial.script')
 <script type="text/JavaScript">
 
-    // window.print();
+    window.print();
 
 </script>
 
