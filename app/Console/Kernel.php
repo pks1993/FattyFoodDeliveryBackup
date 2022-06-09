@@ -42,19 +42,20 @@ class Kernel extends ConsoleKernel
                 //rider
                 $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
                 $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');   
-                    
+                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
 
-                if($diffMinutes=="4"){
+
+                if($diffMinutes=="3"){
 
                     $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
-                        ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . ")) 
-                        * cos(radians(riders.rider_latitude)) 
-                        * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . ")) 
-                        + sin(radians(" .$customer_address_latitude. ")) 
+                        ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
+                        + sin(radians(" .$customer_address_latitude. "))
                         * sin(radians(riders.rider_latitude))) AS distance"))
                         // ->having('distance', '<', $distance)
                         ->groupBy("riders.rider_id")
+                        ->where('is_order','0')
                         ->get();
 
                     $fcm_token2=array();
@@ -80,48 +81,13 @@ class Kernel extends ConsoleKernel
                     curl_close($curl_session1);
                     // $schedule->command('send:notification');
 
-                }elseif($diffMinutes=="8"){
+                }elseif($diffMinutes=="5"){
 
                     $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
-                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . ")) 
-                    * cos(radians(riders.rider_latitude)) 
-                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . ")) 
-                    + sin(radians(" .$customer_address_latitude. ")) 
-                    * sin(radians(riders.rider_latitude))) AS distance"))
-                    // ->having('distance', '<', $distance)
-                    ->groupBy("riders.rider_id")
-                    ->get();
-
-                    $fcm_token2=array();
-                    foreach($riders as $rid)
-                    {
-                        array_push($fcm_token2, $rid->rider_fcm_token);
-                    }
-
-                    $title1="New Order Income";
-                    $messages1="succssfully accept your order confirmed from restaurant! Now, packing or cooking your order";
-                    $message1 = strip_tags($messages1);
-                    $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$value['order_id'],'order_status_id'=>$value['order_status_id'],'type'=>'new_order','order_type'=>$value['order_type'],'title' => $title1, 'body' => $message1]);
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-                    // $schedule->command('send:notification');
-
-                }elseif($diffMinutes=="16"){
-
-                    $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
-                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . ")) 
-                    * cos(radians(riders.rider_latitude)) 
-                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . ")) 
-                    + sin(radians(" .$customer_address_latitude. ")) 
+                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+                    * cos(radians(riders.rider_latitude))
+                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
+                    + sin(radians(" .$customer_address_latitude. "))
                     * sin(radians(riders.rider_latitude))) AS distance"))
                     // ->having('distance', '<', $distance)
                     ->groupBy("riders.rider_id")
