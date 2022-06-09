@@ -67,7 +67,7 @@ class SettingApiController extends Controller
 
     public function rider_privacy()
     {
-        $data=Privacy::where('privacy_id','2')->first();
+        $data=Privacy::where('privacy_id','2')->select('privacy_id','body_mm','body_en','body_ch')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is privacy text','data'=>$data]);
         }else{
@@ -77,7 +77,7 @@ class SettingApiController extends Controller
 
     public function restaurant_privacy()
     {
-        $data=Privacy::where('privacy_id','3')->first();
+        $data=Privacy::where('privacy_id','3')->select('privacy_id','body_mm','body_en','body_ch')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is privacy text','data'=>$data]);
         }else{
@@ -143,7 +143,7 @@ class SettingApiController extends Controller
 
     public function rider_terms()
     {
-        $data=TermsConditions::where('terms_conditions_id','2')->first();
+        $data=TermsConditions::where('terms_conditions_id','2')->select('terms_conditions_id','body_mm','body_en','body_ch')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is terms & conditions text','data'=>$data]);
         }else{
@@ -153,7 +153,7 @@ class SettingApiController extends Controller
 
     public function restaurant_terms()
     {
-        $data=TermsConditions::where('terms_conditions_id','3')->first();
+        $data=TermsConditions::where('terms_conditions_id','3')->select('terms_conditions_id','body_mm','body_en','body_ch')->first();
         if(!empty($data)){
             return response()->json(['success'=>true,'message'=>'this is terms & conditions text','data'=>$data]);
         }else{

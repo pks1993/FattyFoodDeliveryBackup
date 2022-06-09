@@ -202,6 +202,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/activenow/list','Api\Rider\
 Route::post('v1/fatty/202221/lashio/main/admin/rider/office/location','Api\Rider\RiderApiController@rider_office_location');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiController@rider_details');
 Route::post('v1/fatty/202221/lashio/main/admin/rider_token/update','Api\Rider\RiderApiController@rider_token_update');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@order_estimate_cost');
 
 
 //insightRider
