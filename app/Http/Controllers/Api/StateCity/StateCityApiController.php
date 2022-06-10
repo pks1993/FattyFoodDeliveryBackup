@@ -8,6 +8,7 @@ use App\Models\City\City;
 use App\Models\State\State;
 use App\Models\Order\ParcelState;
 use App\Models\City\ParcelCity;
+use App\Models\City\ParcelCityHistory;
 use App\Models\Customer\CustomerAddress;
 
 class StateCityApiController extends Controller
@@ -29,7 +30,7 @@ class StateCityApiController extends Controller
         if($customer_id && $state_id){
             $default=CustomerAddress::where('customer_id',$customer_id)->where('is_default',1)->first();
             $cities=ParcelCity::where('state_id',$state_id)->get();
-            $recent=ParcelCity::where('state_id',$state_id)->limit(3)->get();
+            $recent=ParcelCityHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->orderBy('count','desc')->limit(3)->get();
             if($default){
                 $data=[];
                 if($default->is_default==1){
