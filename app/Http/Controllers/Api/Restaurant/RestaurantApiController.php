@@ -51,18 +51,18 @@ class RestaurantApiController extends Controller
         $current_date=date('Y-m-d 00:00:00', strtotime($current_date));
         $tt=Date(Carbon::today());
 
-        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->get();
-        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','1')->count();
-        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','2')->count();
-        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','3')->count();
-        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->get();
+        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','1')->count();
+        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','2')->count();
+        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','3')->count();
+        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereRaw('Date(created_at) = CURDATE()')->get();
 
-        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
 
-        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
 
         //OrderShow
-        $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereDate('created_at',$current_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+        $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at',$current_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
 
         $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at',$current_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
 
@@ -78,18 +78,18 @@ class RestaurantApiController extends Controller
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
         // $tt=Date(Carbon::today());
 
-        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->get();
-        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','1')->count();
-        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','2')->count();
-        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('payment_method_id','3')->count();
-        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->get();
+        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','1')->count();
+        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','2')->count();
+        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','3')->count();
+        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereRaw('Date(created_at) = CURDATE()')->get();
 
-        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
 
-        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
 
         //OrderShow
-        $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','7')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+        $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
 
         $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
 
