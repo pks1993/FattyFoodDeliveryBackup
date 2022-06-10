@@ -227,7 +227,7 @@ class RestaurantController extends Controller
             "start_offered_date"=>$start_date,
             "last_offered_date"=>$end_date,
             "status"=>0,
-            "payment_voucher"=>"V00".$count,
+            "payment_voucher"=>"LRV00".$count,
         ]);
 
         // $request->session()->flash('alert-success', 'successfullyt!');
