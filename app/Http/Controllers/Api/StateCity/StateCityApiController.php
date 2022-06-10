@@ -30,7 +30,19 @@ class StateCityApiController extends Controller
         if($customer_id && $state_id){
             $default=CustomerAddress::where('customer_id',$customer_id)->where('is_default',1)->first();
             $cities=ParcelCity::where('state_id',$state_id)->get();
-            $recent=ParcelCityHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->orderBy('count','desc')->limit(3)->get();
+            $recent=ParcelCityHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->orderBy('count','desc')->limit(3)->select('parcel_city_id','state_id','created_at','updated_at')->get();
+            if($recent){
+                $item=[];
+                foreach($recent as $value){
+                    if($value){
+                        $parcel_city=ParcelCity::where('parcel_city_id',$value->parcel_city_id)->first();
+                        $value->city_name=$parcel_city->city_name;
+                        $value->latitude=$parcel_city->latitude;
+                        $value->longitude=$parcel_city->latitude;
+                    }
+                    array_push($item,$value);
+                }
+            }
             if($default){
                 $data=[];
                 if($default->is_default==1){
