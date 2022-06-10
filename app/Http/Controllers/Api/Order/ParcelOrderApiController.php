@@ -127,7 +127,7 @@ class ParcelOrderApiController extends Controller
         }
 
         if($distances < 2) {
-            $rider_delivery_fee=0;
+            $rider_delivery_fee=600;
         }elseif($distances == 2){
             $rider_delivery_fee=600;
         }elseif($distances > 2 && $distances < 3.5){
@@ -450,7 +450,7 @@ class ParcelOrderApiController extends Controller
             $distances=(float) number_format((float)$distance, 1, '.', '');
 
             if($distances < 2) {
-                $rider_delivery_fee=0;
+                $rider_delivery_fee=600;
             }elseif($distances == 2){
                 $rider_delivery_fee=600;
             }elseif($distances > 2 && $distances < 3.5){

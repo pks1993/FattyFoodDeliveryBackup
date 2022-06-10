@@ -101,7 +101,7 @@ class RiderController extends Controller
         // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
 
         $cus_order_list=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(rider_delivery_fee) as rider_delivery_fee"))->whereBetween('created_at',[$from_date,$to_date])->whereIn('order_status_id',['7','15'])->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(rider_delivery_fee) as rider_delivery_fee"))->whereBetween('created_at',[$from_date,$to_date])->whereIn('order_status_id',['7','8','15'])->get();
 
         $data=[];
         foreach($cus_order_list as $value){
@@ -163,7 +163,7 @@ class RiderController extends Controller
         }
 
         $cus_order_list=CustomerOrder::whereDoesntHave('today_rider_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"))->whereBetween('created_at',[$from_date,$to_date])->whereIn('order_status_id',['7','15'])->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"))->whereBetween('created_at',[$from_date,$to_date])->whereIn('order_status_id',['7','8','15'])->get();
 
         $data=[];
         foreach($cus_order_list as $value){

@@ -1395,12 +1395,12 @@ class RiderApicontroller extends Controller
         $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
 
-        $today_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
-        $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
-        $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+        $today_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get();
+        $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
 
         //OrderShow
-        $orders=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->get();
+        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->get();
 
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$orders]]);
     }
@@ -1408,19 +1408,19 @@ class RiderApicontroller extends Controller
     public function rider_insight(Request $request)
     {
         $rider_id=$request['rider_id'];
-        $total_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->get();
+        $total_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->get();
 
-        $CashonDelivery=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('payment_method_id','1')->count();
-        $KBZ=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('payment_method_id','2')->count();
-        $WaveMoney=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('payment_method_id','3')->count();
-        $today_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get();
+        $CashonDelivery=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('payment_method_id','1')->count();
+        $KBZ=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('payment_method_id','2')->count();
+        $WaveMoney=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('payment_method_id','3')->count();
+        $today_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get();
 
-        $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
+        $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeString())->get();
 
-        $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
 
         $this_week=CustomerOrder::with(['rider'=>function($foods){
-            $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->where('created_at','>',Carbon::now()->subDays(10)->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
+            $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->subDays(10)->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
         $this_week_data=[];
         foreach($this_week as $value){
             $kilometer=number_format((float)$value->distance, 2, '.', '');
@@ -1429,7 +1429,7 @@ class RiderApicontroller extends Controller
         }
 
         $this_month=CustomerOrder::with(['rider'=>function($foods){
-            $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
+            $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get()->each(function ($row, $index) {$row->rank = $index + 1;});
         $this_month_data=[];
         foreach($this_month as $value1){
             $kilometer=number_format((float)$value1->distance, 2, '.', '');
@@ -1438,7 +1438,7 @@ class RiderApicontroller extends Controller
         }
 
         $today=CustomerOrder::with(['rider'=>function($foods){
-                $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->where('order_status_id','7')->whereRaw('Date(created_at) = CURDATE()')->get()->each(function ($row, $index) {$row->rank = $index + 1;});
+                $foods->select('rider_id','rider_user_name','rider_image')->get();}])->groupBy('rider_id')->selectRaw('sum(rider_restaurant_distance) as distance,count(order_id) as order_count,rider_id')->orderBy('distance','DESC')->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get()->each(function ($row, $index) {$row->rank = $index + 1;});
         $today_data=[];
         foreach($today as $value2){
             $kilometer=number_format((float)$value2->distance, 2, '.', '');
