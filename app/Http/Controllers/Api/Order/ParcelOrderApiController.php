@@ -9,6 +9,7 @@ use App\Models\Order\ParcelType;
 use App\Models\Order\ParcelExtraCover;
 use App\Models\Order\ParcelImage;
 use App\Models\City\ParcelCity;
+use App\Models\City\ParcelCityHistory;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer\Customer;
@@ -427,11 +428,11 @@ class ParcelOrderApiController extends Controller
         $parcel_order_note=$request['parcel_order_note'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
         $bill_total_price=$request['bill_total_price'];
+
         $from_parcel_city_id=$request['from_parcel_city_id'];
         $to_parcel_city_id=$request['to_parcel_city_id'];
         $start_time = Carbon::now()->format('g:i A');
         $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
-
 
 
         $order_status_id=17;
@@ -569,6 +570,37 @@ class ParcelOrderApiController extends Controller
             $parcel_order->to_parcel_city_id=$to_parcel_city_id;
             $parcel_order->update();
 
+            //Recent Block
+            if($from_parcel_city_id){
+                $parcelCity=ParcelCity::where('parcel_city_id',$from_parcel_city_id)->first();
+                $check=ParcelCityHistory::where('customer_id',$parcel_order->customer_id)->where('parcel_city_id',$from_parcel_city_id)->first();
+                if($check){
+                    $check->count=$check->count+1;
+                    $check->update();
+                }else{
+                    ParcelCityHistory::create([
+                        "customer_id"=>$parcel_order->customer_id,
+                        "parcel_city_id"=>$from_parcel_city_id,
+                        "state_id"=>$parcelCity->state_id,
+                        "count"=>1,
+                    ]);
+                }
+            }
+            if($to_parcel_city_id){
+                $parcelCity=ParcelCity::where('parcel_city_id',$from_parcel_city_id)->first();
+                $check=ParcelCityHistory::where('customer_id',$parcel_order->customer_id)->where('parcel_city_id',$to_parcel_city_id)->first();
+                if($check){
+                    $check->count=$check->count+1;
+                    $check->update();
+                }else{
+                    ParcelCityHistory::create([
+                        "customer_id"=>$parcel_order->customer_id,
+                        "parcel_city_id"=>$to_parcel_city_id,
+                        "state_id"=>$parcelCity->state_id,
+                        "count"=>1,
+                    ]);
+                }
+            }
 
             //Notification
             //customer

@@ -1335,6 +1335,21 @@ class RiderApicontroller extends Controller
             }
 
                 $orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+                $data=[];
+                if($orders1){
+                    $theta = $orders1->customer_address_longitude - $rider->rider_longitude;
+                    $dist = sin(deg2rad($orders1->customer_address_latitude)) * sin(deg2rad($rider->rider_latitude)) +  cos(deg2rad($orders1->customer_address_latitude)) * cos(deg2rad($rider->rider_latitude)) * cos(deg2rad($theta));
+                    $dist = acos($dist);
+                    $dist = rad2deg($dist);
+                    $miles = $dist * 60 * 1.1515;
+                    $kilometer=$miles * 1.609344;
+                    $distances=(float) number_format((float)$kilometer, 2, '.', '');
+                }else{
+                    $distances=0;
+                }
+
+                $orders1->distance=$distances;
+                array_push($data,$orders1);
 
                 return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1]);
         }elseif(empty($order)){
