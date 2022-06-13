@@ -1293,7 +1293,7 @@ class OrderApiController extends Controller
             $kilometer=$miles * 1.609344;
             $distances=(float) number_format((float)$kilometer, 2, '.', '');
         }else{
-            $distances=0;
+            $distances=0.00;
         }
 
         $data=[];

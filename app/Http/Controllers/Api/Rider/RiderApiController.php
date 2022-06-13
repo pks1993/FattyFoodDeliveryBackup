@@ -1287,11 +1287,11 @@ class RiderApicontroller extends Controller
                                     "order_status_id"=>$orderstatusId,
                                     "order_type"=>$orderType,
                                     "title_mm"=> "Customer Not Found",
-                                    "body_mm"=> "You not found the customer's plac",
+                                    "body_mm"=> "You not found the customer's place",
                                     "title_en"=> "Customer Not Found",
-                                    "body_en"=> "You not found the customer's plac",
+                                    "body_en"=> "You not found the customer's place",
                                     "title_ch"=> "Customer Not Found",
-                                    "body_ch"=> "You not found the customer's plac"
+                                    "body_ch"=> "You not found the customer's place"
                                 ],
                             ],
                         ]);
