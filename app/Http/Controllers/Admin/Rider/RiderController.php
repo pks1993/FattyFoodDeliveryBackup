@@ -205,7 +205,7 @@ class RiderController extends Controller
             "last_offered_date"=>$end_date,
             "duration"=>$duration,
             "status"=>0,
-            "payment_voucher"=>"V00".$count,
+            "payment_voucher"=>"LOV00".$count,
         ]);
 
         // $request->session()->flash('alert-success', 'successfullyt!');
@@ -231,7 +231,7 @@ class RiderController extends Controller
             "last_offered_date"=>$end_date,
             "duration"=>$duration,
             "status"=>0,
-            "payment_voucher"=>"V00".$count,
+            "payment_voucher"=>"LDV00".$count,
         ]);
 
         // $request->session()->flash('alert-success', 'successfullyt!');
