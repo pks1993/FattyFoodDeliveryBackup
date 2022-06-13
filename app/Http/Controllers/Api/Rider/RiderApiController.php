@@ -37,7 +37,7 @@ class RiderApicontroller extends Controller
 
         $rider_latitude=$rider_check->rider_latitude;
         $rider_longitude=$rider_check->rider_longitude;
-        $distance="1000";
+        $distance="500";
 
         $orders=DB::table("customer_orders")->select("customer_orders.order_id"
         ,DB::raw("6371 * acos(cos(radians(" . $rider_latitude . "))
@@ -1287,11 +1287,11 @@ class RiderApicontroller extends Controller
                                     "order_status_id"=>$orderstatusId,
                                     "order_type"=>$orderType,
                                     "title_mm"=> "Customer Not Found",
-                                    "body_mm"=> "You not found the customer's plac",
+                                    "body_mm"=> "You not found the customer's place",
                                     "title_en"=> "Customer Not Found",
-                                    "body_en"=> "You not found the customer's plac",
+                                    "body_en"=> "You not found the customer's place",
                                     "title_ch"=> "Customer Not Found",
-                                    "body_ch"=> "You not found the customer's plac"
+                                    "body_ch"=> "You not found the customer's place"
                                 ],
                             ],
                         ]);
