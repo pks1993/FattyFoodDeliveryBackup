@@ -613,7 +613,7 @@ class ParcelOrderApiController extends Controller
                         'json' => [
                             "to"=>$cus_token,
                             "data"=> [
-                                "type"=> "new_order",
+                                "type"=> "rider_parcel_update",
                                 "order_id"=>$parcel_order->order_id,
                                 "order_status_id"=>$parcel_order->order_status_id,
                                 "order_type"=>$parcel_order->order_type,

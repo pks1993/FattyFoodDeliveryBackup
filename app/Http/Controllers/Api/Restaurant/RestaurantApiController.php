@@ -810,7 +810,7 @@ class RestaurantApiController extends Controller
                 $distances_customer_restaurant= number_format((float)$value->distance, 2, '.', '');
 
                 if($distances < 2) {
-                    $rider_delivery_fee=0;
+                    $rider_delivery_fee=600;
                     $customer_delivery_fee=0;
                 }elseif($distances == 2){
                     $rider_delivery_fee=600;
@@ -1065,7 +1065,7 @@ class RestaurantApiController extends Controller
                 $distances_customer_restaurant= number_format((float)$distance, 2, '.', '');
 
                 if($distances < 2) {
-                    $rider_delivery_fee=0;
+                    $rider_delivery_fee=600;
                     $customer_delivery_fee=0;
                 }elseif($distances == 2){
                     $rider_delivery_fee=600;

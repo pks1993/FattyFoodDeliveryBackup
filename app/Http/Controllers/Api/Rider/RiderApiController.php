@@ -37,7 +37,7 @@ class RiderApicontroller extends Controller
 
         $rider_latitude=$rider_check->rider_latitude;
         $rider_longitude=$rider_check->rider_longitude;
-        $distance="1000";
+        $distance="500";
 
         $orders=DB::table("customer_orders")->select("customer_orders.order_id"
         ,DB::raw("6371 * acos(cos(radians(" . $rider_latitude . "))

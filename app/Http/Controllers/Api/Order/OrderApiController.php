@@ -1744,8 +1744,7 @@ class OrderApiController extends Controller
         $customer_orders->rider_delivery_fee=$rider_delivery_fee;
         $customer_orders->rider_restaurant_distance=$distances;
         $customer_orders->item_total_price=$item_total_price;
-        // $customer_orders->bill_total_price=$bill_total_price;
-        $customer_orders->bill_total_price=1;
+        $customer_orders->bill_total_price=$bill_total_price;
         $customer_orders->customer_address_latitude=$customer_address_latitude;
         $customer_orders->customer_address_longitude=$customer_address_longitude;
 
@@ -1906,9 +1905,9 @@ class OrderApiController extends Controller
                                     "order_status_id"=>$customer_orders->order_status_id,
                                     "order_type"=>$customer_orders->order_type,
                                     "title_mm"=> "Order Notification",
-                                    "body_mm"=> "==Your order has been confirmed successfully! Please wait for delivery!",
+                                    "body_mm"=> "Your order has been confirmed successfully! Please wait for delivery!",
                                     "title_en"=> "Order Notification",
-                                    "body_en"=> "==Your order has been confirmed successfully! Please wait for delivery!",
+                                    "body_en"=> "Your order has been confirmed successfully! Please wait for delivery!",
                                     "title_ch"=> "订单通知",
                                     "body_ch"=> "您的订单已确认!"
                                 ],
