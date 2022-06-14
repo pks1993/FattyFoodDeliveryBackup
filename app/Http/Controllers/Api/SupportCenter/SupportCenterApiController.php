@@ -69,116 +69,16 @@ class SupportCenterApiController extends Controller
         }
     }
 
-    public function rider_support_center(Request $request)
+    public function rider_support_center()
     {
-        //my en zh
-        $language=$request->header('language');
-        $check=SupportCenter::where('support_center_type','rider')->first();
-        if($language==null){
-            if($check->phone_en){
-                $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_mm){
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_mm as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }elseif($language=="my" ){
-            if($check->phone_mm){
-                $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_mm as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_en){
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }elseif($language=="en"){
-            if($check->phone_en){
-                $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_mm){
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_mm as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }elseif($language=="zh"){
-            if($check->phone_ch){
-                $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_en){
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','rider')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }else{
-            return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
-        }
-
-        if(!empty($data)){
-            return response()->json(['success'=>true,'message'=>'this is support center text','data'=>$data]);
-        }else{
-            return response()->json(['success'=>false,'message'=>'privacy id not found']);
-        }
+        $support_center=SupportCenter::where('support_center_type','rider')->get();
+        return response()->json(['success'=>true,'message'=>'this is support center text','data'=>$support_center]);
     }
 
-    public function restaurant_support_center(Request $request)
+    public function restaurant_support_center()
     {
-        //my en zh
-        $language=$request->header('language');
-        $check=SupportCenter::where('support_center_type','restaurant')->first();
-        if($language==null){
-            if($check->phone_en){
-                $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_mm){
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_mm as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }elseif($language=="my" ){
-            if($check->phone_mm){
-                $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_mm as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_en){
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }elseif($language=="en"){
-            if($check->phone_en){
-                $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_mm){
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_mm as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }elseif($language=="zh"){
-            if($check->phone_ch){
-                $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-            }else{
-                if($check->phone_en){
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_en as phone','type','created_at','updated_at')->get();
-                }else{
-                    $data=SupportCenter::where('support_center_type','restaurant')->select('support_center_id','support_center_type','phone_ch as phone','type','created_at','updated_at')->get();
-                }
-            }
-        }else{
-            return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
-        }
-
-        if(!empty($data)){
-            return response()->json(['success'=>true,'message'=>'this is support center text','data'=>$data]);
-        }else{
-            return response()->json(['success'=>false,'message'=>'privacy id not found']);
-        }
+        $support_center=SupportCenter::where('support_center_type','restaurant')->get();
+        return response()->json(['success'=>true,'message'=>'this is support center text','data'=>$support_center]);
     }
 
     /**
