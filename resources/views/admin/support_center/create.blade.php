@@ -41,12 +41,25 @@
                                 </div>
                             </div>
                         </div>
-
-
-
                         <div class="card-body">
                             <form method="POST" action="{{ route('fatty.admin.support_center.store') }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
+                                <div class="form-group row">
+                                    <label for="support_center_type" class="col-md-12 col-form-label">{{ __('Application') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <select id="support_center_type" class="form-control @error('support_center_type') is-invalid @enderror" name="support_center_type" value="{{ old('support_center_type') }}" autocomplete="support_center_type" autofocus>
+                                            <option value="customer">Customer</option>
+                                            <option value="rider">Rider</option>
+                                            <option value="restaurant">Restauarnt</option>
+                                        </select>
+                                        
+                                        @error('support_center_type')
+                                        <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label for="type" class="col-md-12 col-form-label">{{ __('Type') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -59,10 +72,32 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="phone" class="col-md-12 col-form-label">{{ __('Phone') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <label for="phone_mm" class="col-md-12 col-form-label">{{ __('Phone Myanmar') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" autocomplete="phone" autofocus>
-                                        @error('phone')
+                                        <input id="phone_mm" type="text" class="form-control @error('phone_mm') is-invalid @enderror" name="phone_mm" value="{{ old('phone_mm') }}" autocomplete="phone_mm" autofocus>
+                                        @error('phone_mm')
+                                        <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="phone_en" class="col-md-12 col-form-label">{{ __('Phone English') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input id="phone_en" type="text" class="form-control @error('phone_en') is-invalid @enderror" name="phone_en" value="{{ old('phone_en') }}" autocomplete="phone_en" autofocus>
+                                        @error('phone_en')
+                                        <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="phone_ch" class="col-md-12 col-form-label">{{ __('Phone China') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input id="phone_ch" type="text" class="form-control @error('phone_ch') is-invalid @enderror" name="phone_ch" value="{{ old('phone_ch') }}" autocomplete="phone_ch" autofocus>
+                                        @error('phone_ch')
                                         <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -90,5 +125,11 @@
 
 @endsection
 @section('script')
+<script>
+    $(document).ready(function () {
+    //select2
+    $('#support_center_type').select2();
+});
+</script>
 
 @endsection

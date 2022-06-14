@@ -48,7 +48,10 @@ class SupportCenterController extends Controller
     {
         $this->validate($request, [
             'type' => 'required',
-            'phone' => 'required'
+            'phone_mm' => 'required',
+            'phone_en' => 'required',
+            'phone_ch' => 'required',
+            'support_center_type'=>'required',
         ]);
         SupportCenter::create($request->all());
         $request->session()->flash('alert-success', 'successfully support center create');
@@ -89,7 +92,10 @@ class SupportCenterController extends Controller
     {
         $this->validate($request, [
             'type' => 'required',
-            'phone' => 'required'
+            'phone_mm' => 'required',
+            'phone_en' => 'required',
+            'phone_ch' => 'required',
+            'support_center_type'=>'required',
         ]);
         SupportCenter::find($id)->update($request->all());
         $request->session()->flash('alert-success', 'successfully support center update');
