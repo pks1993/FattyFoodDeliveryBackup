@@ -916,6 +916,12 @@ class RestaurantApiController extends Controller
                     $customer_delivery_fee=8600;
                 }
 
+                if($value->wishlist==1){
+                    $value->is_wish=true;
+                }else{
+                    $value->is_wish=false;
+                }
+
                 $value->distance=(float)$distances_customer_restaurant;
                 $value->distance_time=(int)$distances*2 + $value->average_time;
                 $value->delivery_fee=$customer_delivery_fee;
