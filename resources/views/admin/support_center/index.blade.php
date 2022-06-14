@@ -40,8 +40,11 @@
                             <thead class="text-center">
                             <tr>
                                 <th>No.</th>
-                                <th class="text-left">Support Center Phone</th>
-                                <th class="text-left">Support Center Type</th>
+                                <th class="text-left">PhoneMyanmar</th>
+                                <th class="text-left">PhoneEnglish</th>
+                                <th class="text-left">PhoneChina</th>
+                                <th class="text-left">Type</th>
+                                <th class="text-left">PhoneType</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -49,11 +52,14 @@
                             @foreach($support_center as $support)
                                 <tr class="text-center">
                                     <td>{{$loop->iteration}}</td>
-                                    <td class="text-left">{{$support->phone}}</td>
+                                    <td class="text-left">{{$support->phone_mm}}</td>
+                                    <td class="text-left">{{$support->phone_en}}</td>
+                                    <td class="text-left">{{$support->phone_ch}}</td>
                                     <td class="text-left">{{$support->type}}</td>
+                                    <td class="text-left">{{$support->support_center_type}}</td>
                                     <td class="btn-group">
                                         <a href="{{route('fatty.admin.support_center.edit',['support_center_id'=>$support->support_center_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                    
+
                                         <form action="{{route('fatty.admin.support_center.destroy', $support->support_center_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                             @csrf
                                             @method('delete')

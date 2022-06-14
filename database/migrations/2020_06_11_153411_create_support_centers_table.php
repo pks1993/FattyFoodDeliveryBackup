@@ -15,9 +15,11 @@ class CreateSupportCentersTable extends Migration
     {
         Schema::create('support_centers', function (Blueprint $table) {
             $table->bigIncrements('support_center_id');
-            $table->string('phone')->nullable();
-            $table->string('type')->nullable();
             $table->string('support_center_type')->nullable();
+            $table->string('phone_mm')->nullable();
+            $table->string('phone_en')->nullable();
+            $table->string('phone_ch')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

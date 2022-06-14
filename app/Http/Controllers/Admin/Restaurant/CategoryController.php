@@ -189,23 +189,23 @@ class CategoryController extends Controller
             }elseif($count1 > 8){
                 $check_assign_id=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->pluck('category_assign_id')->toArray();
                 if(in_array('8',$check_assign_id)){
-                    // $categoryassign=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id')->limit(8)->get();
-                    // $sort_id=$categoryassign[7]->sort_id;
-                    // $assign_id=$categoryassign[7]->category_assign_id;
+                    $categoryassign=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->whereNotIn('category_assign_id',[8])->orderBy('sort_id')->limit(8)->get();
+                    $sort_id=$categoryassign[7]->sort_id;
+                    $assign_id=$categoryassign[7]->category_assign_id;
 
-                    // $assign_last=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id','desc')->first();
-                    // $assign_sort_id=$assign_last->sort_id+1;
+                    $assign_last=CategoryAssign::where('category_type_id',$category_sort1->category_type_id)->orderBy('sort_id','desc')->first();
+                    $assign_sort_id=$assign_last->sort_id+1;
 
-                    // if($assign_id != 8){
-                    //     foreach($posts_as as $value){
-                    //         if($value->category_assign_id == 8){
-                    //             $value->update(['category_type_id'=>$category_sort1->category_type_id,'category_sort_id'=>$category_sort1->sort_id,'sort_id'=>$sort_id]);
-                    //         }
-                    //         if($assign_id==$value->category_assign_id){
-                    //             $value->update(['sort_id'=>$assign_sort_id]);
-                    //         }
-                    //     }
-                    // }
+                    if($assign_id != 8){
+                        foreach($posts_as as $value){
+                            if($value->category_assign_id == 8){
+                                $value->update(['category_type_id'=>$category_sort1->category_type_id,'category_sort_id'=>$category_sort1->sort_id,'sort_id'=>$sort_id]);
+                            }
+                            if($assign_id==$value->category_assign_id){
+                                $value->update(['sort_id'=>$assign_sort_id]);
+                            }
+                        }
+                    }
 
                 }else{
                     //8 > $count
@@ -231,7 +231,7 @@ class CategoryController extends Controller
                 $count=8-$count1;
                 $count_minutes=$count-1;
 
-                $categoryassign=CategoryAssign::where('category_type_id',$category_sort2->category_type_id)->orderBy('sort_id')->limit($count)->get();
+                $categoryassign=CategoryAssign::where('category_type_id',$category_sort2->category_type_id)->whereNotIn('category_assign_id',[8])->orderBy('sort_id')->limit($count)->get();
                 $sort_id=$categoryassign[$count_minutes]->sort_id;
                 $assign_id=$categoryassign[$count_minutes]->category_assign_id;
 
