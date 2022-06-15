@@ -36,7 +36,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="height: 25px;">
                 <div class="flash-message" id="successMessage">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                     @if(Session::has('alert-' . $msg))
@@ -115,6 +115,10 @@
 @endsection
 @push('scripts')
 <script>
+
+setTimeout(function() {
+        $('#successMessage').fadeOut('fast');
+    }, 2000);
     // Custom filtering function which will search data in column four between two values
     $.fn.dataTable.ext.search.push(
     function( settings, data, dataIndex ) {

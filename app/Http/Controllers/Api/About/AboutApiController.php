@@ -137,6 +137,8 @@ class AboutApiController extends Controller
 
     public function paut_count()
     {
+        // $test=Carbon::now()->subDays(9)->toDateTimeLocalString();
+        // return response()->json($test);
         $now = Carbon::now();
         $weekStartDate = $now->startOfWeek()->isoFormat('D-MMMM-Y dddd');
         $weekEndDate = $now->endOfWeek(5)->isoFormat('D-MMMM-Y dddd');

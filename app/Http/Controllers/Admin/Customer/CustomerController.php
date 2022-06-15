@@ -569,11 +569,19 @@ class CustomerController extends Controller
     */
     public function destroy(Request $request,$id)
     {
-        $customers=Customer::where('customer_id','=',$id)->FirstOrFail();
-        Storage::disk('CustomersImages')->delete($customers->image);
-        $customers->delete();
+        $check=CustomerOrder::where('customer_id',$id)->first();
 
-        $request->session()->flash('alert-danger', 'successfully delete customer!');
-        return redirect('fatty/main/admin/customers');
+        if($check){
+            $request->session()->flash('alert-warning', "don't delete accont because this user have orders!");
+            return redirect('fatty/main/admin/customers');
+        }else{
+            $customers=Customer::where('customer_id','=',$id)->FirstOrFail();
+            Storage::disk('CustomersImages')->delete($customers->image);
+            $customers->delete();
+
+            $request->session()->flash('alert-success', 'successfully delete customer!');
+            return redirect('fatty/main/admin/customers');
+        }
+
     }
 }
