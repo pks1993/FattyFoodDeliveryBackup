@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -85,11 +85,11 @@
                                     <tbody>
                                         <tr>
                                             <td>Minimum date:</td>
-                                            <td><input type="text" id="min" name="min"></td>
+                                            <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
                                         </tr>
                                         <tr>
                                             <td>Maximum date:</td>
-                                            <td><input type="text" id="max" name="max"></td>
+                                            <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -108,7 +108,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -126,8 +126,8 @@
     function( settings, data, dataIndex ) {
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
-        var date = new Date( data[5] );
-        
+        var date = new Date( data[6] );
+
         if (
         ( min === null && max === null ) ||
         ( min === null && date <= max ) ||
@@ -139,12 +139,12 @@
         return false;
     }
     );
-    
-    
+
+
     $(document).ready(function() {
         // Create date inputs
         $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-        
+
         $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
             // DataTables initialisation
             var table = $("#riders").DataTable({
@@ -166,14 +166,14 @@
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'rider_latitude', name:'rider_latitude'},
                 {data: 'rider_longitude', name:'rider_longitude'},
-                
+
                 ],
                 dom: 'lBfrtip',
                 buttons: [
                 'excel', 'pdf', 'print'
                 ],
             });
-            
+
             // Refilter the table
             $('#min, #max').on('change', function () {
                 table.draw();
@@ -181,4 +181,3 @@
         });
     </script>
     @endpush
-    

@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -88,11 +88,11 @@
                                     <tbody>
                                         <tr>
                                             <td>From Year:</td>
-                                            <td><input type="text" id="min" name="min" autocomplete="off"></td>
+                                            <td><input type="text" id="min" value="{{ now()->format('Y') }}" name="min" autocomplete="off"></td>
                                         </tr>
                                         <tr>
                                             <td>To Year:</td>
-                                            <td><input type="text" id="max" name="max" autocomplete="off"></td>
+                                            <td><input type="text" id="max" value="{{ now()->format('Y') }}" name="max" autocomplete="off"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -111,7 +111,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -137,7 +137,7 @@
                         $('.ui-datepicker-calendar').hide();
                     });
                 },
-                onClose: function(dateText, inst) { 
+                onClose: function(dateText, inst) {
                     var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                     $(this).datepicker('setDate', new Date(year, month, 1));
@@ -150,7 +150,7 @@
             var minYear = min.val();
             // var minData = minDate.split('-');
             // var minYear = minData[1];
-            
+
             var max = $('#max').datepicker({
                 changeMonth: true,
                 changeYear: true,
@@ -161,7 +161,7 @@
                         $('.ui-datepicker-calendar').hide();
                     });
                 },
-                onClose: function(dateText, inst) { 
+                onClose: function(dateText, inst) {
                     var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                     $(this).datepicker('setDate', new Date(year, month, 1));
@@ -174,22 +174,22 @@
             var maxYear = max.val();
             // var maxData = maxDate.split('-');
             // var maxYear = maxData[1];
-            
-            var date = data[5].split('-');
-            
+
+            var date = data[6].split('-');
+
             // console.log(minData);
-            
+
             if ((minData == '' && maxData == '') ||
             (date[2] == minYear) ||
-            ((date[2] <= minYear || date[2] > minYear) && maxYear >= date[2])
-            
+            ((date[2] >= minYear || date[2] > minYear) && maxYear >= date[2])
+
             )  {
                 return true;
             }
             return false;
         }
         );
-        
+
         // Create date inputs
         $("#min").datepicker({
             changeMonth: true,
@@ -201,7 +201,7 @@
                     $('.ui-datepicker-calendar').hide();
                 });
             },
-            onClose: function(dateText, inst) { 
+            onClose: function(dateText, inst) {
                 var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                 var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                 $(this).datepicker('setDate', new Date(year, month, 1));
@@ -210,7 +210,7 @@
         }).click(function(){
             $('.ui-datepicker-calendar').hide();
         });
-        
+
         $("#max").datepicker({
             changeMonth: true,
             changeYear: true,
@@ -221,7 +221,7 @@
                     $('.ui-datepicker-calendar').hide();
                 });
             },
-            onClose: function(dateText, inst) { 
+            onClose: function(dateText, inst) {
                 var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                 var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                 $(this).datepicker('setDate', new Date(year, month, 1));
@@ -230,7 +230,7 @@
         }).click(function(){
             $('.ui-datepicker-calendar').hide();
         });
-            
+
             // DataTables initialisation
             var table = $("#riders").DataTable({
                 "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
@@ -251,14 +251,14 @@
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'rider_latitude', name:'rider_latitude'},
                 {data: 'rider_longitude', name:'rider_longitude'},
-                
+
                 ],
                 dom: 'lBfrtip',
                 buttons: [
                 'excel', 'pdf', 'print'
                 ],
             });
-            
+
             // Refilter the table
             $('#min, #max').on('change', function () {
                 table.draw();
@@ -266,4 +266,3 @@
         });
     </script>
     @endpush
-    

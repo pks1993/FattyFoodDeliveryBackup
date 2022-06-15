@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -59,11 +59,11 @@
                                 <tbody>
                                     <tr>
                                         <td>From Month:</td>
-                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
+                                        <td><input type="text" id="min" value="{{ now()->format('m-Y') }}" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>To Month:</td>
-                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
+                                        <td><input type="text" id="max" name="max" value="{{ now()->format('m-Y') }}" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -85,7 +85,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -111,7 +111,7 @@
                         $('.ui-datepicker-calendar').hide();
                     });
                 },
-                onClose: function(dateText, inst) { 
+                onClose: function(dateText, inst) {
                     var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                     $(this).datepicker('setDate', new Date(year, month, 1));
@@ -124,7 +124,7 @@
             var minData = minDate.split('-');
             var minMonth = minData[0];
             var minYear = minData[1];
-            
+
             var max = $('#max').datepicker({
                 changeMonth: true,
                 changeYear: true,
@@ -135,7 +135,7 @@
                         $('.ui-datepicker-calendar').hide();
                     });
                 },
-                onClose: function(dateText, inst) { 
+                onClose: function(dateText, inst) {
                     var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                     $(this).datepicker('setDate', new Date(year, month, 1));
@@ -148,22 +148,22 @@
             var maxData = maxDate.split('-');
             var maxMonth = maxData[0];
             var maxYear = maxData[1];
-            
-            
-            
+
+
+
             var date = data[3].split('-');
             console.log(date[1] >= minMonth && minYear <= date[2] && date[1] <= maxMonth && maxYear >= date[2]);
-            
+
             if ((isNaN(minDate) == false && isNaN(maxDate) == false) ||
-            (date[1] == minMonth && minYear == date[2]) || 
-            ((date[1] >= minMonth || date[1] <= minMonth && minYear < date[2]) && minYear <= date[2] && (date[1] <= maxMonth || date[1] >= maxMonth && maxYear > date[2]) && maxYear >= date[2]) 
+            (date[1] == minMonth && minYear == date[2]) ||
+            ((date[1] >= minMonth || date[1] <= minMonth && minYear < date[2]) && minYear <= date[2] && (date[1] <= maxMonth || date[1] >= maxMonth && maxYear > date[2]) && maxYear >= date[2])
             )  {
                 return true;
             }
             return false;
         }
         );
-        
+
         // Create date inputs
         $("#min").datepicker({
             changeMonth: true,
@@ -175,7 +175,7 @@
                     $('.ui-datepicker-calendar').hide();
                 });
             },
-            onClose: function(dateText, inst) { 
+            onClose: function(dateText, inst) {
                 var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                 var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                 $(this).datepicker('setDate', new Date(year, month, 1));
@@ -184,7 +184,7 @@
         }).click(function(){
             $('.ui-datepicker-calendar').hide();
         });
-        
+
         $("#max").datepicker({
             changeMonth: true,
             changeYear: true,
@@ -195,7 +195,7 @@
                     $('.ui-datepicker-calendar').hide();
                 });
             },
-            onClose: function(dateText, inst) { 
+            onClose: function(dateText, inst) {
                 var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                 var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                 $(this).datepicker('setDate', new Date(year, month, 1));
@@ -204,7 +204,7 @@
         }).click(function(){
             $('.ui-datepicker-calendar').hide();
         });
-        
+
         // DataTables initialisation
         var table = $("#orders").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],

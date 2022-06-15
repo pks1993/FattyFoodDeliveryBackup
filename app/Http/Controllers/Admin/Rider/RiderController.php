@@ -430,7 +430,7 @@ class RiderController extends Controller
             return $rider_image;
         })
         ->addColumn('register_date', function(Rider $item){
-            $register_date = $item->created_at->format('d M Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         // ->addColumn('is_admin_approved', function(Rider $item){
@@ -485,7 +485,7 @@ class RiderController extends Controller
             return $rider_image;
         })
         ->addColumn('register_date', function(Rider $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         // ->addColumn('is_admin_approved', function(Rider $item){
@@ -539,7 +539,7 @@ class RiderController extends Controller
             return $rider_image;
         })
         ->addColumn('register_date', function(Rider $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         // ->addColumn('is_admin_approved', function(Rider $item){
