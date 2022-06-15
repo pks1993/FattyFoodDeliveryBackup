@@ -33,6 +33,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Route::post('fatty/202221/lashio/main/admin/parcels/states','Api\StateCity\StateCityApiController@parcel_state');
 // Route::post('fatty/202221/lashio/main/admin/restaurants/orders/status','Api\Order\OrderApiController@restaurant_status');
 
+//PautGaNan
+Route::get('pautganan/home_page','Api\About\AboutApiController@pautganan');
+Route::get('pautganan/set_value/history','Api\About\AboutApiController@set_value_history');
+Route::get('pautganan/paut_count','Api\About\AboutApiController@paut_count');
+
 Route::post('v1/fatty/202221/lashio/main/admin/customers/request_otp','Api\Customer\CustomerApiController@request_otp');
 Route::post('v1/fatty/202221/lashio/main/admin/customers/verify_otp','Api\Customer\CustomerApiController@verify_otp');
 Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_request_otp','Api\Customer\CustomerApiController@resend_request_otp');
