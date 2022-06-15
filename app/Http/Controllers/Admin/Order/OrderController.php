@@ -24,12 +24,12 @@ class OrderController extends Controller
         $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->paginate(10);
         return view('admin.order.index',compact('food_orders'));
     }
-    
+
     public function dailyfoodorderindex()
     {
-        return view('admin.order.daily_food_orders.index');    
+        return view('admin.order.daily_food_orders.index');
     }
-    
+
     public function dailyfoodorderajax(){
         $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
@@ -43,30 +43,30 @@ class OrderController extends Controller
                 $value->rider_name="Null";
             }
             $value->payment_method_name=$value->payment_method->payment_method_name;
-            
+
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
             $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            
+
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
-    
+
     public function monthlyfoodorderindex()
     {
-        return view('admin.order.monthly_food_orders.index');    
+        return view('admin.order.monthly_food_orders.index');
     }
-    
+
     public function monthlyfoodorderajax(){
         $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
@@ -80,14 +80,14 @@ class OrderController extends Controller
                 $value->rider_name="Null";
             }
             $value->payment_method_name=$value->payment_method->payment_method_name;
-            
+
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
             $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            
+
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
@@ -96,14 +96,14 @@ class OrderController extends Controller
         })
         ->rawColumns(['action','ordered_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
-    
+
     public function yearlyfoodorderindex()
     {
-        return view('admin.order.yearly_food_orders.index');    
+        return view('admin.order.yearly_food_orders.index');
     }
-    
+
     public function yearlyfoodorderajax(){
         $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
         $data=[];
@@ -117,30 +117,30 @@ class OrderController extends Controller
                 $value->rider_name="Null";
             }
             $value->payment_method_name=$value->payment_method->payment_method_name;
-            
+
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
             $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            
+
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-m-Y');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
-    
+
     public function dailyparcelorderindex()
     {
-        return view('admin.order.daily_parcel_orders.index');    
+        return view('admin.order.daily_parcel_orders.index');
     }
-    
+
     public function dailyparcelorderajax(){
         $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
@@ -153,30 +153,30 @@ class OrderController extends Controller
                 $value->rider_name="Null";
             }
             $value->payment_method_name=$value->payment_method->payment_method_name;
-            
+
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
             $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            
+
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d M Y');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
-    
+
     public function monthlyparcelorderindex()
     {
-        return view('admin.order.monthly_parcel_orders.index');    
+        return view('admin.order.monthly_parcel_orders.index');
     }
-    
+
     public function monthlyparcelorderajax(){
         $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
@@ -189,14 +189,14 @@ class OrderController extends Controller
                 $value->rider_name="Null";
             }
             $value->payment_method_name=$value->payment_method->payment_method_name;
-            
+
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
             $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            
+
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
@@ -205,14 +205,14 @@ class OrderController extends Controller
         })
         ->rawColumns(['action','ordered_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
-    
+
     public function yearlyparcelorderindex()
     {
-        return view('admin.order.yearly_parcel_orders.index');    
+        return view('admin.order.yearly_parcel_orders.index');
     }
-    
+
     public function yearlyparcelorderajax(){
         $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
@@ -225,77 +225,77 @@ class OrderController extends Controller
                 $value->rider_name="Null";
             }
             $value->payment_method_name=$value->payment_method->payment_method_name;
-            
+
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
             $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            
+
             return $btn;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-m-Y');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->rawColumns(['action','ordered_date'])
         ->searchPane('model', $model)
-        ->make(true); 
+        ->make(true);
     }
-    
+
     public function foodorderchart()
     {
-        
+
         $m= date("m");
-        
+
         $de= date("d");
-        
+
         $y= date("Y");
-        
+
         for($i=0; $i<10; $i++){
-            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y)); 
-            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y)); 
+            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y));
+            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y));
             $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','food')->count();
-            
-            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y)); 
-            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y)); 
+
+            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y));
+            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y));
             $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','food')->count();
-            
+
             $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','food')->count();
         }
         // dd($years);
-        return view('admin.order.food_orders_chart.index')->with('days',$days)->with('daily_orders',$daily_orders)->with('months',$months)->with('monthly_orders',$monthly_orders)->with('years',$years)->with('yearly_orders',$yearly_orders);    
+        return view('admin.order.food_orders_chart.index')->with('days',$days)->with('daily_orders',$daily_orders)->with('months',$months)->with('monthly_orders',$monthly_orders)->with('years',$years)->with('yearly_orders',$yearly_orders);
     }
-    
+
     public function parcelorderchart()
     {
-        
+
         $m= date("m");
-        
+
         $de= date("d");
-        
+
         $y= date("Y");
-        
+
         for($i=0; $i<10; $i++){
-            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y)); 
-            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y)); 
+            $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y));
+            $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y));
             $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','parcel')->count();
-            
-            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y)); 
-            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y)); 
+
+            $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y));
+            $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y));
             $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','parcel')->count();
-            
+
             $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','parcel')->count();
         }
         // dd($years);
-        return view('admin.order.parcel_orders_chart.index')->with('days',$days)->with('daily_orders',$daily_orders)->with('months',$months)->with('monthly_orders',$monthly_orders)->with('years',$years)->with('yearly_orders',$yearly_orders);    
+        return view('admin.order.parcel_orders_chart.index')->with('days',$days)->with('daily_orders',$daily_orders)->with('months',$months)->with('monthly_orders',$monthly_orders)->with('years',$years)->with('yearly_orders',$yearly_orders);
     }
-    
+
     /**
     * Show the form for creating a new resource.
     *
@@ -305,7 +305,7 @@ class OrderController extends Controller
     {
         //
     }
-    
+
     /**
     * Store a newly created resource in storage.
     *
@@ -316,7 +316,7 @@ class OrderController extends Controller
     {
         //
     }
-    
+
     /**
     * Display the specified resource.
     *
@@ -334,7 +334,7 @@ class OrderController extends Controller
         $parcel_order = CustomerOrder::findOrFail($id);
         return view('admin.order.parcel_view')->with('parcel_order',$parcel_order);
     }
-    
+
     /**
     * Show the form for editing the specified resource.
     *
@@ -348,35 +348,35 @@ class OrderController extends Controller
         $rider_all=Rider::all();
         return view('admin.order.assign',compact('orders','rider_all','order_id'));
     }
-    
+
     public function assign_noti(Request $request,$id)
     {
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
         $riders_check=Rider::where('rider_id',$id)->first();
-        
+
         $customer_orders->is_force_assign=1;
         $customer_orders->rider_id=$id;
-        
+
         if($customer_orders->order_type=="food"){
             $customer_orders->order_status_id=4;
         }else{
             $customer_orders->order_status_id=12;
         }
         $customer_orders->update();
-        
+
         $riders_check->is_order=1;
         $riders_check->update();
-        
+
         $order_assign=OrderAssign::create([
             "order_id"=>$order_id,
             "rider_id"=>$id,
         ]);
-        
+
         $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
         $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
         $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
-        
+
         //rider
         $fcm_token2=array();
         array_push($fcm_token2, $riders_check->rider_fcm_token);
@@ -399,7 +399,7 @@ class OrderController extends Controller
         $request->session()->flash('alert-success', 'successfully support center create');
         return redirect()->back();
     }
-    
+
     /**
     * Update the specified resource in storage.
     *
@@ -411,7 +411,7 @@ class OrderController extends Controller
     {
         //
     }
-    
+
     /**
     * Remove the specified resource from storage.
     *

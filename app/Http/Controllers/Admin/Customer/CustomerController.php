@@ -87,7 +87,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d M Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -163,7 +163,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-m-Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -179,7 +179,7 @@ class CustomerController extends Controller
 
     public function dailyorderedajax(){
         $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
-        $model=Customer::whereIn('customer_id',$ordered_customers)->get();
+        $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_name){
@@ -203,7 +203,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d M Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -218,7 +218,7 @@ class CustomerController extends Controller
 
     public function monthlyorderedajax(){
         $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
-        $model=Customer::whereIn('customer_id',$ordered_customers)->get();
+        $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_name){
@@ -257,7 +257,7 @@ class CustomerController extends Controller
 
     public function yearlyorderedajax(){
         $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
-        $model=Customer::whereIn('customer_id',$ordered_customers)->get();
+        $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_name){
@@ -296,7 +296,7 @@ class CustomerController extends Controller
 
     public function dailyactiveajax(){
         $active_customers=ActiveCustomer::select('customer_id')->get();
-        $model=Customer::whereIn('customer_id',$active_customers)->get();
+        $model=Customer::whereIn('customer_id',$active_customers)->orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_name){
@@ -320,7 +320,7 @@ class CustomerController extends Controller
             return $btn;
         })
         ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d M Y');
+            $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
         ->rawColumns(['action','register_date'])
@@ -335,7 +335,7 @@ class CustomerController extends Controller
 
     public function monthlyactiveajax(){
         $active_customers=ActiveCustomer::select('customer_id')->get();
-        $model=Customer::whereIn('customer_id',$active_customers)->get();
+        $model=Customer::whereIn('customer_id',$active_customers)->orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_name){
@@ -373,7 +373,7 @@ class CustomerController extends Controller
 
     public function yearlyactiveajax(){
         $active_customers=ActiveCustomer::select('customer_id')->get();
-        $model=Customer::whereIn('customer_id',$active_customers)->get();
+        $model=Customer::whereIn('customer_id',$active_customers)->orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_name){

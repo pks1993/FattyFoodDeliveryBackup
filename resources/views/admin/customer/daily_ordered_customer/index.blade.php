@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -84,11 +84,11 @@
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
+                                        <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
+                                        <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -106,7 +106,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{--                                        
+                                    {{--
                                         @foreach($customers as $key=>$customer)
                                         <tr class="text-center">
                                             <td> {{ ($tno*15)+$key+1 }} </td>
@@ -117,9 +117,9 @@
                                                 {{ $customer->customer_name }}
                                                 @endif
                                             </td>
-                                            <td class="text-left">{{ $customer->customer_phone}}</td> 
-                                            <td class="text-left">{{ $customer->created_at->format('d.m.Y') }}</td> 
-                                            <td class="text-left">{{ $customer->order_count }}</td> 
+                                            <td class="text-left">{{ $customer->customer_phone}}</td>
+                                            <td class="text-left">{{ $customer->created_at->format('d.m.Y') }}</td>
+                                            <td class="text-left">{{ $customer->order_count }}</td>
                                             <td class="text-left">{{ $customer->order_amount }}</td>  --}}
                                             {{-- <td>
                                                 @if($customer->image)
@@ -138,16 +138,16 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                
+
                                                             </div>
-                                                            
+
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td> --}}
                                             {{-- <td class="btn-group text-center">
                                                 <a href="{{route('fatty.admin.customers.edit',['customer_id'=>$customer->customer_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                                
+
                                                 <form action="{{route('fatty.admin.customers.destroy', $customer->customer_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                                     @csrf
                                                     @method('delete')
@@ -174,7 +174,7 @@
             var min = $('#min').datepicker("getDate");
             var max = $('#max').datepicker("getDate");
             var date = new Date( data[3] );
-            
+
             if (
             ( min === null && max === null ) ||
             ( min === null && date <= max ) ||
@@ -186,14 +186,14 @@
             return false;
         }
         );
-        
-        
+
+
         $(document).ready(function() {
             // Create date inputs
             $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-            
+
             $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
-            
+
             // DataTables initialisation
             var table = $("#customers").DataTable({
                 "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
@@ -225,4 +225,3 @@
         });
     </script>
     @endpush
-    

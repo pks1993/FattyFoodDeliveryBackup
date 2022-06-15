@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -59,11 +59,11 @@
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min"></td>
+                                        <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max"></td>
+                                        <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -84,7 +84,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -103,7 +103,7 @@
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
         var date = new Date( data[3] );
-        
+
         if (
         ( min === null && max === null ) ||
         ( min === null && date <= max ) ||
@@ -115,14 +115,14 @@
         return false;
     }
     );
-    
-    
+
+
     $(document).ready(function() {
         // Create date inputs
         $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-        
+
         $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
-        
+
         // DataTables initialisation
         var table = $("#orders").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],

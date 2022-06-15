@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -87,11 +87,11 @@
                                 <tbody>
                                     <tr>
                                         <td>From Year:</td>
-                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
+                                        <td><input type="text" id="min" value="{{ now()->format('Y') }}" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>To Year:</td>
-                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
+                                        <td><input type="text" id="max" value="{{ now()->format('Y') }}" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -109,7 +109,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{--                                        
+                                    {{--
                                         @foreach($customers as $key=>$customer)
                                         <tr class="text-center">
                                             <td> {{ ($tno*15)+$key+1 }} </td>
@@ -120,9 +120,9 @@
                                                 {{ $customer->customer_name }}
                                                 @endif
                                             </td>
-                                            <td class="text-left">{{ $customer->customer_phone}}</td> 
-                                            <td class="text-left">{{ $customer->created_at->format('d.m.Y') }}</td> 
-                                            <td class="text-left">{{ $customer->order_count }}</td> 
+                                            <td class="text-left">{{ $customer->customer_phone}}</td>
+                                            <td class="text-left">{{ $customer->created_at->format('d.m.Y') }}</td>
+                                            <td class="text-left">{{ $customer->order_count }}</td>
                                             <td class="text-left">{{ $customer->order_amount }}</td>  --}}
                                             {{-- <td>
                                                 @if($customer->image)
@@ -141,16 +141,16 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                
+
                                                             </div>
-                                                            
+
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td> --}}
                                             {{-- <td class="btn-group text-center">
                                                 <a href="{{route('fatty.admin.customers.edit',['customer_id'=>$customer->customer_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                                
+
                                                 <form action="{{route('fatty.admin.customers.destroy', $customer->customer_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                                     @csrf
                                                     @method('delete')
@@ -184,7 +184,7 @@
                             $('.ui-datepicker-calendar').hide();
                         });
                     },
-                    onClose: function(dateText, inst) { 
+                    onClose: function(dateText, inst) {
                         var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                         var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                         $(this).datepicker('setDate', new Date(year, month, 1));
@@ -197,7 +197,7 @@
                 var minYear = min.val();
                 // var minData = minDate.split('-');
                 // var minYear = minData[1];
-                
+
                 var max = $('#max').datepicker({
                     changeMonth: true,
                     changeYear: true,
@@ -208,7 +208,7 @@
                             $('.ui-datepicker-calendar').hide();
                         });
                     },
-                    onClose: function(dateText, inst) { 
+                    onClose: function(dateText, inst) {
                         var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                         var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                         $(this).datepicker('setDate', new Date(year, month, 1));
@@ -221,22 +221,22 @@
                 var maxYear = max.val();
                 // var maxData = maxDate.split('-');
                 // var maxYear = maxData[1];
-                
+
                 var date = data[3].split('-');
-                
+
                 console.log(minData);
-                
+
                 if ((minData == '' && maxData == '') ||
                 (date[2] == minYear) ||
-                ((date[2] <= minYear || date[2] > minYear) && maxYear >= date[2])
-                
+                ((date[2] >= minYear || date[2] > minYear) && maxYear >= date[2])
+
                 )  {
                     return true;
                 }
                 return false;
             }
             );
-            
+
             // Create date inputs
             $("#min").datepicker({
                 changeMonth: true,
@@ -248,7 +248,7 @@
                         $('.ui-datepicker-calendar').hide();
                     });
                 },
-                onClose: function(dateText, inst) { 
+                onClose: function(dateText, inst) {
                     var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                     $(this).datepicker('setDate', new Date(year, month, 1));
@@ -257,7 +257,7 @@
             }).click(function(){
                 $('.ui-datepicker-calendar').hide();
             });
-            
+
             $("#max").datepicker({
                 changeMonth: true,
                 changeYear: true,
@@ -268,7 +268,7 @@
                         $('.ui-datepicker-calendar').hide();
                     });
                 },
-                onClose: function(dateText, inst) { 
+                onClose: function(dateText, inst) {
                     var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
                     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
                     $(this).datepicker('setDate', new Date(year, month, 1));
@@ -308,4 +308,3 @@
         });
     </script>
     @endpush
-    

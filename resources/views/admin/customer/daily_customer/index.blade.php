@@ -6,7 +6,7 @@
         display: none;
     }
     .dt-buttons>button{
-        border-radius: revert; 
+        border-radius: revert;
         margin-top: 15px;
         margin-right: 5px;
     }
@@ -74,11 +74,11 @@
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" name="min" autocomplete="off"></td>
+                                        <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min" autocomplete="off"></td>
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" name="max" autocomplete="off"></td>
+                                        <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max" autocomplete="off"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -114,7 +114,7 @@
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
         var date = new Date( data[3] );
-        
+
         if (
         ( min === null && max === null ) ||
         ( min === null && date <= max ) ||
@@ -126,12 +126,12 @@
         return false;
     }
     );
-    
-    
+
+
     $(document).ready(function() {
         // Create date inputs
         $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-        
+
         $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
         // DataTables initialisation
         var table = $("#customers").DataTable({
@@ -157,7 +157,7 @@
             'excel', 'pdf', 'print'
             ],
         });
-        
+
         // Refilter the table
         $('#min, #max').on('change', function () {
             table.draw();
