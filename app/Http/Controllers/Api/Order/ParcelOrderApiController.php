@@ -13,6 +13,7 @@ use App\Models\City\ParcelCityHistory;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer\Customer;
+use App\Models\Customer\OrderCustomer;
 use App\Models\Rider\Rider;
 use App\Models\Order\OrderReview;
 use DB;
@@ -244,6 +245,16 @@ class ParcelOrderApiController extends Controller
             "from_parcel_city_id"=>$from_parcel_city_id,
             "to_parcel_city_id"=>$to_parcel_city_id,
         ]);
+
+        //start customer order
+        $check=OrderCustomer::where('customer_id',$customer_id)->whereDate('created_at',date('Y-m-d'))->first();
+        if(empty($check)){
+            OrderCustomer::create([
+                "customer_id"=>$customer_id,
+            ]);
+        }
+        //close customer order
+
 
 
         //customer

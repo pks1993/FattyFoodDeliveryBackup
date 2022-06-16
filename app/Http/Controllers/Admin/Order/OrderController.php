@@ -21,8 +21,55 @@ class OrderController extends Controller
     */
     public function index()
     {
-        $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->paginate(10);
+        $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
         return view('admin.order.index',compact('food_orders'));
+    }
+
+    public function assignorderajax()
+    {
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->orderBy('created_at')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->customer_name=$value->customer->customer_name;
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" title="Order Detail" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            // <a href="{{route('fatty.admin.food_orders.assign',['order_id'=>$order->order_id])}}" class="btn btn-primary btn-sm mr-1" title="Assign"><i class="fa fa-edit"></i></a>
+            $btn = $btn.'<a href="/fatty/main/admin/foods/orders/assign/'.$post->order_id.'" title="Rider Assign" class="btn btn-primary btn-sm mr-2"><i class="fas fa-plus-circle"></i></a>';
+            return $btn;
+        })
+        ->addColumn('order_status', function(CustomerOrder $item){
+            if($item->order_status_id=='1' || $item->order_status_id=="19"){
+                $order_status = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Pending (NotAcceptRestaurant)</a>';
+            }elseif($item->order_status_id=='11'){
+                $order_status = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Pending (NotAcceptRider)</a>';
+            }elseif($item->order_status_id=='3'){
+                $order_status = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:red;">AcceptByRestaurant(NotAcceptRider)</a>';
+            }elseif($item->order_status_id=='5'){
+                $order_status = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">ReadyToPick(NotAcceptRider)</a>';
+            }else{
+                $order_status = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Check Error</a>';
+            }
+            return $order_status;
+        })
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d-M-Y');
+            return $ordered_date;
+        })
+        ->addColumn('order_type', function(CustomerOrder $item){
+            if($item->order_type=="food"){
+                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:#bde000;color:black;">'.$item->order_type.'</a>';
+            }else{
+                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:#00dfc2;color:black;">'.$item->order_type.'</a>';
+            }
+            return $order_type;
+        })
+        ->rawColumns(['action','ordered_date','order_status','order_type'])
+        ->searchPane('model', $model)
+        ->make(true);
     }
 
     public function dailyfoodorderindex()
@@ -345,7 +392,7 @@ class OrderController extends Controller
     {
         $order_id=$id;
         $orders=CustomerOrder::findOrFail($id);
-        $rider_all=Rider::all();
+        $rider_all=Rider::where('is_order',0)->get();
         return view('admin.order.assign',compact('orders','rider_all','order_id'));
     }
 

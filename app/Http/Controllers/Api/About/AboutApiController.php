@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api\About;
 use App\Models\About\About;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Customer\Customer;
 use Illuminate\Support\Carbon;
+use App\Models\Order\CustomerOrder;
+use App\Models\Customer\OrderCustomer;
 
 class AboutApiController extends Controller
 {
@@ -143,5 +146,20 @@ class AboutApiController extends Controller
         $weekStartDate = $now->startOfWeek()->isoFormat('D-MMMM-Y dddd');
         $weekEndDate = $now->endOfWeek(5)->isoFormat('D-MMMM-Y dddd');
         return response()->json(['succss'=>true,'message'=>'pauntganan paut tee count data','start_date'=>$weekStartDate,'end_date'=>$weekEndDate,'data'=>['zero'=>0,'one'=>0,'two'=>2,'three'=>0,'four'=>1,'five'=>3,'six'=>0,'seven'=>0,'eight'=>1,'nine'=>0]]);
+    }
+
+    public function daily_order_customer()
+    {
+        $data=CustomerOrder::all();
+        foreach($data as $item){
+            $check=OrderCustomer::where('customer_id',$item->customer_id)->whereDate('created_at',$item->created_at)->first();
+            if(empty($check)){
+                OrderCustomer::create([
+                    "customer_id"=>$item->customer_id,
+                    "created_at"=>$item->created_at,
+                ]);
+            }
+        }
+        return response()->json($data);
     }
 }

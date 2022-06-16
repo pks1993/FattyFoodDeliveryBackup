@@ -1,6 +1,20 @@
 @extends('admin.layouts.master')
 
 @section('css')
+<style>
+    form>.fa {
+        display: none;
+    }
+    .dt-buttons>button{
+        border-radius: revert;
+        margin-top: 15px;
+        margin-right: 5px;
+    }
+    .dataTables_length >label {
+        margin-right: 15px !important;
+        margin-top: 15px;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -50,9 +64,18 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane table-responsive active" id="Admin">
-                                <div class="pagination">
-                                    {{ $food_orders->appends(request()->input())->links() }}
-                                </div>
+                                <table border="0" cellspacing="5" cellpadding="5">
+                                    <tbody>
+                                        <tr>
+                                            <td>Minimum date:</td>
+                                            <td><input type="text" id="min" name="min"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Maximum date:</td>
+                                            <td><input type="text" id="max" name="max"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                                 <table id="foods_orders" class="table table-bordered table-striped table-hover">
                                     <thead>
                                     <tr class="text-center">
@@ -61,14 +84,15 @@
                                         <th>OrderId</th>
                                         <th>BookingId</th>
                                         <th>CustomerName</th>
+                                        <th>OrderDate</th>
                                         <th>OrderType</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($food_orders as $order)
+                                    {{-- @foreach($food_orders as $order)
                                     <tr class="text-center">
-                                        <td>{{ $loop->iteration }}</td> 
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>
                                             @if($order->order_status_id=="1" || $order->order_status_id=="11")
                                                 <a class="btn btn-warning btn-sm mr-1" style="color: white;width: 100%;">{{ $order->order_status->order_status_name }}</a>
@@ -92,44 +116,9 @@
                                         </td>
                                         <td>
                                             <a href="{{route('fatty.admin.food_orders.assign',['order_id'=>$order->order_id])}}" class="btn btn-primary btn-sm mr-1" title="Assign"><i class="fa fa-edit"></i></a>
-
-                                           {{--  <form action="{{route('fatty.admin.restaurants.destroy', $order->ordre_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                                @csrf
-                                                @method('delete')
-                                                <button class="btn btn-danger btn-sm" title="Delete"><i class="fa fa-trash"></i></button>
-                                            </form> --}}
                                         </td>
-                                        {{-- <td class="btn-group text-center">
-                                            @if($restaurant->restaurant_user->is_admin_approved=="0")
-                                                <a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>
-                                            @else
-                                                <a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>
-                                            @endif
-                                            @if($restaurant->restaurant_emergency_status=="0")
-                                                <a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-lock-open" title="Restaurant Open"></i></a>
-                                            @else
-                                                <a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-lock" title="Restaurant Close"></i></a>
-                                            @endif
-
-
-                                            <a href="{{route('fatty.admin.restaurants.edit',['restaurant_id'=>$restaurant->restaurant_id])}}" class="btn btn-primary btn-sm mr-1" title="Edit"><i class="fa fa-edit"></i></a>
-
-                                            <form action="{{route('fatty.admin.restaurants.destroy', $restaurant->restaurant_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                                @csrf
-                                                @method('delete')
-                                                <button class="btn btn-danger btn-sm" title="Delete"><i class="fa fa-trash"></i></button>
-                                            </form>
-                                        
-                                        </td> --}}
-                                        {{-- <td>
-                                            @if($restaurant->restaurant_image)
-                                                <img src="../../../uploads/restaurant/{{$restaurant->restaurant_image}}" class="img-rounded" style="width: 55px;height: 45px;">
-                                            @else
-                                                <img src="{{asset('../image/available.png')}}" class="img-rounded" style="width: 55px;height: 45px;">
-                                            @endif
-                                        </td> --}}
                                     </tr>
-                                    @endforeach
+                                    @endforeach --}}
                                     </tbody>
                                 </table>
                             </div>
@@ -141,20 +130,72 @@
     </section>
 @endsection
 @push('scripts')
+
 <script>
-    $(function () {
-        $("#foods_orders").DataTable({
-            // "lengthMenu": [[10,25,50, 100, 250,500, -1], [10,25,50,100, 250, 500, "All"]],
-            "paging": false, // Allow data to be paged
-            "lengthChange": false,
-            "searching": false, // Search box and search function will be actived
-            "info": false,
-            "autoWidth": true,
-            "processing": false,  // Show processing
-        });
-    });
-    setTimeout(function() {
-        $('#successMessage').fadeOut('fast');
-    }, 2000);
+    // Custom filtering function which will search data in column four between two values
+    $.fn.dataTable.ext.search.push(
+   function( settings, data, dataIndex ) {
+       var min = $('#min').datepicker("getDate");
+       var max = $('#max').datepicker("getDate");
+       var date = new Date( data[5] );
+
+       if (
+       ( min === null && max === null ) ||
+       ( min === null && date <= max ) ||
+       ( min <= date   && max === null ) ||
+       ( min <= date   && date <= max )
+       ) {
+           return true;
+       }
+       return false;
+   }
+   );
+
+
+   $(document).ready(function() {
+       // Create date inputs
+       $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
+
+       $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
+
+       // DataTables initialisation
+       var table = $("#foods_orders").DataTable({
+           "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+           "paging": true, // Allow data to be paged
+           "lengthChange": true,
+           "searching": true, // Search box and search function will be actived
+           "info": true,
+           "autoWidth": true,
+           "processing": true,  // Show processing
+           ajax: "/fatty/main/admin/orders/datatable/assginorderajax",
+           columns: [
+           {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+           {data: 'order_status', name:'order_status'},
+        //    {data: 'order_id', name:'order_id'},
+           {data: 'customer_order_id', name:'customer_order_id'},
+           {data: 'customer_booking_id', name:'customer_booking_id'},
+        //    {data: 'ordered_date', name:'ordered_date'},
+        //    {data: 'order_time', name:'order_time'},
+        //    {data: 'customer_id', name:'customer_id'},
+        //    {data: 'restauant_id', name:'restauant_id'},
+        //    {data: 'rider_id', name:'rider_id'},
+        {data: 'customer_name', name:'customer_name'},
+        {data: 'ordered_date', name:'ordered_date'},
+           {data: 'order_type', name:'order_type'},
+           {data: 'action', name: 'action',className:'btn-group', orderable: false, searchable: false},
+           ],
+           dom: 'lBfrtip',
+           buttons: [
+           'excel', 'pdf', 'print'
+           ],
+       });
+       // Refilter the table
+       $('#min, #max').on('change', function () {
+           table.draw();
+       });
+   });
+   setTimeout(function() {
+       $('#successMessage').fadeOut('fast');
+   }, 2000);
 </script>
 @endpush
