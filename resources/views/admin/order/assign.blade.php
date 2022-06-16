@@ -68,7 +68,7 @@
                                     <tbody>
                                     @foreach($rider_all as $order)
                                     <tr class="text-center">
-                                        <td>{{ $loop->iteration }}</td> 
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $order->rider_user_name }}</td>
                                         <td>{{ $order->state->state_name_mm }}</td>
                                         <td>
@@ -96,7 +96,7 @@
 
                                             <!-- Modal -->
                                             <div class="modal fade" id="rider_id{{ $order->rider_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <form method="POST" action="{{ route('fatty.admin.food_orders.assign.notification',$order->rider_id) }}" autocomplete="off" enctype="multipart/form-data">                                                    
+                                                <form method="POST" action="{{ route('fatty.admin.food_orders.assign.notification',$order->rider_id) }}" autocomplete="off" enctype="multipart/form-data">
                                                 @csrf
                                               <div class="modal-dialog" role="document">
                                                 <div class="modal-content">

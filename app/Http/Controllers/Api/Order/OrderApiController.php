@@ -17,6 +17,7 @@ use App\Models\Food\FoodSubItemData;
 use App\Models\Order\PaymentMethod;
 use App\Models\Order\PaymentMethodClose;
 use App\Models\Customer\Customer;
+use App\Models\Customer\OrderCustomer;
 use App\Models\Rider\Rider;
 use DB;
 use Carbon\Carbon;
@@ -1767,6 +1768,14 @@ class OrderApiController extends Controller
             "order_status_id"=>$customer_orders->order_status_id,
         ]);
         //close History
+        //start customer order
+        $check=OrderCustomer::where('customer_id',$customer_id)->whereDate('created_at',date('Y-m-d'))->first();
+        if(empty($check)){
+            OrderCustomer::create([
+                "customer_id"=>$customer_id,
+            ]);
+        }
+         //close customer order
 
         $food_list=$request->food_list;
         $food_lists=json_decode($food_list,true);

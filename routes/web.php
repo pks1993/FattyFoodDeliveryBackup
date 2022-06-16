@@ -356,6 +356,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Order
     Route::get('foods/orders/lists','Admin\Order\OrderController@index');
+    Route::get('orders/datatable/assginorderajax','Admin\Order\OrderController@assignorderajax');
+
     Route::get('foods/orders/assign/{order_id}','Admin\Order\OrderController@assign')->name('food_orders.assign');
     Route::post('foods/orders/assign/notification/{rider_id}','Admin\Order\OrderController@assign_noti')->name('food_orders.assign.notification');
 

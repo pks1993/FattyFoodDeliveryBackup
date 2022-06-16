@@ -96,75 +96,25 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>No.</th>
-                                        <th class="text-left">Customer Name</th>
-                                        <th class="text-left">Customer Phone</th>
-                                        <th class="text-left">Register Date</th>
-                                        <th class="text-left">Order Count</th>
-                                        <th class="text-left">Order Amount</th>
-                                        {{-- <th>Image</th> --}}
+                                        <th class="text-left">CustomerName</th>
+                                        <th class="text-left">CustomerPhone</th>
+                                        <th class="text-left">OrderDate</th>
+                                        <th class="text-left">OrderCount</th>
+                                        <th class="text-left">OrderAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{--
-                                        @foreach($customers as $key=>$customer)
-                                        <tr class="text-center">
-                                            <td> {{ ($tno*15)+$key+1 }} </td>
-                                            <td class="text-left">
-                                                @if($customer->customer_name==null)
-                                                <p style="color: red;">{{ "Empty" }}</p>
-                                                @else
-                                                {{ $customer->customer_name }}
-                                                @endif
-                                            </td>
-                                            <td class="text-left">{{ $customer->customer_phone}}</td>
-                                            <td class="text-left">{{ $customer->created_at->format('d.m.Y') }}</td>
-                                            <td class="text-left">{{ $customer->order_count }}</td>
-                                            <td class="text-left">{{ $customer->order_amount }}</td>  --}}
-                                            {{-- <td>
-                                                @if($customer->image)
-                                                <img src="../../../uploads/customer/{{$customer->image}}" class="img-rounded" style="width: 55px;height: 45px;" data-toggle="modal" data-target="#customer{{ $customer->customer_id }}">
-                                                @else
-                                                <img src="{{asset('../image/person.png')}}" class="img-rounded" style="width: 55px;height: 45px;">
-                                                @endif
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="customer{{ $customer->customer_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">{{ $customer->name }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
 
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td> --}}
-                                            {{-- <td class="btn-group text-center">
-                                                <a href="{{route('fatty.admin.customers.edit',['customer_id'=>$customer->customer_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-
-                                                <form action="{{route('fatty.admin.customers.destroy', $customer->customer_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        @endforeach --}}
-                                    </tbody>
-                                </table>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
     @endsection
     @push('scripts')
     <script>
@@ -208,7 +158,7 @@
                 {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
                 {data: 'customer_name', name:'customer_name'},
                 {data: 'customer_phone', name:'customer_phone'},
-                {data: 'register_date', name:'register_date',className: "register_date"},
+                {data: 'order_date', name:'order_date',className: "order_date"},
                 {data: 'order_count', name:'order_count',className: "order_count"},
                 {data: 'order_amount', name:'order_amount',className: "order_amount"},
                 {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},

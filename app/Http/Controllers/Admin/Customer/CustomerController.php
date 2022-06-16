@@ -10,6 +10,7 @@ use App\Models\Customer\Customer;
 use Yajra\DataTables\DataTables;
 use App\Models\Order\CustomerOrder;
 use App\Models\Customer\ActiveCustomer;
+use App\Models\Customer\OrderCustomer;
 
 
 class CustomerController extends Controller
@@ -178,35 +179,37 @@ class CustomerController extends Controller
     }
 
     public function dailyorderedajax(){
-        $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
-        $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','DESC')->get();
+        $model=OrderCustomer::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
-            if($value->customer_name){
-                $value->customer_name=$value->customer_name;
+            if($value->customer->customer_name){
+                $value->customer_name=$value->customer->customer_name;
             }else{
                 $value->customer_name="Unknown";
             }
+            $value->customer_phone=$value->customer->customer_phone;
+            $value->order_count=$value->customer->order_count;
+            $value->order_amount=$value->customer->order_amount;
             array_push($data,$value);
         }
 
         return DataTables::of($model)
         ->addIndexColumn()
-        ->addColumn('action', function(Customer $post){
+        ->addColumn('action', function(OrderCustomer $post){
             $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            // $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
 
             return $btn;
         })
-        ->addColumn('register_date', function(Customer $item){
-            $register_date = $item->created_at->format('d-M-Y');
-            return $register_date;
+        ->addColumn('order_date', function(OrderCustomer $item){
+            $order_date = $item->created_at->format('d-M-Y');
+            return $order_date;
         })
-        ->rawColumns(['action','register_date'])
+        ->rawColumns(['action','order_date'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -217,31 +220,45 @@ class CustomerController extends Controller
     }
 
     public function monthlyorderedajax(){
-        $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
-        $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','desc')->get();
+        // $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
+        // $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','desc')->get();
+        // $data=[];
+        // foreach($model as $value){
+        //     if($value->customer_name){
+        //         $value->customer_name=$value->customer_name;
+        //     }else{
+        //         $value->customer_name="Unknown";
+        //     }
+        //     array_push($data,$value);
+        // }
+
+        $model=OrderCustomer::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
-            if($value->customer_name){
-                $value->customer_name=$value->customer_name;
+            if($value->customer->customer_name){
+                $value->customer_name=$value->customer->customer_name;
             }else{
                 $value->customer_name="Unknown";
             }
+            $value->customer_phone=$value->customer->customer_phone;
+            $value->order_count=$value->customer->order_count;
+            $value->order_amount=$value->customer->order_amount;
             array_push($data,$value);
         }
 
         return DataTables::of($model)
         ->addIndexColumn()
-        ->addColumn('action', function(Customer $post){
+        ->addColumn('action', function(OrderCustomer $post){
             $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            // $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
 
             return $btn;
         })
-        ->addColumn('register_date', function(Customer $item){
+        ->addColumn('register_date', function(OrderCustomer $item){
             $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
@@ -256,31 +273,33 @@ class CustomerController extends Controller
     }
 
     public function yearlyorderedajax(){
-        $ordered_customers=CustomerOrder::select('customer_id')->distinct()->get();
-        $model=Customer::whereIn('customer_id',$ordered_customers)->orderBy('created_at','desc')->get();
+        $model=OrderCustomer::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
-            if($value->customer_name){
-                $value->customer_name=$value->customer_name;
+            if($value->customer->customer_name){
+                $value->customer_name=$value->customer->customer_name;
             }else{
                 $value->customer_name="Unknown";
             }
+            $value->customer_phone=$value->customer->customer_phone;
+            $value->order_count=$value->customer->order_count;
+            $value->order_amount=$value->customer->order_amount;
             array_push($data,$value);
         }
 
         return DataTables::of($model)
         ->addIndexColumn()
-        ->addColumn('action', function(Customer $post){
+        ->addColumn('action', function(OrderCustomer $post){
             $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            // $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
 
             return $btn;
         })
-        ->addColumn('register_date', function(Customer $item){
+        ->addColumn('register_date', function(OrderCustomer $item){
             $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
@@ -294,32 +313,35 @@ class CustomerController extends Controller
         return view('admin.customer.daily_active_customer.index');
     }
 
-    public function dailyactiveajax(){
-        $active_customers=ActiveCustomer::select('customer_id')->get();
-        $model=Customer::whereIn('customer_id',$active_customers)->orderBy('created_at','desc')->get();
+    public function dailyactiveajax()
+    {
+        $model=ActiveCustomer::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
-            if($value->customer_name){
-                $value->customer_name=$value->customer_name;
+            if($value->customer->customer_name){
+                $value->customer_name=$value->customer->customer_name;
             }else{
                 $value->customer_name="Unknown";
             }
+            $value->customer_phone=$value->customer->customer_phone;
+            $value->order_count=$value->customer->order_count;
+            $value->order_amount=$value->customer->order_amount;
             array_push($data,$value);
         }
 
         return DataTables::of($model)
         ->addIndexColumn()
-        ->addColumn('action', function(Customer $post){
+        ->addColumn('action', function(ActiveCustomer $post){
             $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            // $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
 
             return $btn;
         })
-        ->addColumn('register_date', function(Customer $item){
+        ->addColumn('register_date', function(ActiveCustomer $item){
             $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
@@ -334,31 +356,33 @@ class CustomerController extends Controller
     }
 
     public function monthlyactiveajax(){
-        $active_customers=ActiveCustomer::select('customer_id')->get();
-        $model=Customer::whereIn('customer_id',$active_customers)->orderBy('created_at','desc')->get();
+        $model=ActiveCustomer::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
-            if($value->customer_name){
-                $value->customer_name=$value->customer_name;
+            if($value->customer->customer_name){
+                $value->customer_name=$value->customer->customer_name;
             }else{
                 $value->customer_name="Unknown";
             }
+            $value->customer_phone=$value->customer->customer_phone;
+            $value->order_count=$value->customer->order_count;
+            $value->order_amount=$value->customer->order_amount;
             array_push($data,$value);
         }
 
         return DataTables::of($model)
         ->addIndexColumn()
-        ->addColumn('action', function(Customer $post){
+        ->addColumn('action', function(ActiveCustomer $post){
             $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            // $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
 
             return $btn;
         })
-        ->addColumn('register_date', function(Customer $item){
+        ->addColumn('register_date', function(ActiveCustomer $item){
             $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
@@ -372,31 +396,33 @@ class CustomerController extends Controller
     }
 
     public function yearlyactiveajax(){
-        $active_customers=ActiveCustomer::select('customer_id')->get();
-        $model=Customer::whereIn('customer_id',$active_customers)->orderBy('created_at','desc')->get();
+        $model=ActiveCustomer::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
-            if($value->customer_name){
-                $value->customer_name=$value->customer_name;
+            if($value->customer->customer_name){
+                $value->customer_name=$value->customer->customer_name;
             }else{
                 $value->customer_name="Unknown";
             }
+            $value->customer_phone=$value->customer->customer_phone;
+            $value->order_count=$value->customer->order_count;
+            $value->order_amount=$value->customer->order_amount;
             array_push($data,$value);
         }
 
         return DataTables::of($model)
         ->addIndexColumn()
-        ->addColumn('action', function(Customer $post){
+        ->addColumn('action', function(ActiveCustomer $post){
             $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
-            '.csrf_field().'
-            '.method_field("DELETE").'
-            <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            </form>';
+            // $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            // '.csrf_field().'
+            // '.method_field("DELETE").'
+            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            // </form>';
 
             return $btn;
         })
-        ->addColumn('register_date', function(Customer $item){
+        ->addColumn('register_date', function(ActiveCustomer $item){
             $register_date = $item->created_at->format('d-m-Y');
             return $register_date;
         })
