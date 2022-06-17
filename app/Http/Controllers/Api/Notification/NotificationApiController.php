@@ -9,6 +9,8 @@ use App\Models\Order\CustomerOrder;
 use App\Models\Customer\Customer;
 use App\Models\Restaurant\Restaurant;
 use App\Models\Setting\VersionUpdate;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class NotificationApiController extends Controller
 {
@@ -132,55 +134,72 @@ class NotificationApiController extends Controller
 
                 $customer_check=Customer::where('customer_id',$order->customer_id)->first();
                 if($customer_check){
-                    $title="Order Notification";
-                    $messages="Your order has been confirmed successfully! Please wait for delivery!";
+                    //customer
+                    $cus_client = new Client();
+                    $customer_token=$customer_check->fcm_token;
+                    if($customer_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$customer_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Notification",
+                                        "body_mm"=> "Your order has been confirmed successfully! Please wait for delivery!",
+                                        "title_en"=> "Order Notification",
+                                        "body_en"=> "Your order has been confirmed successfully! Please wait for delivery!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "您的订单已确认!"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
+                                ],
+                            ]);
+                        }catch(ClientException $e){
 
-                    $message = strip_tags($messages);
-                    $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                    $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                    $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+                        }
 
-                    //Customer
-                    $fcm_token=array();
-                    array_push($fcm_token, $customer_check->fcm_token);
-                    $notification = array('title' => $title, 'body' => $message,'sound'=>'default');
-                    $field=array('registration_ids'=>$fcm_token,'notification'=>$notification,'data'=>['order_id'=>$order->order_id,'order_status_id'=>$order->order_status_id,'type'=>'new_order','order_type'=>'food','title' => $title,'body' => $message]);
-
-                    $playLoad = json_encode($field);
-                    $test=json_decode($playLoad);
-                    $curl_session = curl_init();
-                    curl_setopt($curl_session, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session, CURLOPT_POST, true);
-                    curl_setopt($curl_session, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session, CURLOPT_POSTFIELDS, $playLoad);
-                    $result = curl_exec($curl_session);
-
-                    curl_close($curl_session);
+                    }
 
                     //restaurant
                     $restaurant_check=Restaurant::where('restaurant_id',$order->restaurant_id)->first();
-                    $title1="Order Notification";
-                    $messages1="One new order is received! Please check it! This is successfully kpay payment!";
-                    $message1 = strip_tags($messages1);
-                    $fcm_token1=array();
-                    array_push($fcm_token1, $restaurant_check->restaurant_fcm_token);
-                    $field1=array('registration_ids'=>$fcm_token1,'data'=>['order_id'=>$order->order_id,'order_status_id'=>$order->order_status_id,'type'=>'new_order','order_type'=>'food','title' => $title1, 'body' => $message1]);
+                    $restaurant_client = new Client();
+                    $restaurant_token=$restaurant_check->restaurant_fcm_token;
+                    $orderId=(string)$order->order_id;
+                    $orderstatusId=(string)$order->order_status_id;
+                    $orderType=(string)$order->order_type;
+                    if($restaurant_token){
+                        $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        try{
+                            $restaurant_client->post($restaurant_url,[
+                                'json' => [
+                                    "to"=>$restaurant_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Notification",
+                                        "body_mm"=> "One new order is received! Please check it!",
+                                        "title_en"=> "Order Notification",
+                                        "body_en"=> "One new order is received! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "收到一个新订单!请查看！"
+                                    ],
+                                ],
+                            ]);
+                        }catch(ClientException $e){
 
-
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
+                        }
+                    }
                 }
             }
 
