@@ -16,6 +16,7 @@ use DB;
 use Carbon\Carbon;
 use App\Models\City\ParcelCity;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 
 class RiderApicontroller extends Controller
@@ -668,23 +669,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_accept_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Accepted",
-                                    "body_mm"=> "You accept the food order! Go to restaurant quickly!",
-                                    "title_en"=> "Order Accepted",
-                                    "body_en"=> "You accept the food order! Go to restaurant quickly!",
-                                    "title_ch"=> "订单已接受",
-                                    "body_ch"=> "您已接受订单!请尽快赶往商家！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_accept_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Accepted",
+                                        "body_mm"=> "You accept the food order! Go to restaurant quickly!",
+                                        "title_en"=> "Order Accepted",
+                                        "body_en"=> "You accept the food order! Go to restaurant quickly!",
+                                        "title_ch"=> "订单已接受",
+                                        "body_ch"=> "您已接受订单!请尽快赶往商家！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //restaurant
@@ -692,23 +697,27 @@ class RiderApicontroller extends Controller
                     if($order->restaurant->restaurant_fcm_token){
                         $res_token=$order->restaurant->restaurant_fcm_token;
                         $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-                        $res_client->post($res_url,[
-                            'json' => [
-                                "to"=>$res_token,
-                                "data"=> [
-                                    "type"=> "rider_accept_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Accepted by Rider",
-                                    "body_mm"=> "Order is accepted by rider! He is coming!",
-                                    "title_en"=> "Order Accepted by Rider",
-                                    "body_en"=> "Order is accepted by rider! He is coming!",
-                                    "title_ch"=> "骑手已接单",
-                                    "body_ch"=> "骑手已接单!正在赶来！"
+                        try{
+                            $res_client->post($res_url,[
+                                'json' => [
+                                    "to"=>$res_token,
+                                    "data"=> [
+                                        "type"=> "rider_accept_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Accepted by Rider",
+                                        "body_mm"=> "Order is accepted by rider! He is coming!",
+                                        "title_en"=> "Order Accepted by Rider",
+                                        "body_en"=> "Order is accepted by rider! He is coming!",
+                                        "title_ch"=> "骑手已接单",
+                                        "body_ch"=> "骑手已接单!正在赶来！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -716,29 +725,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_accept_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Order Accepted by Rider",
-                                    "body_mm"=> "Your order is accepted by rider! He is taking your food!",
-                                    "title_en"=> "Order Accepted by Rider",
-                                    "body_en"=> "Your order is accepted by rider! He is taking your food!",
-                                    "title_ch"=> "骑手已接单",
-                                    "body_ch"=> "骑手已接单!正在赶往取餐！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_accept_order",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Accepted by Rider",
+                                        "body_mm"=> "Your order is accepted by rider! He is taking your food!",
+                                        "title_en"=> "Order Accepted by Rider",
+                                        "body_en"=> "Your order is accepted by rider! He is taking your food!",
+                                        "title_ch"=> "骑手已接单",
+                                        "body_ch"=> "骑手已接单!正在赶往取餐！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }
                 elseif($order_status_id=="10"){
@@ -747,23 +760,27 @@ class RiderApicontroller extends Controller
                     if($order->restaurant->restaurant_fcm_token){
                         $res_token=$order->restaurant->restaurant_fcm_token;
                         $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-                        $res_client->post($res_url,[
-                            'json' => [
-                                "to"=>$res_token,
-                                "data"=> [
-                                    "type"=> "rider_arrived",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Rider Arrived",
-                                    "body_mm"=> "Rider arrived for taking customer’s order",
-                                    "title_en"=> "Rider Arrived",
-                                    "body_en"=> "Rider arrived for taking customer’s order",
-                                    "title_ch"=> "骑手已到达",
-                                    "body_ch"=> "骑手已到达!正在等待取餐！"
+                        try{
+                            $res_client->post($res_url,[
+                                'json' => [
+                                    "to"=>$res_token,
+                                    "data"=> [
+                                        "type"=> "rider_arrived",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Rider Arrived",
+                                        "body_mm"=> "Rider arrived for taking customer’s order",
+                                        "title_en"=> "Rider Arrived",
+                                        "body_en"=> "Rider arrived for taking customer’s order",
+                                        "title_ch"=> "骑手已到达",
+                                        "body_ch"=> "骑手已到达!正在等待取餐！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -771,29 +788,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_arrived",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Rider Arrived to Restaurant",
-                                    "body_mm"=> "Rider arrived to restaurant! He is taking food to you!",
-                                    "title_en"=> "Rider Arrived to Restaurant",
-                                    "body_en"=> "Rider arrived to restaurant! He is taking food to you!",
-                                    "title_ch"=> "骑手已到达商家",
-                                    "body_ch"=> "骑手已到达商家!正在取餐！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_arrived",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Rider Arrived to Restaurant",
+                                        "body_mm"=> "Rider arrived to restaurant! He is taking food to you!",
+                                        "title_en"=> "Rider Arrived to Restaurant",
+                                        "body_en"=> "Rider arrived to restaurant! He is taking food to you!",
+                                        "title_ch"=> "骑手已到达商家",
+                                        "body_ch"=> "骑手已到达商家!正在取餐！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }
                 elseif($order_status_id=="6"){
@@ -802,23 +823,27 @@ class RiderApicontroller extends Controller
                     if($order->restaurant->restaurant_fcm_token){
                         $res_token=$order->restaurant->restaurant_fcm_token;
                         $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-                        $res_client->post($res_url,[
-                            'json' => [
-                                "to"=>$res_token,
-                                "data"=> [
-                                    "type"=> "rider_start_delivery",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Rider Start Delivery",
-                                    "body_mm"=> "Rider start delivery to customer!",
-                                    "title_en"=> "Rider Start Delivery",
-                                    "body_en"=> "Rider start delivery to customer!",
-                                    "title_ch"=> "开始派送",
-                                    "body_ch"=> "骑手已开始为用户派送!"
+                        try{
+                            $res_client->post($res_url,[
+                                'json' => [
+                                    "to"=>$res_token,
+                                    "data"=> [
+                                        "type"=> "rider_start_delivery",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Rider Start Delivery",
+                                        "body_mm"=> "Rider start delivery to customer!",
+                                        "title_en"=> "Rider Start Delivery",
+                                        "body_en"=> "Rider start delivery to customer!",
+                                        "title_ch"=> "开始派送",
+                                        "body_ch"=> "骑手已开始为用户派送!"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -826,29 +851,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_start_delivery",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Rider Start Delivery",
-                                    "body_mm"=> "Rider starts delivery! He is coming!",
-                                    "title_en"=> "Rider Start Delivery",
-                                    "body_en"=> "Rider starts delivery! He is coming!",
-                                    "title_ch"=> "开始派送",
-                                    "body_ch"=> "骑手已开始派送!正在赶来！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_start_delivery",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Rider Start Delivery",
+                                        "body_mm"=> "Rider starts delivery! He is coming!",
+                                        "title_en"=> "Rider Start Delivery",
+                                        "body_en"=> "Rider starts delivery! He is coming!",
+                                        "title_ch"=> "开始派送",
+                                        "body_ch"=> "骑手已开始派送!正在赶来！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }
                 elseif($order_status_id=="7"){
@@ -860,75 +889,87 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_order_finished",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Finished",
-                                    "body_mm"=> "Good Day! Order is finished.Thanks very much!",
-                                    "title_en"=> "Order Finished",
-                                    "body_en"=> "Good Day! Order is finished.Thanks very much!",
-                                    "title_ch"=> "订单已结束",
-                                    "body_ch"=> "您的订单已结束! 再见！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_order_finished",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Finished",
+                                        "body_mm"=> "Good Day! Order is finished.Thanks very much!",
+                                        "title_en"=> "Order Finished",
+                                        "body_en"=> "Good Day! Order is finished.Thanks very much!",
+                                        "title_ch"=> "订单已结束",
+                                        "body_ch"=> "您的订单已结束! 再见！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                     //restaurant
                     $res_client = new Client();
                     if($order->restaurant->restaurant_fcm_token){
                         $res_token=$order->restaurant->restaurant_fcm_token;
                         $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-                        $res_client->post($res_url,[
-                            'json' => [
-                                "to"=>$res_token,
-                                "data"=> [
-                                    "type"=> "rider_order_finished",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Finished",
-                                    "body_mm"=> "Good Day! Order is finished.Thanks very much!",
-                                    "title_en"=> "Order Finished",
-                                    "body_en"=> "Good Day! Order is finished.Thanks very much!",
-                                    "title_ch"=> "订单已结束",
-                                    "body_ch"=> "订单已结束!"
+                        try{
+                            $res_client->post($res_url,[
+                                'json' => [
+                                    "to"=>$res_token,
+                                    "data"=> [
+                                        "type"=> "rider_order_finished",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Finished",
+                                        "body_mm"=> "Good Day! Order is finished.Thanks very much!",
+                                        "title_en"=> "Order Finished",
+                                        "body_en"=> "Good Day! Order is finished.Thanks very much!",
+                                        "title_ch"=> "订单已结束",
+                                        "body_ch"=> "订单已结束!"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                     //customer
                     $cus_client = new Client();
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_order_finished",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Order Finished",
-                                    "body_mm"=> "Good Day! Your order is finished. Thanks very much!",
-                                    "title_en"=> "Order Finished",
-                                    "body_en"=> "Good Day! Your order is finished. Thanks very much!",
-                                    "title_ch"=> "订单已结束",
-                                    "body_ch"=> "您的订单已结束! 祝您用餐愉快！再见！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_order_finished",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Finished",
+                                        "body_mm"=> "Good Day! Your order is finished. Thanks very much!",
+                                        "title_en"=> "Order Finished",
+                                        "body_en"=> "Good Day! Your order is finished. Thanks very much!",
+                                        "title_ch"=> "订单已结束",
+                                        "body_ch"=> "您的订单已结束! 祝您用餐愉快！再见！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     $count=Customer::where('customer_id',$order->customer_id)->first();
@@ -945,23 +986,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_accept_parcel_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Parcel Order Accepted",
-                                    "body_mm"=> "You accept the parcel order! Go to pick it up quickly!",
-                                    "title_en"=> "Parcel Order Accepted",
-                                    "body_en"=> "You accept the parcel order! Go to pick it up quickly!",
-                                    "title_ch"=> "订单已接受",
-                                    "body_ch"=> "您已接受跑腿订单！请尽快取货！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_accept_parcel_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Parcel Order Accepted",
+                                        "body_mm"=> "You accept the parcel order! Go to pick it up quickly!",
+                                        "title_en"=> "Parcel Order Accepted",
+                                        "body_en"=> "You accept the parcel order! Go to pick it up quickly!",
+                                        "title_ch"=> "订单已接受",
+                                        "body_ch"=> "您已接受跑腿订单！请尽快取货！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -969,29 +1014,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_accept_parcel_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Order Accepted",
-                                    "body_mm"=> "Your order is accepted by rider! He is coming!",
-                                    "title_en"=> "Order Accepted",
-                                    "body_en"=> "Your order is accepted by rider! He is coming!",
-                                    "title_ch"=> "订单已接受",
-                                    "body_ch"=> "骑手已接单！正在赶来!"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_accept_parcel_order",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Accepted",
+                                        "body_mm"=> "Your order is accepted by rider! He is coming!",
+                                        "title_en"=> "Order Accepted",
+                                        "body_en"=> "Your order is accepted by rider! He is coming!",
+                                        "title_ch"=> "订单已接受",
+                                        "body_ch"=> "骑手已接单！正在赶来!"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                 }elseif($order_status_id=="13"){
@@ -1000,23 +1049,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_arrived_pickup_address",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Arrived to pick up Parcel",
-                                    "body_mm"=> "You arrived pickup address for parcel order!",
-                                    "title_en"=> "Arrived to pick up Parcel",
-                                    "body_en"=> "You arrived pickup address for parcel order!",
-                                    "title_ch"=> "已到达取货地",
-                                    "body_ch"=> "您已到达包裹取货地！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_arrived_pickup_address",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Arrived to pick up Parcel",
+                                        "body_mm"=> "You arrived pickup address for parcel order!",
+                                        "title_en"=> "Arrived to pick up Parcel",
+                                        "body_en"=> "You arrived pickup address for parcel order!",
+                                        "title_ch"=> "已到达取货地",
+                                        "body_ch"=> "您已到达包裹取货地！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -1054,23 +1107,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_pickup_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Parcel Picked Up",
-                                    "body_mm"=> "You has picked up parcel order!",
-                                    "title_en"=> "Parcel Picked Up",
-                                    "body_en"=> "You has picked up parcel order!",
-                                    "title_ch"=> "包裹已取走",
-                                    "body_ch"=> "您已取走包裹！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_pickup_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Parcel Picked Up",
+                                        "body_mm"=> "You has picked up parcel order!",
+                                        "title_en"=> "Parcel Picked Up",
+                                        "body_en"=> "You has picked up parcel order!",
+                                        "title_ch"=> "包裹已取走",
+                                        "body_ch"=> "您已取走包裹！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -1078,29 +1135,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_pickup_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Rider Picked up Order",
-                                    "body_mm"=> "Rider picked up your parcel order",
-                                    "title_en"=> "Rider Picked up Order",
-                                    "body_en"=> "Rider picked up your parcel order",
-                                    "title_ch"=> "骑手已取走包裹",
-                                    "body_ch"=> "骑手已取走包裹！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_pickup_order",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Rider Picked up Order",
+                                        "body_mm"=> "Rider picked up your parcel order",
+                                        "title_en"=> "Rider Picked up Order",
+                                        "body_en"=> "Rider picked up your parcel order",
+                                        "title_ch"=> "骑手已取走包裹",
+                                        "body_ch"=> "骑手已取走包裹！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }elseif($order_status_id=="14"){
                     //rider
@@ -1108,23 +1169,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_start_delivery_parcel",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Start Delivery",
-                                    "body_mm"=> "You start delivery parcel order! Go to Drop Address!",
-                                    "title_en"=> "Start Delivery",
-                                    "body_en"=> "You start delivery parcel order! Go to Drop Address!",
-                                    "title_ch"=> "开始派送",
-                                    "body_ch"=> "已开始派送！赶往收货地！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_start_delivery_parcel",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Start Delivery",
+                                        "body_mm"=> "You start delivery parcel order! Go to Drop Address!",
+                                        "title_en"=> "Start Delivery",
+                                        "body_en"=> "You start delivery parcel order! Go to Drop Address!",
+                                        "title_ch"=> "开始派送",
+                                        "body_ch"=> "已开始派送！赶往收货地！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -1132,29 +1197,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_start_delivery_parcel",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Start Delivery",
-                                    "body_mm"=> "Your order is started delivery! He is going to drop address!",
-                                    "title_en"=> "Start Delivery",
-                                    "body_en"=> "Your order is started delivery! He is going to drop address!",
-                                    "title_ch"=> "开始派送",
-                                    "body_ch"=> "骑手已开始派送！正在赶往收货地！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_start_delivery_parcel",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Start Delivery",
+                                        "body_mm"=> "Your order is started delivery! He is going to drop address!",
+                                        "title_en"=> "Start Delivery",
+                                        "body_en"=> "Your order is started delivery! He is going to drop address!",
+                                        "title_ch"=> "开始派送",
+                                        "body_ch"=> "骑手已开始派送！正在赶往收货地！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }elseif($order_status_id=="15"){
                     $rider->is_order=0;
@@ -1165,23 +1234,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_parcel_order_finished",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Accepted",
-                                    "body_mm"=> "You has delivered the parcel order to recipient! Order Finished!",
-                                    "title_en"=> "Order Accepted",
-                                    "body_en"=> "You has delivered the parcel order to recipient! Order Finished!",
-                                    "title_ch"=> "订单已完成",
-                                    "body_ch"=> "包裹已送达收货地！订单结束！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_parcel_order_finished",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Accepted",
+                                        "body_mm"=> "You has delivered the parcel order to recipient! Order Finished!",
+                                        "title_en"=> "Order Accepted",
+                                        "body_en"=> "You has delivered the parcel order to recipient! Order Finished!",
+                                        "title_ch"=> "订单已完成",
+                                        "body_ch"=> "包裹已送达收货地！订单结束！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     // //customer
@@ -1189,29 +1262,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_parcel_order_finished",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Order Finished",
-                                    "body_mm"=> "Your parcel order is accepted by recipient! Order Finished! Good Day!",
-                                    "title_en"=> "Order Finished",
-                                    "body_en"=> "Your parcel order is accepted by recipient! Order Finished! Good Day!",
-                                    "title_ch"=> "订单已结束",
-                                    "body_ch"=> "您的包裹已送达! 订单结束！再见！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_parcel_order_finished",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Finished",
+                                        "body_mm"=> "Your parcel order is accepted by recipient! Order Finished! Good Day!",
+                                        "title_en"=> "Order Finished",
+                                        "body_en"=> "Your parcel order is accepted by recipient! Order Finished! Good Day!",
+                                        "title_ch"=> "订单已结束",
+                                        "body_ch"=> "您的包裹已送达! 订单结束！再见！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }elseif($order_status_id=="16"){
                     $rider->is_order=0;
@@ -1221,23 +1298,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_parcel_cancel_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Canceled",
-                                    "body_mm"=> "You has canceled the order successfully!",
-                                    "title_en"=> "Order Canceled",
-                                    "body_en"=> "You has canceled the order successfully!",
-                                    "title_ch"=> "订单已取消",
-                                    "body_ch"=> "您已取消订单！"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_parcel_cancel_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Canceled",
+                                        "body_mm"=> "You has canceled the order successfully!",
+                                        "title_en"=> "Order Canceled",
+                                        "body_en"=> "You has canceled the order successfully!",
+                                        "title_ch"=> "订单已取消",
+                                        "body_ch"=> "您已取消订单！"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                     //customer
@@ -1245,29 +1326,32 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_parcel_cancel_order",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Order Canceled by Rider",
-                                    "body_mm"=> "You has canceled the order successfully!",
-                                    "title_en"=> "Order Canceled by Rider",
-                                    "body_en"=> "You has canceled the order successfully!",
-                                    "title_ch"=> "订单已结束",
-                                    "body_ch"=> "您的包裹已送达! 订单结束！再见！"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_parcel_cancel_order",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Canceled by Rider",
+                                        "body_mm"=> "You has canceled the order successfully!",
+                                        "title_en"=> "Order Canceled by Rider",
+                                        "body_en"=> "You has canceled the order successfully!",
+                                        "title_ch"=> "订单已结束",
+                                        "body_ch"=> "您的包裹已送达! 订单结束！再见！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+                        }catch(ClientException $e){
+                        }
                     }
                 }elseif($order_status_id=="8"){
                     $rider->is_order=0;
@@ -1278,23 +1362,27 @@ class RiderApicontroller extends Controller
                     $rider_token=$rider->rider_fcm_token;
                     if($rider_token){
                         $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        $rider_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$rider_token,
-                                "data"=> [
-                                    "type"=> "rider_customer_notfound",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Customer Not Found",
-                                    "body_mm"=> "You not found the customer's place",
-                                    "title_en"=> "Customer Not Found",
-                                    "body_en"=> "You not found the customer's place",
-                                    "title_ch"=> "Customer Not Found",
-                                    "body_ch"=> "You not found the customer's place"
+                        try{
+                            $rider_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "rider_customer_notfound",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Customer Not Found",
+                                        "body_mm"=> "You not found the customer's place",
+                                        "title_en"=> "Customer Not Found",
+                                        "body_en"=> "You not found the customer's place",
+                                        "title_ch"=> "Customer Not Found",
+                                        "body_ch"=> "You not found the customer's place"
+                                    ],
                                 ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
 
                      //customer
@@ -1302,29 +1390,33 @@ class RiderApicontroller extends Controller
                     if($order->customer->fcm_token){
                         $cus_token=$order->customer->fcm_token;
                         $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$cus_token,
-                                "data"=> [
-                                    "type"=> "rider_customer_notfound",
-                                    "order_id"=>$order->order_id,
-                                    "order_status_id"=>$order->order_status_id,
-                                    "order_type"=>$order->order_type,
-                                    "title_mm"=> "Order Not Found!",
-                                    "body_mm"=> "Rider Not Found",
-                                    "title_en"=> "Order Not Found!",
-                                    "body_en"=> "Rider Not Found",
-                                    "title_ch"=> "Order Not Found!",
-                                    "body_ch"=> "Rider Not Found"
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$cus_token,
+                                    "data"=> [
+                                        "type"=> "rider_customer_notfound",
+                                        "order_id"=>$order->order_id,
+                                        "order_status_id"=>$order->order_status_id,
+                                        "order_type"=>$order->order_type,
+                                        "title_mm"=> "Order Not Found!",
+                                        "body_mm"=> "Rider Not Found",
+                                        "title_en"=> "Order Not Found!",
+                                        "body_en"=> "Rider Not Found",
+                                        "title_ch"=> "Order Not Found!",
+                                        "body_ch"=> "Rider Not Found"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
+                            ]);
+
+                        }catch(ClientException $e){
+                        }
                     }
                 }else{
                     return response()->json(['success'=>false,'message'=>'Error! Order status id request do not equal 1,2,3,5,8,9,11 and etc.']);

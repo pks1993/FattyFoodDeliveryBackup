@@ -83,11 +83,13 @@ class ParcelOrderApiController extends Controller
         $from_pickup_address=$request['from_pickup_address'];
         $from_pickup_latitude=$request['from_pickup_latitude'];
         $from_pickup_longitude=$request['from_pickup_longitude'];
+        $from_pickup_note=$request['from_pickup_note'];
         $to_recipent_name=$request['to_recipent_name'];
         $to_recipent_phone=$request['to_recipent_phone'];
         $to_drop_address=$request['to_drop_address'];
         $to_drop_latitude=$request['to_drop_latitude'];
         $to_drop_longitude=$request['to_drop_longitude'];
+        $to_drop_note=$request['to_drop_note'];
         $parcel_type_id=$request['parcel_type_id'];
         $total_estimated_weight=$request['total_estimated_weight'];
         $item_qty=$request['item_qty'];
@@ -212,11 +214,13 @@ class ParcelOrderApiController extends Controller
             "from_pickup_address"=>$from_pickup_address,
             "from_pickup_latitude"=>$from_pickup_latitude,
             "from_pickup_longitude"=>$from_pickup_longitude,
+            "from_pickup_note"=>$from_pickup_note,
             "to_recipent_name"=>$to_recipent_name,
             "to_recipent_phone"=>$to_recipent_phone,
             "to_drop_address"=>$to_drop_address,
             "to_drop_latitude"=>$to_drop_latitude,
             "to_drop_longitude"=>$to_drop_longitude,
+            "to_drop_note"=>$to_drop_note,
             "parcel_type_id"=>$parcel_type_id,
             "total_estimated_weight"=>$total_estimated_weight,
             "item_qty"=>$item_qty,
