@@ -36,7 +36,11 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" title="Order Detail" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            if($post->order_type=="food"){
+                $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" title="Order Detail" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            }else{
+                $btn = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" title="Order Detail" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            }
             // <a href="{{route('fatty.admin.food_orders.assign',['order_id'=>$order->order_id])}}" class="btn btn-primary btn-sm mr-1" title="Assign"><i class="fa fa-edit"></i></a>
             $btn = $btn.'<a href="/fatty/main/admin/foods/orders/assign/'.$post->order_id.'" title="Rider Assign" class="btn btn-primary btn-sm mr-2"><i class="fas fa-plus-circle"></i></a>';
             return $btn;
@@ -392,7 +396,8 @@ class OrderController extends Controller
     {
         $order_id=$id;
         $orders=CustomerOrder::findOrFail($id);
-        $rider_all=Rider::where('is_order',0)->get();
+        // $rider_all=Rider::where('is_order',0)->get();
+        $rider_all=Rider::orderBy('is_order')->get();
         return view('admin.order.assign',compact('orders','rider_all','order_id'));
     }
 
