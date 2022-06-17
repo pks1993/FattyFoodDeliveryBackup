@@ -86,7 +86,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($order->is_order=="0")
+                                            {{-- @if($order->is_order=="0") --}}
                                                 <button class="btn btn-primary btn-sm mr-1" title="Assign" data-toggle="modal" data-target="#rider_id{{ $order->rider_id }}"><i class="fa fa-plus-circle"></i></button>
 
                                             <!-- Button trigger modal -->
@@ -120,9 +120,10 @@
                                               </div>
                                           </form>
                                             </div>
-                                            @else
-                                                <button class="btn btn-danger btn-sm mr-1" title="Not Assign"><i class="fa fa-minus-circle"></i></button>
-                                            @endif
+                                            {{-- @else --}}
+                                                {{-- <button class="btn btn-danger btn-sm mr-1" title="Not Assign"><i class="fa fa-minus-circle"></i></button> --}}
+                                                {{-- <button class="btn btn-primary btn-sm mr-1" title="Assign" data-toggle="modal" data-target="#rider_id{{ $order->rider_id }}"><i class="fa fa-plus-circle"></i></button> --}}
+                                            {{-- @endif --}}
 
                                         </td>
                                     </tr>

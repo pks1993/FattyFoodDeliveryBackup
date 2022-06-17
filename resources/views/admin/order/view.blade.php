@@ -8,40 +8,40 @@
 @section('content')
 
 <div class="p-3">
-    
+
     <div class="form-group">
         <label>Restaurant:</label><br>
         @if($food_order->restaurant_id)
         <img src="../../../../../uploads/restaurant/{{ $food_order->restaurant->restaurant_image }}" class="img-thumbnail" width="200" height="200">
         @else
         <img src="../../../../../image/available.png" class="img-thumbnail" width="200" height="200">
-        @endif 
+        @endif
     </div>
-    
+
     <div class="row mb-3">
         <div class="col-md-6">
             <label>Restaurant Name:</label>
             <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $food_order->restaurant->restaurant_name_mm }}</textarea>
         </div>
-        
+
         <div class="col-md-6">
             <label>Restaurant Address:</label>
             <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $food_order->restaurant->restaurant_address }}</textarea>
         </div>
     </div>
-    
+
     <div class="row mb-3">
         <div class="col-md-6">
             <label>Order Id:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $food_order->order_id }}" readonly>
         </div>
-        
+
         <div class="col-md-6">
             <label>Delivery Status:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $food_order->order_status->order_status_name }}" readonly>
         </div>
     </div>
-    
+
     <div class="row mb-3">
         <div class="col-md-12">
             <label>Current Adress:</label>
@@ -52,11 +52,11 @@
             @endif
         </div>
     </div>
-    
+
     <div class="row mb-3">
         <div class="col-md-12">
             <label>Bill Detail:</label><br>
-            <table> 
+            <table>
                 @foreach ($food_order->foods as $food)
                 <tr>
                     <td>{{ $food->food_qty }} x {{ $food->food_name_mm }}
@@ -87,7 +87,7 @@
             </table>
         </div>
     </div>
-    
+
     <div class="row mb-3">
         <div class="col-md-12">
             <label>Order Description:</label>
@@ -102,8 +102,8 @@
         </div>
     </div>
 
-    
-    
+
+
     <a href="{{ url()->previous() }}" class="btn btn-sm mr-2" style="background-color:#fff;border-color:red;color:black;"><i class="fas fa-angle-double-left"></i>&nbsp;Back</a>
     <div class="float-right">
         {{-- <form action="/fatty/main/admin/customers/delete/{{ $customer->customer_id }}" method="post" class="d-inline">
@@ -112,6 +112,6 @@
             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
         </form> --}}
     </div>
-    
+
 </div>
-@endsection 
+@endsection
