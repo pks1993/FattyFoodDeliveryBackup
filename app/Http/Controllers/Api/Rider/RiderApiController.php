@@ -369,13 +369,14 @@ class RiderApicontroller extends Controller
         $rider_check=Rider::where('rider_id',$rider_id)->first();
 
         if(!empty($rider_check)){
-            $check_order_food=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->first();
+            // $check_order_food=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->first();
+            // $check_order_parcel=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->first();
 
-            $check_order_parcel=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->first();
+            $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
             $rider_latitude=$rider_check->rider_latitude;
             $rider_longitude=$rider_check->rider_longitude;
 
-            if(!empty($check_order_food)){
+            if(!empty($check_order)){
                 $distance="1000";
 
                 // $rider_orders=CustomerOrder::with(['rider','customer','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->get();
@@ -391,7 +392,7 @@ class RiderApicontroller extends Controller
                 + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
                 // ->having('distance', '<', $distance)
-                ->whereIn("order_status_id",["3","4","5","6","10"])
+                ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
                 ->get();
 
@@ -427,56 +428,6 @@ class RiderApicontroller extends Controller
 
                 }
 
-                return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$rider_orders]);
-            }elseif($check_order_parcel){
-
-                // $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->get();
-
-                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
-                * cos(radians(customer_orders.to_drop_latitude))
-                * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
-                + sin(radians(customer_orders.from_pickup_latitude))
-                * sin(radians(customer_orders.to_drop_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
-                * cos(radians(customer_orders.customer_address_latitude))
-                * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
-                + sin(radians(".$rider_latitude."))
-                * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
-                // ->having('distance', '<', $distance)
-                ->whereIn('order_status_id',['12','13','14','17'])
-                ->where("rider_id",$rider_id)
-                ->get();
-
-                $parcel_val=[];
-                foreach($rider_orders as $value){
-                    $distance=$value->distance;
-                    $kilometer=number_format((float)$distance, 2, '.', '');
-                    $value->distance=(float) $kilometer;
-                    $value->distance_time=(int)$kilometer*2 + $value->average_time;
-                    $value->rider_customer_distance=(float)number_format((float)$value->rider_customer_distance,2,'.','');
-                    if($value->from_parcel_city_id==0){
-                        $value->from_parcel_city_name=null;
-                        $value->from_latitude=null;
-                        $value->from_longitude=null;
-                    }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
-                        $value->from_parcel_city_name=$city_data->city_name;
-                        $value->from_latitude=$city_data->latitude;
-                        $value->from_longitude=$city_data->longitude;
-                    }
-                    if($value->to_parcel_city_id==0){
-                        $value->to_parcel_city_name=null;
-                        $value->to_latitude=null;
-                        $value->to_longitude=null;
-                    }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
-                        $value->to_parcel_city_name=$city_data->city_name;
-                        $value->to_latitude=$city_data->latitude;
-                        $value->to_longitude=$city_data->longitude;
-                    }
-                    array_push($parcel_val,$value);
-
-                }
                 return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$rider_orders]);
             }else{
                 $rider_latitude=$rider_check->rider_latitude;
@@ -602,6 +553,238 @@ class RiderApicontroller extends Controller
             return response()->json(['success'=>false,'message'=>'Error! Rider Id not found']);
         }
     }
+    // public function home_page(Request $request)
+    // {
+    //     $rider_id=$request['rider_id'];
+    //     $rider_check=Rider::where('rider_id',$rider_id)->first();
+
+    //     if(!empty($rider_check)){
+    //         $check_order_food=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->first();
+
+    //         $check_order_parcel=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->first();
+    //         $rider_latitude=$rider_check->rider_latitude;
+    //         $rider_longitude=$rider_check->rider_longitude;
+
+    //         if(!empty($check_order_food)){
+    //             $distance="1000";
+    //             $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
+    //             ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+    //             * cos(radians(customer_orders.restaurant_address_latitude))
+    //             * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
+    //             + sin(radians(".$rider_latitude."))
+    //             * sin(radians(customer_orders.customer_address_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+    //             * cos(radians(customer_orders.customer_address_latitude))
+    //             * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
+    //             + sin(radians(".$rider_latitude."))
+    //             * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
+    //             // ->having('distance', '<', $distance)
+    //             ->whereIn("order_status_id",["3","4","5","6","10"])
+    //             ->where("rider_id",$rider_id)
+    //             ->get();
+
+    //             $food_val=[];
+    //             foreach($rider_orders as $value1){
+    //                 $distance1=$value1->distance;
+    //                 $kilometer1=number_format((float)$distance1, 2, '.', '');
+    //                 $value1->distance=(float) $kilometer1;
+    //                 $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
+    //                 $value1->rider_customer_distance=(float)number_format((float)$value1->rider_customer_distance,2,'.','');
+
+    //                 if($value1->from_parcel_city_id==0){
+    //                     $value1->from_parcel_city_name=null;
+    //                     $value1->from_latitude=null;
+    //                     $value1->from_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+    //                     $value1->from_parcel_city_name=$city_data->city_name;
+    //                     $value1->from_latitude=$city_data->latitude;
+    //                     $value1->from_longitude=$city_data->longitude;
+    //                 }
+    //                 if($value1->to_parcel_city_id==0){
+    //                     $value1->to_parcel_city_name=null;
+    //                     $value1->to_latitude=null;
+    //                     $value1->to_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
+    //                     $value1->to_parcel_city_name=$city_data->city_name;
+    //                     $value1->to_latitude=$city_data->latitude;
+    //                     $value1->to_longitude=$city_data->longitude;
+    //                 }
+    //                 array_push($food_val,$value1);
+
+    //             }
+
+    //             return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$rider_orders]);
+    //         }elseif($check_order_parcel){
+    //             $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
+    //             ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
+    //             * cos(radians(customer_orders.to_drop_latitude))
+    //             * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
+    //             + sin(radians(customer_orders.from_pickup_latitude))
+    //             * sin(radians(customer_orders.to_drop_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+    //             * cos(radians(customer_orders.customer_address_latitude))
+    //             * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
+    //             + sin(radians(".$rider_latitude."))
+    //             * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
+    //             ->whereIn('order_status_id',['12','13','14','17'])
+    //             ->where("rider_id",$rider_id)
+    //             ->get();
+
+    //             $parcel_val=[];
+    //             foreach($rider_orders as $value){
+    //                 $distance=$value->distance;
+    //                 $kilometer=number_format((float)$distance, 2, '.', '');
+    //                 $value->distance=(float) $kilometer;
+    //                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
+    //                 $value->rider_customer_distance=(float)number_format((float)$value->rider_customer_distance,2,'.','');
+    //                 if($value->from_parcel_city_id==0){
+    //                     $value->from_parcel_city_name=null;
+    //                     $value->from_latitude=null;
+    //                     $value->from_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+    //                     $value->from_parcel_city_name=$city_data->city_name;
+    //                     $value->from_latitude=$city_data->latitude;
+    //                     $value->from_longitude=$city_data->longitude;
+    //                 }
+    //                 if($value->to_parcel_city_id==0){
+    //                     $value->to_parcel_city_name=null;
+    //                     $value->to_latitude=null;
+    //                     $value->to_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+    //                     $value->to_parcel_city_name=$city_data->city_name;
+    //                     $value->to_latitude=$city_data->latitude;
+    //                     $value->to_longitude=$city_data->longitude;
+    //                 }
+    //                 array_push($parcel_val,$value);
+
+    //             }
+    //             return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$rider_orders]);
+    //         }else{
+    //             $rider_latitude=$rider_check->rider_latitude;
+    //             $rider_longitude=$rider_check->rider_longitude;
+    //             $distance="1000";
+
+    //             $parcels=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
+    //             ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
+    //             * cos(radians(customer_orders.to_drop_latitude))
+    //             * cos(radians(customer_orders.to_drop_longitude) - radians(customer_orders.from_pickup_longitude))
+    //             + sin(radians(customer_orders.from_pickup_latitude))
+    //             * sin(radians(customer_orders.to_drop_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+    //             * cos(radians(customer_orders.customer_address_latitude))
+    //             * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
+    //             + sin(radians(".$rider_latitude."))
+    //             * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
+    //             // ->having('distance', '<', $distance)
+    //             ->groupBy("order_id")
+    //             ->orderBy("created_at","DESC")
+    //             ->where("order_status_id","11")
+    //             ->where("order_type","parcel")
+    //             ->get();
+
+    //             $foods=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
+    //             ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+    //             * cos(radians(customer_orders.restaurant_address_latitude))
+    //             * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
+    //             + sin(radians(".$rider_latitude."))
+    //             * sin(radians(customer_orders.restaurant_address_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+    //             * cos(radians(customer_orders.customer_address_latitude))
+    //             * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
+    //             + sin(radians(".$rider_latitude."))
+    //             * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
+    //             // ->having('distance', '<', $distance)
+    //             ->groupBy("order_id")
+    //             ->orderBy("created_at","DESC")
+    //             ->where("rider_id",null)
+    //             ->whereIn("order_status_id",["3","5"])
+    //             ->where("order_type","food")
+    //             ->get();
+
+    //             $parcel_val=[];
+    //             foreach($parcels as $value){
+    //                 $distance=$value->distance;
+    //                 $kilometer=number_format((float)$distance, 2, '.', '');
+    //                 $value->distance=(float) $kilometer;
+    //                 $value->distance_time=(int)$kilometer*2 + $value->average_time;
+    //                 $value->rider_customer_distance=(float)number_format((float)$value->rider_customer_distance,2,'.','');
+    //                 if($value->from_parcel_city_id==0){
+    //                     $value->from_parcel_city_name=null;
+    //                     $value->from_latitude=null;
+    //                     $value->from_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+    //                     $value->from_parcel_city_name=$city_data->city_name;
+    //                     $value->from_latitude=$city_data->latitude;
+    //                     $value->from_longitude=$city_data->longitude;
+    //                 }
+    //                 if($value->to_parcel_city_id==0){
+    //                     $value->to_parcel_city_name=null;
+    //                     $value->to_latitude=null;
+    //                     $value->to_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+    //                     $value->to_parcel_city_name=$city_data->city_name;
+    //                     $value->to_latitude=$city_data->latitude;
+    //                     $value->to_longitude=$city_data->longitude;
+    //                 }
+    //                 array_push($parcel_val,$value);
+
+    //             }
+
+    //             $food_val=[];
+    //             foreach($foods as $value1){
+    //                 $distance1=$value1->distance;
+    //                 $kilometer1=number_format((float)$distance1, 2, '.', '');
+    //                 $value1->distance=(float) $kilometer1;
+    //                 $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
+    //                 $value1->rider_customer_distance=(float)number_format((float)$value1->rider_customer_distance,2,'.','');
+    //                 if($value1->from_parcel_city_id==0){
+    //                     $value1->from_parcel_city_name=null;
+    //                     $value1->from_latitude=null;
+    //                     $value1->from_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+    //                     $value1->from_parcel_city_name=$city_data->city_name;
+    //                     $value1->from_latitude=$city_data->latitude;
+    //                     $value1->from_longitude=$city_data->longitude;
+    //                 }
+    //                 if($value1->to_parcel_city_id==0){
+    //                     $value1->to_parcel_city_name=null;
+    //                     $value1->to_latitude=null;
+    //                     $value1->to_longitude=null;
+    //                 }else{
+    //                     $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
+    //                     $value1->to_parcel_city_name=$city_data->city_name;
+    //                     $value1->to_latitude=$city_data->latitude;
+    //                     $value1->to_longitude=$city_data->longitude;
+    //                 }
+    //                 array_push($food_val,$value1);
+
+    //             }
+
+    //             $total=$foods->merge($parcels);
+    //             //DESC
+    //             $orders =  array_reverse(array_sort($total, function ($value) {
+    //                         return $value['created_at'];
+    //                     }));
+    //             //ASC
+    //             // $all = array_values(array_sort($all, function ($value) {
+    //             //       return $value['created_at'];
+    //             //     }));
+
+    //             // $total=$foods->merge($parcels)->sortByDesc('created_at');
+    //             // foreach($total as $value){
+    //             //     $orders[]=$value;
+    //             // }
+
+
+    //             return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$orders]);
+    //         }
+    //     }else{
+    //         return response()->json(['success'=>false,'message'=>'Error! Rider Id not found']);
+    //     }
+    // }
 
     public function rider_location(Request $request)
     {
