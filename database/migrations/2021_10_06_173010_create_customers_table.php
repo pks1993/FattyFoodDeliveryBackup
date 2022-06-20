@@ -21,15 +21,16 @@ class CreateCustomersTable extends Migration
             $table->bigInteger('longitude')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
-            $table->unsignedBigInteger('customer_type_id')->nullable();
             $table->string('image')->nullable();
             $table->string('device_id')->nullable();
             $table->string('fcm_token')->nullable();
             $table->string('order_count')->nullable();
             $table->string('order_amount')->nullable();
             $table->string('total_distance')->nullable();
-            $table->integer('os_type')->nullable();
+            $table->unsignedBigInteger('customer_type_id')->nullable();
+            $table->boolean('is_restricted')->nullable(false);
             $table->integer('otp')->nullable();
+            $table->integer('os_type')->nullable();
             $table->timestamps();
         });
     }
