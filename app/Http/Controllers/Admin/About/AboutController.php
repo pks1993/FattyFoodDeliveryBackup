@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 // use App\Models\Customer\Customer;
 use DB;
 use Carbon\Carbon;
+use Mapper;
+
 
 class AboutController extends Controller
 {
@@ -22,6 +24,10 @@ class AboutController extends Controller
     }
 
     public function golocation(){
+        Mapper::map(53.381128999999990000, -1.470085000000040000);
+
+        return view('admin.About.index');
+
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');
         // echo $start_time."\n".$end_time;
@@ -30,19 +36,19 @@ class AboutController extends Controller
         // $created_at = Carbon::parse("2022-02-23 13:01:45");
         // $diffMinutes = $created_at->diffInMinutes($now);
         // dd($diffMinutes);
-        
+
         // $lat1 ="22.918267903378916";
         // $lon1 = "97.2557699754834";
         // $lat2 ="22.962385";
         // $lon2 ="97.735954";
         // $unit = "N";
         // // $rad = "300";
-           
+
         // $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
-        // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . ")) 
-        // * cos(radians(restaurants.restaurant_latitude)) 
-        // * cos(radians(restaurants.restaurant_longitude) - radians(" . $lon1 . ")) 
-        // + sin(radians(" .$lat1. ")) 
+        // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
+        // * cos(radians(restaurants.restaurant_latitude))
+        // * cos(radians(restaurants.restaurant_longitude) - radians(" . $lon1 . "))
+        // + sin(radians(" .$lat1. "))
         // * sin(radians(restaurants.restaurant_latitude))) AS distance"))
         // // ->having('distance', '<', $rad)
         // ->groupBy("restaurants.restaurant_id")
@@ -82,7 +88,7 @@ class AboutController extends Controller
     }
 
     public function sendNoti(){
-        
+
     }
 
     /**

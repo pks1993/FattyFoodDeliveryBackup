@@ -44,20 +44,12 @@ class HomePageApiController extends Controller
         $count=Wishlist::where('customer_id',$customer_id)->count();
 
         $check_customer=Customer::where('customer_id',$customer_id)->first();
-        $data_customer=[];
-        if($check_customer->is_restricted==1){
-            $check_customer->is_restricted=true;
-        }else{
-            $check_customer->is_restricted=false;
-        }
-
-        array_push($data_customer,$check_customer);
 
         // if($customer_id != "0"){
         //     $states=State::whereRaw('LOWER(`state_name_en`) LIKE ? ',[trim(strtolower($name)).'%'])->first();
         //     $state=$check_customer->state_id;
         //     if(!empty($check_customer)){
-        //         if(!empty($states)){
+        //         if(!empty($states)){ 
         //             $check_customer->state_id=$states->state_id;
         //             $check_customer->update();
         //         }else{

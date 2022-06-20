@@ -162,6 +162,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Cornford\Googlmapper\MapperServiceProvider::class,
+
 
         /*
          * Package Service Providers...
@@ -240,6 +242,8 @@ return [
 
         // 'Html' => Collective\Html\HtmlFacade::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+        'Mapper'=> Cornford\Googlmapper\Facades\MapperFacade::class,
 
     ],
 
