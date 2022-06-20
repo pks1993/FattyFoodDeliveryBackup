@@ -31,6 +31,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->bigInteger('bill_total_price')->nullable();
             $table->longText('current_address')->nullable();
             $table->longText('building_system')->nullable();
+            $table->string('customer_address_phone')->nullable();
             $table->string('address_type')->nullable();
             $table->double('customer_address_latitude')->nullable();
             $table->double('customer_address_longitude')->nullable();
@@ -51,6 +52,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->double('to_drop_latitude')->nullable();
             $table->double('to_drop_longitude')->nullable();
             $table->longText('to_drop_note')->nullable();
+            $table->longText('rider_parcel_block_note')->nullable();
             $table->unsignedBigInteger('parcel_type_id')->nullable();
             $table->unsignedBigInteger('from_parcel_city_id')->nullable();
             $table->unsignedBigInteger('to_parcel_city_id')->nullable();

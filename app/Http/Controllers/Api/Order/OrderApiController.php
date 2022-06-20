@@ -1369,9 +1369,15 @@ class OrderApiController extends Controller
     }
 
 
-    public function payment_list()
+    public function payment_list(Request $request)
     {
-        $payment_list=PaymentMethod::orderBy('created_at')->get();
+        $customer_id=$request->header('customer-id');
+        $check_customer=Customer::find($customer_id);
+        if($check_customer->is_restricted==0){
+            $payment_list=PaymentMethod::orderBy('created_at')->get();
+        }else{
+            $payment_list=PaymentMethod::where('payment_method_id',1)->get();
+        }
         return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
     }
 
@@ -1669,6 +1675,7 @@ class OrderApiController extends Controller
         $current_address=$request['current_address'];
         $building_system=$request['building_system'];
         $address_type=$request['address_type'];
+        $customer_address_phone=$request['customer_address_phone'];
         $payment_method_id=$request['payment_method_id'];
         $order_time=date('g:i A');
         $start_time = Carbon::now()->format('g:i A');
@@ -1784,14 +1791,15 @@ class OrderApiController extends Controller
         $customer_orders->rider_delivery_fee=$rider_delivery_fee;
         $customer_orders->rider_restaurant_distance=$distances;
         $customer_orders->item_total_price=$item_total_price;
-        // $customer_orders->bill_total_price=$bill_total_price;
-        $customer_orders->bill_total_price=1;
+        $customer_orders->bill_total_price=$bill_total_price;
+        // $customer_orders->bill_total_price=1;
         $customer_orders->customer_address_latitude=$customer_address_latitude;
         $customer_orders->customer_address_longitude=$customer_address_longitude;
 
         $customer_orders->current_address=$current_address;
         $customer_orders->building_system=$building_system;
         $customer_orders->address_type=$address_type;
+        $customer_orders->customer_address_phone=$customer_address_phone;
 
 
         $customer_orders->restaurant_address_latitude=$restaurant_address_latitude;
