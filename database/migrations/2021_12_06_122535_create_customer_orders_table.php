@@ -52,6 +52,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->double('to_drop_latitude')->nullable();
             $table->double('to_drop_longitude')->nullable();
             $table->longText('to_drop_note')->nullable();
+            $table->longText('rider_parcel_address')->nullable();
             $table->longText('rider_parcel_block_note')->nullable();
             $table->unsignedBigInteger('parcel_type_id')->nullable();
             $table->unsignedBigInteger('from_parcel_city_id')->nullable();

@@ -15,6 +15,27 @@ use App\Models\Customer\OrderCustomer;
 
 class CustomerController extends Controller
 {
+    public function restricted(Request $request,$id)
+    {
+        $check_customer=Customer::find($id);
+        if($check_customer){
+            if($check_customer->is_restricted==0){
+                $check_customer->is_restricted=1;
+                $check_customer->update();
+                $request->session()->flash('alert-success', 'successfully update block customer!');
+                return redirect('fatty/main/admin/customers');
+            }else{
+                $check_customer->is_restricted=0;
+                $check_customer->update();
+                $request->session()->flash('alert-success', 'successfully update unblock customer!');
+                return redirect('fatty/main/admin/customers');
+            }
+
+        }else{
+            $request->session()->flash('alert-danger', 'customer does not has in this database!');
+            return redirect('fatty/main/admin/customers');
+        }
+    }
     /**
     * Display a listing of the resource.
     *
@@ -40,14 +61,21 @@ class CustomerController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
-            $btn = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $btn = $btn.'<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" method="post" class="d-inline">
+            $view = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" title="View Detail" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            if($post->is_restricted==0){
+                $restricted = '<a href="/fatty/main/admin/customers/restricted/'.$post->customer_id.'" onclick="return confirm(\'Are You Sure Want to Ban Customer\')" title="UnBan Customer" class="btn btn-success btn-sm mr-2"><i class="fas fa-user-check"></i></a>';
+            }else{
+                $restricted = '<a href="/fatty/main/admin/customers/restricted/'.$post->customer_id.'" onclick="return confirm(\'Are You Sure Want to UnBan Customer\')" title="Ban Customer" class="btn btn-danger btn-sm mr-2"><i class="fas fa-ban"></i></a>';
+            }
+            $delete = '<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" title="Delete" method="post" class="d-inline">
             '.csrf_field().'
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
 
-            return $btn;
+            $data=$restricted.$view.$delete;
+
+            return $data;
         })
         ->addColumn('register_date', function(Customer $item){
             $register_date = $item->created_at->format('d M Y');

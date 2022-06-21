@@ -226,7 +226,7 @@ Route::get('v1/fatty/202221/lashio/main/admin/customers/food/orders/delivery/Hel
 Route::get('restaurant/available/create/all','Api\Restaurant\RestaurantApiController@available_create');
 
 //rider parcel
-Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/click','Api\Order\OrderApiController@customer_order_click');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/click','Api\Order\OrderApiController@rider_order_click');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/images/delete','Api\Order\ParcelOrderApiController@parcel_image_delete');
 Route::get('v1/fatty/202221/lashio/main/admin/rider/parcels/extra/list','Api\Order\ParcelOrderApiController@parcel_extra_list');
 Route::get('v1/fatty/202221/lashio/main/admin/rider/parcels/type/list','Api\Order\ParcelOrderApiController@parcel_type_list');
