@@ -602,8 +602,8 @@ class ParcelOrderApiController extends Controller
             $parcel_order->rider_address_longitude=$parcel_order->rider_address_longitude;
             $parcel_order->rider_restaurant_distance=$distances;
             $parcel_order->order_type=$parcel_order->order_type;
-            $parcel_order->city_id=$parcel_order->city_id;
-            $parcel_order->state_id=$parcel_order->state_id;
+            // $parcel_order->city_id=$parcel_order->city_id;
+            // $parcel_order->state_id=$parcel_order->state_id;
 
             $from_parcel_city_id=$parcel_order->from_parcel_city_id=$parcel_order->from_parcel_city_id;
             $to_parcel_city_id=$parcel_order->to_parcel_city_id=$parcel_order->to_parcel_city_id;
