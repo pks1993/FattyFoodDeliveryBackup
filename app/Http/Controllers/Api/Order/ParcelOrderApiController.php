@@ -21,6 +21,8 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
+use function Symfony\Component\VarDumper\Dumper\esc;
+
 class ParcelOrderApiController extends Controller
 {
     /**
@@ -455,23 +457,27 @@ class ParcelOrderApiController extends Controller
             $dist = rad2deg($dist);
             $miles = $dist * 60 * 1.1515;
             $kilometer=$miles * 1.609344;
+            $history_distance=(float) number_format((float)$kilometer, 1, '.', '');
             $distance[]=(float) number_format((float)$kilometer, 1, '.', '');
 
-            // if($from_city_name==null){
-            //     $from_address=['from_pickup_address'=>$from_pickup_address,'from_city_name'=>null];
-            // }else{
-            //     $from_address=['from_pickup_address'=>null,'from_city_name'=>$from_city_name];
-            // }
-            // if($to_city_name==null){
-            //     $to_address=['to_drop_address'=>$to_drop_address,'to_city_name'=>null];
-            // }else{
-            //     $to_address=['to_drop_address'=>null,'to_city_name'=>$to_city_name];
-            // }
-            // $data=merge($from_address,$to_address);
+            if($from_city_name==null){
+                $from_pickup_address=$from_pickup_address;
+                $from_city_name=null;
+            }else{
+                $from_pickup_address=null;
+                $from_city_name=$from_city_name;
+            }
+            if($to_city_name==null){
+                $to_drop_address=$to_drop_address;
+                $to_city_name=null;
+            }else{
+                $to_drop_address=null;
+                $to_city_name=$to_city_name;
+            }
 
+            $rider_parcel_block_note[]=['from_pickup_address'=>$from_pickup_address,'from_city_name'=>$from_city_name,'to_drop_address'=>$to_drop_address,'to_city_name'=>$to_city_name,'distance'=>$history_distance];
         }
         $distances=collect($distance)->sum();
-        // return response()->json(['first'=>$distance,'second'=>$distances,'data'=>$data]);
 
 
         $order_status_id=17;
@@ -570,6 +576,7 @@ class ParcelOrderApiController extends Controller
             $parcel_order->to_drop_latitude=$parcel_order->to_drop_latitude;
             $parcel_order->to_drop_longitude=$parcel_order->to_drop_longitude;
             $parcel_order->parcel_type_id=$parcel_type_id;
+            $parcel_order->rider_parcel_block_note=$rider_parcel_block_note;
             $parcel_order->rider_parcel_address=$add;
             $parcel_order->total_estimated_weight=$total_estimated_weight;
             $parcel_order->item_qty=$item_qty;
@@ -670,20 +677,29 @@ class ParcelOrderApiController extends Controller
             }
 
             //Image
-            $parcel_image_list=$request['parcel_image_list'];
-            $imagename=time();
-            if(!empty($parcel_image_list)){
-                foreach($parcel_image_list as $list){
-                    if(!empty($list)){
-                    $img_name=$imagename.'.'.$list->getClientOriginalExtension();
-                    Storage::disk('ParcelImage')->put($img_name, File::get($list));
-                    }
+            $parcel_image_list=$request->parcel_image_list;
 
-                    $images[]=ParcelImage::create([
-                        "order_id"=>$order_id,
-                        "parcel_image"=>$img_name,
-                    ]);
+            if($parcel_image_list != []){
+                foreach($parcel_image_list as $list){
+                    $name=time();
+                    $image=$list['image'];
+                    $base_code_of_image=base64_decode($image);
+                    $imagename=$name.'.jpg';
+                    file_put_contents('uploads/parcel/parcel_image/'.$imagename,$base_code_of_image);
                 }
+                // dd($image);
+                // dd($imagename);
+                // if(!empty($list)){
+                    // $img_name=$imagename.'.'.$list->getClientOriginalExtension();
+                    // Storage::disk('ParcelImage')->put($img_name, File::get($list));
+                // }
+                // dd($list);
+
+                $images[]=ParcelImage::create([
+                    "order_id"=>$order_id,
+                    "parcel_image"=>$imagename,
+                ]);
+                // dd($base_code_of_image);
                 $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                     return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
 
@@ -730,7 +746,12 @@ class ParcelOrderApiController extends Controller
 
                     $orders->distance=(float) $kilometer1;
                     $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
-                    $orders->rider_parcel_address=json_decode($orders->rider_parcel_address,true);
+                    // $orders->rider_parcel_block_note=json_decode($orders->rider_parcel_block_note,true);
+                    if($orders->rider_parcel_address==null){
+                        $orders->rider_parcel_address=[];
+                    }else{
+                        $orders->rider_parcel_address=json_decode($orders->rider_parcel_address,true);
+                    }
 
                     if($orders->from_parcel_city_id==null){
                         $orders->from_parcel_city_name=null;
