@@ -620,7 +620,7 @@ class ParcelOrderApiController extends Controller
                     ParcelCityHistory::create([
                         "customer_id"=>$parcel_order->customer_id,
                         "parcel_city_id"=>$from_parcel_city_id,
-                        "state_id"=>$parcelCity->state_id,
+                        // "state_id"=>$parcelCity->state_id,
                         "count"=>1,
                     ]);
                 }
@@ -635,7 +635,7 @@ class ParcelOrderApiController extends Controller
                     ParcelCityHistory::create([
                         "customer_id"=>$parcel_order->customer_id,
                         "parcel_city_id"=>$to_parcel_city_id,
-                        "state_id"=>$parcelCity->state_id,
+                        // "state_id"=>$parcelCity->state_id,
                         "count"=>1,
                     ]);
                 }
