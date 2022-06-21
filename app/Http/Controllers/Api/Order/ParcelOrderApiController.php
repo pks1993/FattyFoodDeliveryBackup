@@ -438,12 +438,16 @@ class ParcelOrderApiController extends Controller
         $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
 
         $add=$request->address;
-        $address=json_decode($add,true);
-        foreach ($address as $list) {
+        // $address=json_decode($add,true);
+        foreach ($add as $list) {
             $from_pickup_latitude=$list['from_pickup_latitude'];
             $from_pickup_longitude=$list['from_pickup_longitude'];
             $to_drop_latitude=$list['to_drop_latitude'];
             $to_drop_longitude=$list['to_drop_longitude'];
+            $from_city_name=$list['from_city_name'];
+            $to_city_name=$list['to_city_name'];
+            $from_pickup_address=$list['from_pickup_address'];
+            $to_drop_address=$list['to_drop_address'];
 
             $theta = $from_pickup_longitude - $to_drop_longitude;
             $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
@@ -452,9 +456,22 @@ class ParcelOrderApiController extends Controller
             $miles = $dist * 60 * 1.1515;
             $kilometer=$miles * 1.609344;
             $distance[]=(float) number_format((float)$kilometer, 1, '.', '');
+
+            // if($from_city_name==null){
+            //     $from_address=['from_pickup_address'=>$from_pickup_address,'from_city_name'=>null];
+            // }else{
+            //     $from_address=['from_pickup_address'=>null,'from_city_name'=>$from_city_name];
+            // }
+            // if($to_city_name==null){
+            //     $to_address=['to_drop_address'=>$to_drop_address,'to_city_name'=>null];
+            // }else{
+            //     $to_address=['to_drop_address'=>null,'to_city_name'=>$to_city_name];
+            // }
+            // $data=merge($from_address,$to_address);
+
         }
         $distances=collect($distance)->sum();
-        // return response()->json(['first'=>$distance,'second'=>$distances]);
+        // return response()->json(['first'=>$distance,'second'=>$distances,'data'=>$data]);
 
 
         $order_status_id=17;
