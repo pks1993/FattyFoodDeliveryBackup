@@ -341,7 +341,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //testing
     Route::get('golocation','Admin\About\AboutController@golocation');
-    Route::get('golocation','Admin\About\AboutController@index');
+    // Route::get('golocation','Admin\About\AboutController@index');
 
     //UpAds
     Route::get('ads/up_ads','Admin\Ads\UpAdsController@index');

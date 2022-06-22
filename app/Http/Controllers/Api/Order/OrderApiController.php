@@ -1346,15 +1346,23 @@ class OrderApiController extends Controller
         }
         if($customer_orders->from_parcel_city_id==0){
             $customer_orders->from_parcel_city_name=null;
+            $customer_orders->from_latitude=null;
+            $customer_orders->from_longitude=null;
         }else{
             $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
             $customer_orders->from_parcel_city_name=$city_data->city_name;
+            $customer_orders->from_latitude=$city_data->latitude;
+            $customer_orders->from_longitude=$city_data->longitude;
         }
         if($customer_orders->to_parcel_city_id==0){
             $customer_orders->to_parcel_city_name=null;
+            $customer_orders->to_latitude=null;
+            $customer_orders->to_longitude=null;
         }else{
             $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
             $customer_orders->to_parcel_city_name=$city_data->city_name;
+            $customer_orders->to_latitude=$city_data->latitude;
+            $customer_orders->to_longitude=$city_data->longitude;
         }
 
         if($customer_orders->from_pickup_latitude==null || $customer_orders->from_pickup_latitude==0){

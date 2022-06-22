@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 // use App\Models\Customer\Customer;
 use DB;
 use Carbon\Carbon;
-use Mapper;
 
 
 class AboutController extends Controller
@@ -24,16 +23,16 @@ class AboutController extends Controller
     }
 
     public function golocation(){
-        $locations = [
+        $locations = "[
             ['Mumbai', 19.0760,72.8777],
             ['Pune', 18.5204,73.8567],
             ['Bhopal ', 23.2599,77.4126],
             ['Agra', 27.1767,78.0081],
             ['Delhi', 28.7041,77.1025],
             ['Rajkot', 22.2734719,70.7512559],
-        ];
+        ]";
 
-        return view('admin.About.index');
+        return view('admin.About.index',compact('locations'));
 
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');

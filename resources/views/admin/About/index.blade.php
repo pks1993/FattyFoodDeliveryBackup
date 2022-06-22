@@ -243,13 +243,17 @@ function addMarker(location, map) {
                 body  {
                 height: 100%;
                 margin: 0;
-                padding: 30px 10px 10px 10px;
+                padding: 30px 10px 30px 10px;
+                }
+                .map-label{
+                    background-color: #000000;
                 }
             </style>
         </head>
 
         <body>
-                <div id="map"></div>
+            <p>{{ $locations }}</p>
+            <div id="map"></div>
 
             <script type="text/javascript">
                 function initMap() {
@@ -312,11 +316,12 @@ function addMarker(location, map) {
                             title:locations[i][0],
                             // label: {text: locations[i][0], color: "white"}
                             label: {
-                                        text: locations[i][0],
-                                        color: '#fff',
-                                        fontSize: '14px',
-                                        fontWeight: 'bold',
-                                    }
+                                    text: locations[i][0],
+                                    color: '#FFF',
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    className: "map-label"
+                                }
 
                           });
 
