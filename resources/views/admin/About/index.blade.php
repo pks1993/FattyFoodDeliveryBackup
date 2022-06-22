@@ -245,9 +245,9 @@ function addMarker(location, map) {
                 margin: 0;
                 padding: 30px 10px 30px 10px;
                 }
-                .map-label{
-                    background-color: #000000;
-                }
+                /* .map-label{
+                    background-color: #ffffff;
+                } */
             </style>
         </head>
 
@@ -256,24 +256,43 @@ function addMarker(location, map) {
             <div id="map"></div>
 
             <script type="text/javascript">
+
+            $.ajax({
+                url: "/fatty/main/admin/riders/map-location",
+                type: "GET",
+                data: {"result" : "sss"},
+                success: function (mydata) {
+                    // alert("Saved");
+                    var data=mydata;
+                    console.log(data);
+                },
+                error: function(error)
+                {
+                    // console.log(error);
+                    // alert('failed');
+                    // alert(error);
+                }
+            });
+
                 function initMap() {
                     const myLatLng = { lat: 22.9665, lng: 97.7525 };
                     const map = new google.maps.Map(document.getElementById("map"), {
-                        zoom: 14,
+                        zoom: 13,
                         center: myLatLng,
                     });
 
 
-                    var locations =[
-                                    ['riders/view/15', 22.974384,97.761361],
-                                    ['Pune', 22.936126,97.751064],
-                                    ['Bhopal ', 22.964286,97.754655],
-                                    ['Agra', 22.942919,97.75457],
-                                    ['Delhi', 22.9444281,97.741002],
-                                    ['Rajkot', 22.930166,97.751226],
-                                ];
-                    // var locations=document.getElementById('location').value;
-                    console.log(locations);
+                    var locations =data;
+                    // console.log(locations);
+                    // var locations =[
+                    //                 ['riders/view/15', 22.974384,97.761361],
+                    //                 ['Pune', 22.936126,97.751064],
+                    //                 ['Bhopal ', 22.964286,97.754655],
+                    //                 ['Agra', 22.942919,97.75457],
+                    //                 ['Delhi', 22.9444281,97.741002],
+                    //                 ['Rajkot', 22.930166,97.751226],
+                    //             ];
+
 
                     const contentString =
                     '<div id="content">' +
@@ -319,7 +338,7 @@ function addMarker(location, map) {
                             // label: {text: locations[i][0], color: "white"}
                             label: {
                                     text: locations[i][0],
-                                    color: '#FFF',
+                                    color: '#fff',
                                     fontSize: '14px',
                                     fontWeight: 'bold',
                                     className: "map-label"

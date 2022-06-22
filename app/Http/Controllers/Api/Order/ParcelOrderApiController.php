@@ -425,6 +425,359 @@ class ParcelOrderApiController extends Controller
 
     }
 
+    public function rider_order_update_testing(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $parcel_type_id=$request['parcel_type_id'];
+        $total_estimated_weight=$request['total_estimated_weight'];
+        $item_qty=$request['item_qty'];
+        $customer_delivery_fee=$request['delivery_fee'];
+        $parcel_order_note=$request['parcel_order_note'];
+        $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
+        $bill_total_price=$request['bill_total_price'];
+
+        $start_time = Carbon::now()->format('g:i A');
+        $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
+
+        $add1=$request->address;
+        $add=json_decode($add1,true);
+        foreach ($add as $list) {
+            $from_parcel_city_id=$add[0]['from_parcel_city_id'];
+            $to_parcel_city_id=$add[0]['to_parcel_city_id'];
+            $from_pickup_latitude=$list['from_pickup_latitude'];
+            $from_pickup_longitude=$list['from_pickup_longitude'];
+            $to_drop_latitude=$list['to_drop_latitude'];
+            $to_drop_longitude=$list['to_drop_longitude'];
+            $from_city_name=$list['from_city_name'];
+            $to_city_name=$list['to_city_name'];
+            $from_pickup_address=$list['from_pickup_address'];
+            $to_drop_address=$list['to_drop_address'];
+
+
+            $theta = $from_pickup_longitude - $to_drop_longitude;
+            $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $kilometer=$miles * 1.609344;
+            $history_distance=(float) number_format((float)$kilometer, 1, '.', '');
+            $distance[]=(float) number_format((float)$kilometer, 1, '.', '');
+
+            if($from_city_name==null){
+                $from_pickup_address=$from_pickup_address;
+                $from_city_name=null;
+            }else{
+                $from_pickup_address=null;
+                $from_city_name=$from_city_name;
+            }
+            if($to_city_name==null){
+                $to_drop_address=$to_drop_address;
+                $to_city_name=null;
+            }else{
+                $to_drop_address=null;
+                $to_city_name=$to_city_name;
+            }
+
+            $rider_parcel_block_note[]=['from_pickup_address'=>$from_pickup_address,'from_city_name'=>$from_city_name,'to_drop_address'=>$to_drop_address,'to_city_name'=>$to_city_name,'distance'=>$history_distance];
+        }
+        $distances=collect($distance)->sum();
+
+
+        $order_status_id=17;
+
+        $parcel_order=CustomerOrder::where('order_id',$order_id)->where('order_type','parcel')->first();
+
+        if(!empty($parcel_order)){
+            $customers=Customer::where('customer_id',$parcel_order->customer_id)->first();
+
+            if($distances < 2) {
+                $rider_delivery_fee=600;
+            }elseif($distances == 2){
+                $rider_delivery_fee=600;
+            }elseif($distances > 2 && $distances < 3.5){
+                $rider_delivery_fee=700;
+            }elseif($distances == 3.5){
+                $rider_delivery_fee=800;
+            }elseif($distances > 3.5 && $distances < 5){
+                $rider_delivery_fee=900;
+            }elseif($distances == 5){
+                $rider_delivery_fee=1000;
+            }elseif($distances > 5 && $distances < 6.5){
+                $rider_delivery_fee=1100;
+            }elseif($distances == 6.5){
+                $rider_delivery_fee=1200;
+            }elseif($distances > 6.5 && $distances < 8){
+                $rider_delivery_fee=1300;
+            }elseif($distances==8){
+                $rider_delivery_fee=2500;
+            }elseif($distances > 8 && $distances < 9.5){
+                $rider_delivery_fee=2700;
+            }elseif($distances==9.5){
+                $rider_delivery_fee=2900;
+            }elseif($distances > 9.5 && $distances < 11){
+                $rider_delivery_fee=3100;
+            }elseif($distances==11){
+                $rider_delivery_fee=3300;
+            }elseif($distances > 11 && $distances < 12.5){
+                $rider_delivery_fee=3500;
+            }elseif($distances==12.5){
+                $rider_delivery_fee=3700;
+            }elseif($distances > 12.5 && $distances < 14){
+                $rider_delivery_fee=3900;
+            }elseif($distances==14){
+                $rider_delivery_fee=4100;
+            }elseif($distances > 14 && $distances < 15.5){
+                $rider_delivery_fee=4400;
+            }elseif($distances==15.5){
+                $rider_delivery_fee=4700;
+            }elseif($distances > 15.5 && $distances < 17){
+                $rider_delivery_fee=5000;
+            }elseif($distances==17){
+                $rider_delivery_fee=5300;
+            }elseif($distances > 17 && $distances < 18.5){
+                $rider_delivery_fee=5600;
+            }elseif($distances==18.5){
+                $rider_delivery_fee=5900;
+            }elseif($distances > 18.5 && $distances < 20){
+                $rider_delivery_fee=6200;
+            }elseif($distances==20){
+                $rider_delivery_fee=6500;
+            }elseif($distances > 20 && $distances < 21.5){
+                $rider_delivery_fee=6800;
+            }elseif($distances==21.5){
+                $rider_delivery_fee=7100;
+            }elseif($distances > 21.5 && $distances < 23){
+                $rider_delivery_fee=7400;
+            }elseif($distances==23){
+                $rider_delivery_fee=7700;
+            }elseif($distances > 23 && $distances < 24.5){
+                $rider_delivery_fee=8000;
+            }elseif($distances==24.5){
+                $rider_delivery_fee=8300;
+            }elseif($distances > 24.5 && $distances < 26){
+                $rider_delivery_fee=8600;
+            }elseif($distances >= 26){
+                $rider_delivery_fee=8900;
+            }else{
+                $rider_delivery_fee=8900;
+            }
+
+            $parcel_order->customer_id=$parcel_order->customer_id;
+            $parcel_order->customer_order_id=$parcel_order->customer_order_id;
+            $parcel_order->customer_booking_id=$parcel_order->customer_booking_id;
+            $parcel_order->payment_method_id=$parcel_order->payment_method_id;
+            $parcel_order->order_time=$parcel_order->order_time;
+            $parcel_order->order_status_id=$order_status_id;
+            $parcel_order->from_sender_name=$parcel_order->from_sender_name;
+            $parcel_order->from_sender_phone=$parcel_order->from_sender_phone;
+            $parcel_order->from_pickup_address=$parcel_order->from_pickup_address;
+            $parcel_order->from_pickup_latitude=$parcel_order->from_pickup_latitude;
+            $parcel_order->from_pickup_longitude=$parcel_order->from_pickup_longitude;
+            $parcel_order->to_recipent_name=$parcel_order->to_recipent_name;
+            $parcel_order->to_recipent_phone=$parcel_order->to_recipent_phone;
+            $parcel_order->to_drop_address=$parcel_order->to_drop_address;
+            $parcel_order->to_drop_latitude=$parcel_order->to_drop_latitude;
+            $parcel_order->to_drop_longitude=$parcel_order->to_drop_longitude;
+            $parcel_order->parcel_type_id=$parcel_type_id;
+            $parcel_order->rider_parcel_block_note=$rider_parcel_block_note;
+            $parcel_order->rider_parcel_address=$add;
+            $parcel_order->total_estimated_weight=$total_estimated_weight;
+            $parcel_order->item_qty=$item_qty;
+            $parcel_order->parcel_order_note=$parcel_order_note;
+            $parcel_order->bill_total_price=$bill_total_price;
+            $parcel_order->parcel_extra_cover_id=$parcel_extra_cover_id;
+            $parcel_order->customer_address_id=$parcel_order->customer_address_id;
+            $parcel_order->restaurant_id=$parcel_order->restaurant_id;
+            $parcel_order->rider_id=$parcel_order->rider_id;
+            $parcel_order->order_description=$parcel_order->order_description;
+            $parcel_order->estimated_start_time=$start_time;
+            $parcel_order->estimated_end_time=$end_time;
+
+            $parcel_order->delivery_fee=$customer_delivery_fee;
+            $parcel_order->rider_delivery_fee=$rider_delivery_fee;
+
+            $parcel_order->item_total_price=$parcel_order->item_total_price;
+            $parcel_order->customer_address_latitude=$parcel_order->customer_address_latitude;
+            $parcel_order->customer_address_longitude=$parcel_order->customer_address_longitude;
+            $parcel_order->restaurant_address_latitude=$parcel_order->restaurant_address_latitude;
+            $parcel_order->restaurant_address_longitude=$parcel_order->restaurant_address_longitude;
+            $parcel_order->rider_address_latitude=$parcel_order->rider_address_latitude;
+            $parcel_order->rider_address_longitude=$parcel_order->rider_address_longitude;
+            $parcel_order->rider_restaurant_distance=$distances;
+            $parcel_order->order_type=$parcel_order->order_type;
+            // $parcel_order->city_id=$parcel_order->city_id;
+            // $parcel_order->state_id=$parcel_order->state_id;
+
+            $from_parcel_city_id=$parcel_order->from_parcel_city_id=$from_parcel_city_id;
+            $to_parcel_city_id=$parcel_order->to_parcel_city_id=$to_parcel_city_id;
+            $parcel_order->update();
+
+            //Recent Block
+            if($from_parcel_city_id){
+                $parcelCity=ParcelCity::where('parcel_city_id',$from_parcel_city_id)->first();
+                $check=ParcelCityHistory::where('customer_id',$parcel_order->customer_id)->where('parcel_city_id',$from_parcel_city_id)->first();
+                if($check){
+                    $check->count=$check->count+1;
+                    $check->update();
+                }else{
+                    ParcelCityHistory::create([
+                        "customer_id"=>$parcel_order->customer_id,
+                        "parcel_city_id"=>$from_parcel_city_id,
+                        // "state_id"=>$parcelCity->state_id,
+                        "count"=>1,
+                    ]);
+                }
+            }
+            if($to_parcel_city_id){
+                $parcelCity=ParcelCity::where('parcel_city_id',$from_parcel_city_id)->first();
+                $check=ParcelCityHistory::where('customer_id',$parcel_order->customer_id)->where('parcel_city_id',$to_parcel_city_id)->first();
+                if($check){
+                    $check->count=$check->count+1;
+                    $check->update();
+                }else{
+                    ParcelCityHistory::create([
+                        "customer_id"=>$parcel_order->customer_id,
+                        "parcel_city_id"=>$to_parcel_city_id,
+                        // "state_id"=>$parcelCity->state_id,
+                        "count"=>1,
+                    ]);
+                }
+            }
+
+            //Notification
+            //customer
+            $cus_client = new Client();
+            $cus_token=$customers->fcm_token;
+            if($cus_token){
+                $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                try{
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "rider_parcel_update",
+                                "order_id"=>$parcel_order->order_id,
+                                "order_status_id"=>$parcel_order->order_status_id,
+                                "order_type"=>$parcel_order->order_type,
+                                "title_mm"=> "Rider Picked up Order",
+                                "body_mm"=> "Rider picked up your parcel",
+                                "title_en"=> "Rider Picked up Order",
+                                "body_en"=> "Rider picked up your parcel",
+                                "title_ch"=> "骑手已取走包裹",
+                                "body_ch"=> "骑手已取走包裹！"
+                            ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
+                }catch(ClientException $e){
+
+                }
+            }
+
+            //Image
+            $parcel_image_list=$request['parcel_image_list'];
+            // dd($parcel_image_list);
+            $imagename=uniqueid();
+            if(!empty($parcel_image_list)){
+                foreach($parcel_image_list as $list){
+                    if(!empty($list)){
+                    $img_name=$imagename.'.'.$list->getClientOriginalExtension();
+                    Storage::disk('ParcelImage')->put($img_name, File::get($list));
+                    }
+
+                    $images[]=ParcelImage::create([
+                        "order_id"=>$order_id,
+                        "parcel_image"=>$img_name,
+                    ]);
+                }
+                $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+                    return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
+
+                    $parcel_val=[];
+                    $distance1=$orders->rider_restaurant_distance;
+                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+
+                    $orders->distance=(float) $kilometer1;
+                    $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
+                    // $orders->rider_parcel_address=json_decode($orders->rider_parcel_address,true);
+                    if($orders->rider_parcel_address==null){
+                        $orders->rider_parcel_address=[];
+                    }else{
+                        $orders->rider_parcel_address=json_decode($orders->rider_parcel_address,true);
+                    }
+
+                    if($orders->from_parcel_city_id==null){
+                        $orders->from_parcel_city_name=null;
+                        $orders->from_latitude=null;
+                        $orders->from_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->from_parcel_city_name=$city_data->city_name;
+                        $orders->from_latitude=$city_data->latitude;
+                        $orders->from_longitude=$city_data->longitude;
+                    }
+                    if($orders->to_parcel_city_id==null){
+                        $orders->to_parcel_city_name=null;
+                        $orders->to_latitude=null;
+                        $orders->to_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->to_parcel_city_id)->first();
+                        $orders->to_parcel_city_name=$city_data->city_name;
+                        $orders->to_latitude=$city_data->latitude;
+                        $orders->to_longitude=$city_data->longitude;
+                    }
+                    array_push($parcel_val,$orders);
+
+            }else{
+                $orders=CustomerOrder::with(['order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
+                $parcel_val=[];
+                    $distance1=$orders->rider_restaurant_distance;
+                    $kilometer1=number_format((float)$distance1, 1, '.', '');
+
+                    $orders->distance=(float) $kilometer1;
+                    $orders->distance_time=(int)$kilometer1*2 + $orders->average_time;
+                    // $orders->rider_parcel_block_note=json_decode($orders->rider_parcel_block_note,true);
+                    if($orders->rider_parcel_address==null){
+                        $orders->rider_parcel_address=[];
+                    }else{
+                        $orders->rider_parcel_address=json_decode($orders->rider_parcel_address,true);
+                    }
+
+                    if($orders->from_parcel_city_id==null){
+                        $orders->from_parcel_city_name=null;
+                        $orders->from_latitude=null;
+                        $orders->from_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->from_parcel_city_id)->first();
+                        $orders->from_parcel_city_name=$city_data->city_name;
+                        $orders->from_latitude=$city_data->latitude;
+                        $orders->from_longitude=$city_data->longitude;
+                    }
+                    if($orders->to_parcel_city_id==null){
+                        $orders->to_parcel_city_name=null;
+                        $orders->to_latitude=null;
+                        $orders->to_longitude=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$orders->to_parcel_city_id)->first();
+                        $orders->to_parcel_city_name=$city_data->city_name;
+                        $orders->to_latitude=$city_data->latitude;
+                        $orders->to_longitude=$city_data->longitude;
+                    }
+                    array_push($parcel_val,$orders);
+                return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
+            }
+
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found!']);
+        }
+
+
+    }
     public function rider_order_update(Request $request)
     {
         $order_id=$request['order_id'];

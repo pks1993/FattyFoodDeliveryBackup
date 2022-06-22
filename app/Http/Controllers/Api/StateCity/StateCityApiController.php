@@ -38,7 +38,7 @@ class StateCityApiController extends Controller
                         $parcel_city=ParcelCity::where('parcel_city_id',$value->parcel_city_id)->first();
                         $value->city_name=$parcel_city->city_name;
                         $value->latitude=$parcel_city->latitude;
-                        $value->longitude=$parcel_city->latitude;
+                        $value->longitude=$parcel_city->longitude;
                     }
                     array_push($item,$value);
                 }

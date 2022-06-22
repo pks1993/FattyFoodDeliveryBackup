@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 // use Spatie\Permission\Models\Role;
 // use Spatie\Permission\Models\Permission;
 // use App\Models\Customer\Customer;
+use App\Models\Restaurant\Restaurant;
 use DB;
 use Carbon\Carbon;
 
@@ -22,17 +23,26 @@ class AboutController extends Controller
          $this->middleware('permission:about-delete', ['only' => ['destroy']]);
     }
 
-    public function golocation(){
-        $locations = "[
-            ['Mumbai', 19.0760,72.8777],
-            ['Pune', 18.5204,73.8567],
-            ['Bhopal ', 23.2599,77.4126],
-            ['Agra', 27.1767,78.0081],
-            ['Delhi', 28.7041,77.1025],
-            ['Rajkot', 22.2734719,70.7512559],
-        ]";
+    public function all_riders()
+    {
+        $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
+        foreach($vale as $item){
+            $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
+        }
+        return response()->json($data);
+    }
 
-        return view('admin.About.index',compact('locations'));
+    public function golocation(){
+        // $locations = "[
+        //     ['Mumbai', 19.0760,72.8777],
+        //     ['Pune', 18.5204,73.8567],
+        //     ['Bhopal ', 23.2599,77.4126],
+        //     ['Agra', 27.1767,78.0081],
+        //     ['Delhi', 28.7041,77.1025],
+        //     ['Rajkot', 22.2734719,70.7512559],
+        // ]";
+
+        return view('admin.About.index');
 
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');

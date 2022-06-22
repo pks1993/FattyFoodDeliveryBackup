@@ -341,6 +341,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //testing
     Route::get('golocation','Admin\About\AboutController@golocation');
+    Route::get('riders/map-location','Admin\About\AboutController@all_riders');
+
     // Route::get('golocation','Admin\About\AboutController@index');
 
     //UpAds
