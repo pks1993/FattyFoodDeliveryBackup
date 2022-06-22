@@ -546,10 +546,10 @@ class RiderApicontroller extends Controller
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
                     $value1->rider_customer_distance=(float)number_format((float)$value1->rider_customer_distance,2,'.','');
 
-                    if($value->rider_parcel_address==null){
-                        $value->rider_parcel_address=[];
+                    if($value1->rider_parcel_address==null){
+                        $value1->rider_parcel_address=[];
                     }else{
-                        $value->rider_parcel_address=json_decode($value->rider_parcel_address,true);
+                        $value1->rider_parcel_address=json_decode($value1->rider_parcel_address,true);
                     }
                     if($value1->from_pickup_latitude==null || $value1->from_pickup_latitude==0){
                         $value1->from_pickup_latitude=0.00;

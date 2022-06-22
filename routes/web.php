@@ -120,7 +120,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('yearly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@yearly_admin_approved');
 
     //Riders Map
-    Route::get('all_riders/location','Admin\Rider\RiderController@all_rider_location');
+    Route::get('all_riders_location','Admin\Rider\RiderController@all_rider_location');
 
 
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
