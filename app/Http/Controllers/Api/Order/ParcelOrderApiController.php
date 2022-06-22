@@ -441,6 +441,8 @@ class ParcelOrderApiController extends Controller
 
         $add=$request->address;
         // $address=json_decode($add,true);
+        $from_parcel_city_id=$add[0]['from_parcel_city_id'];
+        $to_parcel_city_id=$add[0]['to_parcel_city_id'];
         foreach ($add as $list) {
             $from_pickup_latitude=$list['from_pickup_latitude'];
             $from_pickup_longitude=$list['from_pickup_longitude'];
@@ -450,6 +452,7 @@ class ParcelOrderApiController extends Controller
             $to_city_name=$list['to_city_name'];
             $from_pickup_address=$list['from_pickup_address'];
             $to_drop_address=$list['to_drop_address'];
+
 
             $theta = $from_pickup_longitude - $to_drop_longitude;
             $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
@@ -605,8 +608,8 @@ class ParcelOrderApiController extends Controller
             // $parcel_order->city_id=$parcel_order->city_id;
             // $parcel_order->state_id=$parcel_order->state_id;
 
-            $from_parcel_city_id=$parcel_order->from_parcel_city_id=$parcel_order->from_parcel_city_id;
-            $to_parcel_city_id=$parcel_order->to_parcel_city_id=$parcel_order->to_parcel_city_id;
+            $from_parcel_city_id=$parcel_order->from_parcel_city_id=$from_parcel_city_id;
+            $to_parcel_city_id=$parcel_order->to_parcel_city_id=$to_parcel_city_id;
             $parcel_order->update();
 
             //Recent Block
