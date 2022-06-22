@@ -252,14 +252,14 @@ function addMarker(location, map) {
         </head>
 
         <body>
-            <p>{{ $locations }}</p>
+            {{-- <textarea id="location">{{ $locations }}</textarea> --}}
             <div id="map"></div>
 
             <script type="text/javascript">
                 function initMap() {
                     const myLatLng = { lat: 22.9665, lng: 97.7525 };
                     const map = new google.maps.Map(document.getElementById("map"), {
-                        zoom: 13,
+                        zoom: 14,
                         center: myLatLng,
                     });
 
@@ -272,6 +272,8 @@ function addMarker(location, map) {
                                     ['Delhi', 22.9444281,97.741002],
                                     ['Rajkot', 22.930166,97.751226],
                                 ];
+                    // var locations=document.getElementById('location').value;
+                    console.log(locations);
 
                     const contentString =
                     '<div id="content">' +
