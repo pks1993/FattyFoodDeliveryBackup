@@ -682,10 +682,10 @@ class ParcelOrderApiController extends Controller
             //Image
             $parcel_image_list=$request['parcel_image_list'];
             // dd($parcel_image_list);
-            $imagename=uniqueid();
             if(!empty($parcel_image_list)){
                 foreach($parcel_image_list as $list){
                     if(!empty($list)){
+                    $imagename=uniqid();
                     $img_name=$imagename.'.'.$list->getClientOriginalExtension();
                     Storage::disk('ParcelImage')->put($img_name, File::get($list));
                     }
