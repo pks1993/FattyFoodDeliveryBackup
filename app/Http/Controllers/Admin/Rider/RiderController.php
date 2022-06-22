@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Rider;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rider\Rider;
+use App\Models\Restaurant\Restaurant;
 use App\Models\Rider\RiderPayment;
 use App\Models\Rider\RiderTodayPayment;
 use Yajra\DataTables\DataTables;
@@ -676,16 +677,11 @@ class RiderController extends Controller
 
     public function all_rider_location()
     {
-        $riders=Rider::where('rider_latitude','!=',0)->get('rider_id');
-        $data="[
-            ['Mumbai', 22.974384,97.761361],
-            ['Pune', 22.936126,97.751064],
-            ['Bhopal ', 22.964286,97.754655],
-            ['Agra', 22.942919,97.75457],
-            ['Delhi', 22.9444281,97.741002],
-            ['Rajkot', 22.930166,97.751226],
-        ]";
-        // return response()->json($riders);
-        return view('admin.rider.rider_map.index',compact('riders','data'));
+        // $riders=Restaurant::where('restaurant_latitude','!=',0)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
+        $center_rider=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->first();
+        $center_latitude=(double)$center_rider->rider_latitude;
+        $center_longitude=(double)$center_rider->rider_longitude;
+        return view('admin.rider.rider_map.index',compact('riders','center_latitude','center_longitude'));
     }
 }
