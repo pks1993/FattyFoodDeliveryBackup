@@ -678,28 +678,20 @@ class ParcelOrderApiController extends Controller
 
             //Image
             $parcel_image_list=$request->parcel_image_list;
-            $name=time();
 
             if($parcel_image_list != []){
                 foreach($parcel_image_list as $list){
-                    $image=$list['image'];
-                    $base_code_of_image=base64_decode($image);
-                    $imagename=($name+1).'.jpg';
-                    file_put_contents('uploads/parcel/parcel_image/'.$imagename,$base_code_of_image);
-                    ParcelImage::create([
-                        "order_id"=>$order_id,
-                        "parcel_image"=>$imagename,
-                    ]);
+                    if($list){
+                        $image=$list['image'];
+                        $base_code_of_image=base64_decode($image);
+                        $imagename=uniqid().'.jpg';
+                        file_put_contents('uploads/parcel/parcel_image/'.$imagename,$base_code_of_image);
+                        ParcelImage::create([
+                                "order_id"=>$order_id,
+                                "parcel_image"=>$imagename,
+                            ]);
+                    }
                 }
-                // dd($image);
-                // dd($imagename);
-                // if(!empty($list)){
-                    // $img_name=$imagename.'.'.$list->getClientOriginalExtension();
-                    // Storage::disk('ParcelImage')->put($img_name, File::get($list));
-                // }
-                // dd($list);
-
-                // dd($base_code_of_image);
                 $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                     return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
 
