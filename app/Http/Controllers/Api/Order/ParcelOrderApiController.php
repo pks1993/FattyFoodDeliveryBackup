@@ -796,6 +796,7 @@ class ParcelOrderApiController extends Controller
         // $address=json_decode($add,true);
         $from_parcel_city_id=$add[0]['from_parcel_city_id'];
         $to_parcel_city_id=$add[0]['to_parcel_city_id'];
+
         foreach ($add as $list) {
             $from_pickup_latitude=$list['from_pickup_latitude'];
             $from_pickup_longitude=$list['from_pickup_longitude'];

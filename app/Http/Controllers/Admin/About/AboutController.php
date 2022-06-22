@@ -26,10 +26,10 @@ class AboutController extends Controller
     public function all_riders()
     {
         $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
-        foreach($vale as $item){
-            $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
-        }
-        return response()->json($data);
+        // foreach($vale as $item){
+        //     $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
+        // }
+        return response()->json($vale);
     }
 
     public function golocation(){
@@ -41,8 +41,12 @@ class AboutController extends Controller
         //     ['Delhi', 28.7041,77.1025],
         //     ['Rajkot', 22.2734719,70.7512559],
         // ]";
+        $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
+        // foreach($vale as $item){
+        //     $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
+        // }
 
-        return view('admin.About.index');
+        return view('admin.About.index',compact('vale'));
 
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');
