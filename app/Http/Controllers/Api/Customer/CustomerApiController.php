@@ -506,19 +506,13 @@ class CustomerApiController extends Controller
         //     $device_id=$value['device_id'];
         // }
         $device_id=$request->header('device-id');
-        // $headers= getallheaders();
-        // if(count($headers)==10){
-        //     $device_id=$headers['device_id'];
-        // }else{
-        //     return response()->json(['success'=>false,'message'=>'you need device_id']);
-        // }
         $id=$request['customer_id'];
         $customer_name=$request['customer_name'];
         $customer_phone=$request['customer_phone'];
         // $fcm_token=$request['fcm_token'];
         $image=$request['image'];
         $base_code_of_image=base64_decode($image);
-        $imagename=$request['customer_phone'].time().'.jpg';
+        $imagename=time().'.jpg';
 
         $customers=Customer::where('customer_id','=',$id)->first();
         if($customers){

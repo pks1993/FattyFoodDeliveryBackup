@@ -1318,6 +1318,81 @@ class OrderApiController extends Controller
     }
 
 
+    public function rider_order_click(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+
+        if($customer_orders->rider_id){
+            $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
+            $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
+            $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $kilometer=$miles * 1.609344;
+            $distances=(float) number_format((float)$kilometer, 2, '.', '');
+        }else{
+            $distances=0.01;
+        }
+
+        $data=[];
+        if($customer_orders->customer_address_id != 0){
+            if($customer_orders->customer_address->is_default==1){
+                $customer_orders->customer_address->is_default=true;
+            }else{
+                $customer_orders->customer_address->is_default=false;
+            }
+        }
+        if($customer_orders->from_parcel_city_id==0){
+            $customer_orders->from_parcel_city_name=null;
+            $customer_orders->from_latitude=null;
+            $customer_orders->from_longitude=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$city_data->city_name;
+            $customer_orders->from_latitude=$city_data->latitude;
+            $customer_orders->from_longitude=$city_data->longitude;
+        }
+        if($customer_orders->to_parcel_city_id==0){
+            $customer_orders->to_parcel_city_name=null;
+            $customer_orders->to_latitude=null;
+            $customer_orders->to_longitude=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$city_data->city_name;
+            $customer_orders->to_latitude=$city_data->latitude;
+            $customer_orders->to_longitude=$city_data->longitude;
+        }
+
+        if($customer_orders->from_pickup_latitude==null || $customer_orders->from_pickup_latitude==0){
+            $customer_orders->from_pickup_latitude=0.00;
+        }
+        if($customer_orders->from_pickup_longitude==null || $customer_orders->from_pickup_longitude==0){
+            $customer_orders->from_pickup_longitude=0.00;
+        }
+        if($customer_orders->to_drop_latitude==null || $customer_orders->to_drop_latitude==0){
+            $customer_orders->to_drop_latitude=0.00;
+        }
+        if($customer_orders->to_drop_longitude==null || $customer_orders->to_drop_longitude==0){
+            $customer_orders->to_drop_longitude=0.00;
+        }
+        if($customer_orders->rider_parcel_address==null){
+            $customer_orders->rider_parcel_address=[];
+        }else{
+            $customer_orders->rider_parcel_address=json_decode($customer_orders->rider_parcel_address,true);
+        }
+
+        $customer_orders->distance=$distances;
+        array_push($data,$customer_orders);
+
+
+        if($customer_orders){
+            return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found!']);
+        }
+    }
     public function customer_order_click(Request $request)
     {
         $order_id=$request['order_id'];
@@ -1344,6 +1419,7 @@ class OrderApiController extends Controller
                 $customer_orders->customer_address->is_default=false;
             }
         }
+
         if($customer_orders->from_parcel_city_id==0){
             $customer_orders->from_parcel_city_name=null;
         }else{
@@ -1355,6 +1431,12 @@ class OrderApiController extends Controller
         }else{
             $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
             $customer_orders->to_parcel_city_name=$city_data->city_name;
+        }
+
+        if($customer_orders->rider_parcel_address==null){
+            $customer_orders->rider_parcel_address=[];
+        }else{
+            $customer_orders->rider_parcel_address=json_decode($customer_orders->rider_parcel_address,true);
         }
 
         $customer_orders->distance=$distances;
@@ -1376,7 +1458,7 @@ class OrderApiController extends Controller
         if($check_customer->is_restricted==0){
             $payment_list=PaymentMethod::orderBy('created_at')->get();
         }else{
-            $payment_list=PaymentMethod::where('payment_method_id',1)->get();
+            $payment_list=PaymentMethod::where('payment_method_id',2)->get();
         }
         return response()->json(['success'=>true,'message'=>'this is payment list','data'=>$payment_list]);
     }

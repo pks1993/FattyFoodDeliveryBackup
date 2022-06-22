@@ -119,6 +119,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
     Route::get('yearly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@yearly_admin_approved');
 
+    //Riders Map
+    Route::get('all_riders/location','Admin\Rider\RiderController@all_rider_location');
+
+
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');
 
@@ -144,6 +148,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
+
+
     //test
     Route::get('rider_get_billing/print/all_page','Admin\Rider\RiderController@rider_print_all_page');
 
@@ -156,6 +162,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/edit/{customer_id}','Admin\Customer\CustomerController@edit')->name('customers.edit');
     Route::post('customers/update/{customer_id}','Admin\Customer\CustomerController@update')->name('customers.update');
     Route::delete('customers/delete/{customer_id}','Admin\Customer\CustomerController@destroy')->name('customers.destroy');
+    Route::get('customers/restricted/{customer_id}','Admin\Customer\CustomerController@restricted')->name('customers.restricted');
+
 
     //Tutorial
     Route::get('tutorials','Admin\Tutorial\TutorialController@index');
@@ -333,7 +341,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //testing
     Route::get('golocation','Admin\About\AboutController@golocation');
-    Route::get('golocation','Admin\About\AboutController@index');
+    Route::get('riders/map-location','Admin\About\AboutController@all_riders');
+
+    // Route::get('golocation','Admin\About\AboutController@index');
 
     //UpAds
     Route::get('ads/up_ads','Admin\Ads\UpAdsController@index');

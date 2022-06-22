@@ -226,11 +226,12 @@ Route::get('v1/fatty/202221/lashio/main/admin/customers/food/orders/delivery/Hel
 Route::get('restaurant/available/create/all','Api\Restaurant\RestaurantApiController@available_create');
 
 //rider parcel
-Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/click','Api\Order\OrderApiController@customer_order_click');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/click','Api\Order\OrderApiController@rider_order_click');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/images/delete','Api\Order\ParcelOrderApiController@parcel_image_delete');
 Route::get('v1/fatty/202221/lashio/main/admin/rider/parcels/extra/list','Api\Order\ParcelOrderApiController@parcel_extra_list');
 Route::get('v1/fatty/202221/lashio/main/admin/rider/parcels/type/list','Api\Order\ParcelOrderApiController@parcel_type_list');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/orders/update','Api\Order\ParcelOrderApiController@rider_order_update');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/orders/update/testing','Api\Order\ParcelOrderApiController@rider_order_update_testing');
 
 
 //Notify url
@@ -239,10 +240,6 @@ Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\Notification
 //force update
 Route::get('v1/fatty/main/admin/restaurant/version/check','Api\Notification\NotificationApiController@restaurant_version_check');
 Route::get('v1/fatty/main/admin/rider/version/check','Api\Notification\NotificationApiController@rider_version_check');
-
-
-
-
 
 
 

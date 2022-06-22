@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 // use Spatie\Permission\Models\Role;
 // use Spatie\Permission\Models\Permission;
 // use App\Models\Customer\Customer;
+use App\Models\Restaurant\Restaurant;
 use DB;
 use Carbon\Carbon;
+
 
 class AboutController extends Controller
 {
@@ -21,7 +23,31 @@ class AboutController extends Controller
          $this->middleware('permission:about-delete', ['only' => ['destroy']]);
     }
 
+    public function all_riders()
+    {
+        $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
+        // foreach($vale as $item){
+        //     $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
+        // }
+        return response()->json($vale);
+    }
+
     public function golocation(){
+        // $locations = "[
+        //     ['Mumbai', 19.0760,72.8777],
+        //     ['Pune', 18.5204,73.8567],
+        //     ['Bhopal ', 23.2599,77.4126],
+        //     ['Agra', 27.1767,78.0081],
+        //     ['Delhi', 28.7041,77.1025],
+        //     ['Rajkot', 22.2734719,70.7512559],
+        // ]";
+        $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
+        // foreach($vale as $item){
+        //     $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
+        // }
+
+        return view('admin.About.index',compact('vale'));
+
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');
         // echo $start_time."\n".$end_time;
@@ -30,19 +56,19 @@ class AboutController extends Controller
         // $created_at = Carbon::parse("2022-02-23 13:01:45");
         // $diffMinutes = $created_at->diffInMinutes($now);
         // dd($diffMinutes);
-        
+
         // $lat1 ="22.918267903378916";
         // $lon1 = "97.2557699754834";
         // $lat2 ="22.962385";
         // $lon2 ="97.735954";
         // $unit = "N";
         // // $rad = "300";
-           
+
         // $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
-        // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . ")) 
-        // * cos(radians(restaurants.restaurant_latitude)) 
-        // * cos(radians(restaurants.restaurant_longitude) - radians(" . $lon1 . ")) 
-        // + sin(radians(" .$lat1. ")) 
+        // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
+        // * cos(radians(restaurants.restaurant_latitude))
+        // * cos(radians(restaurants.restaurant_longitude) - radians(" . $lon1 . "))
+        // + sin(radians(" .$lat1. "))
         // * sin(radians(restaurants.restaurant_latitude))) AS distance"))
         // // ->having('distance', '<', $rad)
         // ->groupBy("restaurants.restaurant_id")
@@ -82,7 +108,7 @@ class AboutController extends Controller
     }
 
     public function sendNoti(){
-        
+
     }
 
     /**
