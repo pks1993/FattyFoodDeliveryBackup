@@ -805,43 +805,26 @@ class ParcelOrderApiController extends Controller
             $extra_coverage=0;
         }
 
-        if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00)
-        {
-            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>0,'extra_coverage'=>$extra_coverage,'total_estimated'=>$extra_coverage]]]);
-        }
-        elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
-        {
-            $address=$request->address;
-            // $address=json_decode($add,true);
+        $address=$request->address;
 
-            if($address){
-                foreach ($address as $list) {
-                    $from_pickup_latitude=$list['from_pickup_latitude'];
-                    $from_pickup_longitude=$list['from_pickup_longitude'];
-                    $to_drop_latitude=$list['to_drop_latitude'];
-                    $to_drop_longitude=$list['to_drop_longitude'];
+        if($address){
+            foreach ($address as $list) {
+                $from_pickup_latitude=$list['from_pickup_latitude'];
+                $from_pickup_longitude=$list['from_pickup_longitude'];
+                $to_drop_latitude=$list['to_drop_latitude'];
+                $to_drop_longitude=$list['to_drop_longitude'];
 
-                    $theta = $from_pickup_longitude - $to_drop_longitude;
-                    $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
-                    $dist = acos($dist);
-                    $dist = rad2deg($dist);
-                    $miles = $dist * 60 * 1.1515;
-                    $kilometer=$miles * 1.609344;
-                    $distance[]=(float) number_format((float)$kilometer, 1, '.', '');
-                }
-                $distances=collect($distance)->sum();
-            }else{
                 $theta = $from_pickup_longitude - $to_drop_longitude;
                 $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
                 $dist = acos($dist);
                 $dist = rad2deg($dist);
                 $miles = $dist * 60 * 1.1515;
-                $distance=$miles * 1.609344;
-                $distances=(float) number_format((float)$distance, 1, '.', '');
+                $kilometer=$miles * 1.609344;
+                $distance[]=(float) number_format((float)$kilometer, 1, '.', '');
             }
+            $distances=collect($distance)->sum();
 
-
-           if($distances <= 2){
+            if($distances <= 2){
                 if($customer_type_id==2){
                     $customer_delivery_fee=950;
                 }else{
@@ -1050,8 +1033,264 @@ class ParcelOrderApiController extends Controller
             $total_estimated=(int)($customer_delivery_fee + $extra_coverage);
             return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$customer_delivery_fee,'extra_coverage'=>$extra_coverage,'total_estimated'=>$total_estimated]]]);
         }else{
-            return response()->json(['success'=>false,'message'=>'error something']);
+            if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00)
+            {
+                return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>0,'extra_coverage'=>$extra_coverage,'total_estimated'=>$extra_coverage]]]);
+            }
+            elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
+            {
+                // $address=$request->address;
+                // $address=json_decode($add,true);
+
+                // if($address){
+                //     foreach ($address as $list) {
+                //         $from_pickup_latitude=$list['from_pickup_latitude'];
+                //         $from_pickup_longitude=$list['from_pickup_longitude'];
+                //         $to_drop_latitude=$list['to_drop_latitude'];
+                //         $to_drop_longitude=$list['to_drop_longitude'];
+
+                //         $theta = $from_pickup_longitude - $to_drop_longitude;
+                //         $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
+                //         $dist = acos($dist);
+                //         $dist = rad2deg($dist);
+                //         $miles = $dist * 60 * 1.1515;
+                //         $kilometer=$miles * 1.609344;
+                //         $distance[]=(float) number_format((float)$kilometer, 1, '.', '');
+                //     }
+                //     $distances=collect($distance)->sum();
+                // }else{
+                //     $theta = $from_pickup_longitude - $to_drop_longitude;
+                //     $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
+                //     $dist = acos($dist);
+                //     $dist = rad2deg($dist);
+                //     $miles = $dist * 60 * 1.1515;
+                //     $distance=$miles * 1.609344;
+                //     $distances=(float) number_format((float)$distance, 1, '.', '');
+                // }
+
+                $theta = $from_pickup_longitude - $to_drop_longitude;
+                $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
+                $dist = acos($dist);
+                $dist = rad2deg($dist);
+                $miles = $dist * 60 * 1.1515;
+                $distance=$miles * 1.609344;
+                $distances=(float) number_format((float)$distance, 1, '.', '');
+
+
+               if($distances <= 2){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=950;
+                    }else{
+                        $customer_delivery_fee=1200;
+                    }
+                }elseif($distances > 2 && $distances < 3.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1050;
+                    }else{
+                        $customer_delivery_fee=1300;
+                    }
+                }elseif($distances == 3.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1150;
+                    }else{
+                        $customer_delivery_fee=1400;
+                    }
+                }elseif($distances > 3.5 && $distances < 5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1250;
+                    }else{
+                        $customer_delivery_fee=1500;
+                    }
+                }elseif($distances == 5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1350;
+                    }else{
+                        $customer_delivery_fee=1600;
+                    }
+                }elseif($distances > 5 && $distances < 6.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1450;
+                    }else{
+                        $customer_delivery_fee=1700;
+                    }
+                }elseif($distances == 6.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1550;
+                    }else{
+                        $customer_delivery_fee=1800;
+                    }
+                }elseif($distances > 6.5 && $distances < 8){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=1650;
+                    }else{
+                        $customer_delivery_fee=1900;
+                    }
+                }elseif($distances==8){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=3000;
+                    }else{
+                        $customer_delivery_fee=3500;
+                    }
+                }elseif($distances > 8 && $distances < 9.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=3200;
+                    }else{
+                        $customer_delivery_fee=3700;
+                    }
+                }elseif($distances==9.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=3400;
+                    }else{
+                        $customer_delivery_fee=3900;
+                    }
+                }elseif($distances > 9.5 && $distances < 11){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=3600;
+                    }else{
+                        $customer_delivery_fee=4100;
+                    }
+                }elseif($distances==11){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=3800;
+                    }else{
+                        $customer_delivery_fee=4300;
+                    }
+                }elseif($distances > 11 && $distances < 12.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=4000;
+                    }else{
+                        $customer_delivery_fee=4500;
+                    }
+                }elseif($distances==12.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=4200;
+                    }else{
+                        $customer_delivery_fee=4700;
+                    }
+                }elseif($distances > 12.5 && $distances < 14){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=4300;
+                    }else{
+                        $customer_delivery_fee=4900;
+                    }
+                }elseif($distances==14){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=4800;
+                    }else{
+                        $customer_delivery_fee=5500;
+                    }
+                }elseif($distances > 14 && $distances < 15.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=5100;
+                    }else{
+                        $customer_delivery_fee=5800;
+                    }
+                }elseif($distances==15.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=5400;
+                    }else{
+                        $customer_delivery_fee=6100;
+                    }
+                }elseif($distances > 15.5 && $distances < 17){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=5700;
+                    }else{
+                        $customer_delivery_fee=6400;
+                    }
+                }elseif($distances==17){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=6000;
+                    }else{
+                        $customer_delivery_fee=6700;
+                    }
+                }elseif($distances > 17 && $distances < 18.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=6300;
+                    }else{
+                        $customer_delivery_fee=7000;
+                    }
+                }elseif($distances==18.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=6600;
+                    }else{
+                        $customer_delivery_fee=7300;
+                    }
+                }elseif($distances > 18.5 && $distances < 20){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=6900;
+                    }else{
+                        $customer_delivery_fee=7600;
+                    }
+                }elseif($distances==20){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=7200;
+                    }else{
+                        $customer_delivery_fee=7900;
+                    }
+                }elseif($distances > 20 && $distances < 21.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=7500;
+                    }else{
+                        $customer_delivery_fee=8200;
+                    }
+                }elseif($distances==21.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=7800;
+                    }else{
+                        $customer_delivery_fee=8500;
+                    }
+                }elseif($distances > 21.5 && $distances < 23){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=8100;
+                    }else{
+                        $customer_delivery_fee=8800;
+                    }
+                }elseif($distances==23){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=8400;
+                    }else{
+                        $customer_delivery_fee=9100;
+                    }
+                }elseif($distances > 23 && $distances < 24.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=8700;
+                    }else{
+                        $customer_delivery_fee=9400;
+                    }
+                }elseif($distances==24.5){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=9000;
+                    }else{
+                        $customer_delivery_fee=9700;
+                    }
+                }elseif($distances > 24.5 && $distances < 26){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=9300;
+                    }else{
+                        $customer_delivery_fee=10000;
+                    }
+                }elseif($distances >= 26){
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=9600;
+                    }else{
+                        $customer_delivery_fee=10300;
+                    }
+                }else{
+                    if($customer_type_id==2){
+                        $customer_delivery_fee=9600;
+                    }else{
+                        $customer_delivery_fee=10300;
+                    }
+                }
+
+                $total_estimated=(int)($customer_delivery_fee + $extra_coverage);
+                return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$customer_delivery_fee,'extra_coverage'=>$extra_coverage,'total_estimated'=>$total_estimated]]]);
+            }else{
+                return response()->json(['success'=>false,'message'=>'error something']);
+            }
+
         }
+
 
     }
     // public function order_estimate_cost(Request $request)
