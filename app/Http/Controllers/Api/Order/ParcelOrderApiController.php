@@ -678,14 +678,18 @@ class ParcelOrderApiController extends Controller
 
             //Image
             $parcel_image_list=$request->parcel_image_list;
+            $name=time();
 
             if($parcel_image_list != []){
                 foreach($parcel_image_list as $list){
-                    $name=time();
                     $image=$list['image'];
                     $base_code_of_image=base64_decode($image);
-                    $imagename=$name.'.jpg';
+                    $imagename=($name+1).'.jpg';
                     file_put_contents('uploads/parcel/parcel_image/'.$imagename,$base_code_of_image);
+                    ParcelImage::create([
+                        "order_id"=>$order_id,
+                        "parcel_image"=>$imagename,
+                    ]);
                 }
                 // dd($image);
                 // dd($imagename);
@@ -695,10 +699,6 @@ class ParcelOrderApiController extends Controller
                 // }
                 // dd($list);
 
-                $images[]=ParcelImage::create([
-                    "order_id"=>$order_id,
-                    "parcel_image"=>$imagename,
-                ]);
                 // dd($base_code_of_image);
                 $orders=CustomerOrder::with(['from_parcel_region','to_parcel_region','order_status','customer','parcel_type','parcel_extra','parcel_images'])->where('order_id',$parcel_order->order_id)->first();
                     return response()->json(['success'=>true,'message'=>'successfull','data'=>$orders]);
@@ -819,10 +819,10 @@ class ParcelOrderApiController extends Controller
         }
         elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
         {
-            $add=$request->address;
-            $address=json_decode($add,true);
+            $address=$request->address;
+            // $address=json_decode($add,true);
 
-            if($add){
+            if($address){
                 foreach ($address as $list) {
                     $from_pickup_latitude=$list['from_pickup_latitude'];
                     $from_pickup_longitude=$list['from_pickup_longitude'];
