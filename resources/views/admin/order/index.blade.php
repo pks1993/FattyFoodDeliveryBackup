@@ -33,7 +33,7 @@
                 <div class="col-sm-5">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Restaurant</li>
+                        <li class="breadcrumb-item active">Order</li>
                         <li class="breadcrumb-item active">Lists</li>
                     </ol>
                 </div>
@@ -54,6 +54,9 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-6">
+                                <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm">
+                                    <i class="fa fa-location-arrow"></i> All Rider Location
+                                </a>
                             </div>
                             <div class="col-md-6" style="text-align: right;">
                                 <h4><b>{{ "Orders Information" }}</b></h4>

@@ -20,18 +20,33 @@
     </style>
 </head>
 <body>
-    <a href="{{url('fatty/main/admin/riders')}}" class="btn btn-secondary btn-sm" style="margin-top: 10px;margin-bottom:5px;">
-        <i class="fa fa-angle-double-left"></i> Back to <span>Riders lists</span>
-    </a>
-    <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm" style="margin-top: 10px;margin-bottom:5px;">
-        <i class="fa fa-location-arrow"></i> All Rider Location
-    </a>
-    <a href="{{url('fatty/main/admin/all_riders_location/hasOrder')}}" class="btn btn-danger btn-sm" style="margin-top: 10px;margin-bottom:5px;">
-        <i class="fa fa-location-arrow"></i> NotFree Rider Location
-    </a>
-    <a href="{{url('fatty/main/admin/all_riders_location/hasNotOrder')}}" class="btn btn-success btn-sm" style="margin-top: 10px;margin-bottom:5px;">
-        <i class="fa fa-location-arrow"></i> Free Rider Location
-    </a>
+    <div class="row">
+        <div class="col">
+            <a href="{{url('fatty/main/admin/riders')}}" class="btn btn-secondary btn-sm" style="margin-top: 10px;margin-bottom:5px;">
+                <i class="fa fa-angle-double-left"></i> BackToAllRiders
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{url('fatty/main/admin/foods/orders/lists')}}" class="btn btn-secondary btn-sm" style="margin-top: 10px;margin-bottom:5px;">
+                <i class="fa fa-angle-double-left"></i> BackToAssignOrder
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm" style="margin-top: 10px;margin-bottom:5px;">
+                <i class="fa fa-location-arrow"></i> AllRiderLocation
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{url('fatty/main/admin/all_riders_location/hasOrder')}}" class="btn btn-danger btn-sm" style="margin-top: 10px;margin-bottom:5px;">
+                <i class="fa fa-location-arrow"></i> NotFreeRider
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{url('fatty/main/admin/all_riders_location/hasNotOrder')}}" class="btn btn-success btn-sm" style="margin-top: 10px;margin-bottom:5px;">
+                <i class="fa fa-location-arrow"></i> FreeRider
+            </a>
+        </div>
+    </div>
     <div id="map"></div>
 
     <script type="text/javascript">
@@ -40,7 +55,6 @@
             var center_latitude=parseFloat("{{ $center_latitude }}");
             var center_longitude=parseFloat("{{ $center_longitude }}");
             const myLatLng ={ lat: center_latitude, lng: center_longitude };
-            // console.log(myLatLng);
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 14,
                 // zoom: 7,
@@ -48,8 +62,7 @@
             });
             var locations = [
                 @foreach ($riders as $data)
-                    // [ "restaurants/view/{{ $data->restaurant_id }}", "{{ $data->restaurant_name_en }}","{{ $data->restaurant_latitude }}", "{{ $data->restaurant_longitude }}" ],
-                    [ "{{ $data->rider_id }}", "{{ $data->rider_user_name }}","{{ $data->rider_latitude }}", "{{ $data->rider_longitude }}","{{ $data->is_order }}" ],
+                    [ "/fatty/main/admin/riders/detail/{{ $data->rider_id }}", "{{ $data->rider_user_name }}","{{ $data->rider_latitude }}", "{{ $data->rider_longitude }}","{{ $data->is_order }}" ],
                 @endforeach
             ];
 
@@ -70,7 +83,8 @@
                         url: image,
                         labelOrigin: new google.maps.Point(10, -10)
                     },
-                    title:locations[i][0],
+                    title:locations[i][1],
+                    rider_detail:locations[i][0],
                     label: {
                         text: locations[i][1],
                         color: '#fff',
@@ -80,9 +94,7 @@
                     }
                 });
                 marker.addListener('click', function() {
-                    var locat="http://127.0.0.1:8000/fatty/main/admin/riders/detail/"+this.title;
-                    window.location.href = locat;
-                    console.log(locat);
+                    window.location.href = this.rider_detail;
                 });
             }
         }

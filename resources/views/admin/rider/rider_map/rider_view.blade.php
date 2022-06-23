@@ -65,19 +65,27 @@
                 <input type="text" class="form-control form-control-sm" value="{{ $rider->state->state_name_mm }}" readonly>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <label>Is Admin Approved:</label><br>
                 @if ($rider->is_admin_approved == 0)
-                <a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>
+                    <a class="btn btn-danger btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>
                 @else
-                <a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>
+                    <a class="btn btn-success btn-sm mr-1" style="color: white;"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>
+                @endif
+            </div>
+            <div class="col-md-2">
+                <label>Free:</label><br>
+                @if ($rider->is_order == 0)
+                <a class="btn btn-success btn-sm mr-1" style="color: white;" title="HasNotOrder"><i class="fas fa-thumbs-up"></i></a>
+                @else
+                <a class="btn btn-danger btn-sm mr-1" style="color: white;" title="HasOrder"><i class="fas fa-thumbs-down"></i></a>
                 @endif
             </div>
 
         </div>
         <a href="{{ url('fatty/main/admin/all_riders_location') }}" class="btn btn-sm mr-2" style="background-color:#fff;border-color:red;color:black;"><i class="fas fa-angle-double-left"></i>&nbsp;Back</a>
         <div class="float-right">
-            <a href="" class="btn btn-sm mr-2" style="background-color:#fff;border-color: blue;color:black;"><i class="fas fa-angle-double-left"></i>&nbsp;Assign</a>
+            <a href="{{ url('fatty/main/admin/assign/order/list/'.$rider->rider_id) }}" class="btn btn-sm mr-2" style="background-color:#fff;border-color: blue;color:black;">AssignOrder&nbsp;<i class="fas fa-angle-double-right"></i></a>
         </div>
 
     </div>
