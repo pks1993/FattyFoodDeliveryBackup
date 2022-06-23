@@ -10,6 +10,8 @@ use App\Models\Order\OrderAssign;
 use App\Models\Rider\Rider;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 
 class OrderController extends Controller
@@ -425,29 +427,35 @@ class OrderController extends Controller
             "rider_id"=>$id,
         ]);
 
-        $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-        $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-        $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
+        $rider_token=$riders_check->rider_fcm_token;
+        $orderId=(string)$customer_orders->order_id;
+        $orderstatusId=(string)$customer_orders->order_status_id;
+        $orderType=(string)$customer_orders->order_type;
+        if($rider_token){
+            $rider_client = new Client();
+            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+            try{
+                $rider_client->post($cus_url,[
+                    'json' => [
+                        "to"=>$rider_token,
+                        "data"=> [
+                            "type"=> "force_order",
+                            "order_id"=>$orderId,
+                            "order_status_id"=>$orderstatusId,
+                            "order_type"=>$orderType,
+                            "title_mm"=> "Admin to Rider Assign",
+                            "body_mm"=> "You have Order Assign!",
+                            "title_en"=> "Admin to Rider Assign",
+                            "body_en"=> "You have Order Assign!",
+                            "title_ch"=> "Admin to Rider Assign",
+                            "body_ch"=> "You have Order Assign!"
+                        ],
+                    ],
+                ]);
+            }catch(ClientException $e){
 
-        //rider
-        $fcm_token2=array();
-        array_push($fcm_token2, $riders_check->rider_fcm_token);
-        $title1="Order Assign";
-        $messages1="You have one Order Assign!";
-        $message1 = strip_tags($messages1);
-        $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$customer_orders->order_id,'order_status_id'=>$customer_orders->order_status_id,'type'=>'force_order','order_type'=>$customer_orders->order_type,'title' => $title1, 'body' => $message1]);
-        $playLoad1 = json_encode($field1);
-        $test1=json_decode($playLoad1);
-        $curl_session1 = curl_init();
-        curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-        curl_setopt($curl_session1, CURLOPT_POST, true);
-        curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-        $result = curl_exec($curl_session1);
-        curl_close($curl_session1);
+            }
+        }
         $request->session()->flash('alert-success', 'successfully support center create');
         return redirect()->back();
     }
