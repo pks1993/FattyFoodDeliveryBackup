@@ -70,7 +70,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <a href="{{route('fatty.admin.riders.create')}}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-plus"></i> Add rider</a>
+                                <i class="fa fa-plus-circle"></i> Add rider</a>
+                            <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm">
+                                <i class="fa fa-location-arrow"></i> All Rider Location</a>
                             </div>
                             <div class="col-md-6" style="text-align: right;">
                                 <h4><b>{{ "Rider Information" }}</b></h4>

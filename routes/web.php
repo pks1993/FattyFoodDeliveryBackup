@@ -121,6 +121,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Riders Map
     Route::get('all_riders_location','Admin\Rider\RiderController@all_rider_location');
+    Route::get('all_riders_location/hasOrder','Admin\Rider\RiderController@has_order');
+    Route::get('all_riders_location/hasNotOrder','Admin\Rider\RiderController@has_not_order');
 
 
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
@@ -342,6 +344,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     //testing
     Route::get('golocation','Admin\About\AboutController@golocation');
     Route::get('riders/map-location','Admin\About\AboutController@all_riders');
+    Route::get('riders/detail/{rider_id}','Admin\Rider\RiderController@rider_map_detail')->name('riders.view');
 
     // Route::get('golocation','Admin\About\AboutController@index');
 
