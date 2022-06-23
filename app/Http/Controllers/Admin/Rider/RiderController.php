@@ -679,9 +679,42 @@ class RiderController extends Controller
     {
         // $riders=Restaurant::where('restaurant_latitude','!=',0)->get();
         $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
-        $center_rider=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->first();
-        $center_latitude=(double)$center_rider->rider_latitude;
-        $center_longitude=(double)$center_rider->rider_longitude;
-        return view('admin.rider.rider_map.index',compact('riders','center_latitude','center_longitude'));
+        $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
+        $center_latitude=$center_rider->rider_latitude;
+        $center_longitude=$center_rider->rider_longitude;
+        $all_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
+        $has_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->get();
+        $has_not_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->get();
+        return view('admin.rider.rider_map.index',compact('riders','center_latitude','center_longitude','all_count','has_count','has_not_count'));
+    }
+
+    public function has_order()
+    {
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->get();
+        $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
+        $center_latitude=$center_rider->rider_latitude;
+        $center_longitude=$center_rider->rider_longitude;
+        $all_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
+        $has_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->get();
+        $has_not_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->get();
+        return view('admin.rider.rider_map.index',compact('riders','center_latitude','center_longitude','all_count','has_count','has_not_count'));
+    }
+
+    public function has_not_order()
+    {
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->get();
+        $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
+        $center_latitude=$center_rider->rider_latitude;
+        $center_longitude=$center_rider->rider_longitude;
+        $all_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
+        $has_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->get();
+        $has_not_count=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->get();
+        return view('admin.rider.rider_map.index',compact('riders','center_latitude','center_longitude','all_count','has_count','has_not_count'));
+    }
+
+    public function rider_map_detail($id)
+    {
+        $rider = Rider::findOrFail($id);
+        return view('admin.rider.rider_map.rider_view',compact('rider'));
     }
 }
