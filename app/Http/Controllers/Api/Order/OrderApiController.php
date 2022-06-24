@@ -135,25 +135,28 @@ class OrderApiController extends Controller
         $kilometer=$miles * 1.609344;
         $distances=(float) number_format((float)$kilometer, 1, '.', '');
 
-        if($distances <= 2) {
-            $delivery_fee=800;
-        }elseif($distances > 2 && $distances < 3.5){
-            $delivery_fee=1000;
-        }elseif($distances == 3.5){
-            $delivery_fee=1200;
-        }elseif($distances > 3.5 && $distances < 4.5){
-            $delivery_fee=1400;
-        }elseif($distances == 4.5){
-            $delivery_fee=1600;
-        }elseif($distances > 4.5 && $distances < 6){
-            $delivery_fee=1800;
-        }elseif($distances == 6){
-            $delivery_fee=2000;
-        }elseif($distances > 6 && $distances < 7.5){
-            $delivery_fee=2200;
-        }elseif($distances==7.5){
+        // if($distances <= 2) {
+        //     $delivery_fee=800;
+        // }elseif($distances > 2 && $distances < 3.5){
+        //     $delivery_fee=1000;
+        // }elseif($distances == 3.5){
+        //     $delivery_fee=1200;
+        // }elseif($distances > 3.5 && $distances < 4.5){
+        //     $delivery_fee=1400;
+        // }elseif($distances == 4.5){
+        //     $delivery_fee=1600;
+        // }elseif($distances > 4.5 && $distances < 6){
+        //     $delivery_fee=1800;
+        // }elseif($distances == 6){
+        //     $delivery_fee=2000;
+        // }elseif($distances > 6 && $distances < 7.5){
+        //     $delivery_fee=2200;
+
+        if($distances < 8){
+            $delivery_fee=0;
+        }elseif($distances==8){
             $delivery_fee=2400;
-        }elseif($distances > 7.5 && $distances < 9){
+        }elseif($distances > 8 && $distances < 9){
             $delivery_fee=2600;
         }elseif($distances==9){
             $delivery_fee=2800;
