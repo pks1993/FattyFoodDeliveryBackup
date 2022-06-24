@@ -923,6 +923,7 @@ class OrderApiController extends Controller
                     + sin(radians(" .$customer_address_latitude. "))
                     * sin(radians(riders.rider_latitude))) AS distance"))
                     // ->having('distance', '<', $distance)
+                    ->having('distance','<',1)
                     ->groupBy("riders.rider_id")
                     ->where('is_order','0')
                     ->get();
