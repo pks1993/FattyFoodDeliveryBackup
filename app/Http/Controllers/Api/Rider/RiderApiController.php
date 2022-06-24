@@ -392,7 +392,7 @@ class RiderApicontroller extends Controller
                 + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
                 // ->having('distance', '<', $distance)
-                ->having('distance','<',1)
+                // ->having('distance','<',1)
                 ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
                 ->get();
