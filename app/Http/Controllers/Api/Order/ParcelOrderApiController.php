@@ -285,7 +285,8 @@ class ParcelOrderApiController extends Controller
         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
         + sin(radians(" .$from_pickup_latitude. "))
         * sin(radians(riders.rider_latitude))) AS distance"))
-        ->having('distance','<',1)
+        // ->having('distance','<',1)
+        ->having('distance','<',2.1)
         ->groupBy("riders.rider_id")
         ->where('is_order','0')
         ->get();
