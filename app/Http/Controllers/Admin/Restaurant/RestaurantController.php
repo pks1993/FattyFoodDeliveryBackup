@@ -864,9 +864,18 @@ class RestaurantController extends Controller
 
     public function menu_destroy(Request $request,$id)
     {
-        FoodMenu::destroy($id);
-        $request->session()->flash('alert-danger', 'successfully delete food menu!');
-        return redirect()->back();
+        // FoodMenu::destroy($id);
+        // $request->session()->flash('alert-danger', 'successfully delete food menu!');
+        // return redirect()->back();
+        $food=Food::where('food_menu_id',$id)->first();
+        if($food){
+            $request->session()->flash('alert-warning', "don't delete food manu because this has food item");
+            return redirect()->back();
+        }else{
+            FoodMenu::destroy($id);
+            $request->session()->flash('alert-danger', 'successfully delete food menu!');
+            return redirect()->back();
+        }
     }
 
     public function restaurant_food_list($id)

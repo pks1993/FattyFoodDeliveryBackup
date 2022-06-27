@@ -377,15 +377,15 @@ class RiderApicontroller extends Controller
             $rider_longitude=$rider_check->rider_longitude;
 
             if(!empty($check_order)){
-                $distance="1000";
+                // $distance="1000";
 
                 // $rider_orders=CustomerOrder::with(['rider','customer','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->get();
 
                 $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+                ,DB::raw("6371 * acos(cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_latitude))
-                * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
-                + sin(radians(".$rider_latitude."))
+                * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
+                + sin(radians(customer_orders.customer_address_latitude))
                 * sin(radians(customer_orders.customer_address_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
                 * cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
@@ -451,7 +451,7 @@ class RiderApicontroller extends Controller
             }else{
                 $rider_latitude=$rider_check->rider_latitude;
                 $rider_longitude=$rider_check->rider_longitude;
-                $distance="1000";
+                // $distance="1000";
 
                 $parcels=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
                 ,DB::raw("6371 * acos(cos(radians(customer_orders.from_pickup_latitude))
@@ -472,10 +472,10 @@ class RiderApicontroller extends Controller
                 ->get();
 
                 $foods=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
-                ,DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+                ,DB::raw("6371 * acos(cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_latitude))
-                * cos(radians(customer_orders.restaurant_address_longitude) - radians(".$rider_longitude."))
-                + sin(radians(".$rider_latitude."))
+                * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
+                + sin(radians(customer_orders.customer_address_latitude))
                 * sin(radians(customer_orders.restaurant_address_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
                 * cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
@@ -1672,8 +1672,8 @@ class RiderApicontroller extends Controller
                 $orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
                 $data=[];
                 if($orders1){
-                    $theta = $orders1->customer_address_longitude - $rider->rider_longitude;
-                    $dist = sin(deg2rad($orders1->customer_address_latitude)) * sin(deg2rad($rider->rider_latitude)) +  cos(deg2rad($orders1->customer_address_latitude)) * cos(deg2rad($rider->rider_latitude)) * cos(deg2rad($theta));
+                    $theta = $orders1->customer_address_longitude - $rider->restaurant_address_latitude;
+                    $dist = sin(deg2rad($orders1->customer_address_latitude)) * sin(deg2rad($rider->restaurant_address_longitude)) +  cos(deg2rad($orders1->customer_address_latitude)) * cos(deg2rad($rider->restaurant_address_longitude)) * cos(deg2rad($theta));
                     $dist = acos($dist);
                     $dist = rad2deg($dist);
                     $miles = $dist * 60 * 1.1515;

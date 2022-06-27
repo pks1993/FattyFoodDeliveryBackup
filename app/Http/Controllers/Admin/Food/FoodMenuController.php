@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\Food\FoodMenu;
+use App\Models\Food\Food;
 use App\Models\Restaurant\Restaurant;
 
 class FoodMenuController extends Controller
@@ -92,8 +93,15 @@ class FoodMenuController extends Controller
      */
     public function destroy(Request $request,$id)
     {
-        FoodMenu::destroy($id);
-        $request->session()->flash('alert-danger', 'successfully delete food menu!');
-        return redirect('fatty/main/admin/food_menu');
+        $food=Food::where('food_menu_id',$id)->first();
+        // return response()->json($food);
+        if($food){
+            $request->session()->flash('alert-warning', "don't delete food manu because this has food item");
+            return redirect('fatty/main/admin/food_menu');
+        }else{
+            FoodMenu::destroy($id);
+            $request->session()->flash('alert-danger', 'successfully delete food menu!');
+            return redirect('fatty/main/admin/food_menu');
+        }
     }
 }
