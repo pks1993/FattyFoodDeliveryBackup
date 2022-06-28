@@ -386,13 +386,12 @@ class RiderApicontroller extends Controller
                 * cos(radians(customer_orders.restaurant_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
                 + sin(radians(customer_orders.customer_address_latitude))
-                * sin(radians(customer_orders.customer_address_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
+                * sin(radians(customer_orders.restaurant_address_latitude))) AS distance"),DB::raw("6371 * acos(cos(radians(".$rider_latitude."))
                 * cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.customer_address_longitude) - radians(".$rider_longitude."))
                 + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.customer_address_latitude))) AS rider_customer_distance"))
                 // ->having('distance', '<', $distance)
-                // ->having('distance','<',1)
                 ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
                 ->get();
@@ -404,6 +403,7 @@ class RiderApicontroller extends Controller
                     $value1->distance=(float) $kilometer1;
                     $value1->distance_time=(int)$kilometer1*2 + $value1->average_time;
                     $value1->rider_customer_distance=(float)number_format((float)$value1->rider_customer_distance,2,'.','');
+
                     // $value1->rider_parcel_address=json_decode($value1->rider_parcel_address,true);
                     if($value1->rider_parcel_address==null){
                         $value1->rider_parcel_address=[];
