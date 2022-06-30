@@ -9,11 +9,12 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Customer\Customer;
 use App\Models\Zone\Zone;
 use App\User;
+use App\Models\Order\CustomerOrder;
 class DashboardController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:deliveryfee-list', ['only' => ['index','store']]);         
+        $this->middleware('permission:deliveryfee-list', ['only' => ['index','store']]);
     }
     /**
      * Display a listing of the resource.
@@ -22,12 +23,17 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $today_total_order=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->count();
+        $all_orders=CustomerOrder::count();
+        $all_food_orders=CustomerOrder::where('order_type','food')->count();
+        $all_parcel_orders=CustomerOrder::where('order_type','parcel')->count();
+
         $total_all_admin=User::count();
         $total_main_admin=User::where('is_main_admin','1')->count();
         $total_branch_admin=User::where('is_main_admin','0')->count();
         $total_customer=Customer::count();
         $total_zone=Zone::count();
-        return view('admin.dashboard.dashboard',compact('total_customer','total_all_admin','total_branch_admin','total_main_admin','total_zone'));
+        return view('admin.dashboard.dashboard',compact('total_customer','total_all_admin','total_branch_admin','total_main_admin','total_zone','today_total_order','all_orders','all_food_orders','all_parcel_orders'));
     }
 
     /**

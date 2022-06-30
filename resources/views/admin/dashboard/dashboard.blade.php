@@ -31,6 +31,45 @@
                 <!-- small box -->
                 <div class="small-box bg-red">
                     <div class="inner">
+                        <div id="shiva"><span class="count"><h3>{{ $all_orders }}</h3></span></div>
+                        <p>Total Customers Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ url('fatty/main/admin/customers') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-xs-4">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
+                        <div id="shiva"><span class="count"><h3>{{ $all_food_orders }}</h3></span></div>
+                        <p>Total Foods Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ url('fatty/main/admin/customers') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-xs-4">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
+                        <div id="shiva"><span class="count"><h3>{{ $all_parcel_orders }}</h3></span></div>
+                        <p>Total Parcel Orders</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="{{ url('fatty/main/admin/customers') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-xs-4">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
                         <div id="shiva"><span class="count"><h3>{{ $total_customer }}</h3></span></div>
                         <p>Total Customers</p>
                     </div>

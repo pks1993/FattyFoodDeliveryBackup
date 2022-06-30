@@ -33,6 +33,7 @@ class AboutController extends Controller
     }
 
     public function golocation(){
+
         // $locations = "[
         //     ['Mumbai', 19.0760,72.8777],
         //     ['Pune', 18.5204,73.8567],
@@ -41,12 +42,12 @@ class AboutController extends Controller
         //     ['Delhi', 28.7041,77.1025],
         //     ['Rajkot', 22.2734719,70.7512559],
         // ]";
-        $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
+        // $vale=Restaurant::where('restaurant_latitude','!=',0)->get();
         // foreach($vale as $item){
         //     $data[]=[$item->restaurant_name_en,$item->restaurant_latitude,$item->restaurant_longitude];
         // }
 
-        return view('admin.About.index',compact('vale'));
+        // return view('admin.About.index',compact('vale'));
 
         // $start_time = Carbon::now()->format('g:i A');
         // $end_time = Carbon::now()->addMinutes(25)->format('g:i A');
@@ -57,23 +58,25 @@ class AboutController extends Controller
         // $diffMinutes = $created_at->diffInMinutes($now);
         // dd($diffMinutes);
 
-        // $lat1 ="22.918267903378916";
-        // $lon1 = "97.2557699754834";
-        // $lat2 ="22.962385";
-        // $lon2 ="97.735954";
-        // $unit = "N";
+        $lat1 ="21.92940808636731";
+        $lon1 = "96.11176025122404";
+        $lat2 ="21.926762239147155";
+        $lon2 ="21.926762239147155";
+        $unit = "N";
         // // $rad = "300";
 
-        // $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
-        // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
-        // * cos(radians(restaurants.restaurant_latitude))
-        // * cos(radians(restaurants.restaurant_longitude) - radians(" . $lon1 . "))
-        // + sin(radians(" .$lat1. "))
-        // * sin(radians(restaurants.restaurant_latitude))) AS distance"))
-        // // ->having('distance', '<', $rad)
-        // ->groupBy("restaurants.restaurant_id")
-        // ->get();
+        $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
+        ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
+        * cos(radians(".$lat2."))
+        * cos(radians(".$lon2.") - radians(" . $lon1 . "))
+        + sin(radians(" .$lat1. "))
+        * sin(radians(".$lat2."))) AS distance"))
+        // ->having('distance', '<', $rad)
+        ->groupBy("restaurants.restaurant_id")
+        ->get();
         // dd($riders);
+
+        return $riders;
 
         // if (($lat1 == $lat2) && ($lon1 == $lon2)) {
         //     return 0;

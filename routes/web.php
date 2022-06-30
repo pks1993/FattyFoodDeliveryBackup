@@ -157,6 +157,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
 
 
+
     //test
     Route::get('rider_get_billing/print/all_page','Admin\Rider\RiderController@rider_print_all_page');
 
@@ -379,9 +380,17 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('foods/orders/assign/{order_id}','Admin\Order\OrderController@assign')->name('food_orders.assign');
     Route::post('foods/orders/assign/notification/{rider_id}','Admin\Order\OrderController@assign_noti')->name('food_orders.assign.notification');
 
+    //pending_assign
+    Route::get('foods/orders/pending_assign/{order_id}','Admin\Order\OrderController@pending_assign');
+    Route::post('foods/orders/pending_assign/notification/{rider_id}','Admin\Order\OrderController@pending_assign_noti')->name('food_orders.pending_assign.notification');
+
     //Food Order View
     Route::get('food_orders/view/{order_id}','Admin\Order\OrderController@show');
     Route::get('parcel_orders/view/{order_id}','Admin\Order\OrderController@parcel_show');
+
+    //parcel edit
+    Route::get('parcel_orders/edit/{order_id}','Admin\Parcel\ParcelStateController@parcel_edit')->name('parcel.edit');;
+    Route::post('parcel_orders/upate/{order_id}','Admin\Parcel\ParcelStateController@parcel_update')->name('parcel_order.update');;
 
     //food order
     Route::get('daily_food_orders','Admin\Order\OrderController@dailyfoodorderindex');
@@ -394,6 +403,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('orders/datatable/yearlyfoodorderajax','Admin\Order\OrderController@yearlyfoodorderajax');
 
     Route::get('food_orders_chart','Admin\Order\OrderController@foodorderchart');
+
+    //Pending Orders
+    Route::get('pending/orders/lists','Admin\Order\OrderController@pending');
+    Route::get('orders/datatable/pendingorderajax','Admin\Order\OrderController@pendingorderajax');
 
     //parcel order
     Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
@@ -410,5 +423,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('store/parcel_states','Admin\Parcel\ParcelStateController@store')->name('parcel_state.store');;
     Route::post('parcel_states/update/{parcel_state_id}','Admin\Parcel\ParcelStateController@update')->name('parcel_state.update');
     Route::delete('parcel_states/delete/{parcel_states_id}','Admin\Parcel\ParcelStateController@destroy')->name('parcel_state.destroy');
+
+
 
 });

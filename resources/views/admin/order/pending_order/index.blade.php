@@ -21,29 +21,22 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="width: 30px;">
                 <div class="flash-message" id="successMessage">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-                    @if(Session::has('alert-' . $msg))
-                    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-                    @endif
+                        @if(Session::has('alert-' . $msg))
+                            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                        @endif
                     @endforeach
                 </div>
             </div>
             <div class="col-sm-5">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Daily Parcel Ordes</li>
+                    <li class="breadcrumb-item active">Pending Ordes</li>
                     <li class="breadcrumb-item active">Lists</li>
                 </ol>
             </div>
-            {{-- <div class="col-md-12">
-                <form method='post' action="{{ route('fatty.admin.backup.customers') }}">
-                    @csrf
-                    <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
-                    <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
-                </form>
-            </div> --}}
         </div>
     </div>
 </section>
@@ -59,11 +52,13 @@
                                 <tbody>
                                     <tr>
                                         <td>Minimum date:</td>
-                                        <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
+                                        <td><input type="text" id="min" name="min"></td>
+                                        {{-- <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td> --}}
                                     </tr>
                                     <tr>
                                         <td>Maximum date:</td>
-                                        <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
+                                        <td><input type="text" id="max" name="max"></td>
+                                        {{-- <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td> --}}
                                     </tr>
                                 </tbody>
                             </table>
@@ -72,15 +67,16 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>OrderStatus</th>
-                                        <th>CustomerType</th>
                                         <th>CustomerOrderId</th>
                                         <th>CustomerBookingId</th>
                                         <th>OrdereDate</th>
                                         <th>OrderTime</th>
                                         <th>CustomerName</th>
+                                        <th>RestaurantName</th>
                                         <th>RiderName</th>
                                         <th>PaymentMethod</th>
                                         <th>TotalPrice</th>
+                                        <th>OrderType</th>
                                         <th>Detail</th>
                                     </tr>
                                 </thead>
@@ -103,7 +99,7 @@
     function( settings, data, dataIndex ) {
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
-        var date = new Date( data[5] );
+        var date = new Date( data[4] );
 
         if (
         ( min === null && max === null ) ||
@@ -133,20 +129,20 @@
             "info": true,
             "autoWidth": true,
             "processing": true,  // Show processing
-            ajax: "/fatty/main/admin/orders/datatable/dailyparcelorderajax",
+            ajax: "/fatty/main/admin/orders/datatable/pendingorderajax",
             columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-            // {data: 'order_status_name', name:'order_status_name'},
-            {data: 'status', name:'status'},
-            {data: 'customer_type', name:'customer_type',className:'text-center'},
-            {data: 'customer_order_id', name:'customer_order_id',className:'text-center'},
-            {data: 'customer_booking_id', name:'customer_booking_id',className:'text-center'},
-            {data: 'ordered_date', name:'ordered_date',className:'text-center'},
-            {data: 'order_time', name:'order_time',className:'text-center'},
+            {data: 'order_status', name:'order_status'},
+            {data: 'customer_order_id', name:'customer_order_id'},
+            {data: 'customer_booking_id', name:'customer_booking_id'},
+            {data: 'ordered_date', name:'ordered_date'},
+            {data: 'order_time', name:'order_time'},
             {data: 'customer_name', name:'customer_name'},
-            {data: 'rider_name', name:'rider_name'},
-            {data: 'payment_method_name', name:'payment_method_name'},
+            {data: 'restaurant_id', name:'restaurant_id'},
+            {data: 'rider_id', name:'rider_id'},
+            {data: 'payment_method_id', name:'payment_method_id'},
             {data: 'bill_total_price', name:'bill_total_price'},
+            {data: 'order_type', name:'order_type'},
             {data: 'action', name: 'action',className:'btn-group', orderable: false, searchable: false},
             ],
             dom: 'lBfrtip',
