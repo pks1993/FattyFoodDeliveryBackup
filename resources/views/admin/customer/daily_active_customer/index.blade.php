@@ -96,11 +96,11 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>No.</th>
-                                        <th class="text-left">Customer Name</th>
+                                        <th class="text-left">CustomerName</th>
                                         <th class="text-left">Customer Phone</th>
-                                        <th class="text-left">Register Date</th>
-                                        <th class="text-left">Order Count</th>
-                                        <th class="text-left">Order Amount</th>
+                                        <th class="text-left">RegisterDate</th>
+                                        <th class="text-left">OrderCount</th>
+                                        <th class="text-left">OrderAmount</th>
                                         {{-- <th>Image</th> --}}
                                         <th>Action</th>
                                     </tr>

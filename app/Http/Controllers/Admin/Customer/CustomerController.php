@@ -61,19 +61,20 @@ class CustomerController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Customer $post){
-            $view = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" title="View Detail" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $view = '<a href="/fatty/main/admin/customers/view/'.$post->customer_id.'" title="View Detail" class="btn btn-info btn-sm mr-2"><i class="fas fa-eye"></i></a>';
             if($post->is_restricted==0){
                 $restricted = '<a href="/fatty/main/admin/customers/restricted/'.$post->customer_id.'" onclick="return confirm(\'Are You Sure Want to Ban Customer\')" title="UnBan Customer" class="btn btn-success btn-sm mr-2"><i class="fas fa-user-check"></i></a>';
             }else{
                 $restricted = '<a href="/fatty/main/admin/customers/restricted/'.$post->customer_id.'" onclick="return confirm(\'Are You Sure Want to UnBan Customer\')" title="Ban Customer" class="btn btn-danger btn-sm mr-2"><i class="fas fa-ban"></i></a>';
             }
+            $edit = '<a href="/fatty/main/admin/customers/edit/'.$post->customer_id.'" onclick="return confirm(\'Are You Sure Want to Edit Customer\')" title="Edit Customer" class="btn btn-primary btn-sm mr-2"><i class="fas fa-edit"></i></a>';
             $delete = '<form action="/fatty/main/admin/customers/delete/'.$post->customer_id.'" title="Delete" method="post" class="d-inline">
             '.csrf_field().'
             '.method_field("DELETE").'
             <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
 
-            $data=$restricted.$view.$delete;
+            $data=$restricted.$view.$edit.$delete;
 
             return $data;
         })
@@ -81,7 +82,17 @@ class CustomerController extends Controller
             $register_date = $item->created_at->format('d M Y');
             return $register_date;
         })
-        ->rawColumns(['action','register_date'])
+        ->addColumn('customer_type', function(Customer $item){
+            if($item->customer_type_id==1){
+                $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
+            }elseif($item->customer_type_id==2){
+                $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+            }else{
+                $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+            }
+            return $type;
+        })
+        ->rawColumns(['action','register_date','customer_type'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -119,7 +130,17 @@ class CustomerController extends Controller
             $register_date = $item->created_at->format('d-M-Y');
             return $register_date;
         })
-        ->rawColumns(['action','register_date'])
+        ->addColumn('customer_type', function(Customer $item){
+            if($item->customer_type_id==1){
+                $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
+            }elseif($item->customer_type_id==2){
+                $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+            }else{
+                $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+            }
+            return $type;
+        })
+        ->rawColumns(['action','register_date','customer_type'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -610,6 +631,8 @@ class CustomerController extends Controller
         }
         $customers->customer_name=$request['customer_name'];
         $customers->customer_phone=$request['customer_phone'];
+        $customers->is_restricted=$request['is_restricted'];
+        $customers->customer_type_id=$request['customer_type_id'];
         $customers->update();
         $request->session()->flash('alert-success', 'successfully update customer!');
         return redirect('fatty/main/admin/customers');
