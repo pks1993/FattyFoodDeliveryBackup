@@ -540,6 +540,7 @@ class RestaurantController extends Controller
         $restaurants->restaurant_user_id=$request['restaurant_user_id'];
         $restaurants->average_time=$request['average_time'];
         $restaurants->rush_hour_time=$request['rush_hour_time'];
+        $restaurants->percentage=$request['percentage'];
         $restaurants->save();
 
         $collect=array([
@@ -754,6 +755,7 @@ class RestaurantController extends Controller
         $restaurants->restaurant_user_id=$restaurants->restaurant_user_id;
         $restaurants->average_time=$request['average_time'];
         $restaurants->rush_hour_time=$request['rush_hour_time'];
+        $restaurants->percentage=$request['percentage'];
 
 
         if(!empty($request['restaurant_image'])){

@@ -33,7 +33,7 @@
                 </ol>
             </div>
             <div class="col-md-12">
-    
+
             </div>
         </div>
     </div>
@@ -118,7 +118,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <label for="state_id" class="col-md-12 col-form-label">{{ __('ပြည်နယ် / တိုင်း') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -127,7 +127,7 @@
                                             @foreach($states as $state)
                                                 <option value="{{ $state->state_id }}">{{ $state->state_name_mm }} ( {{ $state->state_name_en }} )</option>
                                             @endforeach
-                                            
+
                                         </select>
                                         @error('state_id')
                                             <span class="invalid-feedback" role="alert">
@@ -188,7 +188,7 @@
                                 <div class="form-group row">
                                     <label for="average_time" class="col-md-12 col-form-label">{{ __('Average Time') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input type="text" id="average_time" class="form-control @error('average_time') is-invalid @enderror" name="average_time" autocomplete="average_time">{{ old('average_time') }}
+                                        <input type="text" value="0" id="average_time" class="form-control @error('average_time') is-invalid @enderror" name="average_time" autocomplete="average_time">{{ old('average_time') }}
                                         @error('average_time')
                                             <span class="invalid-feedback" role="alert">
                                               <strong>{{ $message }}</strong>
@@ -199,8 +199,19 @@
                                 <div class="form-group row">
                                     <label for="rush_hour_time" class="col-md-12 col-form-label">{{ __('Rush Hour Time') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input type="text" id="rush_hour_time" class="form-control @error('rush_hour_time') is-invalid @enderror" name="rush_hour_time" autocomplete="rush_hour_time">{{ old('rush_hour_time') }}
+                                        <input type="text" value="0" id="rush_hour_time" class="form-control @error('rush_hour_time') is-invalid @enderror" name="rush_hour_time" autocomplete="rush_hour_time">{{ old('rush_hour_time') }}
                                         @error('rush_hour_time')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="percentage" class="col-md-12 col-form-label">{{ __('Percentage') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="number" value="0" id="percentage" class="form-control @error('percentage') is-invalid @enderror" name="percentage" autocomplete="percentage">{{ old('percentage') }}
+                                        @error('percentage')
                                             <span class="invalid-feedback" role="alert">
                                               <strong>{{ $message }}</strong>
                                             </span>
@@ -255,15 +266,15 @@ $(document).ready(function () {
             $.ajax({
                 type: 'get',
                 url: '/fatty/main/admin/restaurants/city/list/'+id,
-                success: function(data){ 
+                success: function(data){
                     $('#city_id').append(`<option value="">မြို့နယ်</option>`);
                     $.each(data, function(index,value) {
                         $('#city_id').append('<option value='+value.city_id+'>'+value.city_name_mm + ' ( '+value.city_name_en+' ) '+'</option>');
                     });
                 }
-            });  
+            });
         }
-    }); 
+    });
     //select2
     $('#city_id').select2();
     $('#state_id').select2();
