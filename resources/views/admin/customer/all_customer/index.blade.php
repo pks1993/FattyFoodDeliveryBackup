@@ -98,6 +98,7 @@
                                         <th class="text-left">RegisterDate</th>
                                         <th class="text-left">OrderCount</th>
                                         <th class="text-left">OrderAmount</th>
+                                        <th class="text-left">CustomerType</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -162,6 +163,7 @@ setTimeout(function() {
             {data: 'register_date', name:'register_date',className: "register_date"},
             {data: 'order_count', name:'order_count',className: "order_count"},
             {data: 'order_amount', name:'order_amount',className: "order_amount"},
+            {data: 'customer_type', name:'customer_type',className: "text-center"},
             {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
             ],
             dom: 'lBfrtip',

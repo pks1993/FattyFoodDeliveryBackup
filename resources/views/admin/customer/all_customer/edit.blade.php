@@ -58,6 +58,50 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label for="is_restricted" class="col-md-12 col-form-label">{{ __('Restricted') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <select type="text" id="is_restricted" class="form-control @error('is_restricted') is-invalid @enderror" name="is_restricted" value="{{ $customers->is_restricted }}" autocomplete="is_restricted" autofocus>
+                                            @if($customers->is_restricted==0)
+                                                <option value="0">Not Ban Customer</option>
+                                                <option value="1">Ban Customer</option>
+                                            @else
+                                            <option value="1">Ban Customer</option>
+                                            <option value="0">Not Ban Customer</option>
+                                            @endif
+                                        </select>
+                                        @error('is_restricted')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="customer_type_id" class="col-md-12 col-form-label">{{ __('Customer Type') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <select type="text" id="customer_type_id" class="form-control @error('customer_type_id') is-invalid @enderror" name="customer_type_id" value="{{ $customers->customer_type_id }}" autocomplete="customer_type_id" autofocus>
+                                            @if($customers->customer_type_id==1)
+                                                <option value="1">Normal</option>
+                                                <option value="2">VIP</option>
+                                                <option value="3">Admin</option>
+                                            @elseif ($customers->customer_type_id==2)
+                                                <option value="2">VIP</option>
+                                                <option value="1">Normal</option>
+                                                <option value="3">Admin</option>
+                                            @else
+                                                <option value="3">Admin</option>
+                                                <option value="1">Normal</option>
+                                                <option value="2">VIP</option>
+                                            @endif
+                                        </select>
+                                        @error('customer_type_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label for="image" class="col-md-12 col-form-label">{{ __('Profile Image') }} </label>
                                     <div class="col-md-6">
                                         <input type="file" style="height: auto;" id="image" class="form-control @error('image') is-invalid @enderror" name="image" autocomplete="image" onchange="loadFileImage(event)">
@@ -80,7 +124,7 @@
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-save"></i> {{ __('Update') }}
+                                            <i class="fa fa-edit"></i> {{ __('Update') }}
                                         </button>
                                         <a href="{{url('fatty/main/admin/customers')}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
@@ -103,6 +147,9 @@
         var image = document.getElementById('image_one');
         image.src = URL.createObjectURL(event.target.files[0]);
     };
+
+    $('#is_restricted').select2();
+    $('#customer_type_id').select2();
 
 </script>
 @endsection

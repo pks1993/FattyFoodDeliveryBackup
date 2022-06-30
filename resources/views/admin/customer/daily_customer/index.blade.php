@@ -86,11 +86,12 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>No.</th>
-                                        <th class="text-left">Customer Name</th>
-                                        <th class="text-left">Customer Phone</th>
-                                        <th class="text-left">Register Date</th>
+                                        <th class="text-left">CustomerName</th>
+                                        <th class="text-left">CustomerPhone</th>
+                                        <th class="text-left">RegisterDate</th>
                                         <th class="text-left">Order Count</th>
-                                        <th class="text-left">Order Amount</th>
+                                        <th class="text-left">OrderAmount</th>
+                                        <th class="text-left">CustomerType</th>
                                         {{-- <th>Image</th> --}}
                                         <th>Action</th>
                                     </tr>
@@ -150,7 +151,8 @@
             {data: 'register_date', name:'register_date',className: "register_date"},
             {data: 'order_count', name:'order_count',className: "order_count"},
             {data: 'order_amount', name:'order_amount',className: "order_amount"},
-            {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
+            {data: 'customer_type', name:'customer_type',className: "text-center"},
+            {data: 'action', name: 'action',className:'btn-group', orderable: false, searchable: false},
             ],
             dom: 'lBfrtip',
             buttons: [
