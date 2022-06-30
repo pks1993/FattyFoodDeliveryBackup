@@ -19,7 +19,7 @@
                 <div class="col-sm-5">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{url('fatty/main/admin/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Order Assign</li>
+                        <li class="breadcrumb-item active">Pending Orders Assign</li>
                         <li class="breadcrumb-item active">Lists</li>
                     </ol>
                 </div>
@@ -40,7 +40,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-6">
-                                <a href="{{url('fatty/main/admin/foods/orders/lists')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                <a href="{{url('fatty/main/admin/pending/orders/lists')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
                             </div>
                             <div class="col-md-6" style="text-align: right;">
                                 <h4><b>{{ "Orders Information" }}</b></h4>
@@ -96,7 +96,7 @@
 
                                             <!-- Modal -->
                                             <div class="modal fade" id="rider_id{{ $order->rider_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <form method="POST" action="{{ route('fatty.admin.food_orders.assign.notification',$order->rider_id) }}" autocomplete="off" enctype="multipart/form-data">
+                                                <form method="POST" action="{{ route('fatty.admin.food_orders.pending_assign.notification',$order->rider_id) }}" autocomplete="off" enctype="multipart/form-data">
                                                 @csrf
                                               <div class="modal-dialog" role="document">
                                                 <div class="modal-content">

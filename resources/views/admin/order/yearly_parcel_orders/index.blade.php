@@ -74,6 +74,8 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
+                                        <th>Status</th>
+                                        <th>CustomerType</th>
                                         <th>CustomerOrderId</th>
                                         <th>CustomerBookingId</th>
                                         <th>OrdereDate</th>
@@ -219,9 +221,11 @@
             ajax: "/fatty/main/admin/orders/datatable/yearlyparcelorderajax",
             columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+            {data: 'status', name:'status'},
+            {data: 'customer_type', name:'customer_type',className:'text-center'},
+            {data: 'ordered_date', name:'ordered_date'},
             {data: 'customer_order_id', name:'customer_order_id'},
             {data: 'customer_booking_id', name:'customer_booking_id'},
-            {data: 'ordered_date', name:'ordered_date'},
             {data: 'order_time', name:'order_time'},
             {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_name', name:'customer_name'},

@@ -76,7 +76,7 @@ class CustomerOrder extends Model
     }
     public function to_parcel_region()
     {
-        return $this->belongsTo('App\Models\City\ParcelCity','from_parcel_city_id','parcel_city_id');
+        return $this->belongsTo('App\Models\City\ParcelCity','to_parcel_city_id','parcel_city_id');
     }
 
 }

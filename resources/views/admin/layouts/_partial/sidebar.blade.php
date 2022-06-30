@@ -34,8 +34,36 @@
                         <div style="width: 15%;">
                             <i class="fa fa-list" style="margin-right: 5px" aria-hidden="true"></i>
                         </div>
-                        <div style="width: 50%;">
+                        <div style="width: 20%;">
                             <p>Order Assign</p>
+                        </div>
+                        <div style="width: 45%;">
+                            <span class="label label-primary pull-right" style="background-color: red !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
+                            <?php
+                                $count=DB::select("select * from customer_orders where order_status_id not in ('2','4','6','10','12','13','14','17','16','7','8','9','15') ");
+                                echo count($count);
+                            ?>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="{{url('fatty/main/admin/pending/orders/lists')}}" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-list" style="margin-right: 5px" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 20%;">
+                            <p>Pending Order</p>
+                        </div>
+                        <div style="width: 45%;">
+                            <span class="label label-primary pull-right" style="background-color: red !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
+                            <?php
+                                $count=DB::select('select * from customer_orders where order_status_id=8 ');
+                                echo count($count);
+                            ?>
+                            </span>
                         </div>
                     </div>
                 </a>
@@ -46,10 +74,18 @@
                         <div style="width: 15%;">
                             <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                         </div>
-                        <div style="width: 50%;">
+                        <div style="width: 35%;">
                             <p>Food Orders</p>
                         </div>
-                        <div style="width: 35%;text-align: right;">
+                        <div style="width: 30%;">
+                            <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
+                            <?php
+                                $count=DB::select("select * from customer_orders where order_type='food'");
+                                echo count($count);
+                            ?>
+                            </span>
+                        </div>
+                        <div style="width: 20%;text-align: right;">
                             <i class="right fas fa-angle-left"></i>
                         </div>
                     </div>
@@ -59,6 +95,12 @@
                         <a href="{{url('fatty/main/admin/daily_food_orders')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Daily Food Orders</p>
+                            <!-- <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
+                                <?php
+                                    $count=DB::select("select * from customer_orders where order_type='food' and Date(created_at)=Date(now())");
+                                    echo count($count);
+                                ?>
+                            </span> -->
                         </a>
                     </li>
                     <li class="nav-item">
@@ -87,10 +129,18 @@
                         <div style="width: 15%;">
                             <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                         </div>
-                        <div style="width: 50%;">
+                        <div style="width: 35%;">
                             <p>Parcel Orders</p>
                         </div>
-                        <div style="width: 35%;text-align: right;">
+                        <div style="width: 30%;">
+                            <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
+                            <?php
+                                $count=DB::select("select * from customer_orders where order_type='parcel'");
+                                echo count($count);
+                            ?>
+                            </span>
+                        </div>
+                        <div style="width: 20%;text-align: right;">
                             <i class="right fas fa-angle-left"></i>
                         </div>
                     </div>

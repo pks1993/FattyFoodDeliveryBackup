@@ -13,26 +13,26 @@
             <label>Order Id:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->order_id }}" readonly>
         </div>
-        
+
         <div class="col-md-6">
             <label>Delivery Status:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->order_status->order_status_name }}" readonly>
         </div>
     </div>
-    
+
     <div class="row mb-3">
         <div class="col-md-6">
             <label>Sender Name:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->from_sender_name }}" readonly>
         </div>
-        
+
         <div class="col-md-6">
             <label>Sender Phone:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->from_sender_phone }}" readonly>
         </div>
     </div>
-    
-    
+
+
     <div class="row mb-3">
         <div class="col-md-12">
             <label>Pickup Adress:</label>
@@ -45,21 +45,21 @@
             <label>Recipent Name:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->to_recipent_name }}" readonly>
         </div>
-        
+
         <div class="col-md-6">
             <label>Recipent Phone:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->to_recipent_phone }}" readonly>
         </div>
     </div>
-    
-    
+
+
     <div class="row mb-3">
         <div class="col-md-12">
             <label>Recipent Adress:</label>
             <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->to_drop_address }}</textarea>
         </div>
     </div>
-    
+
     <div class="form-group">
         <label>Parcel images:</label><br>
         @if($parcel_order->parcel_images->count() !== 0)
@@ -68,7 +68,7 @@
         @endforeach
         @else
         <img src="../../../../../image/available.png" class="img-thumbnail" width="200" height="200">
-        @endif 
+        @endif
     </div>
 
     <div class="row mb-3">
@@ -95,7 +95,7 @@
     <div class="row mb-3">
         <div class="col-md-12">
             <label>Bill Detail:</label><br>
-            <table> 
+            <table>
                 <tr style="border-bottom: 1px solid #0000002d;">
                     <td>Delivery Fee</td>
                     <td></td>
@@ -115,7 +115,7 @@
      <div class="row mb-3">
         <div class="col-md-12">
             <label>Order Description:</label>
-            <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->order_description }}</textarea>
+            <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->parcel_order_note }}</textarea>
         </div>
     </div>
 
@@ -134,6 +134,6 @@
             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
         </form> --}}
     </div>
-    
+
 </div>
-@endsection 
+@endsection

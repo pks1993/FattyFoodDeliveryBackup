@@ -828,58 +828,62 @@ class ParcelOrderApiController extends Controller
         if(!empty($parcel_order)){
             $customers=Customer::where('customer_id',$parcel_order->customer_id)->first();
 
-            if($distances <= 2) {
-                $rider_delivery_fee=650;
-            }elseif($distances > 2 && $distances < 3.5){
-                $rider_delivery_fee=750;
-            }elseif($distances == 3.5){
-                $rider_delivery_fee=850;
-            }elseif($distances > 3.5 && $distances < 4.5){
-                $rider_delivery_fee=950;
-            }elseif($distances == 4.5){
-                $rider_delivery_fee=1050;
-            }elseif($distances > 4.5 && $distances < 6){
-                $rider_delivery_fee=1150;
-            }elseif($distances == 6){
-                $rider_delivery_fee=1250;
-            }elseif($distances > 6 && $distances < 7.5){
-                $rider_delivery_fee=1350;
-            }elseif($distances==7.5){
-                $rider_delivery_fee=1450;
-            }elseif($distances > 7.5 && $distances < 9){
-                $rider_delivery_fee=1550;
-            }elseif($distances==9){
-                $rider_delivery_fee=1650;
-            }elseif($distances > 9 && $distances < 10.5){
-                $rider_delivery_fee=1750;
-            }elseif($distances==10.5){
-                $rider_delivery_fee=1850;
-            }elseif($distances > 10.5 && $distances < 12){
-                $rider_delivery_fee=1950;
-            }elseif($distances==12){
-                $rider_delivery_fee=2050;
-            }elseif($distances > 12 && $distances < 13.5){
-                $rider_delivery_fee=2150;
-            }elseif($distances==13.5){
-                $rider_delivery_fee=2250;
-            }elseif($distances > 13.5 && $distances < 15){
-                $rider_delivery_fee=2350;
-            }elseif($distances==15){
-                $rider_delivery_fee=2450;
-            }elseif($distances > 15 && $distances < 16.5){
-                $rider_delivery_fee=2550;
-            }elseif($distances==16.5){
-                $rider_delivery_fee=2650;
-            }elseif($distances > 16.5 && $distances < 18){
-                $rider_delivery_fee=2750;
-            }elseif($distances==18){
-                $rider_delivery_fee=2850;
-            }elseif($distances > 18 && $distances < 19.5){
-                $rider_delivery_fee=2950;
-            }elseif($distances >= 19.5){
-                $rider_delivery_fee=3050;
+            if($customers->customer_type_id==3){
+                $rider_delivery_fee=$customer_delivery_fee/2;
             }else{
-                $rider_delivery_fee=3050;
+                if($distances <= 2) {
+                    $rider_delivery_fee=650;
+                }elseif($distances > 2 && $distances < 3.5){
+                    $rider_delivery_fee=750;
+                }elseif($distances == 3.5){
+                    $rider_delivery_fee=850;
+                }elseif($distances > 3.5 && $distances < 4.5){
+                    $rider_delivery_fee=950;
+                }elseif($distances == 4.5){
+                    $rider_delivery_fee=1050;
+                }elseif($distances > 4.5 && $distances < 6){
+                    $rider_delivery_fee=1150;
+                }elseif($distances == 6){
+                    $rider_delivery_fee=1250;
+                }elseif($distances > 6 && $distances < 7.5){
+                    $rider_delivery_fee=1350;
+                }elseif($distances==7.5){
+                    $rider_delivery_fee=1450;
+                }elseif($distances > 7.5 && $distances < 9){
+                    $rider_delivery_fee=1550;
+                }elseif($distances==9){
+                    $rider_delivery_fee=1650;
+                }elseif($distances > 9 && $distances < 10.5){
+                    $rider_delivery_fee=1750;
+                }elseif($distances==10.5){
+                    $rider_delivery_fee=1850;
+                }elseif($distances > 10.5 && $distances < 12){
+                    $rider_delivery_fee=1950;
+                }elseif($distances==12){
+                    $rider_delivery_fee=2050;
+                }elseif($distances > 12 && $distances < 13.5){
+                    $rider_delivery_fee=2150;
+                }elseif($distances==13.5){
+                    $rider_delivery_fee=2250;
+                }elseif($distances > 13.5 && $distances < 15){
+                    $rider_delivery_fee=2350;
+                }elseif($distances==15){
+                    $rider_delivery_fee=2450;
+                }elseif($distances > 15 && $distances < 16.5){
+                    $rider_delivery_fee=2550;
+                }elseif($distances==16.5){
+                    $rider_delivery_fee=2650;
+                }elseif($distances > 16.5 && $distances < 18){
+                    $rider_delivery_fee=2750;
+                }elseif($distances==18){
+                    $rider_delivery_fee=2850;
+                }elseif($distances > 18 && $distances < 19.5){
+                    $rider_delivery_fee=2950;
+                }elseif($distances >= 19.5){
+                    $rider_delivery_fee=3050;
+                }else{
+                    $rider_delivery_fee=3050;
+                }
             }
 
             $parcel_order->customer_id=$parcel_order->customer_id;
