@@ -106,6 +106,7 @@
                                             <th>CityName</th>
                                             <th>StateName</th>
                                             <th>UserPhone</th>
+                                            <th>Percentage</th>
                                             <th>UserPassword</th>
                                             <th>Foods</th>
                                             <th>Menus</th>
@@ -181,6 +182,7 @@
                     {data: 'city_name_mm', name:'city_name_mm',className: "text-center"},
                     {data: 'state_name_mm', name:'state_name_mm',className: "text-center"},
                     {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "restaurant_user_phone"},
+                    {data: 'percentage', name: 'percentage',className:'text-center', orderable: false, searchable: false},
                     {data: 'restaurant_user_password', name:'restaurant_user_password',className: "restaurant_user_password"},
                     {data: 'restaurant_food', name:'restaurant_food',orderable: false,searchable:false,className: "text-center"},
                     {data: 'restaurant_menu', name:'restaurant_menu',orderable: false,searchable:false,className: "text-center"},

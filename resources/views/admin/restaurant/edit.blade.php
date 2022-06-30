@@ -33,7 +33,7 @@
                 </ol>
             </div>
             <div class="col-md-12">
-    
+
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
                         <div class="card-body">
                             <form method="POST" action="{{ route('fatty.admin.restaurants.update',$restaurants->restaurant_id) }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
-                                
+
                                 <div class="form-group row">
                                     <label for="restaurant_name_mm" class="col-md-12 col-form-label">{{ __('Restaurant Name Myanmar') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -107,7 +107,7 @@
                                             @enderror
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <label for="state_id" class="col-md-12 col-form-label">{{ __('ပြည်နယ် / တိုင်း') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -116,7 +116,7 @@
                                             @foreach($states as $state)
                                                 <option value="{{ $state->state_id }}">{{ $state->state_name_mm }} ( {{ $state->state_name_en }} )</option>
                                             @endforeach
-                                            
+
                                         </select>
                                         @error('state_id')
                                             <span class="invalid-feedback" role="alert">
@@ -176,7 +176,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <label for="address" class="col-md-12 col-form-label">{{ __('Address') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -213,6 +213,18 @@
                                 </div>
 
                                 <div class="form-group row">
+                                    <label for="percentage" class="col-md-12 col-form-label">{{ __('Percentage') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="number" value="{{ $restaurants->percentage }}" id="percentage" class="form-control @error('percentage') is-invalid @enderror" name="percentage" autocomplete="percentage">{{ old('percentage') }}
+                                        @error('percentage')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
                                     <label for="restaurant_image" class="col-md-12 col-form-label">{{ __('Restaurant Image') }} </label>
                                     <div class="col-md-6">
                                         <input type="file" style="height: auto;" id="restaurant_image" class="form-control @error('restaurant_image') is-invalid @enderror" name="restaurant_image" autocomplete="restaurant_image" onchange="loadFileImage(event)">
@@ -236,7 +248,7 @@
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Are you sure create?')">
-                                            <i class="fa fa-save"></i> {{ __('Create') }}
+                                            <i class="fa fa-edit"></i> {{ __('Edit') }}
                                         </button>
                                         <a href="{{url('fatty/main/admin/restaurants')}}" class="btn btn-secondary btn-sm" onclick="return confirm('Are you sure cancel?')">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
@@ -263,15 +275,15 @@ $(document).ready(function () {
             $.ajax({
                 type: 'get',
                 url: '/fatty/main/admin/restaurants/city/list/'+id,
-                success: function(data){ 
+                success: function(data){
                     $('#city_id').append(`<option value="">မြို့နယ်</option>`);
                     $.each(data, function(index,value) {
                         $('#city_id').append('<option value='+value.city_id+'>'+value.city_name_mm + ' ( '+value.city_name_en+' ) '+'</option>');
                     });
                 }
-            });  
+            });
         }
-    }); 
+    });
     //select2
     $('#city_id').select2();
     $('#state_id').select2();
