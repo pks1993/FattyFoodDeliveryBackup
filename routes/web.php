@@ -407,6 +407,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     //Pending Orders
     Route::get('pending/orders/lists','Admin\Order\OrderController@pending');
     Route::get('orders/datatable/pendingorderajax','Admin\Order\OrderController@pendingorderajax');
+    Route::get('pending/orders/define/{order_id}','Admin\Order\OrderController@pendingorderdefine')->name('pending_order.update');
+
 
     //parcel order
     Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');

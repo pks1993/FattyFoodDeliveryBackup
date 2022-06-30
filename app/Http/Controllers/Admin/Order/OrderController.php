@@ -151,7 +151,9 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(CustomerOrder $post){
-            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $view = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+            $pending = '<a href="/fatty/main/admin/pending/orders/define/'.$post->order_id.'" onclick="return confirm(\'Are You Sure Want to Pending Order?\')" class="btn btn-primary btn-sm mr-2"><i class="fas fa-plus-circle"></i></a>';
+            $btn=$view.$pending;
 
             return $btn;
         })
@@ -567,6 +569,12 @@ class OrderController extends Controller
         // $rider_all=Rider::where('is_order',0)->get();
         $rider_all=Rider::orderBy('is_order')->get();
         return view('admin.order.pending_order.assign',compact('orders','rider_all','order_id'));
+    }
+    public function pendingorderdefine(Request $request,$id)
+    {
+        CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
+        $request->session()->flash('alert-success', 'successfully Pending Order!');
+        return redirect()->back();
     }
 
     public function assign_noti(Request $request,$id)

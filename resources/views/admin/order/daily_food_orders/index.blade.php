@@ -146,7 +146,7 @@
             {data: 'rider_name', name:'rider_name'},
             {data: 'payment_method_name', name:'payment_method_name'},
             {data: 'bill_total_price', name:'bill_total_price'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
+            {data: 'action', name: 'action', orderable: false, searchable: false,className:'btn-group'},
             ],
             dom: 'lBfrtip',
             buttons: [
