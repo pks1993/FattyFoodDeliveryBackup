@@ -137,6 +137,7 @@ class ParcelStateController extends Controller
             // ->having('distance','<',2.1)
             ->groupBy("rider_id")
             ->where('is_order','0')
+            ->where('rider_fcm_token','!=',null)
             ->pluck('rider_fcm_token')->toArray();
         }else{
             $riderFcmToken=Rider::where('rider_id',$rider_id)->pluck('rider_fcm_token')->toArray();
