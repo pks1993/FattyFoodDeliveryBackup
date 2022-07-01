@@ -1827,6 +1827,12 @@ class OrderApiController extends Controller
         }else{
             $order_status_id="18";
         }
+        $customer_check=Customer::where('customer_id',$customer_id)->first();
+        if($customer_check->customer_type_id==3){
+            $is_admin_force_order=1;
+        }else{
+            $is_admin_force_order=0;
+        }
 
 
         $theta = $customer_address_longitude - $restaurant_address_longitude;
@@ -1931,6 +1937,7 @@ class OrderApiController extends Controller
         $customer_orders->order_status_id=$order_status_id;
         $customer_orders->order_time=$order_time;
         $customer_orders->order_type="food";
+        $customer_orders->is_admin_force_order=$is_admin_force_order;
         $customer_orders->save();
 
         //start History
@@ -2049,7 +2056,7 @@ class OrderApiController extends Controller
             }
             array_push($data,$check);
         }
-        $customer_check=Customer::where('customer_id',$customer_id)->first();
+
 
         if($check){
             if($check->payment_method_id=="2"){
