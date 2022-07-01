@@ -122,6 +122,7 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
         $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        $parcel_orders->is_admin_force_order=0;
         $parcel_orders->update();
 
         $from_pickup_latitude=$parcel_orders->from_pickup_latitude;
@@ -134,7 +135,7 @@ class ParcelStateController extends Controller
             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
             + sin(radians(" .$from_pickup_latitude. "))
             * sin(radians(riders.rider_latitude))) AS distance"))
-            // ->having('distance','<',2.1)
+            ->having('distance','<',5)
             ->groupBy("rider_id")
             ->where('is_order','0')
             ->where('rider_fcm_token','!=',null)

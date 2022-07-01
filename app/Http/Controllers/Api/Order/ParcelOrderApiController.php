@@ -119,6 +119,12 @@ class ParcelOrderApiController extends Controller
 
         $customers=Customer::where('customer_id',$customer_id)->first();
 
+        if($customers->customer_type_id==3){
+            $is_admin_force_order=1;
+        }else{
+            $is_admin_force_order=0;
+        }
+
         $theta = $from_pickup_longitude - $to_drop_longitude;
         $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
         $dist = acos($dist);
@@ -232,6 +238,7 @@ class ParcelOrderApiController extends Controller
             "state_id"=>$state_id,
             "from_parcel_city_id"=>$from_parcel_city_id,
             "to_parcel_city_id"=>$to_parcel_city_id,
+            "is_admin_force_order"=>$is_admin_force_order,
         ]);
 
         //start customer order
