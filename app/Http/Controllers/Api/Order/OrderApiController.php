@@ -971,60 +971,61 @@ class OrderApiController extends Controller
                         }
                     }
 
+                    if($customer_check->customer_type_id!=3){
+                        //rider
+                        $riders=DB::table("riders")->select("riders.rider_id"
+                        ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
+                        + sin(radians(" .$customer_address_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        // ->having('distance', '<', $distance)
+                        ->having('distance','<',2.1)
+                        ->groupBy("riders.rider_id")
+                        ->where('is_order','0')
+                        ->get();
 
-                    //rider
-                    $riders=DB::table("riders")->select("riders.rider_id"
-                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
-                    * cos(radians(riders.rider_latitude))
-                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
-                    + sin(radians(" .$customer_address_latitude. "))
-                    * sin(radians(riders.rider_latitude))) AS distance"))
-                    // ->having('distance', '<', $distance)
-                    ->having('distance','<',2.1)
-                    ->groupBy("riders.rider_id")
-                    ->where('is_order','0')
-                    ->get();
-
-                    foreach($riders as $rider){
-                        $rider_id[]=$rider->rider_id;
-                    }
-                    $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-
-                    $rider_fcm_token=array();
-                    foreach($riders_check as $rid){
-                        if($rid->rider_fcm_token){
-                            array_push($rider_fcm_token, $rid->rider_fcm_token);
+                        foreach($riders as $rider){
+                            $rider_id[]=$rider->rider_id;
                         }
-                    }
+                        $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
 
-                    $rider_client = new Client();
-                        $rider_token=$rider_fcm_token;
-                        $orderId=(string)$customer_orders->order_id;
-                        $orderstatusId=(string)$customer_orders->order_status_id;
-                        $orderType=(string)$customer_orders->order_type;
-                        $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                        if($rider_token){
-                            try{
-                                $request=$rider_client->post($url,[
-                                    'json' => [
-                                        "to"=>$rider_token,
-                                        "data"=> [
-                                            "type"=> "new_order",
-                                            "order_id"=>$orderId,
-                                            "order_status_id"=>$orderstatusId,
-                                            "order_type"=>$orderType,
-                                            "title_mm"=> "Order Incomed",
-                                            "body_mm"=> "One new order is incomed! Please check it!",
-                                            "title_en"=> "Order Incomed",
-                                            "body_en"=> "One new order is incomed! Please check it!",
-                                            "title_ch"=> "订单通知",
-                                            "body_ch"=> "有新订单!请查看！"
-                                        ],
-                                    ],
-                                ]);
-                            }catch(ClientException $e){
+                        $rider_fcm_token=array();
+                        foreach($riders_check as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($rider_fcm_token, $rid->rider_fcm_token);
                             }
                         }
+
+                        $rider_client = new Client();
+                            $rider_token=$rider_fcm_token;
+                            $orderId=(string)$customer_orders->order_id;
+                            $orderstatusId=(string)$customer_orders->order_status_id;
+                            $orderType=(string)$customer_orders->order_type;
+                            $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            if($rider_token){
+                                try{
+                                    $request=$rider_client->post($url,[
+                                        'json' => [
+                                            "to"=>$rider_token,
+                                            "data"=> [
+                                                "type"=> "new_order",
+                                                "order_id"=>$orderId,
+                                                "order_status_id"=>$orderstatusId,
+                                                "order_type"=>$orderType,
+                                                "title_mm"=> "Order Incomed",
+                                                "body_mm"=> "One new order is incomed! Please check it!",
+                                                "title_en"=> "Order Incomed",
+                                                "body_en"=> "One new order is incomed! Please check it!",
+                                                "title_ch"=> "订单通知",
+                                                "body_ch"=> "有新订单!请查看！"
+                                            ],
+                                        ],
+                                    ]);
+                                }catch(ClientException $e){
+                                }
+                            }
+                    }
 
 
                     // try {
