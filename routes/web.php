@@ -389,8 +389,12 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('parcel_orders/view/{order_id}','Admin\Order\OrderController@parcel_show');
 
     //parcel edit
-    Route::get('parcel_orders/edit/{order_id}','Admin\Parcel\ParcelStateController@parcel_edit')->name('parcel.edit');;
-    Route::post('parcel_orders/upate/{order_id}','Admin\Parcel\ParcelStateController@parcel_update')->name('parcel_order.update');;
+    Route::get('parcel_orders/edit/{order_id}','Admin\Parcel\ParcelStateController@parcel_edit')->name('parcel.edit');
+    Route::post('parcel_orders/update/{order_id}','Admin\Parcel\ParcelStateController@parcel_update')->name('parcel_order.update');
+
+    //parcel create
+    Route::get('parcel_orders/create/{order_id}','Admin\Parcel\ParcelStateController@parcel_create')->name('parcel.create');
+    Route::post('parcel_orders/create/{order_id}','Admin\Parcel\ParcelStateController@parcel_create')->name('parcel_order.update');
 
     //food order
     Route::get('daily_food_orders','Admin\Order\OrderController@dailyfoodorderindex');
