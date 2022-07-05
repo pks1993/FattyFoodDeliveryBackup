@@ -124,7 +124,8 @@
         </li>
     </ul>
 
-    <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
+    {{-- <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
+    <form action="" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
         @csrf
         <div class="container-fluid">
             <div class="row p-1">
@@ -231,7 +232,7 @@
                     @enderror
                 </div>
                 <div class="form-group col-12">
-                    <button type="submit" class="btn btn-sm btn-block" style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
+                    <button type="submit" class="btn btn-sm btn-block" disabled style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
                     {{ __('Upload') }}
                     </button>
                 </div>
