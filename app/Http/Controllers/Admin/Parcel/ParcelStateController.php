@@ -89,20 +89,16 @@ class ParcelStateController extends Controller
 
     public function admin_parcel_store(Request $request)
     {
-        $from_parcel_city=$request['from_parcel_city_id'];
-        $data=explode(',',$from_parcel_city);
-        $from_parcel_city_id=$data[0];
-        $from_parcel_city_latitude=$data[1];
-        $from_parcel_city_longitude=$data[2];
+        $from_parcel_city_id=$request['from_parcel_city_id'];
+        $from_parcel_city_latitude=$request['from_lat'];
+        $from_parcel_city_longitude=$request['from_lon'];
 
         $from_sender_phone=$request['from_sender_phone'];
         $from_pickup_note=$request['from_pickup_note'];
 
-        $to_parcel_city=$request['to_parcel_city_id'];
-        $data1=explode(',',$to_parcel_city);
-        $to_parcel_city_id=$data1[0];
-        $to_parcel_city_latitude=$data1[1];
-        $to_parcel_city_longitude=$data1[2];
+        $to_parcel_city_id=$request['to_parcel_city_id'];
+        $to_parcel_city_latitude=$request['to_lat'];
+        $to_parcel_city_longitude=$request['to_lon'];
 
         $to_recipent_phone=$request['to_recipent_phone'];
         $to_drop_note=$request['to_drop_note'];
