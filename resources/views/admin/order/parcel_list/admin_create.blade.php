@@ -73,6 +73,11 @@
         .tab-pane.active{
             display : block;
         }
+        .btn-rider {
+            color: #fff;
+            background-color: #6c757d;
+            box-shadow: none;
+        }
 
     </style>
 </head>
@@ -82,11 +87,11 @@
     <div class="row p-1">
         <div class="form-group col-12">
             <a class="btn btn-block text-white p-1" style="background-color: #28a745;color:white;font-size:20px;text-align:left" onclick="from_region()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> From</a>
-            <div id="from_region" style="display: block">
+            {{-- <div id="from_region" style="display: block"> --}}
                 @foreach ($from_cities as $item)
-                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion(this)"> {{ $item->city_name_mm }} </a>
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion1(`{{$item->parcel_city_id}}`,`{{$item->city_name_mm}}`,`{{ $item->latitude }}`,`{{ $item->longitude }}`)"> {{ $item->city_name_mm }} </a>
                 @endforeach
-            </div>
+            {{-- </div> --}}
         </div>
     </div>
 </div>
@@ -94,23 +99,37 @@
     <div class="row p-1">
         <div class="form-group col-12">
             <a class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:20px;text-align:left" onclick="to_region()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> To</a>
-            <div id="to_region" style="display: block">
+            {{-- <div id="to_region" style="display: block"> --}}
                 @foreach ($to_cities as $item)
-                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion(this)"> {{ $item->city_name_mm }} </a>
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getToRegion1(`{{$item->parcel_city_id}}`,`{{$item->city_name_mm}}`,`{{ $item->latitude }}`,`{{ $item->longitude }}`)"> {{ $item->city_name_mm }} </a>
                 @endforeach
-            </div>
+            {{-- </div> --}}
         </div>
     </div>
 </div>
 <div class="container-fluid" id="driver" style="display: none">
     <div class="row p-1">
         <div class="form-group col-12">
-            <a class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:20px;text-align:left" onclick="showDriver()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> Driver</a>
-            <div id="driver" style="display: block">
+            <a class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:17px;text-align:left" onclick="showDriver()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> Driver</a>
+            {{-- <div id="driver" style="display: block"> --}}
                 @foreach ($riders as $item)
-                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion(this)"> {{ $item->rider_user_name }} </a>
+                    <a class="btn btn-block btn-rider text-white p-2 mt-2" style="background-color:rgb(240, 240, 240);color:black !important;font-size: 17px;text-align:left" onclick="getRider(`{{$item->rider_id}}`,`{{$item->rider_user_name}}`)">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                {{ $item->rider_user_name }} <sup><span class="text-danger font-weight-bold">
+                                    <?php
+                                    $count=DB::select("select * from customer_orders where rider_id='$item->rider_id' and Date(created_at)=Date(now())");
+                                    echo count($count);
+                                    ?>
+                                </span></sup>
+                            </div>
+                            <div class="col-6 text-right">
+                                <i class="fa fa-dot-circle text-success"></i>Test Block
+                            </div>
+                        </div>
+                    </a>
                 @endforeach
-            </div>
+            {{-- </div> --}}
         </div>
     </div>
 </div>
@@ -124,8 +143,8 @@
         </li>
     </ul>
 
-    {{-- <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
-    <form action="" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
+    <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
+    {{-- <form action="" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
         @csrf
         <div class="container-fluid">
             <div class="row p-1">
@@ -147,7 +166,10 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror --}}
-                            <a class="btn btn-block text-white p-2" style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">From</a>
+                            <input class="btn btn-block text-white p-2" id="fromRegion" value="From"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
+                            <input type="hidden" class="btn btn-block" name="from_lat" id="from_lat" value="0">
+                            <input type="hidden" class="btn btn-block" name="from_lon" id="from_lon" value="0">
+                            <input type="hidden" class="btn btn-block" name="from_parcel_city_id" id="from_parcel_city_id" value="0">
                         </div>
                         <div class="form-group col-12">
                             <input id="from_sender_phone" type="text" style="font-size: 15px;height:40px;" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" autocomplete="category_image" autofocus placeholder="From Phone">
@@ -181,7 +203,11 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror --}}
-                            <a class="btn btn-block text-white p-2" style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">To</a>
+                            {{-- <a class="btn btn-block text-white p-2" id="toRegion" style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">To</a> --}}
+                            <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="To"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
+                            <input type="hidden" class="btn btn-block" name="to_lat" id="to_lat" value="0">
+                            <input type="hidden" class="btn btn-block" name="to_lon" id="to_lon" value="0">
+                            <input type="hidden" class="btn btn-block" name="to_parcel_city_id" id="to_parcel_city_id" value="0">
                         </div>
                         <div class="form-group col-12">
                             <input id="to_sender_phone" style="font-size: 15px;height:40px;" type="text" class="form-control @error('to_sender_phone') is-invalid @enderror" name="to_sender_phone" autocomplete="category_image" autofocus placeholder="To Phone">
@@ -221,7 +247,9 @@
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror --}}
-                    <a class="btn btn-block border p-2" style="font-size:20px;text-align:center" onclick="showDriver()"> Driver</a>
+                    {{-- <a class="btn btn-block border p-2" id="driverData" style="font-size:20px;text-align:center" onclick="showDriver()"> Driver</a> --}}
+                    <input class="btn btn-block border p-2" id="driverData" value="Driver"  style="font-size:20px;text-align:center" onclick="showDriver()">
+                    <input type="hidden" class="btn btn-block" name="rider_id" id="rider_id" value="0">
                 </div>
                 <div class="form-group col-12">
                     <textarea id="parcel_order_note" style="font-size: 15px;height:100px;" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:100px;" name="parcel_order_note" autocomplete="category_image" autofocus placeholder="Remark"></textarea>
@@ -232,7 +260,7 @@
                     @enderror
                 </div>
                 <div class="form-group col-12">
-                    <button type="submit" class="btn btn-sm btn-block" disabled style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
+                    <button type="submit" class="btn btn-sm btn-block" style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
                     {{ __('Upload') }}
                     </button>
                 </div>
@@ -241,65 +269,134 @@
     </form>
 </div>
 <script>
-    function showDriver(){
-      var x = document.getElementById("driver");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-        document.getElementById("order_form").style.display = "none";
-      } else {
-        x.style.display = "none";
-        document.getElementById("order_form").style.display = "block";
-      }
-    }
-    function from_region(){
-      var x = document.getElementById("from_region");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-        document.getElementById("order_form").style.display = "none";
-      } else {
-        x.style.display = "none";
-        document.getElementById("order_form").style.display = "block";
-      }
-    }
-    function to_region(){
-      var x = document.getElementById("to_region");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-        document.getElementById("order_form").style.display = "none";
-      } else {
-        x.style.display = "none";
-        document.getElementById("order_form").style.display = "block";
-      }
+
+    function getRider(id,name){
+        var x = document.getElementById("driver");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            document.getElementById("order_form").style.display = "none";
+        } else {
+            x.style.display = "none";
+            document.getElementById("order_form").style.display = "block";
+            document.getElementById("driverData").value = name;
+            document.getElementById("rider_id").value = id;
+        }
     }
 
-    // function getFromRegion(this){
-    //     var aa=this.value;
-    //     console.log(aa);
+    function getFromRegion1(id,name,lat,lon){
+        var x = document.getElementById("from_region");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            document.getElementById("order_form").style.display = "none";
+        } else {
+            x.style.display = "none";
+            document.getElementById("order_form").style.display = "block";
+            document.getElementById("fromRegion").value = name;
+            document.getElementById("from_lat").value = lat;
+            document.getElementById("from_lon").value = lon;
+            document.getElementById("from_parcel_city_id").value = id;
+        }
+        var lat1=document.getElementById("from_lat").value;
+        var lon1=document.getElementById("from_lon").value;
+        var lat2=document.getElementById("to_lat").value;;
+        var lon2=document.getElementById("to_lon").value;;
+        var distances=(calcCrow(lat1,lon1,lat2,lon2).toFixed(1));
+            if(distances <= 2) {
+                var customer_delivery_fee=1200;
+            }else if(distances > 2 && distances < 3.5){
+                var customer_delivery_fee=1500;
+            }else if(distances == 3.5){
+                var customer_delivery_fee=1800;
+            }else if(distances > 3.5 && distances < 4.5){
+                var customer_delivery_fee=2100;
+            }else if(distances == 4.5){
+                   var customer_delivery_fee=2400;
+            }else if(distances > 4.5 && distances < 6){
+                   var customer_delivery_fee=2700;
+            }else if(distances == 6){
+                   var customer_delivery_fee=3000;
+            }else if(distances > 6 && distances < 7.5){
+                   var customer_delivery_fee=3300;
+            }else if(distances==7.5){
+                   var customer_delivery_fee=3600;
+            }else if(distances > 7.5 && distances < 9){
+                   var customer_delivery_fee=3900;
+            }else if(distances==9){
+                   var customer_delivery_fee=4200;
+            }else if(distances > 9 && distances < 10.5){
+                   var customer_delivery_fee=4500;
+            }else if(distances==10.5){
+                   var customer_delivery_fee=4800;
+            }else if(distances > 10.5 && distances < 12){
+                   var customer_delivery_fee=5100;
+            }else if(distances==12){
+                   var customer_delivery_fee=5400;
+            }else if(distances > 12 && distances < 13.5){
+                   var customer_delivery_fee=5700;
+            }else if(distances==13.5){
+                   var customer_delivery_fee=6000;
+            }else if(distances > 13.5 && distances < 15){
+                   var customer_delivery_fee=6300;
+            }else if(distances==15){
+                   var customer_delivery_fee=6600;
+            }else if(distances > 15 && distances < 16.5){
+                   var customer_delivery_fee=6700;
+            }else if(distances==16.5){
+                   var customer_delivery_fee=7000;
+            }else if(distances > 16.5 && distances < 18){
+                   var customer_delivery_fee=7300;
+            }else if(distances==18){
+                   var customer_delivery_fee=7500;
+            }else if(distances > 18 && distances < 19.5){
+                var customer_delivery_fee=7800;
+            }else if(distances >= 19.5){
+                var customer_delivery_fee=8100;
+            }else{
+                var customer_delivery_fee=8100;
+            }
+        document.getElementById('price').value=customer_delivery_fee;
+        document.getElementById('rider_restaurant_distance').value=distances;
+        function calcCrow(lat1, lon1, lat2, lon2)
+        {
+        var R = 6371; // km
+        var dLat = toRad(lat2-lat1);
+        var dLon = toRad(lon2-lon1);
+        var lat1 = toRad(lat1);
+        var lat2 = toRad(lat2);
 
-    // }
-    </script>
-<script>
-    $(document).ready(function () {
-        //select2
-        $('#from_parcel_city_id').select2();
-        $('#to_parcel_city_id').select2();
-        $('#rider_id').select2();
-    });
-</script>
-<script>
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c;
+        return d;
+        }
+
+        // Converts numeric degrees to radians
+        function toRad(Value)
+        {
+            return Value * Math.PI / 180;
+        }
+    }
+
+    function getToRegion1(id,name,lat,lon){
+        var x = document.getElementById("to_region");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            document.getElementById("order_form").style.display = "none";
+        } else {
+            x.style.display = "none";
+            document.getElementById("order_form").style.display = "block";
+            document.getElementById("toRegion").value = name;
+            document.getElementById("to_lat").value = lat;
+            document.getElementById("to_lon").value = lon;
+            document.getElementById("to_parcel_city_id").value = id;
+        }
 
 
-    function calDistance(){
-        var from_lat_lan= document.getElementById("from_parcel_city_id").value;
-        var data=from_lat_lan.split(",");
-        var from_parcel_city_id=data[0];
-        var lat1=data[1];
-        var lon1=data[2];
-        var to_lat_lan= document.getElementById("to_parcel_city_id").value;
-        var data1=to_lat_lan.split(",");
-        var to_parcel_city_id=data1[0];
-        var lat2=data1[1];
-        var lon2=data1[2];
+        var lat1=document.getElementById("from_lat").value;
+        var lon1=document.getElementById("from_lon").value;
+        var lat2=document.getElementById("to_lat").value;;
+        var lon2=document.getElementById("to_lon").value;;
         var distances=(calcCrow(lat1,lon1,lat2,lon2).toFixed(1));
             if(distances <= 2) {
                 var customer_delivery_fee=1200;
@@ -358,6 +455,159 @@
         // document.getElementById('from_parcel_city_id').value=data[0];
         // document.getElementById('to_parcel_city_id').value=data[1];
         document.getElementById('rider_restaurant_distance').value=distances;
+        function calcCrow(lat1, lon1, lat2, lon2)
+        {
+        var R = 6371; // km
+        var dLat = toRad(lat2-lat1);
+        var dLon = toRad(lon2-lon1);
+        var lat1 = toRad(lat1);
+        var lat2 = toRad(lat2);
+
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c;
+        return d;
+        }
+
+        // Converts numeric degrees to radians
+        function toRad(Value)
+        {
+            return Value * Math.PI / 180;
+        }
+    }
+
+
+    function cal_rider(){
+        var x = document.getElementById("driver");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            document.getElementById("order_form").style.display = "none";
+        } else {
+            x.style.display = "none";
+            document.getElementById("order_form").style.display = "block";
+        }
+    }
+    function getFromRegion(){
+        var x = document.getElementById("driver");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            document.getElementById("order_form").style.display = "none";
+        } else {
+            x.style.display = "none";
+            document.getElementById("order_form").style.display = "block";
+        }
+    }
+
+    function showDriver(){
+      var x = document.getElementById("driver");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("order_form").style.display = "none";
+      } else {
+        x.style.display = "none";
+        document.getElementById("order_form").style.display = "block";
+      }
+    }
+    function from_region(){
+      var x = document.getElementById("from_region");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("order_form").style.display = "none";
+      } else {
+        x.style.display = "none";
+        document.getElementById("order_form").style.display = "block";
+      }
+    }
+    function to_region(){
+      var x = document.getElementById("to_region");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("order_form").style.display = "none";
+      } else {
+        x.style.display = "none";
+        document.getElementById("order_form").style.display = "block";
+      }
+    }
+
+    // function getFromRegion(this){
+    //     var aa=this.value;
+    //     console.log(aa);
+
+    // }
+    </script>
+{{-- <script>
+    $(document).ready(function () {
+        //select2
+        $('#from_parcel_city_id').select2();
+        $('#to_parcel_city_id').select2();
+        $('#rider_id').select2();
+    });
+</script> --}}
+<script>
+
+
+    function calDistance(){
+        var lat1=document.getElementById("from_lat").value;
+        var lon1=document.getElementById("from_lon").value;
+        var lat2=document.getElementById("to_lat").value;;
+        var lon2=document.getElementById("to_lon").value;;
+        var distances=(calcCrow(lat1,lon1,lat2,lon2).toFixed(1));
+            if(distances <= 2) {
+                var customer_delivery_fee=1200;
+            }else if(distances > 2 && distances < 3.5){
+                var customer_delivery_fee=1500;
+            }else if(distances == 3.5){
+                var customer_delivery_fee=1800;
+            }else if(distances > 3.5 && distances < 4.5){
+                var customer_delivery_fee=2100;
+            }else if(distances == 4.5){
+                   var customer_delivery_fee=2400;
+            }else if(distances > 4.5 && distances < 6){
+                   var customer_delivery_fee=2700;
+            }else if(distances == 6){
+                   var customer_delivery_fee=3000;
+            }else if(distances > 6 && distances < 7.5){
+                   var customer_delivery_fee=3300;
+            }else if(distances==7.5){
+                   var customer_delivery_fee=3600;
+            }else if(distances > 7.5 && distances < 9){
+                   var customer_delivery_fee=3900;
+            }else if(distances==9){
+                   var customer_delivery_fee=4200;
+            }else if(distances > 9 && distances < 10.5){
+                   var customer_delivery_fee=4500;
+            }else if(distances==10.5){
+                   var customer_delivery_fee=4800;
+            }else if(distances > 10.5 && distances < 12){
+                   var customer_delivery_fee=5100;
+            }else if(distances==12){
+                   var customer_delivery_fee=5400;
+            }else if(distances > 12 && distances < 13.5){
+                   var customer_delivery_fee=5700;
+            }else if(distances==13.5){
+                   var customer_delivery_fee=6000;
+            }else if(distances > 13.5 && distances < 15){
+                   var customer_delivery_fee=6300;
+            }else if(distances==15){
+                   var customer_delivery_fee=6600;
+            }else if(distances > 15 && distances < 16.5){
+                   var customer_delivery_fee=6700;
+            }else if(distances==16.5){
+                   var customer_delivery_fee=7000;
+            }else if(distances > 16.5 && distances < 18){
+                   var customer_delivery_fee=7300;
+            }else if(distances==18){
+                   var customer_delivery_fee=7500;
+            }else if(distances > 18 && distances < 19.5){
+                var customer_delivery_fee=7800;
+            }else if(distances >= 19.5){
+                var customer_delivery_fee=8100;
+            }else{
+                var customer_delivery_fee=8100;
+            }
+        document.getElementById('price').value=customer_delivery_fee;
+        document.getElementById('rider_restaurant_distance').value=distances;
     function calcCrow(lat1, lon1, lat2, lon2)
     {
       var R = 6371; // km
@@ -380,16 +630,10 @@
     }
 }
     function calDistance1(){
-        var from_lat_lan= document.getElementById("from_parcel_city_id").value;
-        var data=from_lat_lan.split(",");
-        var from_parcel_city_id=data[0];
-        var lat1=data[1];
-        var lon1=data[2];
-        var to_lat_lan= document.getElementById("to_parcel_city_id").value;
-        var data1=to_lat_lan.split(",");
-        var to_parcel_city_id=data1[0];
-        var lat2=data1[1];
-        var lon2=data1[2];
+        var lat1=document.getElementById("from_lat").value;
+        var lon1=document.getElementById("from_lon").value;
+        var lat2=document.getElementById("to_lat").value;;
+        var lon2=document.getElementById("to_lon").value;;
         var distances=(calcCrow(lat1,lon1,lat2,lon2).toFixed(1));
             if(distances <= 2) {
                 var customer_delivery_fee=1200;

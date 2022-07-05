@@ -75,7 +75,7 @@
         }
     </style>
 </head>
-<body style="width:100%">
+<body style="width:100%;font-size:15px !important;">
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
 <ul class="nav nav-pills navbar-inverse">
     <li class="nav-item">
@@ -97,7 +97,7 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>CustomerId</th>
+                                    <th>OrderID</th>
                                     <th>BookingId</th>
                                     <th>From</th>
                                     <th>To</th>
