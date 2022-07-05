@@ -77,15 +77,15 @@
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
 <ul class="nav nav-pills navbar-inverse">
     <li class="nav-item col">
-        <a href="{{ url('fatty/main/admin/admin_parcel_orders/create/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Home</a>
+        <a href="{{ url('admin_parcel_orders/create/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Home</a>
     </li>
     <li class="nav-item col">
         <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Order</a>
     </li>
 </ul>
 
-<form action="{{ route('fatty.admin.admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
-    @csrf
+{{-- <form action="{{ route('fatty.admin.admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
+    {{-- @csrf --}}
     <div class="container-fluid">
         <div class="row p-1">
             <div class="form-group col-12 p-1 border border-success rounded">
@@ -137,7 +137,7 @@
 
         </div>
     </div>
-</form>
+{{-- </form> --}}
 <script>
     $(document).ready(function () {
         //select2
