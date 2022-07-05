@@ -80,11 +80,11 @@
         <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
     </li>
     <li class="nav-item col">
-        <a href="{{ url('fatty/main/admin/admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
+        <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
     </li>
 </ul>
 
-<form action="{{ route('fatty.admin.admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
+<form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
     @csrf
     <div class="container-fluid">
         <div class="row p-1">
