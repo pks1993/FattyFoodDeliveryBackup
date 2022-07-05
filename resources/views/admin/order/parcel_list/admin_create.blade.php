@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
     <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
+    <link rel="stylesheet" href="{{asset('css/admin.css')}}">
+
 
     <style>
         .p-1 {
@@ -23,9 +25,9 @@
         .border-success {
         border-color: #28a745!important;
         }
-        .border {
+        /* .border {
         border: 1px solid #28a745!important;
-        }
+        } */
         .border2 {
         border-color: #007bff!important;
         }
@@ -37,7 +39,7 @@
         flex: 0 0 100%;
         max-width: 100%;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
+        /* .select2-container--default .select2-selection--single .select2-selection__rendered {
             color: #ffffff;
             line-height: 35px;
             text-align: center;
@@ -55,7 +57,7 @@
             position: absolute;
             top: 70%;
             width: 0;
-        }
+        } */
         .nav>li>a:focus, .nav>li>a:hover {
             text-decoration: none;
             background-color: #343a40;
@@ -71,130 +73,211 @@
         .tab-pane.active{
             display : block;
         }
+
     </style>
 </head>
 <body style="width:100%">
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
-<ul class="nav nav-pills navbar-inverse">
-    <li class="nav-item col">
-        <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-    </li>
-    <li class="nav-item col">
-        <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
-    </li>
-</ul>
-
-<form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
-    @csrf
-    <div class="container-fluid">
-        <div class="row p-1">
-            <div class="form-group col-12 p-1 border border-success rounded">
-                <div class="card" style="padding:5px;">
-                    <div class="form-group col-12">
-                        <i class="fa fa-user" style="font-size:17px;"> <span style="font-size: 13px;">Kyone Sin</span></i>
-                        <p style="font-weight: 600;font-size:17px;">ORDER NO # <span>{{ $customer_order_count }}</span></p>
-                        <input type="hidden" name="customer_id" value="{{ $customer_admin_id }}">
-                        <input type="hidden" name="rider_restaurant_distance" id="rider_restaurant_distance">
-                        <select id="from_parcel_city_id" style="width: 100%;" class="form-control @error('from_parcel_city_id') is-invalid @enderror" name="from_parcel_city_id" value="{{ old('from_parcel_city_id') }}" autocomplete="from_parcel_city_id" autofocus onchange="calDistance()">
-                            <option value="">From</option>
-                            @foreach($from_cities as $value)
-                                <option value="{{ $value->parcel_city_id }},{{ $value->latitude }},{{ $value->longitude }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                            @endforeach
-                        </select>
-                        @error('from_parcel_city_id')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="form-group col-12">
-                        <input id="from_sender_phone" type="text" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" autocomplete="category_image" autofocus placeholder="From Phone">
-                        @error('from_sender_phone')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="form-group col-12">
-                        <textarea id="from_pickup_note" class="form-control @error('from_pickup_note') is-invalid @enderror" style="height:70px;" name="from_pickup_note" value="{{ old('from_pickup_note') }}" autocomplete="category_image" autofocus placeholder="From Address"></textarea>
-                        @error('from_pickup_note')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-            <div class="form-group col-12 p-1 border2 border-primary rounded2">
-                <div class="card" style="padding:5px;">
-                    <div class="form-group col-12">
-                        <select id="to_parcel_city_id" style="width: 100%;" class="form-control @error('to_parcel_city_id') is-invalid @enderror" name="to_parcel_city_id" value="{{ old('to_parcel_city_id') }}" autocomplete="to_parcel_city_id" autofocus onchange="calDistance1()">
-                            <option value="">To</option>
-                            @foreach($to_cities as $value)
-                                <option value="{{ $value->parcel_city_id }},{{ $value->latitude }},{{ $value->longitude }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                            @endforeach
-                        </select>
-                        @error('to_parcel_city_id')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="form-group col-12">
-                        <input id="to_sender_phone" type="text" class="form-control @error('to_sender_phone') is-invalid @enderror" name="to_sender_phone" autocomplete="category_image" autofocus placeholder="To Phone">
-                        @error('to_sender_phone')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="form-group col-12">
-                        <textarea id="to_pickup_note" class="form-control @error('to_pickup_note') is-invalid @enderror" style="height:70px;" name="to_pickup_note" value="{{ old('to_pickup_note') }}" autocomplete="category_image" autofocus placeholder="To Address"></textarea>
-                        @error('to_pickup_note')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-            <div class="form-group col-12">
-                <input id="price" type="text" class="form-control @error('price') is-invalid @enderror" placeholder="Price" name="price" autocomplete="category_image" autofocus placeholder="From Phone">
-                @error('price')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
-            <div class="form-group col-12">
-                <select class="rider_id" id="rider_id" style="width: 100%;" class="form-control @error('rider_id') is-invalid @enderror" name="rider_id" value="{{ old('rider_id') }}" autocomplete="rider_id" autofocus>
-                    <option value="0"> All Rider</option>
-                    @foreach($riders as $value)
-                        <option value="{{ $value->rider_id }}"> {{ $value->rider_user_name }} ( @if($value->is_order)HasOrder @else Free @endif )</option>
-                    @endforeach
-                </select>
-                @error('rider_id')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
-            <div class="form-group col-12">
-                <textarea id="parcel_order_note" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:100px;" name="parcel_order_note" autocomplete="category_image" autofocus placeholder="Remark"></textarea>
-                @error('parcel_order_note')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-            </div>
-            <div class="form-group col-12">
-                <button type="submit" class="btn btn-sm btn-block" style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
-                {{ __('Upload') }}
-                </button>
+<div class="container-fluid" id="from_region" style="display: none">
+    <div class="row p-1">
+        <div class="form-group col-12">
+            <a class="btn btn-block text-white p-1" style="background-color: #28a745;color:white;font-size:20px;text-align:left" onclick="from_region()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> From</a>
+            <div id="from_region" style="display: block">
+                @foreach ($from_cities as $item)
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion(this)"> {{ $item->city_name_mm }} </a>
+                @endforeach
             </div>
         </div>
     </div>
-</form>
+</div>
+<div class="container-fluid" id="to_region" style="display: none">
+    <div class="row p-1">
+        <div class="form-group col-12">
+            <a class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:20px;text-align:left" onclick="to_region()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> To</a>
+            <div id="to_region" style="display: block">
+                @foreach ($to_cities as $item)
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion(this)"> {{ $item->city_name_mm }} </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid" id="driver" style="display: none">
+    <div class="row p-1">
+        <div class="form-group col-12">
+            <a class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:20px;text-align:left" onclick="showDriver()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> Driver</a>
+            <div id="driver" style="display: block">
+                @foreach ($riders as $item)
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion(this)"> {{ $item->rider_user_name }} </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+<div id="order_form" style="display: block">
+    <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;">
+        <li class="nav-item">
+            <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
+        </li>
+    </ul>
+
+    {{-- <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
+    <form action="" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
+        @csrf
+        <div class="container-fluid">
+            <div class="row p-1">
+                <div class="form-group col-12 p-1 border border-success rounded">
+                    {{-- <div class="card" style="padding:0px;"> --}}
+                        <div class="form-group col-12">
+                            <i class="fa fa-user" style="font-size:17px;"> <span style="font-size: 13px;">Kyone Sin</span></i>
+                            <p style="font-weight: 600;font-size:17px;">ORDER NO # <span>{{ $customer_order_count }}</span></p>
+                            <input type="hidden" name="customer_id" value="{{ $customer_admin_id }}">
+                            <input type="hidden" name="rider_restaurant_distance" id="rider_restaurant_distance">
+                            {{-- <select id="from_parcel_city_id" style="width: 100%;" class="form-control @error('from_parcel_city_id') is-invalid @enderror" name="from_parcel_city_id" value="{{ old('from_parcel_city_id') }}" autocomplete="from_parcel_city_id" autofocus onchange="calDistance()">
+                                <option value="">From</option>
+                                @foreach($from_cities as $value)
+                                    <option value="{{ $value->parcel_city_id }},{{ $value->latitude }},{{ $value->longitude }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
+                                @endforeach
+                            </select>
+                            @error('from_parcel_city_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror --}}
+                            <a class="btn btn-block text-white p-2" style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">From</a>
+                        </div>
+                        <div class="form-group col-12">
+                            <input id="from_sender_phone" type="text" style="font-size: 15px;height:40px;" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" autocomplete="category_image" autofocus placeholder="From Phone">
+                            @error('from_sender_phone')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group col-12">
+                            <textarea id="from_pickup_note" style="font-size: 15px;" class="form-control @error('from_pickup_note') is-invalid @enderror" style="height:70px;" name="from_pickup_note" value="{{ old('from_pickup_note') }}" autocomplete="category_image" autofocus placeholder="From Address"></textarea>
+                            @error('from_pickup_note')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                    {{-- </div> --}}
+                </div>
+                <div class="form-group col-12 p-1 border2 border-primary rounded2">
+                    {{-- <div class="card" style="padding:5px;"> --}}
+                        <div class="form-group col-12 mt-3">
+                            {{-- <select id="to_parcel_city_id" style="width: 100%;" class="form-control @error('to_parcel_city_id') is-invalid @enderror" name="to_parcel_city_id" value="{{ old('to_parcel_city_id') }}" autocomplete="to_parcel_city_id" autofocus onchange="calDistance1()">
+                                <option value="">To</option>
+                                @foreach($to_cities as $value)
+                                    <option value="{{ $value->parcel_city_id }},{{ $value->latitude }},{{ $value->longitude }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
+                                @endforeach
+                            </select>
+                            @error('to_parcel_city_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror --}}
+                            <a class="btn btn-block text-white p-2" style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">To</a>
+                        </div>
+                        <div class="form-group col-12">
+                            <input id="to_sender_phone" style="font-size: 15px;height:40px;" type="text" class="form-control @error('to_sender_phone') is-invalid @enderror" name="to_sender_phone" autocomplete="category_image" autofocus placeholder="To Phone">
+                            @error('to_sender_phone')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group col-12">
+                            <textarea id="to_pickup_note" style="font-size: 15px;" class="form-control @error('to_pickup_note') is-invalid @enderror" style="height:70px;" name="to_pickup_note" value="{{ old('to_pickup_note') }}" autocomplete="category_image" autofocus placeholder="To Address"></textarea>
+                            @error('to_pickup_note')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                            @enderror
+                        </div>
+                    {{-- </div> --}}
+                </div>
+                <div class="form-group col-12">
+                    <input id="price" type="text" style="font-size: 15px;height:40px;" class="form-control @error('price') is-invalid @enderror" placeholder="Price" name="price" autocomplete="category_image" autofocus placeholder="From Phone">
+                    @error('price')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                <div class="form-group col-12">
+                    {{-- <select class="rider_id" id="rider_id" style="width: 100%;" class="form-control @error('rider_id') is-invalid @enderror" name="rider_id" value="{{ old('rider_id') }}" autocomplete="rider_id" autofocus>
+                        <option value="0"> All Rider</option>
+                        @foreach($riders as $value)
+                            <option value="{{ $value->rider_id }}"> {{ $value->rider_user_name }} ( @if($value->is_order)HasOrder @else Free @endif )</option>
+                        @endforeach
+                    </select>
+                    @error('rider_id')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror --}}
+                    <a class="btn btn-block border p-2" style="font-size:20px;text-align:center" onclick="showDriver()"> Driver</a>
+                </div>
+                <div class="form-group col-12">
+                    <textarea id="parcel_order_note" style="font-size: 15px;height:100px;" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:100px;" name="parcel_order_note" autocomplete="category_image" autofocus placeholder="Remark"></textarea>
+                    @error('parcel_order_note')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+                <div class="form-group col-12">
+                    <button type="submit" class="btn btn-sm btn-block" disabled style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
+                    {{ __('Upload') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function showDriver(){
+      var x = document.getElementById("driver");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("order_form").style.display = "none";
+      } else {
+        x.style.display = "none";
+        document.getElementById("order_form").style.display = "block";
+      }
+    }
+    function from_region(){
+      var x = document.getElementById("from_region");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("order_form").style.display = "none";
+      } else {
+        x.style.display = "none";
+        document.getElementById("order_form").style.display = "block";
+      }
+    }
+    function to_region(){
+      var x = document.getElementById("to_region");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        document.getElementById("order_form").style.display = "none";
+      } else {
+        x.style.display = "none";
+        document.getElementById("order_form").style.display = "block";
+      }
+    }
+
+    // function getFromRegion(this){
+    //     var aa=this.value;
+    //     console.log(aa);
+
+    // }
+    </script>
 <script>
     $(document).ready(function () {
         //select2

@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
     <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
+    <link rel="stylesheet" href="{{asset('css/admin.css')}}">
+
 
     <style>
         .p-1 {
@@ -37,7 +39,7 @@
         flex: 0 0 100%;
         max-width: 100%;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
+        /* .select2-container--default .select2-selection--single .select2-selection__rendered {
             color: #ffffff;
             line-height: 35px;
             text-align: center;
@@ -55,7 +57,7 @@
             position: absolute;
             top: 70%;
             width: 0;
-        }
+        } */
         .nav>li>a:focus, .nav>li>a:hover {
             text-decoration: none;
             background-color: #343a40;
@@ -76,10 +78,10 @@
 <body style="width:100%">
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
 <ul class="nav nav-pills navbar-inverse">
-    <li class="nav-item col">
+    <li class="nav-item">
         <a href="{{ url('admin_parcel_orders/create/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Home</a>
     </li>
-    <li class="nav-item col">
+    <li class="nav-item">
         <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Order</a>
     </li>
 </ul>
@@ -90,7 +92,7 @@
         <div class="row p-1">
             <div class="form-group col-12 p-1 border border-success rounded">
                 <div class="card" style="padding:5px;">
-                    <div class="form-group col-12">
+                    <div class="form-group col-12 table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
