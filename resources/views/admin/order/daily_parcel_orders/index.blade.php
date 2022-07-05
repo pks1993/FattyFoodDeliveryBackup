@@ -52,6 +52,11 @@
         <div class="col-md-12">
             <div class="card">
                 <!-- /.card-header -->
+                <div class="card-header">
+                <!-- <a href="{{url('fatty/main/admin/parcel_orders/create')}}" class="btn btn-info btn-sm">
+                                    <i class="fa fa-plus-circle"></i>Add new parcel
+                                </a> -->
+                </div>
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">

@@ -115,7 +115,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h3 class="card-title">Edit this parcel</h3>
+                                    <h3 class="card-title">Create this parcel</h3>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
                                     <a href="{{url('fatty/main/admin/daily_parcel_orders')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
@@ -124,24 +124,16 @@
                         </div>
 
                         <div class="card-body">
-                            <form method="POST" action="{{ route('fatty.admin.parcel_order.update',$orders->order_id) }}" autocomplete="off" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('fatty.admin.parcel_order.store') }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group row">
                                     <label for="from_parcel_city_id" class="col-md-12 col-form-label">{{ __('From Pickup Region') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="from_parcel_city_id" style="width: 100%;" class="form-control @error('from_parcel_city_id') is-invalid @enderror" name="from_parcel_city_id" value="{{ old('from_parcel_city_id') }}" autocomplete="from_parcel_city_id" autofocus>
-                                            {{-- <option value="{{$orders->from_parcel_city_id}}">{{ $orders->from_parcel_region->city_name_mm }}/{{$orders->from_parcel_region->city_name_en}}</option> --}}
-                                            @if($orders->from_parcel_city_id==0 || $orders->from_parcel_city_id==null)
-                                                <option value="">Choose Region</option>
-                                                @foreach($from_cities as $value)
-                                                    <option value="{{ $value->parcel_city_id }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                                                @endforeach
-                                            @else
-                                                <option value="{{$orders->from_parcel_city_id}}">{{ $orders->from_parcel_region->city_name_mm }}/{{$orders->from_parcel_region->city_name_en}}</option>
-                                                @foreach($from_city as $value)
-                                                    <option value="{{ $value->parcel_city_id }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                                                @endforeach
-                                            @endif
+                                            <option value="">Choose Region</option>
+                                            @foreach($from_cities as $value)
+                                                <option value="{{ $value->parcel_city_id }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
+                                            @endforeach
                                         </select>
                                         @error('from_parcel_city_id')
                                             <span class="invalid-feedback" role="alert">
@@ -153,7 +145,7 @@
                                 <div class="form-group row">
                                     <label for="from_sender_phone" class="col-md-12 col-form-label">{{ __('From Sender Phone Number') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="from_sender_phone" type="text" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" value="{{ $orders->from_sender_phone }}" autocomplete="category_image" autofocus>
+                                        <input id="from_sender_phone" type="text" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" autocomplete="category_image" autofocus>
                                         @error('from_sender_phone')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -164,7 +156,7 @@
                                 <div class="form-group row">
                                     <label for="from_pickup_note" class="col-md-12 col-form-label">{{ __('From Pickup Note') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <textarea id="from_pickup_note" class="form-control @error('from_pickup_note') is-invalid @enderror" style="height:150px;" name="from_pickup_note" value="{{ old('from_pickup_note') }}" autocomplete="category_image" autofocus>{{$orders->from_pickup_note}}</textarea>
+                                        <textarea id="from_pickup_note" class="form-control @error('from_pickup_note') is-invalid @enderror" style="height:150px;" name="from_pickup_note" value="{{ old('from_pickup_note') }}" autocomplete="category_image" autofocus></textarea>
                                         @error('from_pickup_note')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -173,21 +165,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="to_parcel_city_id" class="col-md-12 col-form-label">{{ __('To Trop Region') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <label for="to_parcel_city_id" class="col-md-12 col-form-label">{{ __('To Drop Region') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="to_parcel_city_id" style="width: 100%;" class="form-control @error('to_parcel_city_id') is-invalid @enderror" name="to_parcel_city_id" value="{{ old('to_parcel_city_id') }}" autocomplete="to_parcel_city_id" autofocus>
-                                            {{-- <option value="{{$orders->to_parcel_city_id}}">{{ $orders->to_parcel_region->city_name_mm }}/{{$orders->to_parcel_region->city_name_en}}</option> --}}
-                                            @if($orders->to_parcel_city_id==0 || $orders->to_parcel_city_id==null)
-                                                <option value="">Choose Region</option>
-                                                @foreach($to_cities as $value)
-                                                    <option value="{{ $value->parcel_city_id }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                                                @endforeach
-                                            @else
-                                                <option value="{{$orders->to_parcel_city_id}}">{{ $orders->to_parcel_region->city_name_mm }}/{{$orders->to_parcel_region->city_name_en}}</option>
-                                                @foreach($to_city as $value)
-                                                    <option value="{{ $value->parcel_city_id }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                                                @endforeach
-                                            @endif
+                                            <option value="">Choose Region</option>
+                                            @foreach($to_cities as $value)
+                                                <option value="{{ $value->parcel_city_id }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
+                                            @endforeach
                                         </select>
                                         @error('to_parcel_city_id')
                                             <span class="invalid-feedback" role="alert">
@@ -199,7 +183,7 @@
                                 <div class="form-group row">
                                     <label for="to_recipent_phone" class="col-md-12 col-form-label">{{ __('To Drop Phone Number') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="to_recipent_phone" type="text" class="form-control @error('to_recipent_phone') is-invalid @enderror" name="to_recipent_phone" value="{{ $orders->to_recipent_phone }}" autocomplete="category_image" autofocus>
+                                        <input id="to_recipent_phone" type="text" class="form-control @error('to_recipent_phone') is-invalid @enderror" name="to_recipent_phone" autocomplete="category_image" autofocus>
                                         @error('to_recipent_phone')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -210,7 +194,7 @@
                                 <div class="form-group row">
                                     <label for="to_drop_note" class="col-md-12 col-form-label">{{ __('To Drop Note') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <textarea id="to_drop_note" class="form-control @error('to_drop_note') is-invalid @enderror" style="height:150px;" name="to_drop_note" value="{{ old('to_drop_note') }}" autocomplete="category_image" autofocus>{{$orders->to_drop_note}}</textarea>
+                                        <textarea id="to_drop_note" class="form-control @error('to_drop_note') is-invalid @enderror" style="height:150px;" name="to_drop_note" value="{{ old('to_drop_note') }}" autocomplete="category_image" autofocus></textarea>
                                         @error('to_drop_note')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -222,7 +206,7 @@
                                     <label for="parcel_type_id" class="col-md-12 col-form-label">{{ __('Parcel Type') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="parcel_type_id" style="width: 100%;" class="form-control @error('parcel_type_id') is-invalid @enderror" name="parcel_type_id" value="{{ old('parcel_type_id') }}" autocomplete="parcel_type_id" autofocus>
-                                            <option value="{{$orders->parcel_type_id}}">{{ $orders->parcel_type->parcel_type_name }}</option>
+                                            <option value="">Choose Parcel Type</option>
                                             @foreach($parcel_type as $value)
                                                 <option value="{{ $value->parcel_type_id }}">{{ $value->parcel_type_name }}</option>
                                             @endforeach
@@ -238,7 +222,7 @@
                                 <div class="form-group row">
                                     <label for="parcel_order_note" class="col-md-12 col-form-label">{{ __('Add Parcel Note') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <textarea id="parcel_order_note" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:150px;" name="parcel_order_note" autocomplete="category_image" autofocus>{{ $orders->parcel_order_note }}</textarea>
+                                        <textarea id="parcel_order_note" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:150px;" name="parcel_order_note" autocomplete="category_image" autofocus></textarea>
                                         @error('parcel_order_note')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -250,18 +234,10 @@
                                     <label for="parcel_extra_cover_id" class="col-md-12 col-form-label">{{ __('Parcel Extra Cover') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="parcel_extra_cover_id" style="width: 100%;" class="form-control @error('parcel_extra_cover_id') is-invalid @enderror" name="parcel_extra_cover_id" value="{{ old('parcel_extra_cover_id') }}" autocomplete="parcel_extra_cover_id" autofocus onchange="calExtra();">
-                                            @if($orders->parcel_extra_cover_id==0 || $orders->parcel_extra_cover_id==null)
-                                                <option value="000">{{ "Choose Parcel Extra Cover" }}</option>
-                                                @foreach($extra as $value)
-                                                    <option value="{{ $value->parcel_extra_cover_id }}/{{ $value->parcel_extra_cover_price }}"> Prices#( {{ $value->parcel_extra_cover_price }} )</option>
-                                                @endforeach
-                                            @else
-                                                <option value="{{ $orders->parcel_extra_cover_id }}/{{ $orders->parcel_extra->parcel_extra_cover_price }}"> Prices#( {{ $orders->parcel_extra->parcel_extra_cover_price }} )</option>
-                                                @foreach($extra as $value)
-                                                    <option value="{{ $value->parcel_extra_cover_id }}/{{ $value->parcel_extra_cover_price }}"> Prices#( {{ $value->parcel_extra_cover_price }} )</option>
-                                                    <option value="000">{{ "Choose Parcel Extra Cover" }}</option>
-                                                @endforeach
-                                            @endif
+                                            <option value="">{{ "Choose Parcel Extra Cover" }}</option>
+                                            @foreach($extra as $value)
+                                                <option value="{{ $value->parcel_extra_cover_id }}/{{ $value->parcel_extra_cover_price }}"> Prices#( {{ $value->parcel_extra_cover_price }} )</option>
+                                            @endforeach
                                         </select>
                                         @error('parcel_extra_cover_id')
                                             <span class="invalid-feedback" role="alert">
@@ -274,7 +250,7 @@
                                 <div class="form-group row">
                                     <label for="delivery_fee" class="col-md-12 col-form-label">{{ __('Deli Fee') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="delivery_fee" type="text" class="form-control @error('delivery_fee') is-invalid @enderror" name="delivery_fee" value="{{ $orders->delivery_fee }}" autocomplete="category_image" autofocus onchange="calDeli();">
+                                        <input id="delivery_fee" type="text" class="form-control @error('delivery_fee') is-invalid @enderror" value="0" name="delivery_fee" autocomplete="category_image" autofocus onchange="calDeli();">
                                         @error('delivery_fee')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -285,11 +261,7 @@
                                 <div class="form-group row">
                                     <label for="extra_fee" class="col-md-12 col-form-label">{{ __('Extra Fee') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        @if($orders->parcel_extra_cover_id==0 || $orders->parcel_extra_cover_id==null)
-                                            <input id="extra_fee" type="text" class="form-control @error('extra_fee') is-invalid @enderror" name="extra_fee" value="{{ 0 }}" autocomplete="category_image" autofocus>
-                                        @else
-                                            <input id="extra_fee" type="text" class="form-control @error('extra_fee') is-invalid @enderror" name="extra_fee" value="{{ $orders->parcel_extra->parcel_extra_cover_price }}" autocomplete="category_image" autofocus>
-                                        @endif
+                                        <input id="extra_fee" type="text" class="form-control @error('extra_fee') is-invalid @enderror" name="extra_fee" value="0" autocomplete="extra_fee" autofocus>
                                         @error('extra_fee')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -300,11 +272,34 @@
                                 <div class="form-group row">
                                     <label for="total_estimated_fee" class="col-md-12 col-form-label">{{ __('Total Estimated Fee') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="total_estimated_fee" type="text" class="form-control @error('total_estimated_fee') is-invalid @enderror" name="total_estimated_fee" value="{{ $orders->bill_total_price }}" autocomplete="category_image" autofocus>
+                                        <input id="total_estimated_fee" type="text" class="form-control @error('total_estimated_fee') is-invalid @enderror" name="total_estimated_fee"  autocomplete="category_image" autofocus>
                                         @error('total_estimated_fee')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                {{-- <div class="form-group row">
+                                    <fieldset class="form-group">
+                                        <label>Upload (Allow Multiple / no select each image) <a href="javascript:void(0)" class="custom-file-container__image-clear" id="clear_image" title="Clear Image"> ClearImage</a></label>
+                                        <input type="file" id="parcel_image" name="parcel_image[]" style="display: block;height: auto;" class="form-control" multiple>
+                                    </fieldset>
+                                    <div class="preview-images-zone form-group" id=preview></div>
+                                </div> --}}
+                                <div class="form-group row">
+                                    <label for="customer_id" class="col-md-12 col-form-label">{{ __('Customer') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <select id="customer_id" style="width: 100%;" class="form-control @error('customer_id') is-invalid @enderror" name="customer_id" required value="{{ old('customer_id') }}" autocomplete="customer_id" autofocus onchange="calExtra();">
+                                            <option value=""> Choose Customer</option>
+                                            @foreach($customers as $value)
+                                                <option value="{{ $value->customer_id }}"> {{ $value->customer_name }} ( {{ $value->customer_type_id }} )</option>
+                                            @endforeach
+                                        </select>
+                                        @error('customer_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
                                         @enderror
                                     </div>
                                 </div>
@@ -324,19 +319,12 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{-- <div class="form-group row">
-                                    <fieldset class="form-group">
-                                        <label>Upload (Allow Multiple / no select each image) <a href="javascript:void(0)" class="custom-file-container__image-clear" id="clear_image" title="Clear Image"> ClearImage</a></label>
-                                        <input type="file" id="parcel_image" name="parcel_image[]" style="display: block;height: auto;" class="form-control" multiple>
-                                    </fieldset>
-                                    <div class="preview-images-zone form-group" id=preview></div>
-                                </div> --}}
 
 
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-save"></i> {{ __('Update') }}
+                                            <i class="fa fa-save"></i> {{ __('Create') }}
                                         </button>
                                         <a href="{{url('fatty/main/admin/daily_parcel_orders')}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
@@ -362,6 +350,7 @@ $(document).ready(function () {
     $('#parcel_type_id').select2();
     $('#parcel_extra_cover_id').select2();
     $('#rider_id').select2();
+    $('#customer_id').select2();
 });
 //Image Show
 var loadFileImage= function(event) {
@@ -434,4 +423,5 @@ var loadFileImage= function(event) {
       }
   }
   </script>
+
 @endsection
