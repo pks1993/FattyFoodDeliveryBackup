@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Parcel;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\Order\ParcelState;
 use App\Models\Customer\Customer;
 use App\Models\City\ParcelCity;
@@ -17,6 +18,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cookie;
 
 
 
@@ -90,6 +92,12 @@ class ParcelStateController extends Controller
         return redirect('fatty/main/admin/parcel_states');
     }
 
+    public function admin_parcel_copy($id)
+    {
+        $parcel_order=CustomerOrder::where('order_id',$id)->first();
+        return view('admin.order.parcel_list.admin_copy',compact('parcel_order'));
+    }
+
     public function admin_parcel_filter(Request $request)
     {
         $order_count=CustomerOrder::where('order_type','parcel')->count();
@@ -105,12 +113,18 @@ class ParcelStateController extends Controller
         // dd($customer_admin_id);
         $start_date=$request['start_date'];
         $end_date=$request['end_date'];
-        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$request['customer_id'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->get();
+        // $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$request['customer_id'])->whereDate('created_at','>',$start_date)->whereDate('created_at','<',$end_date)->get();
+        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$request['customer_id'])->whereBetween('created_at', [$start_date.' 00:00:00',$end_date.' 23:59:59'])->get();
 
         return view('admin.order.parcel_list.admin_list',compact('parcel_type','extra','from_cities','to_cities','riders','customers','customer_order_count','customer_admin_id','parcel_orders'));
     }
     public function admin_parcel_list(Request $request,$id)
     {
+        // $words = explode(" ", "Community College District");
+        // $acronym = "";
+        // foreach ($words as $w) {
+        // $acronym .= $w[0];
+        // }
         $order_count=CustomerOrder::where('order_type','parcel')->count();
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
@@ -121,7 +135,7 @@ class ParcelStateController extends Controller
         $to_cities=ParcelCity::all();
         $riders=Rider::all();
         $customer_admin_id=$id;
-        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->orderBy('created_at','desc')->get();
+        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->orderBy('created_at','desc')->whereRaw('Date(created_at) = CURDATE()')->get();
 
         return view('admin.order.parcel_list.admin_list',compact('parcel_type','extra','from_cities','to_cities','riders','customers','customer_order_count','customer_admin_id','parcel_orders'));
     }
