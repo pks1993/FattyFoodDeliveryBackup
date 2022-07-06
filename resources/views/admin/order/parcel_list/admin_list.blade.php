@@ -75,7 +75,7 @@
         }
     </style>
 </head>
-<body style="width:100%;font-size:15px !important;">
+<body style="width:100%;font-size:16px !important;">
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
 <ul class="nav nav-pills navbar-inverse">
     <li class="nav-item">
@@ -84,6 +84,10 @@
     <li class="nav-item">
         <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Order</a>
     </li>
+    <li class="nav-item">
+        <a href="{{ url("admin_parcel_orders/logout") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
+    </li>
+
 </ul>
 
 {{-- <form action="{{ route('fatty.admin.admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
@@ -92,17 +96,27 @@
         <div class="row p-1">
             <div class="form-group col-12 p-1 border border-success rounded">
                 <div class="card" style="padding:5px;">
+                    <div class="col-12">
+                        <form action="{{ route('admin_parcel_orders.filter') }}">
+                            <label class="col-4" for="start_date">Start:</label>
+                            <label class="col-4" for="end_date">End:</label>
+                            <label class="col-3" for=""></label>
+                            <input class="col-4" type="date" name="start_date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                            <input class="col-4" type="date" name="end_date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                            <input type="hidden" name="customer_id" value="{{ $customer_admin_id }}">
+                            <button class="col-3" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;">Search</button>
+                        </form>
+                    </div>
                     <div class="form-group col-12 table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>No.</th>
                                     <th>OrderID</th>
-                                    <th>BookingId</th>
                                     <th>From</th>
                                     <th>To</th>
                                     <th>Rider</th>
-                                    <th>Time</th>
+                                    <th>Duration</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -111,22 +125,38 @@
                                 <tr>
                                     <td>{{ $value->order_id }}</td>
                                     <td>{{ $value->customer_order_id }}</td>
-                                    <td>{{ $value->customer_booking_id }}</td>
-                                    <td>{{ $value->from_pickup_address }}</td>
-                                    <td>{{ $value->to_drop_address }}</td>
+                                    <td>
+                                        @if($value->from_pickup_address)
+                                            {{ $value->from_pickup_address }}
+                                        @else
+                                            <span style="color: red">{{ "Empty" }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($value->to_drop_address)
+                                            {{ $value->to_drop_address }}
+                                        @else
+                                        <span style="color: red">{{ "Empty" }}</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($value->rider_id)
-                                            {{ $value->rider->rider_user_name }}
+                                            <a class="btn btn-success text-white rounded">
+                                                {{ $value->rider->rider_user_name }}
+                                            </a>
                                         @else
-                                            {{ "Empty Rider" }}
+                                            <a class="btn btn-danger text-white rounded">
+                                                EmptyRider
+                                            </a>
                                         @endif
                                     </td>
                                     <td>{{ $value->order_time }}</td>
                                     <td>
                                         @if($value->order_status_id==11)
-                                            {{ "Pending" }}
+                                            {{-- <a class="btn btn-primary text-white rounded"><i class="fa fa-check-circle"></i></a> <span style="color: blue">{{ "Pending" }}</span> --}}
+                                            <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}" class="btn btn-primary text-white rounded" title="Pending Order" style="font-size: 13px;"><i class="fa fa-check-circle"></i></a>  <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}"><i class="fa fa-angle-right" style="font-size: 20px;font-weight: 600;color:black;"></i></a>
                                         @else
-                                            {{ "Rider Delivery" }}
+                                            <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}" class="btn btn-success text-white rounded" title="Accept Order" style="font-size: 13px;"><i class="fa fa-check-circle"></i></a>  <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}"><i class="fa fa-angle-right" style="font-size: 20px;font-weight: 600;color:black;"></i></a>
                                         @endif
                                     </td>
                                 </tr>
