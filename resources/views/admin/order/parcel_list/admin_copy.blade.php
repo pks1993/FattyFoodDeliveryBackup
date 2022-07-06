@@ -94,61 +94,61 @@
                     <div class="col-12">
                         <div class="row" id="copy{{ $parcel_order->order_id }}">
                             <input type="hidden" value="{{ $parcel_order->customer_id }}" name="customer_id" id="customer_id">
-                            <div class="col-12 text-center mb-1">
+                            <div class="col-12 text-center">
                                 <strong>Order:{{ $parcel_order->customer_order_id }}</strong>
                             </div>
-                            <div class="col-12 text-center mb-1">
+                            <div class="col-12 text-center">
                                 <strong>-----</strong>
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 @if($parcel_order->from_parcel_city_id)
                                     From: {{ $parcel_order->from_parcel_region->city_name_mm }}
                                 @else
                                     From:
                                 @endif
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 <a href="">{{ $parcel_order->from_sender_phone }}</a>
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 {{ $parcel_order->from_pickup_address }}
                             </div>
-                            <div class="col-12 text-center mb-1">
+                            <div class="col-12 text-center">
                                 <strong>-----</strong>
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 @if($parcel_order->to_parcel_city_id)
                                     To: {{ $parcel_order->to_parcel_region->city_name_mm }}
                                 @else
                                     To:
                                 @endif
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 <a href="">{{ $parcel_order->to_recipent_phone }}</a>
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 {{ $parcel_order->to_drop_address }}
                             </div>
-                            <div class="col-12 text-center mb-1">
+                            <div class="col-12 text-center">
                                 <strong>-----</strong>
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 Price: {{ $parcel_order->bill_total_price}} Ks
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 Remark: {{ $parcel_order->parcel_order_note }}
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 Booking:
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 @if($parcel_order->rider_id)
                                     Rider: {{ $parcel_order->rider->rider_user_name }} - <a href="">{{ $parcel_order->rider->rider_user_phone }}</a>
                                 @else
                                     Rider:
                                 @endif
                             </div>
-                            <div class="col-12 p-0 text-left mb-1">
+                            <div class="col-12 p-0 text-left">
                                 Created By: {{ $parcel_order->customer->customer_name }} - <a href="">{{ $parcel_order->customer->customer_phone }}</a>
                             </div>
                         </div>
