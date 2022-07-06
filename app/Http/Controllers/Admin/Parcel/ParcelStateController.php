@@ -100,7 +100,7 @@ class ParcelStateController extends Controller
 
     public function admin_parcel_filter(Request $request)
     {
-        $order_count=CustomerOrder::where('order_type','parcel')->count();
+        $order_count=CustomerOrder::where('order_type','parcel')->where('customer_id',$request['customer_id'])->count();
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
@@ -120,12 +120,7 @@ class ParcelStateController extends Controller
     }
     public function admin_parcel_list(Request $request,$id)
     {
-        // $words = explode(" ", "Community College District");
-        // $acronym = "";
-        // foreach ($words as $w) {
-        // $acronym .= $w[0];
-        // }
-        $order_count=CustomerOrder::where('order_type','parcel')->count();
+        $order_count=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->count();
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
@@ -185,7 +180,8 @@ class ParcelStateController extends Controller
     // }
     public function admin_parcel_create(Request $request,$id)
     {
-        $order_count=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->count();
+        $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+        $customer_order_id=(1+$order_count);
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
@@ -201,7 +197,8 @@ class ParcelStateController extends Controller
     }
     public function admin_parcel_edit(Request $request,$id,$customer_id)
     {
-        $order_count=CustomerOrder::where('order_type','parcel')->where('customer_id',$customer_id)->count();
+        $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+        $customer_order_id=(1+$order_count);
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
