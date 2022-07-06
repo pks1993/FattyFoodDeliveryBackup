@@ -60,7 +60,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Bootstrap Example</title>
+    <title>Fatty Food Delivery</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -135,6 +135,9 @@
     </style>
 </head>
 <body style="width:100%;font-size:16px !important;">
+    <div style="background-color: black;color:white;padding-top:5px;padding-bottom:5px;text-align:center;font-size:20px;">
+        <strong>Fatty</strong> Food Delivery
+    </div>
 
 
 {{-- <form action="{{ route('fatty.admin.admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
@@ -142,9 +145,9 @@
     <div class="container-fluid">
         <div class="row p-1">
             <div class="form-group col-12 p-1">
-                <div class="card">
-                    <div class="col-12">
-                        <h3 align="center" style="font-weight: 600;font-size:20px;margin-top:10px">Customer Admin Login</h3><br />
+                {{-- <div class="card"> --}}
+                    {{-- <div class="col-12"> --}}
+                        {{-- <h3 align="center" style="font-weight: 600;font-size:20px;margin-top:10px">Customer Admin Login</h3><br /> --}}
 
                         @if(isset(Auth::user()->email))
                             <script>window.location="/main/successlogin";</script>
@@ -170,19 +173,17 @@
                         <form method="post" action="{{ url('admin_parcel_orders/login/check') }}">
                             {{ csrf_field() }}
                             <div class="form-group">
-                            <label>Enter Phone</label>
-                            <input type="text" name="phone" style="height: 30px;font-size: 15px" class="form-control" placeholder="0987654321"/>
+                            <input type="text" name="phone" style="height: 30px;font-size: 15px" class="form-control" placeholder="Fatty ID"/>
                             </div>
                             <div class="form-group">
-                            <label>Enter Password</label>
-                            <input type="password" name="password" style="height: 30px;" class="form-control" placeholder="at lease 6 letter"/>
+                            <input type="password" name="password" style="height: 30px;font-size:15px;" class="form-control" placeholder="Fatty Password"/>
                             </div>
                             <div class="form-group">
-                            <input type="submit" name="login" class="btn btn-block btn-primary" style="font-size: 13px;" value="Login" />
+                            <input type="submit" name="login" class="btn btn-block btn-primary" style="font-size: 15px;" value="Sign In" />
                             </div>
                         </form>
-                    </div>
-                </div>
+                    {{-- </div> --}}
+                {{-- </div> --}}
             </div>
 
         </div>
