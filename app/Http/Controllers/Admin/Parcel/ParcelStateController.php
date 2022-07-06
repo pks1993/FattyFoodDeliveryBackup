@@ -114,7 +114,7 @@ class ParcelStateController extends Controller
         $start_date=$request['start_date'];
         $end_date=$request['end_date'];
         // $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$request['customer_id'])->whereDate('created_at','>',$start_date)->whereDate('created_at','<',$end_date)->get();
-        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$request['customer_id'])->whereBetween('created_at', [$start_date.' 00:00:00',$end_date.' 23:59:59'])->get();
+        $parcel_orders=CustomerOrder::where('order_type','parcel')->orderBy('created_at','desc')->where('customer_id',$request['customer_id'])->whereBetween('created_at', [$start_date.' 00:00:00',$end_date.' 23:59:59'])->get();
 
         return view('admin.order.parcel_list.admin_list',compact('parcel_type','extra','from_cities','to_cities','riders','customers','customer_order_count','customer_admin_id','parcel_orders'));
     }
@@ -351,7 +351,8 @@ class ParcelStateController extends Controller
         }
 
         $request->session()->flash('alert-success', 'successfully create parcel orders!');
-        return redirect('admin_parcel_orders/list/'.$request['customer_id']);
+        // return redirect('admin_parcel_orders/list/'.$request['customer_id']);
+        return redirect('admin_parcel_orders/copy/'.$id);
     }
     public function admin_parcel_store(Request $request)
     {
@@ -489,10 +490,9 @@ class ParcelStateController extends Controller
 
             }
         }
-
-        $request->session()->flash('alert-success', 'successfully create parcel orders!');
         // return redirect()->back();
-        return redirect('admin_parcel_orders/list/'.$request['customer_id']);
+        return redirect('admin_parcel_orders/copy/'.$parcel_orders->order_id);
+        // return redirect('admin_parcel_orders/list/'.$request['customer_id']);
     }
 
     public function parcel_create(Request $request)
