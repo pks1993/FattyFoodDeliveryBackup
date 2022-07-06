@@ -134,48 +134,27 @@
     </div>
 </div>
 <div id="order_form" style="display: block">
-    <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;">
-        <li class="nav-item">
-            <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ url("admin_parcel_orders/logout") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
-        </li>
-    </ul>
-
-    <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
-    {{-- <form action="" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
+    <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:20px;text-align:left;"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> Edit Order</a>
+    <form action="{{ route('admin_parcel.update',$parcel_order->order_id) }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
         @csrf
         <div class="container-fluid">
             <div class="row p-1">
+                <p style="font-weight: 600;font-size:17px;">ORDER NO # <span>{{ $parcel_order->customer_order_id }}</span></p>
                 <div class="form-group col-12 p-1 border border-success rounded">
-                    {{-- <div class="card" style="padding:0px;"> --}}
-                        <div class="form-group col-12">
-                            <i class="fa fa-user" style="font-size:17px;"> <span style="font-size: 14px;">{{ $customer->customer_name }}</span></i>
-                            <p style="font-weight: 600;font-size:17px;">ORDER NO # <span>{{ $customer_order_count }}</span></p>
+                        <div class="form-group col-12 mt-2">
                             <input type="hidden" name="customer_id" value="{{ $customer_admin_id }}">
                             <input type="hidden" name="rider_restaurant_distance" id="rider_restaurant_distance">
-                            {{-- <select id="from_parcel_city_id" style="width: 100%;" class="form-control @error('from_parcel_city_id') is-invalid @enderror" name="from_parcel_city_id" value="{{ old('from_parcel_city_id') }}" autocomplete="from_parcel_city_id" autofocus onchange="calDistance()">
-                                <option value="">From</option>
-                                @foreach($from_cities as $value)
-                                    <option value="{{ $value->parcel_city_id }},{{ $value->latitude }},{{ $value->longitude }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                                @endforeach
-                            </select>
-                            @error('from_parcel_city_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror --}}
-                            <input class="btn btn-block text-white p-2" id="fromRegion" value="From"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
-                            <input type="hidden" class="btn btn-block" name="from_lat" id="from_lat" value="0">
-                            <input type="hidden" class="btn btn-block" name="from_lon" id="from_lon" value="0">
-                            <input type="hidden" class="btn btn-block" name="from_parcel_city_id" id="from_parcel_city_id" value="0">
+                            <input type="hidden" class="btn btn-block" name="from_lat" id="from_lat" value="{{$parcel_order->from_pickup_latitude}}">
+                            <input type="hidden" class="btn btn-block" name="from_lon" id="from_lon" value="{{$parcel_order->from_pickup_longitude}}">
+                            <input type="hidden" class="btn btn-block" name="from_parcel_city_id" id="from_parcel_city_id" value="{{$parcel_order->from_parcel_city_id}}">
+                            @if($parcel_order->from_parcel_city_id)
+                                <input class="btn btn-block text-white p-2" id="fromRegion" value="{{$parcel_order->from_parcel_region->city_name_mm}}"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
+                            @else
+                                <input class="btn btn-block text-white p-2" id="fromRegion" value="From"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
+                            @endif
                         </div>
                         <div class="form-group col-12">
-                            <input id="from_sender_phone" type="text" style="font-size: 15px;height:40px;" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" autocomplete="category_image" autofocus placeholder="From Phone">
+                            <input id="from_sender_phone" type="text" style="font-size: 15px;height:40px;" value="{{ $parcel_order->from_sender_phone }}" class="form-control @error('from_sender_phone') is-invalid @enderror" name="from_sender_phone" autocomplete="category_image" autofocus placeholder="From Phone">
                             @error('from_sender_phone')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -183,37 +162,27 @@
                             @enderror
                         </div>
                         <div class="form-group col-12">
-                            <textarea id="from_pickup_note" style="font-size: 15px;" class="form-control @error('from_pickup_note') is-invalid @enderror" style="height:70px;" name="from_pickup_note" value="{{ old('from_pickup_note') }}" autocomplete="category_image" autofocus placeholder="From Address"></textarea>
+                            <textarea id="from_pickup_note" style="font-size: 15px;" class="form-control @error('from_pickup_note') is-invalid @enderror" style="height:70px;" name="from_pickup_note" value="{{ old('from_pickup_note') }}" autocomplete="category_image" autofocus placeholder="From Address">{{ $parcel_order->from_pickup_note }}</textarea>
                             @error('from_pickup_note')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                             @enderror
                         </div>
-                    {{-- </div> --}}
                 </div>
                 <div class="form-group col-12 p-1 border2 border-primary rounded2">
-                    {{-- <div class="card" style="padding:5px;"> --}}
-                        <div class="form-group col-12 mt-3">
-                            {{-- <select id="to_parcel_city_id" style="width: 100%;" class="form-control @error('to_parcel_city_id') is-invalid @enderror" name="to_parcel_city_id" value="{{ old('to_parcel_city_id') }}" autocomplete="to_parcel_city_id" autofocus onchange="calDistance1()">
-                                <option value="">To</option>
-                                @foreach($to_cities as $value)
-                                    <option value="{{ $value->parcel_city_id }},{{ $value->latitude }},{{ $value->longitude }}">{{ $value->city_name_mm }}/{{ $value->city_name_en }}</option>
-                                @endforeach
-                            </select>
-                            @error('to_parcel_city_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror --}}
-                            {{-- <a class="btn btn-block text-white p-2" id="toRegion" style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">To</a> --}}
-                            <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="To"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
-                            <input type="hidden" class="btn btn-block" name="to_lat" id="to_lat" value="0">
-                            <input type="hidden" class="btn btn-block" name="to_lon" id="to_lon" value="0">
-                            <input type="hidden" class="btn btn-block" name="to_parcel_city_id" id="to_parcel_city_id" value="0">
+                        <div class="form-group col-12 mt-2">
+                            @if($parcel_order->to_parcel_city_id)
+                                <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="{{$parcel_order->to_parcel_region->city_name_mm}}"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
+                            @else
+                                <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="To"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
+                            @endif
+                            <input type="hidden" class="btn btn-block" name="to_lat" id="to_lat" value="{{$parcel_order->to_drop_latitude}}">
+                            <input type="hidden" class="btn btn-block" name="to_lon" id="to_lon" value="{{$parcel_order->to_drop_longitude}}">
+                            <input type="hidden" class="btn btn-block" name="to_parcel_city_id" id="to_parcel_city_id" value="{{$parcel_order->to_parcel_city_id}}">
                         </div>
                         <div class="form-group col-12">
-                            <input id="to_recipent_phone" style="font-size: 15px;height:40px;" type="text" class="form-control @error('to_recipent_phone') is-invalid @enderror" name="to_recipent_phone" autocomplete="category_image" autofocus placeholder="To Phone">
+                            <input id="to_recipent_phone" value="{{$parcel_order->to_recipent_phone}}" style="font-size: 15px;height:40px;" type="text" class="form-control @error('to_recipent_phone') is-invalid @enderror" name="to_recipent_phone" autocomplete="to_recipent_phone" autofocus placeholder="To Phone">
                             @error('to_recipent_phone')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -221,7 +190,7 @@
                             @enderror
                         </div>
                         <div class="form-group col-12">
-                            <textarea id="to_drop_note" style="font-size: 15px;" class="form-control @error('to_drop_note') is-invalid @enderror" style="height:70px;" name="to_drop_note" value="{{ old('to_drop_note') }}" autocomplete="category_image" autofocus placeholder="To Address"></textarea>
+                            <textarea id="to_drop_note" style="font-size: 15px;" class="form-control @error('to_drop_note') is-invalid @enderror" style="height:70px;" name="to_drop_note" value="{{ old('to_drop_note') }}" autocomplete="to_drop_note" autofocus placeholder="To Address">{{$parcel_order->to_drop_note}}</textarea>
                             @error('to_drop_note')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -231,7 +200,7 @@
                     {{-- </div> --}}
                 </div>
                 <div class="form-group col-12">
-                    <input id="price" type="text" style="font-size: 15px;height:40px;" class="form-control @error('price') is-invalid @enderror" placeholder="Price" name="price" autocomplete="category_image" autofocus placeholder="From Phone">
+                    <input id="price" value={{$parcel_order->bill_total_price}} type="text" style="font-size: 15px;height:40px;" class="form-control @error('price') is-invalid @enderror" placeholder="Price" name="price" autocomplete="price" autofocus placeholder="Price">
                     @error('price')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -239,23 +208,16 @@
                     @enderror
                 </div>
                 <div class="form-group col-12">
-                    {{-- <select class="rider_id" id="rider_id" style="width: 100%;" class="form-control @error('rider_id') is-invalid @enderror" name="rider_id" value="{{ old('rider_id') }}" autocomplete="rider_id" autofocus>
-                        <option value="0"> All Rider</option>
-                        @foreach($riders as $value)
-                            <option value="{{ $value->rider_id }}"> {{ $value->rider_user_name }} ( @if($value->is_order)HasOrder @else Free @endif )</option>
-                        @endforeach
-                    </select>
-                    @error('rider_id')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror --}}
-                    {{-- <a class="btn btn-block border p-2" id="driverData" style="font-size:20px;text-align:center" onclick="showDriver()"> Driver</a> --}}
-                    <input class="btn btn-block border p-2" id="driverData" value="Driver"  style="font-size:20px;text-align:center" onclick="showDriver()">
-                    <input type="hidden" class="btn btn-block" name="rider_id" id="rider_id" value="0">
+                    @if($parcel_order->rider_id)
+                        <input class="btn btn-block border p-2" id="driverData" value="{{$parcel_order->rider->rider_user_name}}"  style="font-size:20px;text-align:center" onclick="showDriver()">
+                        <input type="hidden" class="btn btn-block" name="rider_id" id="rider_id" value="{{$parcel_order->rider_id}}">
+                    @else
+                        <input class="btn btn-block border p-2" id="driverData" value="Driver"  style="font-size:20px;text-align:center" onclick="showDriver()">
+                        <input type="hidden" class="btn btn-block" name="rider_id" id="rider_id" value="0">
+                    @endif
                 </div>
                 <div class="form-group col-12">
-                    <textarea id="parcel_order_note" style="font-size: 15px;height:100px;" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:100px;" name="parcel_order_note" autocomplete="category_image" autofocus placeholder="Remark"></textarea>
+                    <textarea id="parcel_order_note" style="font-size: 15px;height:100px;" class="form-control @error('parcel_order_note') is-invalid @enderror" style="height:100px;" name="parcel_order_note" autocomplete="parcel_order_note" autofocus placeholder="Remark">{{$parcel_order->parcel_order_note}}</textarea>
                     @error('parcel_order_note')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
@@ -264,7 +226,7 @@
                 </div>
                 <div class="form-group col-12">
                     <button type="submit" class="btn btn-sm btn-block" style="height: 35px;font-size: 15px;background-color:#0062cc;color:white">
-                    {{ __('Upload') }}
+                    {{ __('Update') }}
                     </button>
                 </div>
             </div>

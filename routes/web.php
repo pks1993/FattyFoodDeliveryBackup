@@ -38,10 +38,20 @@ Route::post('fatty/post/login','Admin\Login\LoginController@login')->name('fatty
 Route::get('fatty/order/payment/url','Admin\Order\PaymentController@index');
 Route::post('fatty/order/payment/place_order','Admin\Order\PaymentController@create')->name('place_order.create');
 
+Route::get('admin_parcel_orders/login','Admin\Parcel\ParcelStateController@login');
+Route::post('admin_parcel_orders/login/check','Admin\Parcel\ParcelStateController@login_check')->name('login_check.create');
+Route::get('admin_parcel_orders/logout','Admin\Parcel\ParcelStateController@logout_check')->name('logout_check');
+
 //parcel create
 Route::get('admin_parcel_orders/list/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_list');
+// Route::get('admin_parcel_orders/datatable/listajax/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_list_ajax');
+Route::get('admin_parcel_orders/filter','Admin\Parcel\ParcelStateController@admin_parcel_filter')->name('admin_parcel_orders.filter');
+
 Route::get('admin_parcel_orders/create/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_create');
 Route::post('admin_parcel_orders/store','Admin\Parcel\ParcelStateController@admin_parcel_store')->name('admin_parcel.store');
+
+Route::get('admin_parcel_orders/edit/{order_id}/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_edit');
+Route::post('admin_parcel_orders/update/{order_id}','Admin\Parcel\ParcelStateController@admin_parcel_update')->name('admin_parcel.update');
 
 // Auth::routes(['verify'=>true]);
 
