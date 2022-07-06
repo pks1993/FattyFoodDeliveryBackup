@@ -95,7 +95,7 @@
                         <div class="row" id="copy{{ $parcel_order->order_id }}">
                             <input type="hidden" value="{{ $parcel_order->customer_id }}" name="customer_id" id="customer_id">
                             <div class="col-12 text-center mb-1">
-                                <strong>Order:333</strong>
+                                <strong>Order:{{ $parcel_order->customer_order_id }}</strong>
                             </div>
                             <div class="col-12 text-center mb-1">
                                 <strong>-----</strong>
