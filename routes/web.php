@@ -42,6 +42,11 @@ Route::get('admin_parcel_orders/login','Admin\Parcel\ParcelStateController@login
 Route::post('admin_parcel_orders/login/check','Admin\Parcel\ParcelStateController@login_check')->name('login_check.create');
 Route::get('admin_parcel_orders/logout','Admin\Parcel\ParcelStateController@logout_check')->name('logout_check');
 
+//cookies
+Route::get('/cookie/set','CookieController@setCookie');
+Route::get('/cookie/get','CookieController@getCookie');
+
+Route::get('admin_parcel_orders/copy/{order_id}','Admin\Parcel\ParcelStateController@admin_parcel_copy');
 //parcel create
 Route::get('admin_parcel_orders/list/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_list');
 // Route::get('admin_parcel_orders/datatable/listajax/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_list_ajax');

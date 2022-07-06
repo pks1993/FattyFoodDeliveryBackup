@@ -95,23 +95,23 @@
     <div class="container-fluid">
         <div class="row p-1">
             <div class="form-group col-12 p-1 border border-success rounded">
-                <div class="card" style="padding:5px;">
+                <div class="" style="padding:5px;">
                     <div class="col-12">
                         <form action="{{ route('admin_parcel_orders.filter') }}">
                             <label class="col-4" for="start_date">Start:</label>
                             <label class="col-4" for="end_date">End:</label>
-                            <label class="col-3" for=""></label>
+                            <label class="col-2" for=""></label>
                             <input class="col-4" type="date" name="start_date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <input class="col-4" type="date" name="end_date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 45%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <input type="hidden" name="customer_id" value="{{ $customer_admin_id }}">
-                            <button class="col-3" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;">Search</button>
+                            <button class="col-2" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
                         </form>
                     </div>
-                    <div class="form-group col-12 table-responsive">
+                    <div class="form-group col-12 table-responsive mt-4">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>No.</th>
+                                    {{-- <th>No.</th> --}}
                                     <th>OrderID</th>
                                     <th>From</th>
                                     <th>To</th>
@@ -123,8 +123,8 @@
                             <tbody>
                                 @foreach ($parcel_orders as $value)
                                 <tr>
-                                    <td>{{ $value->order_id }}</td>
-                                    <td>{{ $value->customer_order_id }}</td>
+                                    {{-- <td>{{ $value->order_id }}</td> --}}
+                                    <td>#{{ $value->customer_order_id }}</td>
                                     <td>
                                         @if($value->from_pickup_address)
                                             {{ $value->from_pickup_address }}
@@ -142,15 +142,23 @@
                                     <td>
                                         @if($value->rider_id)
                                             <a class="btn btn-success text-white rounded">
-                                                {{ $value->rider->rider_user_name }}
+                                                {{-- {{ $value->rider->rider_user_name }} --}}
+                                                <?php
+                                                    $words = explode(" ", $value->rider->rider_user_name);
+                                                    $rider_name = "";
+                                                    foreach ($words as $w) {
+                                                    $rider_name .= $w[0];
+                                                    }
+                                                ?>
+                                                {{ $rider_name }}
                                             </a>
                                         @else
                                             <a class="btn btn-danger text-white rounded">
-                                                EmptyRider
+                                                Empty
                                             </a>
                                         @endif
                                     </td>
-                                    <td>{{ $value->order_time }}</td>
+                                    <td>{{ $value->created_at->diffForHumans(null,true,true) }}</td>
                                     <td>
                                         @if($value->order_status_id==11)
                                             {{-- <a class="btn btn-primary text-white rounded"><i class="fa fa-check-circle"></i></a> <span style="color: blue">{{ "Pending" }}</span> --}}
