@@ -101,7 +101,11 @@
                                 <strong>-----</strong>
                             </div>
                             <div class="col-12 p-0 text-left mb-1">
-                                From: {{ $parcel_order->from_parcel_region->city_name_mm }}
+                                @if($parcel_order->from_parcel_city_id)
+                                    From: {{ $parcel_order->from_parcel_region->city_name_mm }}
+                                @else
+                                    From:
+                                @endif
                             </div>
                             <div class="col-12 p-0 text-left mb-1">
                                 <a href="">{{ $parcel_order->from_sender_phone }}</a>
@@ -113,7 +117,11 @@
                                 <strong>-----</strong>
                             </div>
                             <div class="col-12 p-0 text-left mb-1">
-                                To: {{ $parcel_order->to_parcel_region->city_name_mm }}
+                                @if($parcel_order->to_parcel_city_id)
+                                    To: {{ $parcel_order->to_parcel_region->city_name_mm }}
+                                @else
+                                    To:
+                                @endif
                             </div>
                             <div class="col-12 p-0 text-left mb-1">
                                 <a href="">{{ $parcel_order->to_recipent_phone }}</a>
@@ -134,7 +142,11 @@
                                 Booking:
                             </div>
                             <div class="col-12 p-0 text-left mb-1">
-                                Rider: {{ $parcel_order->rider->rider_user_name }} - <a href="">{{ $parcel_order->rider->rider_user_phone }}</a>
+                                @if($parcel_order->rider_id)
+                                    Rider: {{ $parcel_order->rider->rider_user_name }} - <a href="">{{ $parcel_order->rider->rider_user_phone }}</a>
+                                @else
+                                    Rider:
+                                @endif
                             </div>
                             <div class="col-12 p-0 text-left mb-1">
                                 Created By: {{ $parcel_order->customer->customer_name }} - <a href="">{{ $parcel_order->customer->customer_phone }}</a>
