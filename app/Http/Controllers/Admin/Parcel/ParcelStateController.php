@@ -40,7 +40,7 @@ class ParcelStateController extends Controller
         if($customers){
             $phone_check=substr_replace($customers->customer_phone,0, 0, 3);
             $password_check=substr($phone_check, -6);
-            if($phone_check==$phone && $password==$password_check){
+            if($phone_check==$phone && $password==$password_check && $customers->customer_type_id==3 && $customers->is_restricted==0){
                 return redirect('admin_parcel_orders/create/'.$customers->customer_id);
            }else{
                 $request->session()->flash('alert-danger', 'user name and password are not same!');
