@@ -142,9 +142,18 @@
             <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
         </li>
         <li class="nav-item">
-            <a href="{{ url("admin_parcel_orders/logout") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
+            <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
         </li>
     </ul>
+    <div class="col-12 mt-3" style="font-size: 15px;">
+        <div class="flash-message" id="successMessage">
+            @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                @if(Session::has('alert-' . $msg))
+                    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                @endif
+            @endforeach
+        </div>
+    </div>
 
     <form action="{{ route('admin_parcel.store') }}" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;">
     {{-- <form action="" method="post" autocomplete="off" enctype="multipart/form-data" style="margin: 5px;"> --}}
@@ -547,6 +556,11 @@
         $('#rider_id').select2();
     });
 </script> --}}
+<script>
+    setTimeout(function() {
+        $('#successMessage').fadeOut('fast');
+    }, 2000);
+</script>
 <script>
 
 

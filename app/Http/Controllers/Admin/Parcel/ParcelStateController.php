@@ -43,18 +43,21 @@ class ParcelStateController extends Controller
             $phone_check=substr_replace($customers->customer_phone,0, 0, 3);
             $password_check=substr($phone_check, -6);
             if($phone_check==$phone && $password==$password_check && $customers->customer_type_id==3 && $customers->is_restricted==0){
+                $request->session()->flash('alert-success', 'successfully login!');
                 return redirect('admin_parcel_orders/create/'.$customers->customer_id);
            }else{
                 $request->session()->flash('alert-danger', 'user name and password are not same!');
                 return redirect()->back();
             }
         }else{
-            $request->session()->flash('alert-danger', 'user name and password are not same!');
+                $request->session()->flash('alert-danger', 'user name and password are not same!');
                 return redirect()->back();
         }
     }
     public function logout_check(Request $request)
     {
+        // Cookie::queue(Cookie::forget('customer_admin'));
+        $request->session()->flash('alert-success', 'successfully logout!');
         return redirect('admin_parcel_orders/login');
     }
     /**
@@ -92,7 +95,7 @@ class ParcelStateController extends Controller
         return redirect('fatty/main/admin/parcel_states');
     }
 
-    public function admin_parcel_copy($id)
+    public function admin_parcel_copy(Request $request,$id)
     {
         $parcel_order=CustomerOrder::where('order_id',$id)->first();
         return view('admin.order.parcel_list.admin_copy',compact('parcel_order'));
@@ -213,6 +216,30 @@ class ParcelStateController extends Controller
         return view('admin.order.parcel_list.admin_edit',compact('parcel_type','extra','from_cities','to_cities','riders','customers','customer_order_count','customer_admin_id','parcel_order'));
     }
 
+    public function admin_parcel_destroy(Request $request,$id,$customer_id)
+    {
+        $check_order=CustomerOrder::where('order_id',$id)->first();
+        if($check_order){
+            if($check_order->rider_id){
+                $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
+                    if($has_order){
+                        $check_rider->is_order=1;
+                        $check_rider->update();
+                    }else{
+                        $check_rider->is_order=0;
+                        $check_rider->update();
+                    }
+            }
+            $check_order->delete();
+            $request->session()->flash('alert-danger', 'successfully delete parcel orders!');
+            return redirect('admin_parcel_orders/list/'.$customer_id);
+        }else{
+            $request->session()->flash('alert-warning', 'order id not found!');
+            return redirect()->back();
+        }
+    }
+
     public function admin_parcel_update(Request $request,$id)
     {
         $from_parcel_city_id=$request['from_parcel_city_id'];
@@ -277,6 +304,7 @@ class ParcelStateController extends Controller
         }
         // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
         if($delivery_fee){
+            // dd($delivery_fee);
             $parcel_orders->rider_delivery_fee=$delivery_fee/2;
         }else{
             $parcel_orders->rider_delivery_fee=0;

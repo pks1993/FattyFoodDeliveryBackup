@@ -662,6 +662,18 @@ class OrderController extends Controller
     public function pendingorderdefine(Request $request,$id)
     {
         CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
+        $check_order=CustomerOrder::where('order_id',$id)->first();
+        if($check_order->rider_id){
+            $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+            $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
+                if($has_order){
+                    $check_rider->is_order=1;
+                    $check_rider->update();
+                }else{
+                    $check_rider->is_order=0;
+                    $check_rider->update();
+                }
+        }
         $request->session()->flash('alert-success', 'successfully Pending Order!');
         return redirect()->back();
     }

@@ -200,7 +200,7 @@
                     {{-- </div> --}}
                 </div>
                 <div class="form-group col-12">
-                    <input id="price" value={{$parcel_order->bill_total_price}} type="text" style="font-size: 15px;height:40px;" class="form-control @error('price') is-invalid @enderror" placeholder="Price" name="price" autocomplete="price" autofocus placeholder="Price">
+                    <input id="price" value="{{$parcel_order->bill_total_price}}" type="text" style="font-size: 15px;height:40px;" class="form-control @error('price') is-invalid @enderror" placeholder="Price" name="price" autocomplete="price" autofocus placeholder="Price">
                     @error('price')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -229,12 +229,16 @@
                     {{ __('Update') }}
                     </button>
                 </div>
+                <div class="p-1 col-12 mt-5 text-center">
+                    <a href="{{ url('admin_parcel_orders/destroy/'.$parcel_order->order_id.'/'.$parcel_order->customer_id) }}" class="btn btn-lg btn-danger" onclick="return confirm('Are you sure you want to delete this order?');" style="font-size:15px;color:white">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </form>
 </div>
 <script>
-
     function getRider(id,name){
         var x = document.getElementById("driver");
         if (x.style.display === "none") {
