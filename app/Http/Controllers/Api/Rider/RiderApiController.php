@@ -465,7 +465,7 @@ class RiderApicontroller extends Controller
                 + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.from_pickup_latitude))) AS rider_from_distance"))
                 // ->having('distance', '<', $distance)
-                ->having('rider_from_distance','<',4)
+                ->having('rider_from_distance','<',1.1)
                 ->groupBy("order_id")
                 ->orderBy("created_at","DESC")
                 ->where("order_status_id","11")
@@ -488,7 +488,7 @@ class RiderApicontroller extends Controller
                 + sin(radians(".$rider_latitude."))
                 * sin(radians(customer_orders.restaurant_address_latitude))) AS rider_restaurant_distance"))
                 // ->having('distance', '<', $distance)
-                ->having('rider_restaurant_distance','<',4)
+                ->having('rider_restaurant_distance','<',1.1)
                 ->groupBy("order_id")
                 ->orderBy("created_at","DESC")
                 ->where("rider_id",null)
@@ -1514,7 +1514,7 @@ class RiderApicontroller extends Controller
                         $rider->is_order=0;
                         $rider->update();
                     }
-                    $last_order=CustomerOrder::where('order_id',$order_id)->frist();
+                    $last_order=CustomerOrder::where('order_id',$order_id)->first();
                     $last_order->order_status_id=15;
                     $last_order->update();
 
