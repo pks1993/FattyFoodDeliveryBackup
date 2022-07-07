@@ -1122,8 +1122,14 @@ class RiderApicontroller extends Controller
                     }
                 }
                 elseif($order_status_id=="7"){
-                    $rider->is_order=0;
-                    $rider->update();
+                    $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                    if($check_order){
+                        $rider->is_order=1;
+                        $rider->update();
+                    }else{
+                        $rider->is_order=0;
+                        $rider->update();
+                    }
 
                     //rider
                     $rider_client = new Client();
@@ -1467,8 +1473,14 @@ class RiderApicontroller extends Controller
                         }
                     }
                 }elseif($order_status_id=="15"){
-                    $rider->is_order=0;
-                    $rider->update();
+                    $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                    if($check_order){
+                        $rider->is_order=1;
+                        $rider->update();
+                    }else{
+                        $rider->is_order=0;
+                        $rider->update();
+                    }
 
                     //rider
                     $rider_client = new Client();

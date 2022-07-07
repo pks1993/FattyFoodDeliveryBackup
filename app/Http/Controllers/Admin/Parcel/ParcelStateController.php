@@ -275,7 +275,12 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
-        $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        if($delivery_fee){
+            $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        }else{
+            $parcel_orders->rider_delivery_fee=0;
+        }
         $parcel_orders->is_admin_force_order=0;
         $parcel_orders->update();
 
@@ -321,6 +326,7 @@ class ParcelStateController extends Controller
         }
 
         $rider_token=$riderFcmToken;
+        // dd($rider_token);
         $orderId=(string)$parcel_orders->order_id;
         $orderstatusId=(string)$parcel_orders->order_status_id;
         $orderType=(string)$parcel_orders->order_type;
@@ -416,7 +422,11 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
-        $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        if($delivery_fee){
+            $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        }else{
+            $parcel_orders->rider_delivery_fee=0;
+        }
         $parcel_orders->is_admin_force_order=0;
         $parcel_orders->save();
 
@@ -462,6 +472,7 @@ class ParcelStateController extends Controller
         }
 
         $rider_token=$riderFcmToken;
+        // return response()->json($rider_token);
         $orderId=(string)$parcel_orders->order_id;
         $orderstatusId=(string)$parcel_orders->order_status_id;
         $orderType=(string)$parcel_orders->order_type;
