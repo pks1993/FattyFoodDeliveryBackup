@@ -111,7 +111,7 @@
                                 <a href="tel:{{ $parcel_order->from_sender_phone }}">{{ $parcel_order->from_sender_phone }}</a>
                             </div>
                             <div class="col-12 p-0 text-left">
-                                {{ $parcel_order->from_pickup_address }}
+                                {{ $parcel_order->from_pickup_note }}
                             </div>
                             <div class="col-12 text-center">
                                 <strong>-----</strong>
@@ -127,7 +127,7 @@
                                 <a href="tel:{{ $parcel_order->to_recipent_phone }}">{{ $parcel_order->to_recipent_phone }}</a>
                             </div>
                             <div class="col-12 p-0 text-left">
-                                {{ $parcel_order->to_drop_address }}
+                                {{ $parcel_order->to_drop_note }}
                             </div>
                             <div class="col-12 text-center">
                                 <strong>-----</strong>

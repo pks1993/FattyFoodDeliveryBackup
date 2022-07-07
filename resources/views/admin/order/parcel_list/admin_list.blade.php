@@ -297,7 +297,7 @@
                                                             </div>
 
                                                             <div class="col-12 text-left p-0">
-                                                                {{ $value->from_pickup_address }}<br>
+                                                                {{ $value->from_pickup_note }}<br>
                                                             </div>
 
                                                             <div class="col-12">
@@ -319,7 +319,7 @@
                                                             </div>
 
                                                             <div class="col-12 text-left p-0">
-                                                                {{ $value->to_drop_address }}<br>
+                                                                {{ $value->to_drop_note }}<br>
                                                             </div>
 
                                                             <div class="col-12">
