@@ -954,6 +954,12 @@ class RiderApicontroller extends Controller
                                         "title_ch"=> "骑手已接单",
                                         "body_ch"=> "骑手已接单!正在赶来！"
                                     ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
                             ]);
 
@@ -1017,6 +1023,12 @@ class RiderApicontroller extends Controller
                                         "title_ch"=> "骑手已到达",
                                         "body_ch"=> "骑手已到达!正在等待取餐！"
                                     ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
                             ]);
 
@@ -1079,6 +1091,12 @@ class RiderApicontroller extends Controller
                                         "body_en"=> "Rider start delivery to customer!",
                                         "title_ch"=> "开始派送",
                                         "body_ch"=> "骑手已开始为用户派送!"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
                                     ],
                                 ],
                             ]);
@@ -1178,6 +1196,12 @@ class RiderApicontroller extends Controller
                                         "body_en"=> "Good Day! Order is finished.Thanks very much!",
                                         "title_ch"=> "订单已结束",
                                         "body_ch"=> "订单已结束!"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
                                     ],
                                 ],
                             ]);
@@ -1481,6 +1505,9 @@ class RiderApicontroller extends Controller
                         $rider->is_order=0;
                         $rider->update();
                     }
+                    $last_order=CustomerOrder::where('order_id',$order_id)->frist();
+                    $last_order->order_status_id=15;
+                    $last_order->update();
 
                     //rider
                     $rider_client = new Client();

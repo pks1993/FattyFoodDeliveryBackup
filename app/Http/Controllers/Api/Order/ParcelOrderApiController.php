@@ -791,6 +791,11 @@ class ParcelOrderApiController extends Controller
         $from_parcel_city_id=$add[0]['from_parcel_city_id'];
         $to_parcel_city_id=$add[0]['to_parcel_city_id'];
 
+        $from_pickup_latitude=$add[0]['from_pickup_latitude'];
+        $from_pickup_longitude=$add[0]['from_pickup_longitude'];
+        $to_drop_latitude=$add[0]['to_drop_latitude'];
+        $to_drop_longitude=$add[0]['to_drop_longitude'];
+
         foreach ($add as $list) {
             $from_pickup_latitude=$list['from_pickup_latitude'];
             $from_pickup_longitude=$list['from_pickup_longitude'];
@@ -825,6 +830,7 @@ class ParcelOrderApiController extends Controller
                 $to_drop_address=null;
                 $to_city_name=$to_city_name;
             }
+
 
             $rider_parcel_block_note[]=['from_pickup_address'=>$from_pickup_address,'from_city_name'=>$from_city_name,'to_drop_address'=>$to_drop_address,'to_city_name'=>$to_city_name,'distance'=>$history_distance];
         }
@@ -905,13 +911,13 @@ class ParcelOrderApiController extends Controller
             $parcel_order->from_sender_name=$parcel_order->from_sender_name;
             $parcel_order->from_sender_phone=$parcel_order->from_sender_phone;
             $parcel_order->from_pickup_address=$parcel_order->from_pickup_address;
-            $parcel_order->from_pickup_latitude=$parcel_order->from_pickup_latitude;
-            $parcel_order->from_pickup_longitude=$parcel_order->from_pickup_longitude;
+            $parcel_order->from_pickup_latitude=$from_pickup_latitude;
+            $parcel_order->from_pickup_longitude=$from_pickup_longitude;
             $parcel_order->to_recipent_name=$parcel_order->to_recipent_name;
             $parcel_order->to_recipent_phone=$parcel_order->to_recipent_phone;
             $parcel_order->to_drop_address=$parcel_order->to_drop_address;
-            $parcel_order->to_drop_latitude=$parcel_order->to_drop_latitude;
-            $parcel_order->to_drop_longitude=$parcel_order->to_drop_longitude;
+            $parcel_order->to_drop_latitude=$to_drop_latitude;
+            $parcel_order->to_drop_longitude=$to_drop_longitude;
             $parcel_order->parcel_type_id=$parcel_type_id;
             $parcel_order->rider_parcel_block_note=$rider_parcel_block_note;
             $parcel_order->rider_parcel_address=$add;

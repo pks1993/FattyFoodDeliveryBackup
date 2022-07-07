@@ -75,7 +75,7 @@
         }
     </style>
 </head>
-<body style="width:100%;font-size:16px !important;">
+<body style="width:100% !important;font-size: 13px;">
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
 <ul class="nav nav-pills navbar-inverse">
     <li class="nav-item">
@@ -108,40 +108,41 @@
                         </form>
                     </div>
                     <div class="form-group col-12 table-responsive mt-4">
-                        <table class="table">
+                        <table class="text-center table-avatar" style="width: 100%">
                             <thead>
                                 <tr>
                                     {{-- <th>No.</th> --}}
-                                    <th>OrderID</th>
+                                    <th>ID</th>
                                     <th>From</th>
                                     <th>To</th>
-                                    <th>Rider</th>
-                                    <th>Duration</th>
-                                    <th>Status</th>
+                                    <th><i class="fas fa-motorcycle"></i></th>
+                                    {{-- <th><i class="fas fa-clock"></i></th> --}}
+                                    <th><i class="fas fa-clock"></i></th>
+                                    <th>status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($parcel_orders as $value)
                                 <tr>
                                     {{-- <td>{{ $value->order_id }}</td> --}}
-                                    <td>#{{ $value->customer_order_id }}</td>
+                                    <td>{{ $value->customer_order_id }}</td>
                                     <td>
                                         @if($value->from_pickup_address)
                                             {{ $value->from_pickup_address }}
                                         @else
-                                            <span style="color: red">{{ "Empty" }}</span>
+                                            <span style="color: red;">{{ "Null" }}</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($value->to_drop_address)
                                             {{ $value->to_drop_address }}
                                         @else
-                                        <span style="color: red">{{ "Empty" }}</span>
+                                        <span style="color: red">{{ "Null" }}</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if($value->rider_id)
-                                            <a class="btn btn-success text-white rounded">
+                                            <a class="btn btn-sm btn-success text-white rounded">
                                                 {{-- {{ $value->rider->rider_user_name }} --}}
                                                 <?php
                                                     $words = explode(" ", $value->rider->rider_user_name);
@@ -153,19 +154,175 @@
                                                 {{ $rider_name }}
                                             </a>
                                         @else
-                                            <a class="btn btn-danger text-white rounded">
-                                                Empty
-                                            </a>
+                                        <a class="btn btn-sm btn-danger text-white rounded">
+                                            null
+                                        </a>
                                         @endif
                                     </td>
-                                    <td>{{ $value->created_at->diffForHumans(null,true,true) }}</td>
+                                    {{-- <td>{{ $value->created_at->diffForHumans(null,true,true) }} <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}"><i class="fa fa-angle-right" style="font-size: 15px;font-weight: 600;color:black;"></i></a></td> --}}
+                                    <td class="pt-2 pb-2">
+                                        <div id="show124152">
+                                            <a class="btn btn-sm btn-block" style="font-size: 13px;" id="124152" onclick="showOrderDetail(this)">
+                                                {{ $value->created_at->diffForHumans(null,true,true) }}
+                                                <i class="fas fa-angle-down">
+                                                </i>
+                                            </a>
+                                        </div>
+
+                                        <div id="hide124152" style="display: none;">
+                                            <a class="btn btn-sm btn-block" style="font-size: 13px" id="124152" onclick="hideOrderDetail(this)">
+                                                {{ $value->created_at->diffForHumans(null,true,true) }}
+                                                <i class="fas fa-angle-up"></i>
+                                            </a>
+
+                                        </div>
+                                    </td>
                                     <td>
                                         @if($value->order_status_id==11)
                                             {{-- <a class="btn btn-primary text-white rounded"><i class="fa fa-check-circle"></i></a> <span style="color: blue">{{ "Pending" }}</span> --}}
-                                            <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}" class="btn btn-primary text-white rounded" title="Pending Order" style="font-size: 13px;"><i class="fa fa-check-circle"></i></a>  <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}"><i class="fa fa-angle-right" style="font-size: 20px;font-weight: 600;color:black;"></i></a>
+                                            <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}" class="btn btn-sm btn-primary text-white rounded" title="Pending Order" style="font-size: 13px;"><i class="fa fa-edit fa-sm"></i></a>
                                         @else
-                                            <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}" class="btn btn-success text-white rounded" title="Accept Order" style="font-size: 13px;"><i class="fa fa-check-circle"></i></a>  <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}"><i class="fa fa-angle-right" style="font-size: 20px;font-weight: 600;color:black;"></i></a>
+                                            <a href="{{ url('admin_parcel_orders/edit/'.$value->order_id.'/'.$customer_admin_id) }}" class="btn btn-sm btn-success text-white rounded" title="Accept Order" style="font-size: 13px;"><i class="fa fa-edit fa-sm"></i></a>
                                         @endif
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="7">
+                                        <!-- order detail -->
+
+                                        <div id="order124152" class="container-fluid mt-2" style="border: 1px solid red; border-radius: 5px; display: none;">
+                                                <div class="row p-1">
+                                                    <div class="col-12 text-center">
+
+                                                        <strong>ORDER NO. 1</strong>
+                                                        <br>
+                                                        <a onclick="copyDivToClipboard(124152)" class="btn btn-sm btn-secondary text-white">Copy</a>
+
+                                                        <hr>
+
+                                                    </div>
+
+                                                    <div class="col-4 text-center">
+                                                        <a class="btn btn-sm btn-block btn-success text-white">
+                                                            B-1 (အထက.၁)							</a>
+                                                    </div>
+
+                                                    <div class="col-4 text-center">
+                                                        <a class="btn btn-sm">
+                                                            <i class="fas fa-arrow-right"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-4 text-center">
+                                                        <a class="btn btn-sm btn-block btn-success text-white">
+                                                            B-12 (လားရှိုးကြီး)							</a>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="row" id="copy124152">
+
+                                                            <div class="col-12">
+                                                                <hr>
+                                                                <strong>Order: 1</strong>
+                                                            </div>
+
+                                                            <div class="col-12">
+                                                                -----
+                                                            </div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                From: B-1 (အထက.၁)								</div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                <a href="tel: 0001">
+                                                                    0001									</a>
+                                                            </div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                Testing123<br>
+                                                            </div>
+
+                                                            <div class="col-12">
+                                                                -----
+                                                            </div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                To: B-12 (လားရှိုးကြီး)								</div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                <a href="tel: 00002">
+                                                                    00002									</a>
+                                                            </div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                Testing234<br>
+                                                            </div>
+
+                                                            <div class="col-12">
+                                                                -----
+                                                            </div>
+
+                                                            <div class="col-12 text-left p-0">
+                                                                Price: 2500 ks
+                                                            </div>
+
+                                                            <div class="col-12 text-left p-0 text-danger font-weight-bold">
+                                                                Remark: Testing								</div>
+                                                            <div class="col-12 text-left p-0">
+                                                                Booking:
+                                                                                                </div>
+                                                            <div class="col-12 text-left p-0">
+                                                                Rider:
+                                                                Kyone Sin									 -
+                                                                 <a href="tel: 09970074176">
+                                                                     09970074176									 </a>
+
+                                                            </div>
+                                                            <div class="col-12 text-left p-0">
+                                                                Created By:
+
+                                                                                                     KS									 -
+                                                                 <a href="tel: 09970074176">
+                                                                     09970074176									 </a>
+
+                                                            </div>
+                                                        </div>
+                                                </div>
+
+
+                                                    <div class="col-12">
+                                                        <hr>
+                                                    </div>
+
+                                                    <div class="col-4 text-left p-0">
+                                                        Created
+                                                    </div>
+
+                                                    <div class="col-8 text-right p-0">
+                                                        2022-07-07 10:51:28						</div>
+
+                                                    <div class="col-4 text-left p-0">
+                                                        Received
+                                                    </div>
+
+                                                    <div class="col-8 text-right p-0">
+                                                        2022-07-07 10:51:28						</div>
+
+                                                    <div class="col-4 text-left p-0">
+                                                        Finished
+                                                    </div>
+
+                                                    <div class="col-8 text-right p-0">
+                                                        0000-00-00 00:00:00						</div>
+
+                                                    <div class="col-4 text-left p-0">
+                                                        Duration
+                                                    </div>
+
+                                                    <div class="col-8 text-right p-0">
+                                                        33 m						</div>
+                                                </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -187,6 +344,22 @@
     });
 </script>
 <script>
+
+function showOrderDetail(x){
+		var ord_id = x.getAttribute('id');
+
+		document.getElementById('show' + ord_id).style.display = 'none';
+		document.getElementById('hide' + ord_id).style.display = 'block';
+		document.getElementById('order' + ord_id).style.display = 'block';
+	}
+
+	function hideOrderDetail(x){
+		var ord_id = x.getAttribute('id');
+
+		document.getElementById('show' + ord_id).style.display = 'block';
+		document.getElementById('hide' + ord_id).style.display = 'none';
+		document.getElementById('order' + ord_id).style.display = 'none';
+	}
 
 
     function calDistance(){
