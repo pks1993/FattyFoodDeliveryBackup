@@ -588,6 +588,12 @@ class OrderApiController extends Controller
                                      "title_ch"=> "订单已被用户取消",
                                      "body_ch"=> "非常抱歉 用户已取消订单!"
                                  ],
+                                 "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
                              ],
                          ]);
                      }catch(ClientException $e){
@@ -803,6 +809,12 @@ class OrderApiController extends Controller
                                     "title_ch"=> "Succesfully Order Cancel",
                                     "body_ch"=> "You success cancel customer order!!"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
                             ],
                         ]);
                     }catch(ClientException $e){
@@ -896,6 +908,12 @@ class OrderApiController extends Controller
                                     "body_en"=> "You success cancel customer order!",
                                     "title_ch"=> "Succesfully Order Cancel",
                                     "body_ch"=> "You success cancel customer order!!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
                                 ],
                             ],
                         ]);
@@ -2137,7 +2155,14 @@ class OrderApiController extends Controller
                                     "title_ch"=> "订单通知",
                                     "body_ch"=> "收到一个新订单!请查看！"
                                 ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
                             ],
+
                         ]);
 
                     }catch(ClientException $e){

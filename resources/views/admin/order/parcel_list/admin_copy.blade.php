@@ -108,7 +108,7 @@
                                 @endif
                             </div>
                             <div class="col-12 p-0 text-left">
-                                <a href="">{{ $parcel_order->from_sender_phone }}</a>
+                                <a href="tel:{{ $parcel_order->from_sender_phone }}">{{ $parcel_order->from_sender_phone }}</a>
                             </div>
                             <div class="col-12 p-0 text-left">
                                 {{ $parcel_order->from_pickup_address }}
@@ -124,7 +124,7 @@
                                 @endif
                             </div>
                             <div class="col-12 p-0 text-left">
-                                <a href="">{{ $parcel_order->to_recipent_phone }}</a>
+                                <a href="tel:{{ $parcel_order->to_recipent_phone }}">{{ $parcel_order->to_recipent_phone }}</a>
                             </div>
                             <div class="col-12 p-0 text-left">
                                 {{ $parcel_order->to_drop_address }}
@@ -135,7 +135,7 @@
                             <div class="col-12 p-0 text-left">
                                 Price: {{ $parcel_order->bill_total_price}} Ks
                             </div>
-                            <div class="col-12 p-0 text-left">
+                            <div class="col-12 p-0 text-left text-danger font-weight-bold">
                                 Remark: {{ $parcel_order->parcel_order_note }}
                             </div>
                             <div class="col-12 p-0 text-left">
@@ -143,13 +143,13 @@
                             </div>
                             <div class="col-12 p-0 text-left">
                                 @if($parcel_order->rider_id)
-                                    Rider: {{ $parcel_order->rider->rider_user_name }} - <a href="">{{ $parcel_order->rider->rider_user_phone }}</a>
+                                    Rider: {{ $parcel_order->rider->rider_user_name }} - <a href="tel:{{ $parcel_order->rider->rider_user_phone }}">{{ $parcel_order->rider->rider_user_phone }}</a>
                                 @else
                                     Rider:
                                 @endif
                             </div>
                             <div class="col-12 p-0 text-left">
-                                Created By: {{ $parcel_order->customer->customer_name }} - <a href="">{{ $parcel_order->customer->customer_phone }}</a>
+                                Created By: {{ $parcel_order->customer->customer_name }} - <a href="tel:{{ $parcel_order->customer->customer_phone }}">{{ $parcel_order->customer->customer_phone }}</a>
                             </div>
                         </div>
                     </div>

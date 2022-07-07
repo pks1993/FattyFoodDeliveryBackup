@@ -954,6 +954,12 @@ class RiderApicontroller extends Controller
                                         "title_ch"=> "骑手已接单",
                                         "body_ch"=> "骑手已接单!正在赶来！"
                                     ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
                             ]);
 
@@ -1016,6 +1022,12 @@ class RiderApicontroller extends Controller
                                         "body_en"=> "Rider arrived for taking customer’s order",
                                         "title_ch"=> "骑手已到达",
                                         "body_ch"=> "骑手已到达!正在等待取餐！"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
                                     ],
                                 ],
                             ]);
@@ -1080,6 +1092,12 @@ class RiderApicontroller extends Controller
                                         "title_ch"=> "开始派送",
                                         "body_ch"=> "骑手已开始为用户派送!"
                                     ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
                             ]);
 
@@ -1122,8 +1140,14 @@ class RiderApicontroller extends Controller
                     }
                 }
                 elseif($order_status_id=="7"){
-                    $rider->is_order=0;
-                    $rider->update();
+                    $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                    if($check_order){
+                        $rider->is_order=1;
+                        $rider->update();
+                    }else{
+                        $rider->is_order=0;
+                        $rider->update();
+                    }
 
                     //rider
                     $rider_client = new Client();
@@ -1172,6 +1196,12 @@ class RiderApicontroller extends Controller
                                         "body_en"=> "Good Day! Order is finished.Thanks very much!",
                                         "title_ch"=> "订单已结束",
                                         "body_ch"=> "订单已结束!"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
                                     ],
                                 ],
                             ]);
@@ -1467,8 +1497,17 @@ class RiderApicontroller extends Controller
                         }
                     }
                 }elseif($order_status_id=="15"){
-                    $rider->is_order=0;
-                    $rider->update();
+                    $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                    if($check_order){
+                        $rider->is_order=1;
+                        $rider->update();
+                    }else{
+                        $rider->is_order=0;
+                        $rider->update();
+                    }
+                    $last_order=CustomerOrder::where('order_id',$order_id)->frist();
+                    $last_order->order_status_id=15;
+                    $last_order->update();
 
                     //rider
                     $rider_client = new Client();

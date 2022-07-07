@@ -249,33 +249,57 @@ class OrderController extends Controller
         $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
-            $value->order_status_name=$value->order_status->order_status_name;
-            $value->customer_name=$value->customer->customer_name;
+            if($value->order_statu_id==null)
+            {
+                $value->order_status_name=Null;
+            }else{
+                $value->order_status_name=$value->order_status->order_status_name;
+            }
+            if($value->customer_id==null)
+            {
+                $value->customer_name=null;
+            }else{
+                $value->customer_name=$value->customer->customer_name;
+            }
             if($value->rider_id){
                 $value->rider_name=$value->rider->rider_user_name;
             }else{
                 $value->rider_name="Null";
             }
-            if($value->customer->customer_type_id==1){
-                $value->customer_type="Normal";
-            }elseif($value->customer->customer_type_id==2){
-                $value->customer_type="Vip";
+            if($value->customer_id==null){
+                $value->customer_type=null;
             }else{
-                $value->customer_type="Admin";
+                if($value->customer->customer_type_id==null){
+                    $value->customer_type=null;
+                }elseif($value->customer->customer_type_id==1){
+                    $value->customer_type="Normal";
+                }
+                elseif($value->customer->customer_type_id==2){
+                    $value->customer_type="Vip";
+                }else{
+                    $value->customer_type="Admin";
+                }
             }
-            $value->payment_method_name=$value->payment_method->payment_method_name;
+            // $value->payment_method_name=$value->payment_method->payment_method_name;
+            $value->payment_method_name="Cash ON Delivery";
 
             array_push($data,$value);
         }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('customer_type', function(CustomerOrder $item){
-            if($item->customer->customer_type_id==1){
-                $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
-            }elseif($item->customer->customer_type_id==2){
-                $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+            if($item->customer_id==null){
+                $type = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
             }else{
-                $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+                if($item->customer->customer_type_id==null){
+                    $type = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
+                }elseif($item->customer->customer_type_id==2){
+                    $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+                }elseif($item->customer->customer_type_id==1){
+                    $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
+                }else{
+                    $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+                }
             }
             return $type;
         })
@@ -303,10 +327,15 @@ class OrderController extends Controller
         })
         ->addColumn('action', function(CustomerOrder $post){
             $view = '<a href="/fatty/main/admin/parcel_orders/view/'.$post->order_id.'" class="btn btn-success btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            if ($post->customer->customer_type_id==3 && $post->order_type=="parcel") {
-                $edit = '<a href="/fatty/main/admin/parcel_orders/edit/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2" title="Parcel Edit"><i class="fas fa-edit"></i></a>';
-            }else{
+            if($post->customer_id==null)
+            {
                 $edit = '<a href="/fatty/main/admin/parcel_orders/edit" class="btn btn-danger btn-sm mr-2 disabled" title="Do Not Edit"><i class="fas fa-edit"></i></a>';
+            }else{
+                if ($post->customer->customer_type_id==3 && $post->order_type=="parcel") {
+                    $edit = '<a href="/fatty/main/admin/parcel_orders/edit/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2" title="Parcel Edit"><i class="fas fa-edit"></i></a>';
+                }else{
+                    $edit = '<a href="/fatty/main/admin/parcel_orders/edit" class="btn btn-danger btn-sm mr-2 disabled" title="Do Not Edit"><i class="fas fa-edit"></i></a>';
+                }
             }
             $btn=$view.$edit;
             return $btn;
@@ -329,15 +358,39 @@ class OrderController extends Controller
         $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
-            $value->order_status_name=$value->order_status->order_status_name;
-            $value->customer_name=$value->customer->customer_name;
+            if($value->order_statu_id==null)
+            {
+                $value->order_status_name=Null;
+            }else{
+                $value->order_status_name=$value->order_status->order_status_name;
+            }
+            if($value->customer_id==null)
+            {
+                $value->customer_name=null;
+            }else{
+                $value->customer_name=$value->customer->customer_name;
+            }
             if($value->rider_id){
                 $value->rider_name=$value->rider->rider_user_name;
             }else{
                 $value->rider_name="Null";
             }
-            $value->payment_method_name=$value->payment_method->payment_method_name;
-
+            if($value->customer_id==null){
+                $value->customer_type=null;
+            }else{
+                if($value->customer->customer_type_id==null){
+                    $value->customer_type=null;
+                }elseif($value->customer->customer_type_id==1){
+                    $value->customer_type="Normal";
+                }
+                elseif($value->customer->customer_type_id==2){
+                    $value->customer_type="Vip";
+                }else{
+                    $value->customer_type="Admin";
+                }
+            }
+            // $value->payment_method_name=$value->payment_method->payment_method_name;
+            $value->payment_method_name="Cash ON Delivery";
             array_push($data,$value);
         }
         return DataTables::of($model)
@@ -352,32 +405,38 @@ class OrderController extends Controller
             return $ordered_date;
         })
         ->addColumn('customer_type', function(CustomerOrder $item){
-            if($item->customer->customer_type_id==1){
-                $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
-            }elseif($item->customer->customer_type_id==2){
-                $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+            if($item->customer_id==null){
+                $type = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
             }else{
-                $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+                if($item->customer->customer_type_id==null){
+                    $type = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
+                }elseif($item->customer->customer_type_id==2){
+                    $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+                }elseif($item->customer->customer_type_id==1){
+                    $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
+                }else{
+                    $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+                }
             }
             return $type;
         })
         ->addColumn('status', function(CustomerOrder $item){
             if($item->order_status_id=='11'){
-                $order_status = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Waiting(NotAcceptRider)</a>';
+                $order_status = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Pending(NotAcceptRider)</a>';
             }elseif($item->order_status_id=='12'){
                 $order_status = '<a class="btn btn-primary btn-sm mr-2" style="color: white;width: 100%;">AcceptByRider</a>';
             }elseif($item->order_status_id=='13'){
-                $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;">ArrivedtoPickOrder</a>';
+                $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">ArrivedtoPickOrder</a>';
             }elseif($item->order_status_id=='17'){
-                $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;">RiderPickup</a>';
+                $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">RiderPickup</a>';
             }elseif($item->order_status_id=='14'){
-                $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;">StartDeliverybyRider </a>';
+                $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">StartDeliverybyRider </a>';
             }elseif($item->order_status_id=='15'){
-                $order_status = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:green;">AcceptCustomer</a>';
+                $order_status = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">AcceptCustomer</a>';
             }elseif($item->order_status_id=='8'){
                 $order_status = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">PendingOrder</a>';
             }elseif($item->order_status_id=='16'){
-                $order_status = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:red;">CustomerCancel</a>';
+                $order_status = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">CustomerCancel</a>';
             }else{
                 $order_status = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
             }
@@ -397,15 +456,39 @@ class OrderController extends Controller
         $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
         $data=[];
         foreach($model as $value){
-            $value->order_status_name=$value->order_status->order_status_name;
-            $value->customer_name=$value->customer->customer_name;
+            if($value->order_statu_id==null)
+            {
+                $value->order_status_name=Null;
+            }else{
+                $value->order_status_name=$value->order_status->order_status_name;
+            }
+            if($value->customer_id==null)
+            {
+                $value->customer_name=null;
+            }else{
+                $value->customer_name=$value->customer->customer_name;
+            }
             if($value->rider_id){
                 $value->rider_name=$value->rider->rider_user_name;
             }else{
                 $value->rider_name="Null";
             }
-            $value->payment_method_name=$value->payment_method->payment_method_name;
-
+            if($value->customer_id==null){
+                $value->customer_type=null;
+            }else{
+                if($value->customer->customer_type_id==null){
+                    $value->customer_type=null;
+                }elseif($value->customer->customer_type_id==1){
+                    $value->customer_type="Normal";
+                }
+                elseif($value->customer->customer_type_id==2){
+                    $value->customer_type="Vip";
+                }else{
+                    $value->customer_type="Admin";
+                }
+            }
+            // $value->payment_method_name=$value->payment_method->payment_method_name;
+            $value->payment_method_name="Cash ON Delivery";
             array_push($data,$value);
         }
         return DataTables::of($model)
@@ -420,12 +503,18 @@ class OrderController extends Controller
             return $ordered_date;
         })
         ->addColumn('customer_type', function(CustomerOrder $item){
-            if($item->customer->customer_type_id==1){
-                $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
-            }elseif($item->customer->customer_type_id==2){
-                $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+            if($item->customer_id==null){
+                $type = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
             }else{
-                $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+                if($item->customer->customer_type_id==null){
+                    $type = '<a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>';
+                }elseif($item->customer->customer_type_id==2){
+                    $type = '<a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>';
+                }elseif($item->customer->customer_type_id==1){
+                    $type = '<a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>';
+                }else{
+                    $type = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>';
+                }
             }
             return $type;
         })
@@ -433,7 +522,7 @@ class OrderController extends Controller
             if($item->order_status_id=='11'){
                 $order_status = '<a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Pending(NotAcceptRider)</a>';
             }elseif($item->order_status_id=='12'){
-                $order_status = '<a class="btn btn-primary btn-sm mr-2" style="color: white;width: 100%;background-color:red;">AcceptByRider</a>';
+                $order_status = '<a class="btn btn-primary btn-sm mr-2" style="color: white;width: 100%;">AcceptByRider</a>';
             }elseif($item->order_status_id=='13'){
                 $order_status = '<a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">ArrivedtoPickOrder</a>';
             }elseif($item->order_status_id=='17'){
@@ -573,6 +662,18 @@ class OrderController extends Controller
     public function pendingorderdefine(Request $request,$id)
     {
         CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
+        $check_order=CustomerOrder::where('order_id',$id)->first();
+        if($check_order->rider_id){
+            $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+            $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
+                if($has_order){
+                    $check_rider->is_order=1;
+                    $check_rider->update();
+                }else{
+                    $check_rider->is_order=0;
+                    $check_rider->update();
+                }
+        }
         $request->session()->flash('alert-success', 'successfully Pending Order!');
         return redirect()->back();
     }

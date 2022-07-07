@@ -188,8 +188,21 @@
 
         </div>
     </div>
+
+    <div class="flash-message" id="successMessage">
+        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+            @if(Session::has('alert-' . $msg))
+                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+            @endif
+        @endforeach
+    </div>
 {{-- </form> --}}
 
+<script>
+    setTimeout(function() {
+        $('#successMessage').fadeOut('fast');
+    }, 2000);
+</script>
 </body>
 </html>
 

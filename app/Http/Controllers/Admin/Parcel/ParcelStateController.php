@@ -43,18 +43,21 @@ class ParcelStateController extends Controller
             $phone_check=substr_replace($customers->customer_phone,0, 0, 3);
             $password_check=substr($phone_check, -6);
             if($phone_check==$phone && $password==$password_check && $customers->customer_type_id==3 && $customers->is_restricted==0){
+                $request->session()->flash('alert-success', 'successfully login!');
                 return redirect('admin_parcel_orders/create/'.$customers->customer_id);
            }else{
                 $request->session()->flash('alert-danger', 'user name and password are not same!');
                 return redirect()->back();
             }
         }else{
-            $request->session()->flash('alert-danger', 'user name and password are not same!');
+                $request->session()->flash('alert-danger', 'user name and password are not same!');
                 return redirect()->back();
         }
     }
     public function logout_check(Request $request)
     {
+        // Cookie::queue(Cookie::forget('customer_admin'));
+        $request->session()->flash('alert-success', 'successfully logout!');
         return redirect('admin_parcel_orders/login');
     }
     /**
@@ -92,7 +95,7 @@ class ParcelStateController extends Controller
         return redirect('fatty/main/admin/parcel_states');
     }
 
-    public function admin_parcel_copy($id)
+    public function admin_parcel_copy(Request $request,$id)
     {
         $parcel_order=CustomerOrder::where('order_id',$id)->first();
         return view('admin.order.parcel_list.admin_copy',compact('parcel_order'));
@@ -213,6 +216,30 @@ class ParcelStateController extends Controller
         return view('admin.order.parcel_list.admin_edit',compact('parcel_type','extra','from_cities','to_cities','riders','customers','customer_order_count','customer_admin_id','parcel_order'));
     }
 
+    public function admin_parcel_destroy(Request $request,$id,$customer_id)
+    {
+        $check_order=CustomerOrder::where('order_id',$id)->first();
+        if($check_order){
+            if($check_order->rider_id){
+                $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
+                    if($has_order){
+                        $check_rider->is_order=1;
+                        $check_rider->update();
+                    }else{
+                        $check_rider->is_order=0;
+                        $check_rider->update();
+                    }
+            }
+            $check_order->delete();
+            $request->session()->flash('alert-danger', 'successfully delete parcel orders!');
+            return redirect('admin_parcel_orders/list/'.$customer_id);
+        }else{
+            $request->session()->flash('alert-warning', 'order id not found!');
+            return redirect()->back();
+        }
+    }
+
     public function admin_parcel_update(Request $request,$id)
     {
         $from_parcel_city_id=$request['from_parcel_city_id'];
@@ -275,7 +302,13 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
-        $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        if($delivery_fee){
+            // dd($delivery_fee);
+            $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        }else{
+            $parcel_orders->rider_delivery_fee=0;
+        }
         $parcel_orders->is_admin_force_order=0;
         $parcel_orders->update();
 
@@ -289,7 +322,7 @@ class ParcelStateController extends Controller
             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
             + sin(radians(" .$from_pickup_latitude. "))
             * sin(radians(riders.rider_latitude))) AS distance"))
-            // ->having('distance','<',5)
+            ->having('distance','<',5)
             ->groupBy("rider_id")
             ->where('is_order',0)
             ->where('rider_fcm_token','!=',null)
@@ -321,6 +354,7 @@ class ParcelStateController extends Controller
         }
 
         $rider_token=$riderFcmToken;
+        // dd($rider_token);
         $orderId=(string)$parcel_orders->order_id;
         $orderstatusId=(string)$parcel_orders->order_status_id;
         $orderType=(string)$parcel_orders->order_type;
@@ -416,7 +450,11 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
-        $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        if($delivery_fee){
+            $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        }else{
+            $parcel_orders->rider_delivery_fee=0;
+        }
         $parcel_orders->is_admin_force_order=0;
         $parcel_orders->save();
 
@@ -424,21 +462,54 @@ class ParcelStateController extends Controller
         $from_pickup_longitude=$parcel_orders->from_pickup_longitude;
 
         if($rider_id=="0"){
-            $riders=Rider::select("rider_id","rider_fcm_token"
-            ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
-            * cos(radians(riders.rider_latitude))
-            * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
-            + sin(radians(" .$from_pickup_latitude. "))
-            * sin(radians(riders.rider_latitude))) AS distance"))
-            // ->having('distance','<',5)
-            ->groupBy("rider_id")
-            ->where('is_order',0)
-            ->where('rider_fcm_token','!=',null)
-            ->get();
-            $riderFcmToken=array();
-            foreach($riders as $rid){
-                if($rid->rider_fcm_token){
-                    array_push($riderFcmToken, $rid->rider_fcm_token);
+            if($from_pickup_latitude != 0 || $from_pickup_longitude!=0){
+                $riders=Rider::select("rider_id","rider_fcm_token"
+                ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                * cos(radians(riders.rider_latitude))
+                * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                + sin(radians(" .$from_pickup_latitude. "))
+                * sin(radians(riders.rider_latitude))) AS distance"))
+                ->having('distance','<',5)
+                ->groupBy("rider_id")
+                ->where('is_order',0)
+                ->where('rider_fcm_token','!=',null)
+                ->get();
+                $riderFcmToken=array();
+                foreach($riders as $rid){
+                    if($rid->rider_fcm_token){
+                        array_push($riderFcmToken, $rid->rider_fcm_token);
+                    }
+                }
+
+                $rider_token=$riderFcmToken;
+                // return response()->json($rider_token);
+                $orderId=(string)$parcel_orders->order_id;
+                $orderstatusId=(string)$parcel_orders->order_status_id;
+                $orderType=(string)$parcel_orders->order_type;
+                if($rider_token){
+                    $rider_client = new Client();
+                    $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    try{
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "new_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "New Parcel Order",
+                                    "body_mm"=> "One new order is received! Please check it!",
+                                    "title_en"=> "New Parcel Order",
+                                    "body_en"=> "One new order is received! Please check it!",
+                                    "title_ch"=> "New Parcel Order",
+                                    "body_ch"=> "One new order is received! Please check it!"
+                                ],
+                            ],
+                        ]);
+                    }catch(ClientException $e){
+
+                    }
                 }
             }
         }else{
@@ -459,37 +530,40 @@ class ParcelStateController extends Controller
             $riders->is_order=1;
             $riders->update();
 
-        }
-
-        $rider_token=$riderFcmToken;
-        $orderId=(string)$parcel_orders->order_id;
-        $orderstatusId=(string)$parcel_orders->order_status_id;
-        $orderType=(string)$parcel_orders->order_type;
-        if($rider_token){
-            $rider_client = new Client();
-            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-            try{
-                $rider_client->post($cus_url,[
-                    'json' => [
-                        "to"=>$rider_token,
-                        "data"=> [
-                            "type"=> "new_order",
-                            "order_id"=>$orderId,
-                            "order_status_id"=>$orderstatusId,
-                            "order_type"=>$orderType,
-                            "title_mm"=> "New Parcel Order",
-                            "body_mm"=> "One new order is received! Please check it!",
-                            "title_en"=> "New Parcel Order",
-                            "body_en"=> "One new order is received! Please check it!",
-                            "title_ch"=> "New Parcel Order",
-                            "body_ch"=> "One new order is received! Please check it!"
+            $rider_token=$riderFcmToken;
+            // return response()->json($rider_token);
+            $orderId=(string)$parcel_orders->order_id;
+            $orderstatusId=(string)$parcel_orders->order_status_id;
+            $orderType=(string)$parcel_orders->order_type;
+            if($rider_token){
+                $rider_client = new Client();
+                $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                try{
+                    $rider_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$rider_token,
+                            "data"=> [
+                                "type"=> "new_order",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "New Parcel Order",
+                                "body_mm"=> "One new order is received! Please check it!",
+                                "title_en"=> "New Parcel Order",
+                                "body_en"=> "One new order is received! Please check it!",
+                                "title_ch"=> "New Parcel Order",
+                                "body_ch"=> "One new order is received! Please check it!"
+                            ],
                         ],
-                    ],
-                ]);
-            }catch(ClientException $e){
+                    ]);
+                }catch(ClientException $e){
 
+                }
             }
+
         }
+
+
         // return redirect()->back();
         return redirect('admin_parcel_orders/copy/'.$parcel_orders->order_id);
         // return redirect('admin_parcel_orders/list/'.$request['customer_id']);

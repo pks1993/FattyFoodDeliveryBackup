@@ -40,7 +40,7 @@ Route::post('fatty/order/payment/place_order','Admin\Order\PaymentController@cre
 
 Route::get('admin_parcel_orders/login','Admin\Parcel\ParcelStateController@login');
 Route::post('admin_parcel_orders/login/check','Admin\Parcel\ParcelStateController@login_check')->name('login_check.create');
-Route::get('admin_parcel_orders/logout','Admin\Parcel\ParcelStateController@logout_check')->name('logout_check');
+Route::get('admin_parcel_orders/logout_check','Admin\Parcel\ParcelStateController@logout_check')->name('logout_check');
 
 //cookies
 Route::get('/cookie/set','CookieController@setCookie');
@@ -57,6 +57,7 @@ Route::post('admin_parcel_orders/store','Admin\Parcel\ParcelStateController@admi
 
 Route::get('admin_parcel_orders/edit/{order_id}/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_edit');
 Route::post('admin_parcel_orders/update/{order_id}','Admin\Parcel\ParcelStateController@admin_parcel_update')->name('admin_parcel.update');
+Route::get('admin_parcel_orders/destroy/{order_id}/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_destroy')->name('admin_parcel.destroy');
 
 // Auth::routes(['verify'=>true]);
 
