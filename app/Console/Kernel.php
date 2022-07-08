@@ -6,7 +6,10 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 use App\Models\Order\CustomerOrder;
-use DB;
+use App\Models\Rider\Rider;
+use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Client;
 use Carbon\Carbon;
 
 class Kernel extends ConsoleKernel
@@ -28,94 +31,407 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $customer_check = CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['2','7','8','9','15','16','18','20'])->first();
+        $customer_check = CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['2','7','8','9','15','16','18','20'])->whereRaw('Date(created_at) = CURDATE()')->first();
 
         if(!empty($customer_check)){
             $data = CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['2','7','8','9','15','16','18','20'])->get();
             foreach($data as $value){
-                $customer_address_latitude=$value['customer_address_latitude'];
-                $customer_address_longitude=$value['customer_address_longitude'];
+                $restaurant_address_latitude=$value['restaurant_address_latitude'];
+                $restaurant_address_longitude=$value['restaurant_address_longitude'];
+                $from_pickup_latitude=$value['from_pickup_latitude'];
+                $from_pickup_longitude=$value['from_pickup_longitude'];
                 $created_at=$value['created_at'];
                 $now = Carbon::now();
                 $created_at = Carbon::parse($created_at);
                 $diffMinutes = $created_at->diffInMinutes($now);
-                //rider
-                $path_to_fcm = 'https://fcm.googleapis.com/fcm/send';
-                $server_key = 'AAAAHUFURUE:APA91bFEvfAjoz58_u5Ns5l-y48QA9SgjICPzChgqVEg_S_l7ftvXrmGQjsE46rzGRRDtvGMnfqCWkksUMu0lDwdfxeTIHZPRMsdzFmEZx_0LIrcJoaUC-CF43XCxbMs2IMEgJNJ9j7E';
-                $header = array('Authorization:key=' . $server_key, 'Content-Type:application/json');
 
-
-                if($diffMinutes=="3"){
-
-                    $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
-                        ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+                //Rider
+                if($diffMinutes=="2"){
+                    if($value->order_type=="food"){
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
                         * cos(radians(riders.rider_latitude))
-                        * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
-                        + sin(radians(" .$customer_address_latitude. "))
+                        * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                        + sin(radians(" .$restaurant_address_latitude. "))
                         * sin(radians(riders.rider_latitude))) AS distance"))
-                        // ->having('distance', '<', $distance)
-                        ->groupBy("riders.rider_id")
-                        ->where('is_order','0')
+                        ->having('distance','<',1.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
                         ->get();
+                    }else{
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',1.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }
+                    if($riders->isNotEmpty()){
+                        $riderFcmToken=array();
+                        foreach($riders as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($riderFcmToken, $rid->rider_fcm_token);
+                            }
+                        }
 
-                    $fcm_token2=array();
-                    foreach($riders as $rid)
-                    {
-                        array_push($fcm_token2, $rid->rider_fcm_token);
+                        $rider_token=$riderFcmToken;
+                        $orderId=(string)$value['order_id'];
+                        $orderstatusId=(string)$value['order_status_id'];
+                        $orderType=(string)$value['order_type'];
+                        if($rider_token){
+                            $rider_client = new Client();
+                            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            try{
+                                $rider_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "New Parcel Order",
+                                            "body_mm"=> "One new order is received! Please check it Kernal!",
+                                            "title_en"=> "New Parcel Order",
+                                            "body_en"=> "One new order is received! Please check it Kernal!",
+                                            "title_ch"=> "New Parcel Order",
+                                            "body_ch"=> "One new order is received! Please check it Kernal!"
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
+
+                            }
+                        }
                     }
 
-                    $title1="New Order Income";
-                    $messages1="succssfully accept your order confirmed from restaurant! Now, packing or cooking your order";
-                    $message1 = strip_tags($messages1);
-                    $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$value['order_id'],'order_status_id'=>$value['order_status_id'],'type'=>'new_order','order_type'=>$value['order_type'],'title' => $title1, 'body' => $message1]);
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-                    // $schedule->command('send:notification');
-
-                }elseif($diffMinutes=="5"){
-
-                    $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
-                    ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
-                    * cos(radians(riders.rider_latitude))
-                    * cos(radians(riders.rider_longitude) - radians(" . $customer_address_longitude . "))
-                    + sin(radians(" .$customer_address_latitude. "))
-                    * sin(radians(riders.rider_latitude))) AS distance"))
-                    // ->having('distance', '<', $distance)
-                    ->groupBy("riders.rider_id")
-                    ->get();
-
-                    $fcm_token2=array();
-                    foreach($riders as $rid)
-                    {
-                        array_push($fcm_token2, $rid->rider_fcm_token);
+                }elseif($diffMinutes=="4"){
+                    if($value->order_type=="food"){
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                        + sin(radians(" .$restaurant_address_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',2.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }else{
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',2.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
                     }
+                    if($riders->isNotEmpty()){
+                        $riderFcmToken=array();
+                        foreach($riders as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($riderFcmToken, $rid->rider_fcm_token);
+                            }
+                        }
 
-                    $title1="New Order Income";
-                    $messages1="succssfully accept your order confirmed from restaurant! Now, packing or cooking your order";
-                    $message1 = strip_tags($messages1);
-                    $field1=array('registration_ids'=>$fcm_token2,'data'=>['order_id'=>$value['order_id'],'order_status_id'=>$value['order_status_id'],'type'=>'new_order','order_type'=>$value['order_type'],'title' => $title1, 'body' => $message1]);
-                    $playLoad1 = json_encode($field1);
-                    $curl_session1 = curl_init();
-                    curl_setopt($curl_session1, CURLOPT_URL, $path_to_fcm);
-                    curl_setopt($curl_session1, CURLOPT_POST, true);
-                    curl_setopt($curl_session1, CURLOPT_HTTPHEADER, $header);
-                    curl_setopt($curl_session1, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($curl_session1, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($curl_session1, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-                    curl_setopt($curl_session1, CURLOPT_POSTFIELDS, $playLoad1);
-                    $result = curl_exec($curl_session1);
-                    curl_close($curl_session1);
-                    // $schedule->command('send:notification');
+                        $rider_token=$riderFcmToken;
+                        $orderId=(string)$value['order_id'];
+                        $orderstatusId=(string)$value['order_status_id'];
+                        $orderType=(string)$value['order_type'];
+                        if($rider_token){
+                            $rider_client = new Client();
+                            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            try{
+                                $rider_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "New Parcel Order",
+                                            "body_mm"=> "One new order is received! Please check it Kernal!",
+                                            "title_en"=> "New Parcel Order",
+                                            "body_en"=> "One new order is received! Please check it Kernal!",
+                                            "title_ch"=> "New Parcel Order",
+                                            "body_ch"=> "One new order is received! Please check it Kernal!"
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
 
+                            }
+                        }
+                    }
+                }elseif($diffMinutes=="6"){
+                    if($value->order_type=="food"){
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                        + sin(radians(" .$restaurant_address_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',3.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }else{
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',3.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }
+                    if($riders->isNotEmpty()){
+                        $riderFcmToken=array();
+                        foreach($riders as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($riderFcmToken, $rid->rider_fcm_token);
+                            }
+                        }
+
+                        $rider_token=$riderFcmToken;
+                        $orderId=(string)$value['order_id'];
+                        $orderstatusId=(string)$value['order_status_id'];
+                        $orderType=(string)$value['order_type'];
+                        if($rider_token){
+                            $rider_client = new Client();
+                            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            try{
+                                $rider_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "New Parcel Order",
+                                            "body_mm"=> "One new order is received! Please check it Kernal!",
+                                            "title_en"=> "New Parcel Order",
+                                            "body_en"=> "One new order is received! Please check it Kernal!",
+                                            "title_ch"=> "New Parcel Order",
+                                            "body_ch"=> "One new order is received! Please check it Kernal!"
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
+
+                            }
+                        }
+                    }
+                }elseif($diffMinutes=="8"){
+                    if($value->order_type=="food"){
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                        + sin(radians(" .$restaurant_address_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',4.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }else{
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',4.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }
+                    if($riders->isNotEmpty()){
+                        $riderFcmToken=array();
+                        foreach($riders as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($riderFcmToken, $rid->rider_fcm_token);
+                            }
+                        }
+
+                        $rider_token=$riderFcmToken;
+                        $orderId=(string)$value['order_id'];
+                        $orderstatusId=(string)$value['order_status_id'];
+                        $orderType=(string)$value['order_type'];
+                        if($rider_token){
+                            $rider_client = new Client();
+                            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            try{
+                                $rider_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "New Parcel Order",
+                                            "body_mm"=> "One new order is received! Please check it Kernal!",
+                                            "title_en"=> "New Parcel Order",
+                                            "body_en"=> "One new order is received! Please check it Kernal!",
+                                            "title_ch"=> "New Parcel Order",
+                                            "body_ch"=> "One new order is received! Please check it Kernal!"
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
+
+                            }
+                        }
+                    }
+                }elseif($diffMinutes=="10"){
+                    if($value->order_type=="food"){
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                        + sin(radians(" .$restaurant_address_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',5.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }else{
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',5.1)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }
+                    if($riders->isNotEmpty()){
+
+                        $riderFcmToken=array();
+                        foreach($riders as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($riderFcmToken, $rid->rider_fcm_token);
+                            }
+                        }
+
+                        $rider_token=$riderFcmToken;
+                        $orderId=(string)$value['order_id'];
+                        $orderstatusId=(string)$value['order_status_id'];
+                        $orderType=(string)$value['order_type'];
+                        if($rider_token){
+                            $rider_client = new Client();
+                            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            try{
+                                $rider_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "New Parcel Order",
+                                            "body_mm"=> "One new order is received! Please check it Kernal!",
+                                            "title_en"=> "New Parcel Order",
+                                            "body_en"=> "One new order is received! Please check it Kernal!",
+                                            "title_ch"=> "New Parcel Order",
+                                            "body_ch"=> "One new order is received! Please check it Kernal!"
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
+
+                            }
+                        }
+                    }
+                }else{
+                    if($value->order_type=="food"){
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                        + sin(radians(" .$restaurant_address_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',20)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }else{
+                        $riders=Rider::select("rider_id","rider_fcm_token"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',20)
+                        ->groupBy("rider_id")
+                        ->where('is_order',0)
+                        ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }
+                    if($riders->isNotEmpty()){
+                        $riderFcmToken=array();
+                        foreach($riders as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($riderFcmToken, $rid->rider_fcm_token);
+                            }
+                        }
+
+                        $rider_token=$riderFcmToken;
+                        $orderId=(string)$value['order_id'];
+                        $orderstatusId=(string)$value['order_status_id'];
+                        $orderType=(string)$value['order_type'];
+                        if($rider_token){
+                            $rider_client = new Client();
+                            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                            try{
+                                $rider_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "New Parcel Order",
+                                            "body_mm"=> "One new order is received! Please check it Kernal!",
+                                            "title_en"=> "New Parcel Order",
+                                            "body_en"=> "One new order is received! Please check it Kernal!",
+                                            "title_ch"=> "New Parcel Order",
+                                            "body_ch"=> "One new order is received! Please check it Kernal!"
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
+
+                            }
+                        }
+                    }
                 }
             }
         }

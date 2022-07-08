@@ -71,11 +71,12 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>CustomerOrderId</th>
-                                        <th>CustomerBookingId</th>
-                                        <th>OrdereDate</th>
-                                        <th>OrderTime</th>
                                         <th>OrderStatus</th>
+                                        <th>CustomerType</th>
+                                        <th>OrdereDate</th>
+                                        <th>OrderId</th>
+                                        <th>BookingId</th>
+                                        <th>OrderTime</th>
                                         <th>CustomerName</th>
                                         <th>RestaurantName</th>
                                         <th>RiderName</th>

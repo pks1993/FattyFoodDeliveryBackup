@@ -35,8 +35,8 @@ Route::get('/','Admin\Login\LoginController@index')->name('login');
 Route::post('fatty/post/login','Admin\Login\LoginController@login')->name('fatty.post.login');
 
 //Payment
-Route::get('fatty/order/payment/url','Admin\Order\PaymentController@index');
-Route::post('fatty/order/payment/place_order','Admin\Order\PaymentController@create')->name('place_order.create');
+// Route::get('fatty/order/payment/url','Admin\Order\PaymentController@index');
+// Route::post('fatty/order/payment/place_order','Admin\Order\PaymentController@create')->name('place_order.create');
 
 Route::get('admin_parcel_orders/login','Admin\Parcel\ParcelStateController@login');
 Route::post('admin_parcel_orders/login/check','Admin\Parcel\ParcelStateController@login_check')->name('login_check.create');

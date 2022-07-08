@@ -295,44 +295,46 @@ class ParcelOrderApiController extends Controller
             + sin(radians(" .$from_pickup_latitude. "))
             * sin(radians(riders.rider_latitude))) AS distance"))
             // ->having('distance','<',1)
-            ->having('distance','<',2.1)
+            ->having('distance','<',1.1)
             ->groupBy("riders.rider_id")
             ->where('is_order','0')
             ->get();
-            $riderFcmToken=array();
-            foreach($riders as $rid){
-                if($rid->rider_fcm_token){
-                    array_push($riderFcmToken, $rid->rider_fcm_token);
+            if($riders->isNotEmpty()){
+                $riderFcmToken=array();
+                foreach($riders as $rid){
+                    if($rid->rider_fcm_token){
+                        array_push($riderFcmToken, $rid->rider_fcm_token);
+                    }
                 }
-            }
 
-            $rider_token=$riderFcmToken;
-            $orderId=(string)$parcel_order->order_id;
-            $orderstatusId=(string)$parcel_order->order_status_id;
-            $orderType=(string)$parcel_order->order_type;
-            if($rider_token){
-                $rider_client = new Client();
-                $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                try{
-                    $rider_client->post($cus_url,[
-                        'json' => [
-                            "to"=>$rider_token,
-                            "data"=> [
-                                "type"=> "new_order",
-                                "order_id"=>$orderId,
-                                "order_status_id"=>$orderstatusId,
-                                "order_type"=>$orderType,
-                                "title_mm"=> "New Parcel Order",
-                                "body_mm"=> "One new order is received! Please check it!",
-                                "title_en"=> "New Parcel Order",
-                                "body_en"=> "One new order is received! Please check it!",
-                                "title_ch"=> "New Parcel Order",
-                                "body_ch"=> "One new order is received! Please check it!"
+                $rider_token=$riderFcmToken;
+                $orderId=(string)$parcel_order->order_id;
+                $orderstatusId=(string)$parcel_order->order_status_id;
+                $orderType=(string)$parcel_order->order_type;
+                if($rider_token){
+                    $rider_client = new Client();
+                    $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    try{
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "new_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "New Parcel Order",
+                                    "body_mm"=> "One new order is received! Please check it!",
+                                    "title_en"=> "New Parcel Order",
+                                    "body_en"=> "One new order is received! Please check it!",
+                                    "title_ch"=> "New Parcel Order",
+                                    "body_ch"=> "One new order is received! Please check it!"
+                                ],
                             ],
-                        ],
-                    ]);
-                }catch(ClientException $e){
+                        ]);
+                    }catch(ClientException $e){
 
+                    }
                 }
             }
         }
@@ -796,6 +798,9 @@ class ParcelOrderApiController extends Controller
         $to_drop_latitude=$add[0]['to_drop_latitude'];
         $to_drop_longitude=$add[0]['to_drop_longitude'];
 
+        $from_pickup_address=$add[0]['from_pickup_address'];
+        $to_drop_address=$add[0]['to_drop_address'];
+
         foreach ($add as $list) {
             $from_pickup_latitude=$list['from_pickup_latitude'];
             $from_pickup_longitude=$list['from_pickup_longitude'];
@@ -910,12 +915,12 @@ class ParcelOrderApiController extends Controller
             $parcel_order->order_status_id=$order_status_id;
             $parcel_order->from_sender_name=$parcel_order->from_sender_name;
             $parcel_order->from_sender_phone=$parcel_order->from_sender_phone;
-            $parcel_order->from_pickup_address=$parcel_order->from_pickup_address;
+            $parcel_order->from_pickup_address=$from_pickup_address;
             $parcel_order->from_pickup_latitude=$from_pickup_latitude;
             $parcel_order->from_pickup_longitude=$from_pickup_longitude;
             $parcel_order->to_recipent_name=$parcel_order->to_recipent_name;
             $parcel_order->to_recipent_phone=$parcel_order->to_recipent_phone;
-            $parcel_order->to_drop_address=$parcel_order->to_drop_address;
+            $parcel_order->to_drop_address=$to_drop_address;
             $parcel_order->to_drop_latitude=$to_drop_latitude;
             $parcel_order->to_drop_longitude=$to_drop_longitude;
             $parcel_order->parcel_type_id=$parcel_type_id;
