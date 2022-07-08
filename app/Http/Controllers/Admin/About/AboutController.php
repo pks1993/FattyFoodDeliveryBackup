@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 // use Spatie\Permission\Models\Role;
 // use Spatie\Permission\Models\Permission;
 // use App\Models\Customer\Customer;
+use App\Models\Order\CustomerOrder;
 use App\Models\Restaurant\Restaurant;
 use DB;
 use Carbon\Carbon;
@@ -33,6 +34,20 @@ class AboutController extends Controller
     }
 
     public function golocation(){
+        $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['2','7','8','9','15','16','18','20'])->orderBy('created_at','desc')->whereRaw('Date(created_at) = CURDATE()')->first();
+        dd($customer_check);
+        $customer_check=CustomerOrder::orderBy('created_at','desc')->first();
+        $now = Carbon::now();
+        $created_at = Carbon::parse($customer_check->created_at);
+        $diffMinutes = $created_at->diffInMinutes($now);
+        if($diffMinutes< 2){
+            dd($diffMinutes."1");
+
+        }elseif($diffMinutes<3){
+            dd($diffMinutes."2");
+        }else{
+           dd($diffMinutes."3");
+        }
 
         // $locations = "[
         //     ['Mumbai', 19.0760,72.8777],
