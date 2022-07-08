@@ -708,16 +708,24 @@ class RiderApicontroller extends Controller
 
                 }
 
-                if($noti_rider->isNotEmpty()){
+                if($noti_order){
+                    if($noti_rider->isNotEmpty()){
+                        $last=$foods->merge($parcels);
+                        //DESC
+                        $last_order =  array_reverse(array_sort($last, function ($value) {
+                            return $value['created_at'];
+                        }));
+                        $orders=$noti_rider->merge($last_order);
+                    }else{
+                        $total=$foods->merge($parcels);
+                        //DESC
+                        $orders =  array_reverse(array_sort($total, function ($value) {
+                                    return $value['created_at'];
+                                }));
+                    }
                     // $all_data=$noti_rider->merge($foods);
                     // $total=$all_data->merge($parcels);
 
-                    $last=$foods->merge($parcels);
-                    //DESC
-                    $last_order =  array_reverse(array_sort($last, function ($value) {
-                        return $value['created_at'];
-                    }));
-                    $orders=$noti_rider->merge($last_order);
 
 
                 }else{
