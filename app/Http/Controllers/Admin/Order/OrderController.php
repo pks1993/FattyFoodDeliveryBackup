@@ -111,7 +111,7 @@ class OrderController extends Controller
             return $order_status;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-M-Y');
+            $ordered_date = $item->created_at->format('d-M-Y H:i:s');
             return $ordered_date;
         })
         ->addColumn('order_type', function(CustomerOrder $item){

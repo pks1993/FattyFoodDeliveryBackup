@@ -38,6 +38,7 @@ class SendEmails extends Command
     public function handle()
     {
         info('send noti message to rider');
+        $this->info('Demo:Cron Command Run successfully!');
 
     }
 }
