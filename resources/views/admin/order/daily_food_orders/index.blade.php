@@ -71,11 +71,12 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>CustomerOrderId</th>
-                                        <th>CustomerBookingId</th>
+                                        <th>OrderStatus</th>
+                                        <th>CustomerType</th>
+                                        <th>OrderId</th>
+                                        <th>BookingId</th>
                                         <th>OrdereDate</th>
                                         <th>OrderTime</th>
-                                        <th>OrderStatus</th>
                                         <th>CustomerName</th>
                                         <th>RestaurantName</th>
                                         <th>RiderName</th>
@@ -84,7 +85,7 @@
                                         <th>Detail</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody style="text-align:center">
 
                                 </tbody>
                             </table>
@@ -103,7 +104,7 @@
     function( settings, data, dataIndex ) {
         var min = $('#min').datepicker("getDate");
         var max = $('#max').datepicker("getDate");
-        var date = new Date( data[3] );
+        var date = new Date( data[5] );
 
         if (
         ( min === null && max === null ) ||
@@ -126,7 +127,7 @@
 
         // DataTables initialisation
         var table = $("#orders").DataTable({
-            "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
+            "lengthMenu": [[15,50, 100, 250, -1], [15,50,100,250, "All"]],
             "paging": true, // Allow data to be paged
             "lengthChange": true,
             "searching": true, // Search box and search function will be actived
@@ -136,11 +137,13 @@
             ajax: "/fatty/main/admin/orders/datatable/dailyfoodorderajax",
             columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+            {data: 'status', name:'status'},
+            // {data: 'order_status', name:'order_status'},
+            {data: 'customer_type', name:'customer_type'},
             {data: 'customer_order_id', name:'customer_order_id'},
             {data: 'customer_booking_id', name:'customer_booking_id'},
             {data: 'ordered_date', name:'ordered_date'},
             {data: 'order_time', name:'order_time'},
-            {data: 'order_status_name', name:'order_status_name'},
             {data: 'customer_name', name:'customer_name'},
             {data: 'restaurant_name', name:'restaurant_name'},
             {data: 'rider_name', name:'rider_name'},

@@ -58,25 +58,25 @@ class AboutController extends Controller
         // $diffMinutes = $created_at->diffInMinutes($now);
         // dd($diffMinutes);
 
-        $lat1 ="21.92940808636731";
-        $lon1 = "96.11176025122404";
-        $lat2 ="21.926762239147155";
-        $lon2 ="21.926762239147155";
-        $unit = "N";
-        // // $rad = "300";
+        // $lat1 ="21.92940808636731";
+        // $lon1 = "96.11176025122404";
+        // $lat2 ="21.926762239147155";
+        // $lon2 ="21.926762239147155";
+        // $unit = "N";
+        // // // $rad = "300";
 
-        $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
-        ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
-        * cos(radians(".$lat2."))
-        * cos(radians(".$lon2.") - radians(" . $lon1 . "))
-        + sin(radians(" .$lat1. "))
-        * sin(radians(".$lat2."))) AS distance"))
-        // ->having('distance', '<', $rad)
-        ->groupBy("restaurants.restaurant_id")
-        ->get();
-        // dd($riders);
+        // $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
+        // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
+        // * cos(radians(".$lat2."))
+        // * cos(radians(".$lon2.") - radians(" . $lon1 . "))
+        // + sin(radians(" .$lat1. "))
+        // * sin(radians(".$lat2."))) AS distance"))
+        // // ->having('distance', '<', $rad)
+        // ->groupBy("restaurants.restaurant_id")
+        // ->get();
+        // // dd($riders);
 
-        return $riders;
+        // return $riders;
 
         // if (($lat1 == $lat2) && ($lon1 == $lon2)) {
         //     return 0;

@@ -1420,16 +1420,33 @@ class OrderApiController extends Controller
 
         if($customer_orders->rider_id){
             $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
-            $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
-            $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
-            $dist = acos($dist);
-            $dist = rad2deg($dist);
-            $miles = $dist * 60 * 1.1515;
-            $kilometer=$miles * 1.609344;
-            $distances=(float) number_format((float)$kilometer, 2, '.', '');
+            if($customer_orders->order_type=="food"){
+                $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
+                $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+                $dist = acos($dist);
+                $dist = rad2deg($dist);
+                $miles = $dist * 60 * 1.1515;
+                $kilometer=$miles * 1.609344;
+                $distances=(float) number_format((float)$kilometer, 2, '.', '');
+                if($distances==0){
+                    $distances=0.01;
+                }
+            }else{
+                $theta = $customer_orders->to_drop_longitude - $riders->rider_longitude;
+                $dist = sin(deg2rad($customer_orders->to_drop_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->to_drop_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+                $dist = acos($dist);
+                $dist = rad2deg($dist);
+                $miles = $dist * 60 * 1.1515;
+                $kilometer=$miles * 1.609344;
+                $distances=(float) number_format((float)$kilometer, 2, '.', '');
+                if($distances==0){
+                    $distances=0.01;
+                }
+            }
         }else{
             $distances=0.01;
         }
+
 
         $data=[];
         if($customer_orders->customer_address_id != 0){
@@ -1493,17 +1510,40 @@ class OrderApiController extends Controller
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
-        if($customer_orders->rider_id){
-            $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
-            $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
-            $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+        // if($customer_orders->rider_id){
+        //     $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
+        //     $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
+        //     $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+        //     $dist = acos($dist);
+        //     $dist = rad2deg($dist);
+        //     $miles = $dist * 60 * 1.1515;
+        //     $kilometer=$miles * 1.609344;
+        //     $distances=(float) number_format((float)$kilometer, 2, '.', '');
+        // }else{
+        //     $distances=0.00;
+        // }
+        if($customer_orders->order_type=="food"){
+            $theta = $customer_orders->customer_address_longitude - $customer_orders->restaurant_address_longitude;
+            $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($customer_orders->customer_address_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($theta));
             $dist = acos($dist);
             $dist = rad2deg($dist);
             $miles = $dist * 60 * 1.1515;
             $kilometer=$miles * 1.609344;
             $distances=(float) number_format((float)$kilometer, 2, '.', '');
+            if($distances==0){
+                $distances=0.01;
+            }
         }else{
-            $distances=0.00;
+            $theta = $customer_orders->to_drop_longitude - $customer_orders->from_pickup_longitude;
+            $dist = sin(deg2rad($customer_orders->to_drop_latitude)) * sin(deg2rad($customer_orders->from_pickup_latitude)) +  cos(deg2rad($customer_orders->to_drop_latitude)) * cos(deg2rad($customer_orders->from_pickup_latitude)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $kilometer=$miles * 1.609344;
+            $distances=(float) number_format((float)$kilometer, 2, '.', '');
+            if($distances==0){
+                $distances=0.01;
+            }
         }
 
         $data=[];

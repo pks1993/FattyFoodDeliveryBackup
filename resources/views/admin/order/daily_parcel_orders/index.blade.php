@@ -78,8 +78,8 @@
                                         <th>No.</th>
                                         <th>OrderStatus</th>
                                         <th>CustomerType</th>
-                                        <th>CustomerOrderId</th>
-                                        <th>CustomerBookingId</th>
+                                        <th>OrderId</th>
+                                        <th>BookingId</th>
                                         <th>OrdereDate</th>
                                         <th>OrderTime</th>
                                         <th>CustomerName</th>
