@@ -322,15 +322,47 @@ class ParcelStateController extends Controller
             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
             + sin(radians(" .$from_pickup_latitude. "))
             * sin(radians(riders.rider_latitude))) AS distance"))
-            ->having('distance','<',1)
+            ->having('distance','<',1.1)
             ->groupBy("rider_id")
             ->where('is_order',0)
             ->where('rider_fcm_token','!=',null)
             ->get();
-            $riderFcmToken=array();
-            foreach($riders as $rid){
-                if($rid->rider_fcm_token){
-                    array_push($riderFcmToken, $rid->rider_fcm_token);
+            if($riders->isNotEmpty()){
+                $riderFcmToken=array();
+                foreach($riders as $rid){
+                    if($rid->rider_fcm_token){
+                        array_push($riderFcmToken, $rid->rider_fcm_token);
+                    }
+                }
+                $rider_token=$riderFcmToken;
+                $orderId=(string)$parcel_orders->order_id;
+                $orderstatusId=(string)$parcel_orders->order_status_id;
+                $orderType=(string)$parcel_orders->order_type;
+                if($rider_token){
+                    $rider_client = new Client();
+                    $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    try{
+                        $rider_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$rider_token,
+                                "data"=> [
+                                    "type"=> "new_order",
+                                    "order_id"=>$orderId,
+                                    "order_status_id"=>$orderstatusId,
+                                    "order_type"=>$orderType,
+                                    "title_mm"=> "New Parcel Order",
+                                    "body_mm"=> "One new order is received! Please check it!",
+                                    "title_en"=> "New Parcel Order",
+                                    "body_en"=> "One new order is received! Please check it!",
+                                    "title_ch"=> "New Parcel Order",
+                                    "body_ch"=> "One new order is received! Please check it!"
+                                ],
+                            ],
+                        ]);
+                    }catch(ClientException $e){
+
+                    }
+
                 }
             }
         }else{
@@ -351,37 +383,37 @@ class ParcelStateController extends Controller
             $riders->is_order=1;
             $riders->update();
 
-        }
-
-        $rider_token=$riderFcmToken;
-        // dd($rider_token);
-        $orderId=(string)$parcel_orders->order_id;
-        $orderstatusId=(string)$parcel_orders->order_status_id;
-        $orderType=(string)$parcel_orders->order_type;
-        if($rider_token){
-            $rider_client = new Client();
-            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-            try{
-                $rider_client->post($cus_url,[
-                    'json' => [
-                        "to"=>$rider_token,
-                        "data"=> [
-                            "type"=> "new_order",
-                            "order_id"=>$orderId,
-                            "order_status_id"=>$orderstatusId,
-                            "order_type"=>$orderType,
-                            "title_mm"=> "New Parcel Order",
-                            "body_mm"=> "One new order is received! Please check it!",
-                            "title_en"=> "New Parcel Order",
-                            "body_en"=> "One new order is received! Please check it!",
-                            "title_ch"=> "New Parcel Order",
-                            "body_ch"=> "One new order is received! Please check it!"
+            $rider_token=$riderFcmToken;
+            $orderId=(string)$parcel_orders->order_id;
+            $orderstatusId=(string)$parcel_orders->order_status_id;
+            $orderType=(string)$parcel_orders->order_type;
+            if($rider_token){
+                $rider_client = new Client();
+                $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                try{
+                    $rider_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$rider_token,
+                            "data"=> [
+                                "type"=> "new_order",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "New Parcel Order",
+                                "body_mm"=> "One new order is received! Please check it!",
+                                "title_en"=> "New Parcel Order",
+                                "body_en"=> "One new order is received! Please check it!",
+                                "title_ch"=> "New Parcel Order",
+                                "body_ch"=> "One new order is received! Please check it!"
+                            ],
                         ],
-                    ],
-                ]);
-            }catch(ClientException $e){
+                    ]);
+                }catch(ClientException $e){
+
+                }
 
             }
+
         }
 
         $request->session()->flash('alert-success', 'successfully create parcel orders!');

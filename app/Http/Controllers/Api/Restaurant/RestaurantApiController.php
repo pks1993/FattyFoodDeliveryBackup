@@ -312,7 +312,7 @@ class RestaurantApiController extends Controller
     public function activenow(Request $request)
     {
         $res_id=$request['restaurant_id'];
-        $status=$request['restaurant_emergency_status'];
+        $status=(string)$request['restaurant_emergency_status'];
         $check_restaurant=Restaurant::where('restaurant_id',$res_id)->first();
         if($check_restaurant){
             if($status==null){
