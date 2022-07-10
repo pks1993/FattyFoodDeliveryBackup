@@ -444,10 +444,23 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('orders/datatable/yearlyparcelorderajax','Admin\Order\OrderController@yearlyparcelorderajax');
     Route::get('parcel_orders_chart','Admin\Order\OrderController@parcelorderchart');
 
+    //parcel_state
     Route::get('parcel_states','Admin\Parcel\ParcelStateController@index');
     Route::post('store/parcel_states','Admin\Parcel\ParcelStateController@store')->name('parcel_state.store');;
     Route::post('parcel_states/update/{parcel_state_id}','Admin\Parcel\ParcelStateController@update')->name('parcel_state.update');
     Route::delete('parcel_states/delete/{parcel_states_id}','Admin\Parcel\ParcelStateController@destroy')->name('parcel_state.destroy');
+
+    //parcel_block
+    Route::get('parcel_block','Admin\Parcel\ParcelBlockController@index');
+    Route::post('store/parcel_block','Admin\Parcel\ParcelBlockController@store')->name('parcel_block.store');;
+    Route::post('parcel_block/update/{parcel_block_id}','Admin\Parcel\ParcelBlockController@update')->name('parcel_block.update');
+    Route::delete('parcel_block/delete/{parcel_block_id}','Admin\Parcel\ParcelBlockController@destroy')->name('parcel_block.destroy');
+
+    //parcel_from_to_block
+    Route::get('parcel_from_to_block','Admin\Parcel\ParcelFromToBlockController@index');
+    Route::post('store/parcel_from_to_block','Admin\Parcel\ParcelFromToBlockController@store')->name('parcel_from_to_block.store');;
+    Route::post('parcel_from_to_block/update/{parcel_from_to_block_id}','Admin\Parcel\ParcelFromToBlockController@update')->name('parcel_from_to_block.update');
+    Route::delete('parcel_from_to_block/delete/{parcel_from_to_block_id}','Admin\Parcel\ParcelFromToBlockController@destroy')->name('parcel_from_to_block.destroy');
 
 
 
