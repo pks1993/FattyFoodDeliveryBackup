@@ -458,9 +458,12 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //parcel_from_to_block
     Route::get('parcel_from_to_block','Admin\Parcel\ParcelFromToBlockController@index');
+    Route::get('parcel_from_to_block/dataTables/ajaxparcelfromtoblock','Admin\Parcel\ParcelFromToBlockController@ajaxparcelfromtoblock');
     Route::post('store/parcel_from_to_block','Admin\Parcel\ParcelFromToBlockController@store')->name('parcel_from_to_block.store');;
-    Route::post('parcel_from_to_block/update/{parcel_from_to_block_id}','Admin\Parcel\ParcelFromToBlockController@update')->name('parcel_from_to_block.update');
     Route::delete('parcel_from_to_block/delete/{parcel_from_to_block_id}','Admin\Parcel\ParcelFromToBlockController@destroy')->name('parcel_from_to_block.destroy');
+
+    Route::get('parcel_from_to_block/edit/{parcel_from_to_block_id}','Admin\Parcel\ParcelFromToBlockController@edit')->name('parcel_from_to_block.edit');
+    Route::post('parcel_from_to_block/update/{parcel_from_to_block_id}','Admin\Parcel\ParcelFromToBlockController@update')->name('parcel_from_to_block.update');
 
 
 

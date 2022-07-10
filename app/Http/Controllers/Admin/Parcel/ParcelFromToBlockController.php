@@ -8,6 +8,7 @@ use App\Models\City\ParcelFromToBlock;
 use App\Models\City\ParcelBlockList;
 // use App\Models\State\State;
 use App\Models\Order\CustomerOrder;
+use Yajra\DataTables\DataTables;
 
 class ParcelFromToBlockController extends Controller
 {
@@ -21,6 +22,35 @@ class ParcelFromToBlockController extends Controller
         $parcel_from_to_block=ParcelFromToBlock::all();
         $blocks=ParcelBlockList::all();
         return view('admin.parcel_from_to_block.index',compact('parcel_from_to_block','blocks'));
+    }
+
+    public function ajaxparcelfromtoblock()
+    {
+        $model =ParcelFromToBlock::orderBy('parcel_from_block_id','desc')->orderBy('parcel_from_block_id','desc')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->from_block_name=$value->from_block->block_name;
+            $value->to_block_name=$value->to_block->block_name;
+            $value->price=$value->delivery_fee;
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('action', function(ParcelFromToBlock $post){
+            $edit='<a href="/fatty/main/admin/parcel_from_to_block/edit/'.$post->parcel_from_to_block_id.'" title="Edit" class="btn btn-primary btn-sm mr-2"><i class="fas fa-edit"></i></a>';
+            $delete ='<form action="/fatty/main/admin/parcel_from_to_block/delete/'.$post->parcel_from_to_block_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'<button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button></form>';
+            $data=$edit.$delete;
+            return $data;
+        })
+        ->addColumn('created_date', function(ParcelFromToBlock $item){
+            $ordered_date = $item->created_at->format('d-M-Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['action','created_date'])
+        ->searchPane('model', $model)
+        ->make(true);
     }
 
     /**
@@ -73,7 +103,9 @@ class ParcelFromToBlockController extends Controller
      */
     public function edit($id)
     {
-        //
+        $parcel_from_to_block=ParcelFromToBlock::find($id);
+        $blocks=ParcelBlockList::all();
+        return view('admin.parcel_from_to_block.edit',compact('parcel_from_to_block','blocks'));
     }
 
     /**
@@ -85,17 +117,13 @@ class ParcelFromToBlockController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $parcel_from_block_id=$request['parcel_from_block_id'];
-        $parcel_to_block_id=$request['parcel_to_block_id'];
-        $check_block=ParcelFromToBlock::where('parcel_from_block_id',$parcel_from_block_id)->where('parcel_to_block_id',$parcel_to_block_id)->first();
-        if($check_block){
-            $request->session()->flash('alert-warning', 'from and to parcel block exits database! please check!');
-            return redirect()->back();
-        }else{
+        // $parcel_from_block_id=$request['parcel_from_block_id'];
+        // $parcel_to_block_id=$request['parcel_to_block_id'];
+        // $check_block=ParcelFromToBlock::where('parcel_from_block_id',$parcel_from_block_id)->where('parcel_to_block_id',$parcel_to_block_id)->first();
             ParcelFromToBlock::find($id)->update($request->all());
             $request->session()->flash('alert-success', 'successfully update parcel state!');
-            return redirect()->back();
-        }
+            return redirect('fatty/main/admin/parcel_from_to_block');
+
     }
 
     /**
