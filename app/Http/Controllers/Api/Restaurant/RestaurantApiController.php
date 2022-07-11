@@ -71,6 +71,8 @@ class RestaurantApiController extends Controller
 
     public function restaurant_insight_v1(Request $request)
     {
+        $from=Carbon::now()->subDays(11)->toDateTimeLocalString();
+        $to=Carbon::now()->addDays(1)->toDateTimeLocalString();
         $restaurant_id=$request['restaurant_id'];
         $current_date=$request['start_date'];
         $next_date=$request['end_date'];
@@ -84,9 +86,10 @@ class RestaurantApiController extends Controller
         $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','3')->count();
         $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereRaw('Date(created_at) = CURDATE()')->get();
 
-        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->subDays(10)->toDateTimeString())->where('created_at','<',Carbon::now()->toDateTimeString())->get();
+        // $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeLocalString())->get();
+        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereBetween('created_at',[$from,$to])->get();
 
-        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->get();
+        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>=',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<=',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
 
         //OrderShow
         $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
