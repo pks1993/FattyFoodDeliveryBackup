@@ -26,7 +26,7 @@ class ParcelFromToBlockController extends Controller
 
     public function ajaxparcelfromtoblock()
     {
-        $model =ParcelFromToBlock::orderBy('parcel_from_block_id','desc')->orderBy('parcel_from_block_id','desc')->get();
+        $model =ParcelFromToBlock::orderBy('parcel_from_block_id','desc')->orderBy('parcel_from_block_id','des')->get();
         $data=[];
         foreach($model as $value){
             $value->from_block_name=$value->from_block->block_name;

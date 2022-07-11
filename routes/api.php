@@ -73,6 +73,7 @@ Route::middleware('one_device_login')->group(function(){
 
     //Choose address parcel
     Route::post('v1/fatty/202221/lashio/main/admin/parcels/choose_address','Api\StateCity\StateCityApiController@parcel_choose_address');
+    Route::post('v2/fatty/202221/lashio/main/admin/parcels/choose_address','Api\StateCity\StateCityApiController@v2_parcel_choose_address');
 
     //Search
     //Food
@@ -121,6 +122,7 @@ Route::middleware('one_device_login')->group(function(){
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/list','Api\Order\ParcelOrderApiController@index');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/store','Api\Order\ParcelOrderApiController@order_store');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@order_estimate_cost');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@v2_order_estimate_cost');
 });
 
 Route::post('v1/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');
@@ -159,6 +161,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/states','Api\StateCity\StateCityA
 //Parcel State
 Route::post('v1/fatty/202221/lashio/main/admin/parcels/states','Api\StateCity\StateCityApiController@parcel_state_version1');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@parcel_choose_address');
+Route::post('v2/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@v2_parcel_choose_address');
 
 //Rider About
 Route::get('v1/fatty/202221/lashio/main/admin/application/riders/abouts','Api\About\AboutApiController@rider_about');
@@ -209,6 +212,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/office/location','Api\Rider
 Route::post('v1/fatty/202221/lashio/main/admin/rider/details','Api\Rider\RiderApiController@rider_details');
 Route::post('v1/fatty/202221/lashio/main/admin/rider_token/update','Api\Rider\RiderApiController@rider_token_update');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@order_estimate_cost');
+Route::post('v2/fatty/202221/lashio/main/admin/rider/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@v2_order_estimate_cost');
 
 
 //insightRider
