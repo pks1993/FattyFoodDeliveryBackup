@@ -12,6 +12,18 @@ use App\Models\Customer\OrderCustomer;
 
 class AboutApiController extends Controller
 {
+    public function order_time()
+    {
+        $data=CustomerOrder::all();
+        foreach($data as $value){
+            $date=$value->created_at->format('g:i A');
+            $order=CustomerOrder::where('order_id',$value->order_id)->first();
+            $order->order_time=$date;
+            $order->update();
+
+        }
+        return response()->json(['message'=>'success']);
+    }
     /**
      * Display a listing of the resource.
      *

@@ -32,6 +32,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Route::post('auth_login','Api\Auth\AuthApiController@index');
 // Route::post('fatty/202221/lashio/main/admin/parcels/states','Api\StateCity\StateCityApiController@parcel_state');
 // Route::post('fatty/202221/lashio/main/admin/restaurants/orders/status','Api\Order\OrderApiController@restaurant_status');
+Route::get('fatty/202221/lashio/main/admin/order_time/update','Api\About\AboutApiController@order_time');
 
 //PautGaNan
 Route::get('pautganan/home_page','Api\About\AboutApiController@pautganan');
