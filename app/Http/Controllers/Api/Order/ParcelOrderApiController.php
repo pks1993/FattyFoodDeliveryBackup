@@ -10,6 +10,9 @@ use App\Models\Order\ParcelExtraCover;
 use App\Models\Order\ParcelImage;
 use App\Models\City\ParcelCity;
 use App\Models\City\ParcelCityHistory;
+use App\Models\City\ParcelBlockHistory;
+use App\Models\City\ParcelBlockList;
+use App\Models\City\ParcelFromToBlock;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer\Customer;
@@ -968,7 +971,7 @@ class ParcelOrderApiController extends Controller
                     ParcelCityHistory::create([
                         "customer_id"=>$parcel_order->customer_id,
                         "parcel_city_id"=>$from_parcel_city_id,
-                        // "state_id"=>$parcelCity->state_id,
+                        "state_id"=>15,
                         "count"=>1,
                     ]);
                 }
@@ -983,7 +986,47 @@ class ParcelOrderApiController extends Controller
                     ParcelCityHistory::create([
                         "customer_id"=>$parcel_order->customer_id,
                         "parcel_city_id"=>$to_parcel_city_id,
-                        // "state_id"=>$parcelCity->state_id,
+                        "state_id"=>15,
+                        "count"=>1,
+                    ]);
+                }
+            }
+            if($from_parcel_city_id){
+                $parcelBlock=ParcelBlockList::where('parcel_block_id',$from_parcel_city_id)->first();
+                if($parcelBlock->state_id){
+                    $state_id=$parcelBlock->state_id;
+                }else{
+                    $state_id=15;
+                }
+                $check=ParcelBlockHistory::where('customer_id',$parcel_order->customer_id)->where('parcel_block_id',$from_parcel_city_id)->first();
+                if($check){
+                    $check->count=$check->count+1;
+                    $check->update();
+                }else{
+                    ParcelBlockHistory::create([
+                        "customer_id"=>$parcel_order->customer_id,
+                        "parcel_block_id"=>$from_parcel_city_id,
+                        "state_id"=>$state_id,
+                        "count"=>1,
+                    ]);
+                }
+            }
+            if($to_parcel_city_id){
+                $parcelBlock=ParcelBlockList::where('parcel_block_id',$from_parcel_city_id)->first();
+                if($parcelBlock->state_id){
+                    $state_id=$parcelBlock->state_id;
+                }else{
+                    $state_id=15;
+                }
+                $check=ParcelBlockHistory::where('customer_id',$parcel_order->customer_id)->where('parcel_block_id',$to_parcel_city_id)->first();
+                if($check){
+                    $check->count=$check->count+1;
+                    $check->update();
+                }else{
+                    ParcelBlockHistory::create([
+                        "customer_id"=>$parcel_order->customer_id,
+                        "parcel_block_id"=>$to_parcel_city_id,
+                        "state_id"=>$state_id,
                         "count"=>1,
                     ]);
                 }
@@ -1135,6 +1178,34 @@ class ParcelOrderApiController extends Controller
         }else{
             return response()->json(['success'=>false,'message'=>'parcel image id not found!']);
         }
+    }
+    public function v2_order_estimate_cost(Request $request)
+    {
+        $from_block_id=$request['from_block_id'];
+        $to_block_id=$request['to_block_id'];
+        $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
+
+        $parcel_extra=ParcelExtraCover::where('parcel_extra_cover_id',$parcel_extra_cover_id)->first();
+        if($parcel_extra){
+            $extra_coverage=(int)$parcel_extra->parcel_extra_cover_price;
+        }else{
+            $extra_coverage=0;
+        }
+
+        if($from_block_id && $to_block_id){
+            $block_list=ParcelFromToBlock::where('parcel_from_block_id',$from_block_id)->where('parcel_to_block_id',$to_block_id)->first();
+            if($block_list){
+                $customer_delivery_fee=$block_list->delivery_fee;
+            }else{
+                $customer_delivery_fee=0;
+            }
+            $total_estimated=(int)($customer_delivery_fee + $extra_coverage);
+            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$customer_delivery_fee,'extra_coverage'=>$extra_coverage,'total_estimated'=>$total_estimated]]]);
+        }else{
+            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>0,'extra_coverage'=>$extra_coverage,'total_estimated'=>$extra_coverage]]]);
+        }
+
+
     }
 
     public function order_estimate_cost(Request $request)
@@ -1516,83 +1587,6 @@ class ParcelOrderApiController extends Controller
 
 
     }
-    // public function order_estimate_cost(Request $request)
-    // {
-    //     $from_pickup_latitude=$request['from_pickup_latitude'];
-    //     $from_pickup_longitude=$request['from_pickup_longitude'];
-    //     $to_drop_latitude=$request['to_drop_latitude '];
-    //     $to_drop_longitude=$request['to_drop_longitude'];
-    //     $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
-
-    //     $total_estimated=$request['total_estimated_weight'];
-    //     $total_estimated_weight= number_format((float)$total_estimated, 1, '.', '');
-
-    //     $parcel_extra=ParcelExtraCover::where('parcel_extra_cover_id',$parcel_extra_cover_id)->first();
-    //     if($parcel_extra){
-    //         $extra_coverage=(int)$parcel_extra->parcel_extra_cover_price;
-    //     }else{
-    //         $extra_coverage=0;
-    //     }
-
-    //     if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00)
-    //     {
-    //         return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>[['weight'=>'1kg','delivery_fee'=>500],['weight'=>'2kg','delivery_fee'=>1000],['weight'=>"3kg",'delivery_fee'=>1500],['weight'=>"About 3kg",'delivery_fee'=>2000]],'estimated_cost'=>null]]);
-    //     }
-    //     elseif($from_pickup_latitude!=0.00 || $from_pickup_longitude!=0.00 || $to_drop_latitude!=0.00 || $to_drop_longitude!=0.00)
-    //     {
-    //         $theta = $from_pickup_longitude - $to_drop_longitude;
-    //         $dist = sin(deg2rad($from_pickup_latitude)) * sin(deg2rad($to_drop_latitude)) +  cos(deg2rad($from_pickup_latitude)) * cos(deg2rad($to_drop_latitude)) * cos(deg2rad($theta));
-    //         $dist = acos($dist);
-    //         $dist = rad2deg($dist);
-    //         $miles = $dist * 60 * 1.1515;
-    //         $kilometer=$miles * 1.609344;
-    //         // $kilometer=6;
-    //         $kilometer= number_format((float)$kilometer, 1, '.', '');
-
-    //         if($kilometer <= 3 ){
-    //             $delivery_fee=1500;
-    //         }
-    //         else{
-    //             $number=explode('.', $kilometer);
-
-    //             $addOneKilometer=$number[0] - 3;
-    //             $folat_number=$number[1];
-
-    //             if($folat_number=="0"){
-    //                 $delivery_fee=$addOneKilometer * 500 + 1500;
-    //             }else{
-    //                 if($folat_number <= 5){
-    //                     $delivery_fee=($addOneKilometer * 500) + 250 + 1500;
-    //                 }else{
-    //                     $delivery_fee=($addOneKilometer * 500) + (250 * 2) + 1500;
-    //                 }
-    //             }
-
-    //         }
-
-    //         if($total_estimated_weight <= 5){
-    //             $weight_fee=0;
-    //         }else{
-    //             $weight=explode('.', $total_estimated_weight);
-    //             $first_weight=$weight[0]-5;
-    //             $second_weight=$weight[1];
-    //             if($second_weight=="0"){
-    //                 $weight_fee=$first_weight * 300;
-    //             }else{
-    //                 if($second_weight <=5 ){
-    //                     $weight_fee=($first_weight * 300) + 150;
-    //                 }else{
-    //                     $weight_fee=($first_weight * 300) + 300;
-    //                 }
-    //             }
-    //         }
-    //         $total_estimated=(int)($delivery_fee + $extra_coverage + $weight_fee);
-    //         return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$delivery_fee,'extra_coverage'=>$extra_coverage,'weight_fee'=>$weight_fee,'total_estimated'=>$total_estimated]]]);
-    //     }else{
-    //         return response()->json(['success'=>false,'message'=>'error something']);
-    //     }
-
-    // }
 
     /**
      * Show the form for creating a new resource.

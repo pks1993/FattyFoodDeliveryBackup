@@ -176,10 +176,22 @@
                             <p>Parcel Orders Chart</p>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="{{url('fatty/main/admin/parcel_states')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Parcel States</p>
+                        </a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/parcel_block')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Parcel Block</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/parcel_from_to_block')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Parcel Block FromTo</p>
                         </a>
                     </li>
                 </ul>

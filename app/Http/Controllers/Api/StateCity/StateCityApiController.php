@@ -9,6 +9,9 @@ use App\Models\State\State;
 use App\Models\Order\ParcelState;
 use App\Models\City\ParcelCity;
 use App\Models\City\ParcelCityHistory;
+use App\Models\City\ParcelBlockHistory;
+use App\Models\City\ParcelBlockList;
+use App\Models\City\ParcelFromToBlock;
 use App\Models\Customer\CustomerAddress;
 
 class StateCityApiController extends Controller
@@ -58,6 +61,28 @@ class StateCityApiController extends Controller
             }
         }else{
             return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['default_address'=>null,'recent_cities'=>[],'city_lists'=>[]]]);
+        }
+    }
+    public function v2_parcel_choose_address(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $state_id=$request['state_id'];
+        if($customer_id && $state_id){
+            $blocks=ParcelBlockList::where('state_id',$state_id)->get();
+            $recent=ParcelBlockHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->orderBy('count','desc')->limit(3)->select('parcel_block_id','state_id','created_at','updated_at')->get();
+            if($recent){
+                $item=[];
+                foreach($recent as $value){
+                    if($value){
+                        $parcel_block=ParcelBlockList::where('parcel_block_id',$value->parcel_block_id)->first();
+                        $value->block_name=$parcel_block->block_name;
+                    }
+                    array_push($item,$value);
+                }
+            }
+            return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['recent_blocks'=>$recent,'block_lists'=>$blocks]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['recent_blocks'=>[],'block_lists'=>[]]]);
         }
     }
 
