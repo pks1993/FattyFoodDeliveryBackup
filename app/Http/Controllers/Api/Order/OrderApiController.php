@@ -588,7 +588,8 @@ class OrderApiController extends Controller
                                      "title_en"=> "Order Canceled by Customer",
                                      "body_en"=> "New order has been canceled by customer!",
                                      "title_ch"=> "订单已被用户取消",
-                                     "body_ch"=> "非常抱歉 用户已取消订单!"
+                                     "body_ch"=> "非常抱歉 用户已取消订单!",
+                                     "sound" => "receiveNoti.caf",
                                  ],
                                  "mutable_content" => true ,
                                 "content_available" => true,
@@ -596,6 +597,7 @@ class OrderApiController extends Controller
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
+                                    "sound" => "receiveNoti.caf",
                                 ],
                              ],
                          ]);
@@ -810,7 +812,8 @@ class OrderApiController extends Controller
                                     "title_en"=> "Succesfully Order Cancel",
                                     "body_en"=> "You success cancel customer order!",
                                     "title_ch"=> "Succesfully Order Cancel",
-                                    "body_ch"=> "You success cancel customer order!!"
+                                    "body_ch"=> "You success cancel customer order!!",
+                                    "sound" => "receiveNoti.caf",
                                 ],
                                 "mutable_content" => true ,
                                 "content_available" => true,
@@ -818,6 +821,7 @@ class OrderApiController extends Controller
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
+                                    "sound" => "receiveNoti.caf",
                                 ],
                             ],
                         ]);
@@ -911,7 +915,8 @@ class OrderApiController extends Controller
                                     "title_en"=> "Succesfully Order Cancel",
                                     "body_en"=> "You success cancel customer order!",
                                     "title_ch"=> "Succesfully Order Cancel",
-                                    "body_ch"=> "You success cancel customer order!!"
+                                    "body_ch"=> "You success cancel customer order!",
+                                    "sound" => "receiveNoti.caf",
                                 ],
                                 "mutable_content" => true ,
                                 "content_available" => true,
@@ -919,6 +924,7 @@ class OrderApiController extends Controller
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
+                                    "sound" => "receiveNoti.caf",
                                 ],
                             ],
                         ]);
@@ -2327,14 +2333,16 @@ class OrderApiController extends Controller
                                     "title_en"=> "Order Notification",
                                     "body_en"=> "One new order is received! Please check it!",
                                     "title_ch"=> "订单通知",
-                                    "body_ch"=> "收到一个新订单!请查看！"
+                                    "body_ch"=> "收到一个新订单!请查看！",
+                                    "sound" => "receiveNoti.caf",
                                 ],
+                                "sound" => "receiveNoti.caf",
                                 "mutable_content" => true ,
                                 "content_available" => true,
-                                "sound" => "receiveNoti.caf",
                                 "notification"=> [
                                     "title"=>"this is a title",
                                     "body"=>"this is a body",
+                                    "sound" => "receiveNoti.caf",
                                 ],
                             ],
 

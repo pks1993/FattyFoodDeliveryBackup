@@ -1095,7 +1095,8 @@ class RiderApicontroller extends Controller
                                         "title_en"=> "Order Accepted by Rider",
                                         "body_en"=> "Order is accepted by rider! He is coming!",
                                         "title_ch"=> "骑手已接单",
-                                        "body_ch"=> "骑手已接单!正在赶来！"
+                                        "body_ch"=> "骑手已接单!正在赶来！",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                     "mutable_content" => true ,
                                     "content_available" => true,
@@ -1103,6 +1104,7 @@ class RiderApicontroller extends Controller
                                     "notification"=> [
                                         "title"=>"this is a title",
                                         "body"=>"this is a body",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                 ],
                             ]);
@@ -1165,7 +1167,8 @@ class RiderApicontroller extends Controller
                                         "title_en"=> "Rider Arrived",
                                         "body_en"=> "Rider arrived for taking customer’s order",
                                         "title_ch"=> "骑手已到达",
-                                        "body_ch"=> "骑手已到达!正在等待取餐！"
+                                        "body_ch"=> "骑手已到达!正在等待取餐！",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                     "mutable_content" => true ,
                                     "content_available" => true,
@@ -1173,6 +1176,7 @@ class RiderApicontroller extends Controller
                                     "notification"=> [
                                         "title"=>"this is a title",
                                         "body"=>"this is a body",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                 ],
                             ]);
@@ -1235,7 +1239,8 @@ class RiderApicontroller extends Controller
                                         "title_en"=> "Rider Start Delivery",
                                         "body_en"=> "Rider start delivery to customer!",
                                         "title_ch"=> "开始派送",
-                                        "body_ch"=> "骑手已开始为用户派送!"
+                                        "body_ch"=> "骑手已开始为用户派送!",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                     "mutable_content" => true ,
                                     "content_available" => true,
@@ -1243,6 +1248,7 @@ class RiderApicontroller extends Controller
                                     "notification"=> [
                                         "title"=>"this is a title",
                                         "body"=>"this is a body",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                 ],
                             ]);
@@ -1341,7 +1347,8 @@ class RiderApicontroller extends Controller
                                         "title_en"=> "Order Finished",
                                         "body_en"=> "Good Day! Order is finished.Thanks very much!",
                                         "title_ch"=> "订单已结束",
-                                        "body_ch"=> "订单已结束!"
+                                        "body_ch"=> "订单已结束!",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                     "mutable_content" => true ,
                                     "content_available" => true,
@@ -1349,6 +1356,7 @@ class RiderApicontroller extends Controller
                                     "notification"=> [
                                         "title"=>"this is a title",
                                         "body"=>"this is a body",
+                                        "sound" => "receiveNoti.caf",
                                     ],
                                 ],
                             ]);
