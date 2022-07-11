@@ -1048,6 +1048,7 @@ class RiderApicontroller extends Controller
                 if($order_status_id=="4"){
                     $rider->is_order=1;
                     $rider->update();
+                    NotiOrder::where('order_id',$order_id)->delete();
                     //for rider
                     $rider_client = new Client();
                     $rider_token=$rider->rider_fcm_token;
