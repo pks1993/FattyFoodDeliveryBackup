@@ -355,24 +355,41 @@ class RiderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
-            $edit = '<a href="/fatty/main/admin/riders/edit/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2" title="Edit">  <i class="fas fa-edit"></i></a>';
-            $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-2" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
-            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-success btn-sm mr-2" title="Rider Detail"><i class="fas fa-eye"></i></a>';
-            if ($post->is_admin_approved == 0) {
-                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            $value=$view.$location.$edit.$approved;
+            $edit = '<a href="/fatty/main/admin/riders/edit/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-1" title="Edit">  <i class="fas fa-edit"></i></a>';
+            if($post->active_inactive_status==0 || $post->is_ban==1){
+                $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-1 disabled" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
+            }else{
+                $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-1" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
+            }
+            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-success btn-sm mr-1" title="Rider Detail"><i class="fas fa-eye"></i></a>';
+            if($post->active_inactive_status== 1){
+                $on_off = '<a href="/fatty/main/admin/riders/activenow/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to off this rider?\')" class="btn btn-success btn-sm mr-1" title="On">  <i class="fas fa-motorcycle"></i></a>';
+            }else{
+                $on_off = '<a href="/fatty/main/admin/riders/activenow/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to on this rider?\')" class="btn btn-danger btn-sm mr-1" title="Off">  <i class="fas fa-motorcycle"></i></a>';
+            }
+
+            $value=$view.$location.$on_off.$edit;
 
             return $value;
         })
         ->addColumn('delete', function(Rider $post){
-            $delete= '<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            if ($post->is_admin_approved == 0) {
+                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to Not Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            if($post->is_ban==1){
+                $ban = '<a href="/fatty/main/admin/riders/ban/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to unBan this rider?\')" class="btn btn-danger btn-sm mr-1" title="Ban">  <i class="fas fa-ban"></i></a>';
+            }else{
+                $ban = '<a href="/fatty/main/admin/riders/ban/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to Ban this rider?\')" class="btn btn-success btn-sm mr-1" title="UnBan">  <i class="fas fa-check-circle"></i></a>';
+            }
+            $delete= '<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" title="Delete" method="post" class="d-inline">
             '.csrf_field().'
-            '.method_field("DELETE").'<button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            '.method_field("DELETE").'<button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are you sure want to Delete?\')"><i class="fa fa-trash"></button>
             </form>';
-            return $delete;
+
+            $data=$approved.$ban.$delete;
+            return $data;
         })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
@@ -645,6 +662,36 @@ class RiderController extends Controller
     {
         $rider = Rider::findOrFail($id);
         return view('admin.rider.view',compact('rider'));
+    }
+
+
+    public function activenow(Request $request,$id)
+    {
+        $rider=Rider::where('rider_id',$id)->first();
+        if($rider->active_inactive_status==1){
+            $rider->active_inactive_status=0;
+            $rider->update();
+            $request->session()->flash('alert-success', 'successfully update rider off !');
+        }else{
+            $rider->active_inactive_status=1;
+            $request->session()->flash('alert-success', 'successfully update rider on !');
+            $rider->update();
+        }
+        return redirect()->back();
+    }
+    public function ban_rider(Request $request,$id)
+    {
+        $rider=Rider::where('rider_id',$id)->first();
+        if($rider->is_ban==1){
+            $rider->is_ban=0;
+            $rider->update();
+            $request->session()->flash('alert-success', 'successfully update rider un ban !');
+        }else{
+            $rider->is_ban=1;
+            $request->session()->flash('alert-success', 'successfully update rider ban !');
+            $rider->update();
+        }
+        return redirect()->back();
     }
 
     /**

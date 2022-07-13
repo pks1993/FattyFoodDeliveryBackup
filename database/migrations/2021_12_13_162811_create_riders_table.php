@@ -24,6 +24,7 @@ class CreateRidersTable extends Migration
             $table->string('rider_latitude')->nullable();
             $table->string('rider_longitude')->nullable();
             $table->string('state_id')->nullable();
+            $table->tinyInteger('is_ban')->nullable()->default(0);
             $table->tinyInteger('active_inactive_status')->nullable()->default(0);
             $table->tinyInteger('rider_attendance_status')->nullable()->default(0);
             $table->tinyInteger('is_admin_approved')->nullable()->default(1);

@@ -136,6 +136,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('riders/store','Admin\Rider\RiderController@store')->name('riders.store');
     Route::get('riders/edit/{rider_id}','Admin\Rider\RiderController@edit')->name('riders.edit');
     Route::post('riders/update/{rider_id}','Admin\Rider\RiderController@update')->name('riders.update');
+    Route::get('riders/activenow/{rider_id}','Admin\Rider\RiderController@activenow')->name('riders.activenow');
+    Route::get('riders/ban/{rider_id}','Admin\Rider\RiderController@ban_rider')->name('riders.ban');
     Route::get('riders/admin/approved/update/{rider}','Admin\Rider\RiderController@admin_approved');
     Route::get('daily_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@daily_admin_approved');
     Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
