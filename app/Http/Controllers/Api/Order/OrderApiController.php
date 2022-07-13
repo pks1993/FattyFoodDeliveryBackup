@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use App\Models\City\ParcelCity;
+use App\Models\City\ParcelBlockList;
 use App\Models\Order\NotiOrder;
 
 
@@ -276,14 +277,16 @@ class OrderApiController extends Controller
                     if($value->from_parcel_city_id==0){
                         $value->from_parcel_city_name=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
-                        $value->from_parcel_city_name=$city_data->city_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->block_name;
                     }
                     if($value->to_parcel_city_id==0){
                         $value->to_parcel_city_name=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
-                        $value->to_parcel_city_name=$city_data->city_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->block_name;
                     }
                     array_push($data,$value);
                 }
@@ -294,14 +297,16 @@ class OrderApiController extends Controller
                     if($order->from_parcel_city_id==0){
                         $order->from_parcel_city_name=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$order->from_parcel_city_id)->first();
-                        $order->from_parcel_city_name=$city_data->city_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$order->from_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$order->from_parcel_city_id)->first();
+                        $order->from_parcel_city_name=$city_data->block_name;
                     }
                     if($order->to_parcel_city_id==0){
                         $order->to_parcel_city_name=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
-                        $order->to_parcel_city_name=$city_data->city_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$order->to_parcel_city_id)->first();
+                        $order->to_parcel_city_name=$city_data->block_name;
                     }
                     array_push($item,$order);
                 }
@@ -1583,8 +1588,9 @@ class OrderApiController extends Controller
             $customer_orders->from_latitude=null;
             $customer_orders->from_longitude=null;
         }else{
-            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
-            $customer_orders->from_parcel_city_name=$city_data->city_name;
+            // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            $city_data=ParcelBlockList::where('parcel_block_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$city_data->block_name;
             $customer_orders->from_latitude=$city_data->latitude;
             $customer_orders->from_longitude=$city_data->longitude;
         }
@@ -1593,8 +1599,9 @@ class OrderApiController extends Controller
             $customer_orders->to_latitude=null;
             $customer_orders->to_longitude=null;
         }else{
-            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
-            $customer_orders->to_parcel_city_name=$city_data->city_name;
+            // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            $city_data=ParcelBlockList::where('parcel_block_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$city_data->block_name;
             $customer_orders->to_latitude=$city_data->latitude;
             $customer_orders->to_longitude=$city_data->longitude;
         }
@@ -1680,14 +1687,16 @@ class OrderApiController extends Controller
         if($customer_orders->from_parcel_city_id==0){
             $customer_orders->from_parcel_city_name=null;
         }else{
-            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
-            $customer_orders->from_parcel_city_name=$city_data->city_name;
+            // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            $block_data=ParcelBlockList::where('parcel_block_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$block_data->block_name;
         }
         if($customer_orders->to_parcel_city_id==0){
             $customer_orders->to_parcel_city_name=null;
         }else{
-            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
-            $customer_orders->to_parcel_city_name=$city_data->city_name;
+            // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            $block_data=ParcelBlockList::where('parcel_block_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$block_data->block_name;
         }
 
         if($customer_orders->rider_parcel_address==null){

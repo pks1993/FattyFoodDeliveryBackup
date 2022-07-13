@@ -46,7 +46,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_request_otp','Ap
 Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api\Customer\CustomerApiController@resend_verify_otp');
 
 
-// Route::middleware('one_device_login')->group(function(){
+Route::middleware('one_device_login')->group(function(){
     //Customer Api
     //one device login
     Route::post('v1/fatty/202221/lashio/main/admin/customers/update','Api\Customer\CustomerApiController@update');
@@ -124,7 +124,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/customers/resend_verify_otp','Api
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/store','Api\Order\ParcelOrderApiController@order_store');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@order_estimate_cost');
     Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@v2_order_estimate_cost');
-// });
+});
 
 Route::post('v1/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');
 

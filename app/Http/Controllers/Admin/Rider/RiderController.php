@@ -652,7 +652,8 @@ class RiderController extends Controller
      */
     public function edit($id)
     {
-        //
+        $states=State::all();
+        return view('admin.rider.create',compact('states'));
     }
 
     /**
