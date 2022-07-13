@@ -277,6 +277,64 @@ class OrderApiController extends Controller
                     if($value->from_parcel_city_id==0){
                         $value->from_parcel_city_name=null;
                     }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->city_name;
+                    }
+                    if($value->to_parcel_city_id==0){
+                        $value->to_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->city_name;
+                    }
+                    array_push($data,$value);
+                }
+
+                $past_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->get();
+                $item=[];
+                foreach($past_order as $order){
+                    if($order->from_parcel_city_id==0){
+                        $order->from_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$order->from_parcel_city_id)->first();
+                        $order->from_parcel_city_name=$city_data->city_name;
+                    }
+                    if($order->to_parcel_city_id==0){
+                        $order->to_parcel_city_name=null;
+                    }else{
+                        $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
+                        $order->to_parcel_city_name=$city_data->city_name;
+                    }
+                    array_push($item,$order);
+                }
+
+
+                return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order]);
+            }else{
+                return response()->json(['success'=>false,'message'=>'order_type not found!']);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'customer id not found!']);
+        }
+    }
+    public function v2_customer_index(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $order_type=$request['order_type'];
+        $check_customer=Customer::where('customer_id',$customer_id)->first();
+        if(!empty($check_customer)){
+            if($order_type=="food"){
+                $active_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->get();
+
+                $past_order=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->get();
+
+                return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order ,'past_order'=>$past_order]);
+            }elseif($order_type=="parcel"){
+                $active_order=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->get();
+                $data=[];
+                foreach($active_order as $value){
+                    if($value->from_parcel_city_id==0){
+                        $value->from_parcel_city_name=null;
+                    }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value->from_parcel_city_id)->first();
                         $value->from_parcel_city_name=$city_data->block_name;
@@ -1588,6 +1646,98 @@ class OrderApiController extends Controller
             $customer_orders->from_latitude=null;
             $customer_orders->from_longitude=null;
         }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$city_data->city_name;
+            $customer_orders->from_latitude=$city_data->latitude;
+            $customer_orders->from_longitude=$city_data->longitude;
+        }
+        if($customer_orders->to_parcel_city_id==0){
+            $customer_orders->to_parcel_city_name=null;
+            $customer_orders->to_latitude=null;
+            $customer_orders->to_longitude=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$city_data->city_name;
+            $customer_orders->to_latitude=$city_data->latitude;
+            $customer_orders->to_longitude=$city_data->longitude;
+        }
+
+        if($customer_orders->from_pickup_latitude==null || $customer_orders->from_pickup_latitude==0){
+            $customer_orders->from_pickup_latitude=0.00;
+        }
+        if($customer_orders->from_pickup_longitude==null || $customer_orders->from_pickup_longitude==0){
+            $customer_orders->from_pickup_longitude=0.00;
+        }
+        if($customer_orders->to_drop_latitude==null || $customer_orders->to_drop_latitude==0){
+            $customer_orders->to_drop_latitude=0.00;
+        }
+        if($customer_orders->to_drop_longitude==null || $customer_orders->to_drop_longitude==0){
+            $customer_orders->to_drop_longitude=0.00;
+        }
+        if($customer_orders->rider_parcel_address==null){
+            $customer_orders->rider_parcel_address=[];
+        }else{
+            $customer_orders->rider_parcel_address=json_decode($customer_orders->rider_parcel_address,true);
+        }
+
+        $customer_orders->distance=$distances;
+        array_push($data,$customer_orders);
+
+
+        if($customer_orders){
+            return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found!']);
+        }
+    }
+    public function v2_rider_order_click(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+
+        if($customer_orders->rider_id){
+            $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
+            if($customer_orders->order_type=="food"){
+                $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
+                $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+                $dist = acos($dist);
+                $dist = rad2deg($dist);
+                $miles = $dist * 60 * 1.1515;
+                $kilometer=$miles * 1.609344;
+                $distances=(float) number_format((float)$kilometer, 2, '.', '');
+                if($distances==0){
+                    $distances=0.01;
+                }
+            }else{
+                $theta = $customer_orders->to_drop_longitude - $riders->rider_longitude;
+                $dist = sin(deg2rad($customer_orders->to_drop_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->to_drop_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+                $dist = acos($dist);
+                $dist = rad2deg($dist);
+                $miles = $dist * 60 * 1.1515;
+                $kilometer=$miles * 1.609344;
+                $distances=(float) number_format((float)$kilometer, 2, '.', '');
+                if($distances==0){
+                    $distances=0.01;
+                }
+            }
+        }else{
+            $distances=0.01;
+        }
+
+
+        $data=[];
+        if($customer_orders->customer_address_id != 0){
+            if($customer_orders->customer_address->is_default==1){
+                $customer_orders->customer_address->is_default=true;
+            }else{
+                $customer_orders->customer_address->is_default=false;
+            }
+        }
+        if($customer_orders->from_parcel_city_id==0){
+            $customer_orders->from_parcel_city_name=null;
+            $customer_orders->from_latitude=null;
+            $customer_orders->from_longitude=null;
+        }else{
             // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
             $city_data=ParcelBlockList::where('parcel_block_id',$customer_orders->from_parcel_city_id)->first();
             $customer_orders->from_parcel_city_name=$city_data->block_name;
@@ -1635,6 +1785,87 @@ class OrderApiController extends Controller
         }
     }
     public function customer_order_click(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+
+        // if($customer_orders->rider_id){
+        //     $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
+        //     $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
+        //     $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+        //     $dist = acos($dist);
+        //     $dist = rad2deg($dist);
+        //     $miles = $dist * 60 * 1.1515;
+        //     $kilometer=$miles * 1.609344;
+        //     $distances=(float) number_format((float)$kilometer, 2, '.', '');
+        // }else{
+        //     $distances=0.00;
+        // }
+        if($customer_orders->order_type=="food"){
+            $theta = $customer_orders->customer_address_longitude - $customer_orders->restaurant_address_longitude;
+            $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($customer_orders->customer_address_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $kilometer=$miles * 1.609344;
+            $distances=(float) number_format((float)$kilometer, 2, '.', '');
+            if($distances==0){
+                $distances=0.01;
+            }
+        }else{
+            $theta = $customer_orders->to_drop_longitude - $customer_orders->from_pickup_longitude;
+            $dist = sin(deg2rad($customer_orders->to_drop_latitude)) * sin(deg2rad($customer_orders->from_pickup_latitude)) +  cos(deg2rad($customer_orders->to_drop_latitude)) * cos(deg2rad($customer_orders->from_pickup_latitude)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $kilometer=$miles * 1.609344;
+            $distances=(float) number_format((float)$kilometer, 2, '.', '');
+            if($distances==0){
+                $distances=0.01;
+            }
+        }
+
+        $data=[];
+        if($customer_orders->customer_address_id != 0){
+            if($customer_orders->customer_address->is_default==1){
+                $customer_orders->customer_address->is_default=true;
+            }else{
+                $customer_orders->customer_address->is_default=false;
+            }
+        }
+
+        if($customer_orders->from_parcel_city_id==0){
+            $customer_orders->from_parcel_city_name=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
+            // $block_data=ParcelBlockList::where('parcel_block_id',$customer_orders->from_parcel_city_id)->first();
+            $customer_orders->from_parcel_city_name=$city_data->city_name;
+        }
+        if($customer_orders->to_parcel_city_id==0){
+            $customer_orders->to_parcel_city_name=null;
+        }else{
+            $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
+            // $block_data=ParcelBlockList::where('parcel_block_id',$customer_orders->to_parcel_city_id)->first();
+            $customer_orders->to_parcel_city_name=$city_data->city_name;
+        }
+
+        if($customer_orders->rider_parcel_address==null){
+            $customer_orders->rider_parcel_address=[];
+        }else{
+            $customer_orders->rider_parcel_address=json_decode($customer_orders->rider_parcel_address,true);
+        }
+
+        $customer_orders->distance=$distances;
+        array_push($data,$customer_orders);
+
+
+        if($customer_orders){
+            return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found!']);
+        }
+    }
+    public function v2_customer_order_click(Request $request)
     {
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();

@@ -355,21 +355,24 @@ class RiderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
+            $edit = '<a href="/fatty/main/admin/riders/edit/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2" title="Edit">  <i class="fas fa-edit"></i></a>';
             $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-2" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
-            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2" title="Rider Detail"><i class="fas fa-eye"></i></a>';
+            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-success btn-sm mr-2" title="Rider Detail"><i class="fas fa-eye"></i></a>';
             if ($post->is_admin_approved == 0) {
-                $update = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
             } else {
-                $update = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
             };
-            $value=$view.$location.$update;
-            // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
-            // '.csrf_field().'
-            // '.method_field("DELETE").'
-            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            // </form>';
+            $value=$view.$location.$edit.$approved;
 
             return $value;
+        })
+        ->addColumn('delete', function(Rider $post){
+            $delete= '<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'<button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+            return $delete;
         })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
@@ -395,7 +398,7 @@ class RiderController extends Controller
             $state = $item->state->state_name_mm;
             return $state;
         })
-        ->rawColumns(['rider_image','action','register_date','state'])
+        ->rawColumns(['rider_image','action','register_date','state','delete'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -595,7 +598,7 @@ class RiderController extends Controller
      */
     public function create()
     {
-        $states=State::all();
+        $states=State::where('state_id','15')->first();
         return view('admin.rider.create',compact('states'));
     }
 
@@ -652,8 +655,9 @@ class RiderController extends Controller
      */
     public function edit($id)
     {
-        $states=State::all();
-        return view('admin.rider.create',compact('states'));
+        $rider=Rider::find($id);
+        $states=State::where('state_id','15')->first();
+        return view('admin.rider.edit',compact('states','rider'));
     }
 
     /**
@@ -665,7 +669,24 @@ class RiderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $photoname=time();
+        $riders=Rider::where('rider_id',$id)->first();
+
+        if(!empty($request['rider_image'])){
+            Storage::disk('Rider')->delete($riders->rider_image);
+            $img_name=$photoname.'.'.$request->file('rider_image')->getClientOriginalExtension();
+            $riders->rider_image=$img_name;
+            Storage::disk('Rider')->put($img_name, File::get($request['rider_image']));
+        }
+        $riders->rider_user_name=$request['rider_user_name'];
+        $riders->rider_user_phone=$request['rider_user_phone'];
+        $riders->state_id=$request['state_id'];
+        $riders->rider_user_password=$request['rider_user_password'];
+        $riders->is_admin_approved=$request['is_admin_approved'];
+        $riders->update();
+
+        $request->session()->flash('alert-success', 'successfully update rider!');
+        return redirect('fatty/main/admin/riders');
     }
 
     /**
@@ -674,9 +695,21 @@ class RiderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+        $check_order=CustomerOrder::where('rider_id',$id)->first();
+        if($check_order){
+            $request->session()->flash('alert-warning', 'donot delete because he have some orders!');
+            return redirect('fatty/main/admin/riders');
+        }else{
+            $rider=Rider::where('rider_id',$id)->FirstOrFail();
+            Storage::disk('Rider')->delete($rider->rider_image);
+            $rider->delete();
+
+            $request->session()->flash('alert-success', 'successfully delete rider!');
+            return redirect('fatty/main/admin/riders');
+        }
+
     }
 
     public function all_rider_location()

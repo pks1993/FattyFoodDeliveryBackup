@@ -58,7 +58,7 @@
                                 <div class="form-group row">
                                     <label for="rider_user_name" class="col-md-12 col-form-label">{{ __('Rider User Name') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input id="rider_user_name" type="text" class="form-control @error('rider_user_name') is-invalid @enderror" name="rider_user_name" value="{{ old('rider_user_name') }}" autocomplete="category_image" autofocus>
+                                        <input id="rider_user_name" type="text" class="form-control @error('rider_user_name') is-invalid @enderror" name="rider_user_name" value="{{ old('rider_user_name') }}" autocomplete="rider_user_name" autofocus>
                                         @error('rider_user_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -69,7 +69,7 @@
                                 <div class="form-group row">
                                     <label for="rider_user_phone" class="col-md-12 col-form-label">{{ __('Rider User Phone') }} </label>
                                     <div class="col-md-12">
-                                        <input id="rider_user_phone" type="text" class="form-control @error('rider_user_phone') is-invalid @enderror" name="rider_user_phone" value="{{ old('rider_user_phone') }}" autocomplete="category_image" autofocus>
+                                        <input id="rider_user_phone" type="text" class="form-control @error('rider_user_phone') is-invalid @enderror" name="rider_user_phone" value="{{ old('rider_user_phone') }}" autocomplete="rider_user_phone" autofocus>
                                         @error('rider_user_phone')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -77,16 +77,16 @@
                                         @enderror
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <label for="state_id" class="col-md-12 col-form-label">{{ __('ပြည်နယ် / တိုင်း') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="state_id" style="width: 100%;" class="form-control @error('state_id') is-invalid @enderror" name="state_id" value="{{ old('state_id') }}" autocomplete="state_id" autofocus>
-                                                <option value="">ပြည်နယ် / တိုင်း</option>
+                                            {{-- <option value="">ပြည်နယ် / တိုင်း</option>
                                             @foreach($states as $state)
                                                 <option value="{{ $state->state_id }}">{{ $state->state_name_mm }} ( {{ $state->state_name_en }} )</option>
-                                            @endforeach
-                                            
+                                            @endforeach --}}
+                                            <option value="{{ $states->state_id }}">{{ $states->state_name_mm }} ( {{ $states->state_name_en }} )</option>
                                         </select>
                                         @error('state_id')
                                             <span class="invalid-feedback" role="alert">
@@ -95,7 +95,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row">
                                     <label for="rider_user_password" class="col-md-12 col-form-label">{{ __('Password') }} <span  style="color: #990000;font-weight:700;">*</span></label>
 
@@ -144,7 +144,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
@@ -181,7 +181,7 @@ var loadFileImage= function(event) {
 $('#rider_user_password, #password_confirmation').on('keyup', function () {
   if ($('#rider_user_password').val() == $('#password_confirmation').val()) {
     $('#message').html('Matching').css('color', 'green');
-  } else 
+  } else
     $('#message').html('Not Matching').css('color', 'red');
 });
 </script>
