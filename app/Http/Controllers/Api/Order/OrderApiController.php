@@ -1077,6 +1077,8 @@ class OrderApiController extends Controller
                         ->having('distance','<',1.1)
                         ->groupBy("riders.rider_id")
                         ->where('is_order','0')
+                        ->where('active_inactive_status','1')
+                        ->where('is_ban','0')
                         ->get();
                         if($riders->isNotEmpty())
                         {
@@ -1107,6 +1109,8 @@ class OrderApiController extends Controller
                             ->having('distance','<',2.1)
                             ->groupBy("riders.rider_id")
                             ->where('is_order','0')
+                            ->where('active_inactive_status','1')
+                            ->where('is_ban','0')
                             ->get();
                             if($riders->isNotEmpty()){
                                 foreach($riders as $rider){
@@ -1136,6 +1140,8 @@ class OrderApiController extends Controller
                                 ->having('distance','<',3.1)
                                 ->groupBy("riders.rider_id")
                                 ->where('is_order','0')
+                                ->where('active_inactive_status','1')
+                                ->where('is_ban','0')
                                 ->get();
                                 if($riders->isNotEmpty()){
                                     foreach($riders as $rider){
@@ -1165,6 +1171,8 @@ class OrderApiController extends Controller
                                     ->having('distance','<',4.1)
                                     ->groupBy("riders.rider_id")
                                     ->where('is_order','0')
+                                    ->where('active_inactive_status','1')
+                                    ->where('is_ban','0')
                                     ->get();
                                     if($riders->isNotEmpty()){
                                         foreach($riders as $rider){
@@ -1194,6 +1202,8 @@ class OrderApiController extends Controller
                                         ->having('distance','<',5.1)
                                         ->groupBy("riders.rider_id")
                                         ->where('is_order','0')
+                                        ->where('active_inactive_status','1')
+                                        ->where('is_ban','0')
                                         ->get();
                                         if($riders->isNotEmpty()){
                                             foreach($riders as $rider){
@@ -1223,8 +1233,39 @@ class OrderApiController extends Controller
                                             ->having('distance','<',6.1)
                                             ->groupBy("riders.rider_id")
                                             ->where('is_order','0')
+                                            ->where('active_inactive_status','1')
+                                            ->where('is_ban','0')
                                             ->get();
                                             if($riders->isNotEmpty()){
+                                                foreach($riders as $rider){
+                                                    $rider_id[]=$rider->rider_id;
+                                                }
+                                                $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
+                                                $rider_fcm_token=array();
+                                                foreach($riders_check as $rid){
+                                                    $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                                    if(empty($check_noti_order)){
+                                                        NotiOrder::create([
+                                                            "rider_id"=>$rid->rider_id,
+                                                            "order_id"=>$order_id,
+                                                        ]);
+                                                    }
+                                                    if($rid->rider_fcm_token){
+                                                        array_push($rider_fcm_token, $rid->rider_fcm_token);
+                                                    }
+                                                }
+                                            }else{
+                                                $riders=DB::table("riders")->select("riders.rider_id"
+                                                ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                                                * cos(radians(riders.rider_latitude))
+                                                * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                                                + sin(radians(" .$restaurant_address_latitude. "))
+                                                * sin(radians(riders.rider_latitude))) AS distance"))
+                                                ->groupBy("riders.rider_id")
+                                                ->where('is_order','0')
+                                                ->where('active_inactive_status','1')
+                                                ->where('is_ban','0')
+                                                ->get();
                                                 foreach($riders as $rider){
                                                     $rider_id[]=$rider->rider_id;
                                                 }
@@ -1614,7 +1655,7 @@ class OrderApiController extends Controller
                 $kilometer=$miles * 1.609344;
                 $distances=(float) number_format((float)$kilometer, 2, '.', '');
                 if($distances==0){
-                    $distances=0.01;
+                    $distances=0.00;
                 }
             }else{
                 $theta = $customer_orders->to_drop_longitude - $riders->rider_longitude;
@@ -1681,6 +1722,9 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
+
+
+        $customer_orders->test=(float)number_format($customer_orders->from_pickup_latitude==0?0.0:1.02,2);
         array_push($data,$customer_orders);
 
 

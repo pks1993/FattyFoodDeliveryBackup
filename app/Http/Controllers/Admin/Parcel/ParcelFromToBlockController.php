@@ -31,7 +31,9 @@ class ParcelFromToBlockController extends Controller
         foreach($model as $value){
             $value->from_block_name=$value->from_block->block_name;
             $value->to_block_name=$value->to_block->block_name;
-            $value->price=$value->delivery_fee;
+            $value->cus_delivery_fee=$value->delivery_fee." $";
+            $value->rider_delivery_fee=$value->rider_delivery_fee." $";
+            $value->percentage=$value->percentage."%";
             array_push($data,$value);
         }
         return DataTables::of($model)

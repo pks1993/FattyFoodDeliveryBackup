@@ -237,7 +237,7 @@
                                                 <div class="row p-1">
                                                     <div class="col-12 text-center">
 
-                                                        <strong>ORDER NO. {{ $value->order_id }}</strong>
+                                                        <strong>ORDER NO. {{ $value->customer_order_id }}</strong>
                                                         <br>
                                                         <a onclick="copyDivToClipboard({{ $value->order_id }})" class="btn btn-sm btn-secondary text-white">Copy</a>
 
@@ -275,7 +275,7 @@
 
                                                             <div class="col-12">
                                                                 <hr>
-                                                                <strong>Order: {{ $value->order_id }}</strong>
+                                                                <strong>Order: {{ $value->customer_order_id }}</strong>
                                                             </div>
 
                                                             <div class="col-12">
