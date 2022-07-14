@@ -397,8 +397,6 @@ class RiderApicontroller extends Controller
                 * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                 ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
-                ->where('active_inactive_status','1')
-                ->where('is_ban','0')
                 ->get();
 
                 $food_val=[];
@@ -488,8 +486,6 @@ class RiderApicontroller extends Controller
                     * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                     ->whereIn("order_id",$noti_order)
                     ->orderBy('created_at','desc')
-                    ->where('active_inactive_status','1')
-                    ->where('is_ban','0')
                     ->get();
                     $noti_val=[];
                     foreach($noti_rider as $value1){
