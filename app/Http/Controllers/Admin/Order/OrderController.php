@@ -82,6 +82,7 @@ class OrderController extends Controller
         $data=[];
         foreach($model as $value){
             $value->customer_name=$value->customer->customer_name;
+            $value->duration=$value->created_at->diffForHumans(null,true,true);
             array_push($data,$value);
         }
         return DataTables::of($model)
@@ -111,14 +112,14 @@ class OrderController extends Controller
             return $order_status;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-M-Y H:i:s');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->addColumn('order_type', function(CustomerOrder $item){
             if($item->order_type=="food"){
-                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:#bde000;color:black;">'.$item->order_type.'</a>';
+                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color: #800000;">'.$item->order_type.'</a>';
             }else{
-                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:#00dfc2;color:black;">'.$item->order_type.'</a>';
+                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color: #8A2BE2;">'.$item->order_type.'</a>';
             }
             return $order_type;
         })
