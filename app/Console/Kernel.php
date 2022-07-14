@@ -59,6 +59,8 @@ class Kernel extends ConsoleKernel
                         ->groupBy("rider_id")
                         ->where('is_order',0)
                         ->where('rider_fcm_token','!=',null)
+                        ->where('active_inactive_status','1')
+                        ->where('is_ban','0')
                         ->get();
                     }
                     if($riders->isNotEmpty()){
@@ -88,6 +90,8 @@ class Kernel extends ConsoleKernel
                             ->groupBy("rider_id")
                             ->where('is_order',0)
                             ->where('rider_fcm_token','!=',null)
+                            ->where('active_inactive_status','1')
+                            ->where('is_ban','0')
                             ->get();
                         }
                         if($riders->isNotEmpty()){
@@ -117,6 +121,8 @@ class Kernel extends ConsoleKernel
                                 ->groupBy("rider_id")
                                 ->where('is_order',0)
                                 ->where('rider_fcm_token','!=',null)
+                                ->where('active_inactive_status','1')
+                                ->where('is_ban','0')
                                 ->get();
                             }
                             if($riders->isNotEmpty()){
@@ -146,6 +152,8 @@ class Kernel extends ConsoleKernel
                                     ->groupBy("rider_id")
                                     ->where('is_order',0)
                                     ->where('rider_fcm_token','!=',null)
+                                    ->where('active_inactive_status','1')
+                                    ->where('is_ban','0')
                                     ->get();
                                 }
                                 if($riders->isNotEmpty()){
@@ -175,6 +183,8 @@ class Kernel extends ConsoleKernel
                                         ->groupBy("rider_id")
                                         ->where('is_order',0)
                                         ->where('rider_fcm_token','!=',null)
+                                        ->where('active_inactive_status','1')
+                                        ->where('is_ban','0')
                                         ->get();
                                     }
                                     if($riders->isNotEmpty()){
@@ -239,6 +249,8 @@ class Kernel extends ConsoleKernel
                         ->groupBy("rider_id")
                         ->where('is_order',0)
                         ->where('rider_fcm_token','!=',null)
+                        ->where('active_inactive_status','1')
+                        ->where('is_ban','0')
                         ->get();
                     }
                     if($riders->isNotEmpty()){
@@ -268,6 +280,8 @@ class Kernel extends ConsoleKernel
                             ->groupBy("rider_id")
                             ->where('is_order',0)
                             ->where('rider_fcm_token','!=',null)
+                            ->where('active_inactive_status','1')
+                            ->where('is_ban','0')
                             ->get();
                         }
                         if($riders->isNotEmpty()){
@@ -297,6 +311,8 @@ class Kernel extends ConsoleKernel
                                 ->groupBy("rider_id")
                                 ->where('is_order',0)
                                 ->where('rider_fcm_token','!=',null)
+                                ->where('active_inactive_status','1')
+                                ->where('is_ban','0')
                                 ->get();
                             }
                             if($riders->isNotEmpty()){
@@ -326,6 +342,8 @@ class Kernel extends ConsoleKernel
                                     ->groupBy("rider_id")
                                     ->where('is_order',0)
                                     ->where('rider_fcm_token','!=',null)
+                                    ->where('active_inactive_status','1')
+                                    ->where('is_ban','0')
                                     ->get();
                                 }
                                 if($riders->isNotEmpty()){
@@ -389,6 +407,8 @@ class Kernel extends ConsoleKernel
                         ->groupBy("rider_id")
                         ->where('is_order',0)
                         ->where('rider_fcm_token','!=',null)
+                        ->where('active_inactive_status','1')
+                        ->where('is_ban','0')
                         ->get();
                     }
                     if($riders->isNotEmpty()){
@@ -418,6 +438,8 @@ class Kernel extends ConsoleKernel
                             ->groupBy("rider_id")
                             ->where('is_order',0)
                             ->where('rider_fcm_token','!=',null)
+                            ->where('active_inactive_status','1')
+                            ->where('is_ban','0')
                             ->get();
                         }
                         if($riders->isNotEmpty()){
@@ -447,6 +469,8 @@ class Kernel extends ConsoleKernel
                                 ->groupBy("rider_id")
                                 ->where('is_order',0)
                                 ->where('rider_fcm_token','!=',null)
+                                ->where('active_inactive_status','1')
+                                ->where('is_ban','0')
                                 ->get();
                             }
                             if($riders->isNotEmpty()){
@@ -509,6 +533,8 @@ class Kernel extends ConsoleKernel
                         ->groupBy("rider_id")
                         ->where('is_order',0)
                         ->where('rider_fcm_token','!=',null)
+                        ->where('active_inactive_status','1')
+                        ->where('is_ban','0')
                         ->get();
                     }
                     if($riders->isNotEmpty()){
@@ -538,6 +564,8 @@ class Kernel extends ConsoleKernel
                             ->groupBy("rider_id")
                             ->where('is_order',0)
                             ->where('rider_fcm_token','!=',null)
+                            ->where('active_inactive_status','1')
+                            ->where('is_ban','0')
                             ->get();
                         }
                         if($riders->isNotEmpty()){

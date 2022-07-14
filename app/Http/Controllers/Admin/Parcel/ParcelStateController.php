@@ -209,7 +209,7 @@ class ParcelStateController extends Controller
         $from_cities=ParcelCity::all();
 
         $to_cities=ParcelCity::all();
-        $riders=Rider::all();
+        $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         $customer_admin_id=$customer_id;
         $parcel_order=CustomerOrder::where('order_id',$id)->first();
 
@@ -763,7 +763,7 @@ class ParcelStateController extends Controller
 
         $to_cities=ParcelCity::all();
         $to_city=ParcelCity::where('parcel_city_id','!=',$orders->to_parcel_city_id)->get();
-        $riders=Rider::all();
+        $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
 
         return view('admin.order.parcel_list.edit',compact('parcel_type','extra','orders','from_cities','from_city','to_cities','to_city','riders'));
     }

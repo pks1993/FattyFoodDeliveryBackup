@@ -805,7 +805,7 @@ class OrderController extends Controller
         $order_id=$id;
         $orders=CustomerOrder::findOrFail($id);
         // $rider_all=Rider::where('is_order',0)->get();
-        $rider_all=Rider::orderBy('is_order')->get();
+        $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         return view('admin.order.assign',compact('orders','rider_all','order_id'));
     }
 
@@ -814,7 +814,7 @@ class OrderController extends Controller
         $order_id=$id;
         $orders=CustomerOrder::findOrFail($id);
         // $rider_all=Rider::where('is_order',0)->get();
-        $rider_all=Rider::orderBy('is_order')->get();
+        $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         return view('admin.order.pending_order.assign',compact('orders','rider_all','order_id'));
     }
     public function pendingorderdefine(Request $request,$id)

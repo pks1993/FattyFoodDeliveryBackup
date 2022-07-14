@@ -77,23 +77,29 @@ class RiderApicontroller extends Controller
 
         $check_user_phone=Rider::where('rider_user_phone',$rider_user_phone)->first();
         $check_user_password=Rider::where('rider_user_password',$rider_user_password)->first();
+        $check_user_ban=Rider::where('rider_user_phone',$rider_user_phone)->where('rider_user_password',$rider_user_password)->where('is_ban',1)->first();
 
-        $check_rider=Rider::where('rider_user_phone',$rider_user_phone)->where('rider_user_password',$rider_user_password)->where('is_admin_approved','1')->first();
+        $check_rider=Rider::where('rider_user_phone',$rider_user_phone)->where('rider_user_password',$rider_user_password)->where('is_admin_approved',1)->where('is_ban',0)->first();
 
-        if($check_rider!=null){
-            $check_rider->rider_fcm_token=$rider_fcm_token;
-            $check_rider->update();
-
-            $rider_data=Rider::where('rider_user_phone',$rider_user_phone)->where('rider_user_password',$rider_user_password)->first();
-
-            return response()->json(['success'=>true,'message' => 'successfully rider login','data'=>$rider_data]);
+        if($check_user_ban){
+            return response()->json(['success'=>false,'message' => 'Error! this rider is Ban']);
         }else{
-            if(empty($check_user_phone)){
-                return response()->json(['success'=>false,'message' => 'Error! this rider phone is not same']);
-            }elseif(empty($check_user_password)){
-                return response()->json(['success'=>false,'message' => 'Error! this rider password is not same']);
+            if($check_rider!=null){
+                $check_rider->rider_fcm_token=$rider_fcm_token;
+                $check_rider->update();
+
+                $rider_data=Rider::where('rider_user_phone',$rider_user_phone)->where('rider_user_password',$rider_user_password)->first();
+
+                return response()->json(['success'=>true,'message' => 'successfully rider login','data'=>$rider_data]);
             }else{
-                return response()->json(['success'=>false,'message' => 'Error! this rider is not admin approved']);
+
+                if(empty($check_user_phone)){
+                    return response()->json(['success'=>false,'message' => 'Error! this rider phone is not same']);
+                }elseif(empty($check_user_password)){
+                    return response()->json(['success'=>false,'message' => 'Error! this rider password is not same']);
+                }else{
+                    return response()->json(['success'=>false,'message' => 'Error! this rider is not admin approved']);
+                }
             }
         }
     }
@@ -370,9 +376,6 @@ class RiderApicontroller extends Controller
         $rider_check=Rider::where('rider_id',$rider_id)->first();
 
         if(!empty($rider_check)){
-            // $check_order_food=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10'])->first();
-            // $check_order_parcel=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['12','13','14','17'])->first();
-
             $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
             $rider_latitude=$rider_check->rider_latitude;
             $rider_longitude=$rider_check->rider_longitude;
@@ -394,6 +397,8 @@ class RiderApicontroller extends Controller
                 * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                 ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
+                ->where('active_inactive_status','1')
+                ->where('is_ban','0')
                 ->get();
 
                 $food_val=[];
@@ -483,6 +488,8 @@ class RiderApicontroller extends Controller
                     * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                     ->whereIn("order_id",$noti_order)
                     ->orderBy('created_at','desc')
+                    ->where('active_inactive_status','1')
+                    ->where('is_ban','0')
                     ->get();
                     $noti_val=[];
                     foreach($noti_rider as $value1){

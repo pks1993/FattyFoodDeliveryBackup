@@ -762,7 +762,7 @@ class RiderController extends Controller
     public function all_rider_location()
     {
         // $riders=Restaurant::where('restaurant_latitude','!=',0)->get();
-        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('active_inactive_status',1)->where('is_ban',0)->get();
         $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
         $center_latitude=$center_rider->rider_latitude;
         $center_longitude=$center_rider->rider_longitude;
@@ -774,7 +774,7 @@ class RiderController extends Controller
 
     public function has_order()
     {
-        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->where('active_inactive_status',1)->where('is_ban',0)->get();
         $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
         $center_latitude=$center_rider->rider_latitude;
         $center_longitude=$center_rider->rider_longitude;
@@ -786,7 +786,7 @@ class RiderController extends Controller
 
     public function has_not_order()
     {
-        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->where('active_inactive_status',1)->where('is_ban',0)->get();
         $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
         $center_latitude=$center_rider->rider_latitude;
         $center_longitude=$center_rider->rider_longitude;
@@ -798,17 +798,25 @@ class RiderController extends Controller
 
     public function rider_map_detail($id)
     {
-        $rider = Rider::findOrFail($id);
-        return view('admin.rider.rider_map.rider_view',compact('rider'));
+        $rider = Rider::where('rider_id',$id)->where('active_inactive_status',1)->where('is_ban',0)->first();
+        if($rider){
+            return view('admin.rider.rider_map.rider_view',compact('rider'));
+        }else{
+            return response(view('error.404'), 404);
+        }
     }
 
     public function assign_order_list($id)
     {
-        $rider=Rider::find($id);
-        $rider_id=$id;
-        $rider_name=$rider->rider_user_name;
-        $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
-        return view('admin.rider.rider_map.order_list',compact('food_orders','rider_id'));
+        $rider=Rider::where('rider_id',$id)->where('active_inactive_status',1)->where('is_ban',0)->first();
+        if($rider){
+            $rider_id=$id;
+            $rider_name=$rider->rider_user_name;
+            $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
+            return view('admin.rider.rider_map.order_list',compact('food_orders','rider_id'));
+        }else{
+            return response(view('error.404'), 404);
+        }
     }
 
     public function assign_order_list_ajax($id)
