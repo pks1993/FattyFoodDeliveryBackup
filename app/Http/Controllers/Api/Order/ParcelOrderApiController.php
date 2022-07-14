@@ -1073,6 +1073,8 @@ class ParcelOrderApiController extends Controller
 
         $from_pickup_address=$request['from_pickup_address'];
         $to_drop_address=$request['to_drop_address'];
+        $from_sender_phone=$request['from_sender_phone'];
+        $to_recipent_phone=$request['to_recipent_phone'];
 
         // foreach ($add as $list) {
         //     $from_pickup_latitude=$list['from_pickup_latitude'];
@@ -1206,12 +1208,12 @@ class ParcelOrderApiController extends Controller
             $parcel_order->order_time=$parcel_order->order_time;
             $parcel_order->order_status_id=$order_status_id;
             $parcel_order->from_sender_name=$parcel_order->from_sender_name;
-            $parcel_order->from_sender_phone=$parcel_order->from_sender_phone;
+            $parcel_order->from_sender_phone=$from_sender_phone;
             $parcel_order->from_pickup_address=$from_pickup_address;
             $parcel_order->from_pickup_latitude=$from_pickup_latitude;
             $parcel_order->from_pickup_longitude=$from_pickup_longitude;
             $parcel_order->to_recipent_name=$parcel_order->to_recipent_name;
-            $parcel_order->to_recipent_phone=$parcel_order->to_recipent_phone;
+            $parcel_order->to_recipent_phone=$to_recipent_phone;
             $parcel_order->to_drop_address=$to_drop_address;
             $parcel_order->to_drop_latitude=$to_drop_latitude;
             $parcel_order->to_drop_longitude=$to_drop_longitude;
