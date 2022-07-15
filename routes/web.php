@@ -364,6 +364,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('foods/sub_items/update/{food_sub_item_id}','Admin\Food\FoodSubItemController@update')->name('foods.sub_items.update');
     Route::delete('foods/sub_items/delete/{food_sub_item_id}','Admin\Food\FoodSubItemController@destroy')->name('foods.sub_items.destroy');
 
+    Route::get('foods/sub_items/section_data/edit/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_edit')->name('foods.sub_items.data.edit');
+    Route::post('foods/sub_items/section_data/update/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_update')->name('foods.sub_items.data.update');
+
     Route::get('foods/sub_items/data/create/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_create')->name('foods.sub_items.data.create');
     Route::post('foods/sub_items/data/store/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_store')->name('foods.sub_items.data.update');
     Route::get('foods/sub_items/data/edit/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_edit')->name('foods.sub_items.data.edit');

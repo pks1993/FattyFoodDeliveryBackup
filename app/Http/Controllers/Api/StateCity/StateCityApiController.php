@@ -76,6 +76,8 @@ class StateCityApiController extends Controller
                     if($value){
                         $parcel_block=ParcelBlockList::where('parcel_block_id',$value->parcel_block_id)->first();
                         $value->block_name=$parcel_block->block_name;
+                        $value->latitude=$parcel_block->latitude;
+                        $value->longitude=$parcel_block->longitude;
                     }
                     array_push($item,$value);
                 }
