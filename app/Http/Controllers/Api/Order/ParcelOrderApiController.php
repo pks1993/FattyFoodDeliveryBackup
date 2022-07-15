@@ -356,7 +356,7 @@ class ParcelOrderApiController extends Controller
         //     }
         // }
 
-        if($customers->customer_type_id !=3){
+        // if($customers->customer_type_id !=3){
             //rider
             $riders=DB::table("riders")->select("riders.rider_id"
             ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
@@ -611,7 +611,7 @@ class ParcelOrderApiController extends Controller
                 }
             }
 
-        }
+        // }
 
         //Image
         $parcel_image_list=$request['parcel_image_list'];

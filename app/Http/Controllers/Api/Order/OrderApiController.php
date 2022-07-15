@@ -1066,7 +1066,7 @@ class OrderApiController extends Controller
                         }
                     }
 
-                    if($customer_check->customer_type_id!=3){
+                    // if($customer_check->customer_type_id!=3){
                         //rider
                         $riders=DB::table("riders")->select("riders.rider_id"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -1321,7 +1321,7 @@ class OrderApiController extends Controller
                             }
                         }
 
-                    }
+                    // }
 
                     return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
 
