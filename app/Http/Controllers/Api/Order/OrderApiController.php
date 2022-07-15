@@ -672,7 +672,6 @@ class OrderApiController extends Controller
                 if($customer_orders->order_status_id==19){
                     $customer_orders->order_status_id=9;
                     $customer_orders->update();
-
                         if(!isset($_SESSION))
                         {
                             session_start();
@@ -691,6 +690,7 @@ class OrderApiController extends Controller
                 }elseif($customer_orders->order_type=="parcel"){
                     $customer_orders->order_status_id=16;
                     $customer_orders->update();
+                    NotiOrder::where('order_id',$customer_orders->order_id)->delete();
 
                     return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
                 }
@@ -1074,7 +1074,7 @@ class OrderApiController extends Controller
                         * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
                         + sin(radians(" .$restaurant_address_latitude. "))
                         * sin(radians(riders.rider_latitude))) AS distance"))
-                        ->having('distance','<',1.1)
+                        // ->having('distance','<',1.1)
                         ->groupBy("riders.rider_id")
                         ->where('is_order','0')
                         ->where('active_inactive_status','1')

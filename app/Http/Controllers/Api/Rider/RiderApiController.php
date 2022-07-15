@@ -534,8 +534,9 @@ class RiderApicontroller extends Controller
                             $value1->from_latitude=null;
                             $value1->from_longitude=null;
                         }else{
-                            $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
-                            $value1->from_parcel_city_name=$city_data->city_name;
+                            // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                            $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
+                            $value1->from_parcel_city_name=$city_data->block_name;
                             $value1->from_latitude=$city_data->latitude;
                             $value1->from_longitude=$city_data->longitude;
                         }
@@ -544,8 +545,9 @@ class RiderApicontroller extends Controller
                             $value1->to_latitude=null;
                             $value1->to_longitude=null;
                         }else{
-                            $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
-                            $value1->to_parcel_city_name=$city_data->city_name;
+                            // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
+                            $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
+                            $value1->to_parcel_city_name=$city_data->block_name;
                             $value1->to_latitude=$city_data->latitude;
                             $value1->to_longitude=$city_data->longitude;
                         }
