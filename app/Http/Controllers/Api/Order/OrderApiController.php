@@ -1074,7 +1074,7 @@ class OrderApiController extends Controller
                         * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
                         + sin(radians(" .$restaurant_address_latitude. "))
                         * sin(radians(riders.rider_latitude))) AS distance"))
-                        // ->having('distance','<',1.1)
+                        ->having('distance','<',1.1)
                         ->groupBy("riders.rider_id")
                         ->where('is_order','0')
                         ->where('active_inactive_status','1')
@@ -1299,7 +1299,7 @@ class OrderApiController extends Controller
                             $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
                             if($rider_token){
                                 try{
-                                    $request=$rider_client->post($url,[
+                                    $rider_client->post($url,[
                                         'json' => [
                                             "to"=>$rider_token,
                                             "data"=> [
