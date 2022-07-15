@@ -102,7 +102,7 @@ class ParcelOrderApiController extends Controller
         $item_qty=$request['item_qty'];
         $parcel_order_note=$request['parcel_order_note'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
-        $payment_method_id=$request['payment_method_id'];
+        $payment_method_id=1;
         $bill_total_price=$request['bill_total_price'];
         $customer_delivery_fee=$request['delivery_fee'];
         $city_id=$request['city_id'];
@@ -138,7 +138,7 @@ class ParcelOrderApiController extends Controller
         $kilometer=$miles * 1.609344;
 
         if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00){
-            $distances=0.01;
+            $distances=0;
         }else{
             $distances=(float) number_format((float)$kilometer, 1, '.', '');
         }
@@ -1204,7 +1204,7 @@ class ParcelOrderApiController extends Controller
             $parcel_order->customer_id=$parcel_order->customer_id;
             $parcel_order->customer_order_id=$parcel_order->customer_order_id;
             $parcel_order->customer_booking_id=$parcel_order->customer_booking_id;
-            $parcel_order->payment_method_id=$parcel_order->payment_method_id;
+            $parcel_order->payment_method_id=1;
             $parcel_order->order_time=$parcel_order->order_time;
             $parcel_order->order_status_id=$order_status_id;
             $parcel_order->from_sender_name=$parcel_order->from_sender_name;
@@ -1220,8 +1220,8 @@ class ParcelOrderApiController extends Controller
             $parcel_order->parcel_type_id=$parcel_type_id;
             $parcel_order->rider_parcel_block_note=$rider_parcel_block_note;
             $parcel_order->rider_parcel_address=$add;
-            $parcel_order->total_estimated_weight=$total_estimated_weight;
-            $parcel_order->item_qty=$item_qty;
+            $parcel_order->total_estimated_weight=0;
+            $parcel_order->item_qty=0;
             $parcel_order->parcel_order_note=$parcel_order_note;
             $parcel_order->bill_total_price=$bill_total_price;
             $parcel_order->parcel_extra_cover_id=$parcel_extra_cover_id;
