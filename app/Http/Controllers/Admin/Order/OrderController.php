@@ -823,6 +823,7 @@ class OrderController extends Controller
     public function pendingorderdefine(Request $request,$id)
     {
         CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
+        NotiOrder::where('order_id',$id)->delete();
         $check_order=CustomerOrder::where('order_id',$id)->first();
         if($check_order->rider_id){
             $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
@@ -922,6 +923,8 @@ class OrderController extends Controller
             "order_id"=>$order_id,
             "rider_id"=>$id,
         ]);
+
+        NotiOrder::where('order_id',$order_id)->delete();
 
         $rider_token=$riders_check->rider_fcm_token;
         $orderId=(string)$customer_orders->order_id;
