@@ -52,7 +52,8 @@
                             <thead>
                             <tr class="text-center">
                                 <th>No.</th>
-                                <th>Option</th>
+                                <!-- <th>Option</th> -->
+                                <th>Action</th>
                                 <th class="text-left">RequiredChoice</th>
                                 <th class="text-left">SectionNameMyanmar</th>
                                 <th class="text-left">SectionNameEnglish</th>
@@ -61,16 +62,25 @@
                                 <th class="text-left">RestaurantName</th>
                                 <th>FoodImage</th>
                                 <th>RestaurantImage</th>
-                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($food_subitem as $subitem)
                                 <tr class="text-center">
                                     <td>{{$loop->iteration}}</td>
-                                    <td>
-                                        <a href="{{route('fatty.admin.foods.sub_items.data.create',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-success btn-sm mr-1" title="Add Option"><i class="fa fa-plus-circle"></i></a>
+                                    <td class="btn-group">
+
+                                        <a href="{{route('fatty.admin.foods.sub_items.edit',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
+
+                                        <form action="{{route('fatty.admin.foods.sub_items.destroy', $subitem->food_sub_item_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
+                                            @csrf
+                                            @method('delete')
+                                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                        </form>
                                     </td>
+                                    {{-- <td>
+                                        <a href="{{route('fatty.admin.foods.sub_items.data.create',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-success btn-sm mr-1" title="Add Option"><i class="fa fa-plus-circle"></i></a>
+                                    </td> --}}
                                     <td class="text-left">
                                         @if($subitem->required_type=="0")
                                             <span class="fa fa-square" style="color: blue;"></span> CheckBox
@@ -96,16 +106,6 @@
                                         @else
                                             <img src="{{asset('../image/available.png')}}" class="img-rounded" style="width: 55px;height: 45px;">
                                         @endif
-                                    </td>
-                                    <td class="btn-group">
-
-                                        <a href="{{route('fatty.admin.foods.sub_items.edit',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-
-                                        <form action="{{route('fatty.admin.foods.sub_items.destroy', $subitem->food_sub_item_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                            @csrf
-                                            @method('delete')
-                                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -139,6 +139,7 @@
                             <thead>
                             <tr class="text-center">
                                 <th>No.</th>
+                                <th>Action</th>
                                 <th class="text-left">ItemNameMyanmar</th>
                                 <th class="text-left">ItemNameEnglish</th>
                                 <th class="text-left">ItemNameChina</th>
@@ -146,13 +147,21 @@
                                 <th class="text-left">SectionName</th>
                                 <th class="text-left">Choice</th>
                                 <th>InStock</th>
-                                {{-- <th>Action</th> --}}
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($food_subitem_data as $subitem)
                                 <tr class="text-center">
                                     <td>{{$loop->iteration}}</td>
+                                    <td class="btn-group">
+                                        <a href="{{route('fatty.admin.foods.sub_items.data.edit',['food_sub_item_data_id'=>$subitem->food_sub_item_data_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
+
+                                        <form action="{{route('fatty.admin.foods.sub_items.data.destroy', $subitem->food_sub_item_data_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
+                                            @csrf
+                                            @method('delete')
+                                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                        </form>
+                                    </td>
                                     <td class="text-left">{{$subitem->item_name_mm}}</td>
                                     <td class="text-left">{{$subitem->item_name_en}}</td>
                                     <td class="text-left">{{$subitem->item_name_ch}}</td>
@@ -172,15 +181,6 @@
                                             <p class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></p>
                                         @endif
                                     </td>
-                                    {{-- <td class="btn-group">
-                                        <a href="{{route('fatty.admin.foods.sub_items.edit',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-
-                                        <form action="{{route('fatty.admin.foods.sub_items.destroy', $subitem->food_sub_item_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                            @csrf
-                                            @method('delete')
-                                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                        </form>
-                                    </td> --}}
                                 </tr>
                             @endforeach
                             </tbody>

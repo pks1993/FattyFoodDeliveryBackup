@@ -1053,7 +1053,7 @@ class ParcelOrderApiController extends Controller
         $parcel_type_id=$request['parcel_type_id'];
         $total_estimated_weight=$request['total_estimated_weight'];
         $item_qty=$request['item_qty'];
-        // $customer_delivery_fee=$request['delivery_fee'];
+        $customer_delivery_fee=$request['delivery_fee'];
         $parcel_order_note=$request['parcel_order_note'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
         $bill_total_price=$request['bill_total_price'];
@@ -1129,10 +1129,10 @@ class ParcelOrderApiController extends Controller
         $block_list=ParcelFromToBlock::where('parcel_from_block_id',$from_parcel_city_id)->where('parcel_to_block_id',$to_parcel_city_id)->first();
         if($block_list){
             $rider_delivery_fee=$block_list->rider_delivery_fee;
-            $customer_delivery_fee=$block_list->delivery_fee;
+            // $customer_delivery_fee=$block_list->delivery_fee;
         }else{
             $rider_delivery_fee=0;
-            $customer_delivery_fee=0;
+            // $customer_delivery_fee=0;
         }
 
 

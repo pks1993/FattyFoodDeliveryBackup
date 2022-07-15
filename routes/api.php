@@ -246,6 +246,7 @@ Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\Notification
 
 //force update
 Route::get('v1/fatty/main/admin/restaurant/version/check','Api\Notification\NotificationApiController@restaurant_version_check');
+Route::get('v1/fatty/main/admin/restaurant_ios/version/check','Api\Notification\NotificationApiController@restaurant_ios_version_check');
 Route::get('v1/fatty/main/admin/rider/version/check','Api\Notification\NotificationApiController@rider_version_check');
 
 

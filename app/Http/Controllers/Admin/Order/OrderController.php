@@ -873,7 +873,7 @@ class OrderController extends Controller
                     'json' => [
                         "to"=>$rider_token,
                         "data"=> [
-                            "type"=> "force_order",
+                            "type"=> "new_order",
                             "order_id"=>$orderId,
                             "order_status_id"=>$orderstatusId,
                             "order_type"=>$orderType,
@@ -929,7 +929,7 @@ class OrderController extends Controller
                     'json' => [
                         "to"=>$rider_token,
                         "data"=> [
-                            "type"=> "force_order",
+                            "type"=> "new_order",
                             "order_id"=>$orderId,
                             "order_status_id"=>$orderstatusId,
                             "order_type"=>$orderType,
