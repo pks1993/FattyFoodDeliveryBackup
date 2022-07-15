@@ -12,6 +12,8 @@ use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use App\Models\Order\NotiOrder;
+
 
 
 class OrderController extends Controller
@@ -853,6 +855,8 @@ class OrderController extends Controller
         }
         $customer_orders->update();
 
+
+
         $riders_check->is_order=1;
         $riders_check->update();
 
@@ -860,6 +864,8 @@ class OrderController extends Controller
             "order_id"=>$order_id,
             "rider_id"=>$id,
         ]);
+
+        NotiOrder::where('order_id',$order_id)->delete();
 
         $rider_token=$riders_check->rider_fcm_token;
         $orderId=(string)$customer_orders->order_id;

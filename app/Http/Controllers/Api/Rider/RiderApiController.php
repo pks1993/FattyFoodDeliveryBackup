@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use DB;
 use Carbon\Carbon;
 use App\Models\City\ParcelCity;
+use App\Models\City\ParcelBlockList;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -443,8 +444,9 @@ class RiderApicontroller extends Controller
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
-                        $value1->from_parcel_city_name=$city_data->city_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
+                        $value1->from_parcel_city_name=$city_data->block_name;
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
@@ -453,8 +455,9 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
-                        $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
-                        $value1->to_parcel_city_name=$city_data->city_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
+                        $value1->to_parcel_city_name=$city_data->block_name;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
@@ -1304,6 +1307,7 @@ class RiderApicontroller extends Controller
                         $rider->is_order=0;
                         $rider->update();
                     }
+                    NotiOrder::where('order_id',$order_id)->delete();
 
                     //rider
                     $rider_client = new Client();
@@ -1664,6 +1668,7 @@ class RiderApicontroller extends Controller
                         $rider->is_order=0;
                         $rider->update();
                     }
+                    NotiOrder::where('order_id',$order_id)->delete();
                     $last_order=CustomerOrder::where('order_id',$order_id)->first();
                     $last_order->order_status_id=15;
                     $last_order->update();
@@ -1909,8 +1914,9 @@ class RiderApicontroller extends Controller
                     $orders1->from_latitude=null;
                     $orders1->from_longitude=null;
                 }else{
-                    $city_data=ParcelCity::where('parcel_city_id',$orders1->from_parcel_city_id)->first();
-                    $orders1->from_parcel_city_name=$city_data->city_name;
+                    // $city_data=ParcelCity::where('parcel_city_id',$orders1->from_parcel_city_id)->first();
+                    $city_data=ParcelBlockList::where('parcel_block_id',$orders1->from_parcel_city_id)->first();
+                    $orders1->from_parcel_city_name=$city_data->block_name;
                     $orders1->from_latitude=$city_data->latitude;
                     $orders1->from_longitude=$city_data->longitude;
                 }
@@ -1919,8 +1925,9 @@ class RiderApicontroller extends Controller
                     $orders1->to_latitude=null;
                     $orders1->to_longitude=null;
                 }else{
-                    $city_data=ParcelCity::where('parcel_city_id',$orders1->to_parcel_city_id)->first();
-                    $orders1->to_parcel_city_name=$city_data->city_name;
+                    // $city_data=ParcelCity::where('parcel_city_id',$orders1->to_parcel_city_id)->first();
+                    $city_data=ParcelBlockList::where('parcel_block_id',$orders1->to_parcel_city_id)->first();
+                    $orders1->to_parcel_city_name=$city_data->block_name;
                     $orders1->to_latitude=$city_data->latitude;
                     $orders1->to_longitude=$city_data->longitude;
                 }

@@ -87,6 +87,9 @@
     <li class="nav-item">
         <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
     </li>
+    <li class="nav-item">
+        <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
+    </li>
 
 </ul>
 <div class="col-12 mt-3" style="font-size: 15px;">

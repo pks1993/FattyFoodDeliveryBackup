@@ -70,7 +70,7 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td class="btn-group">
 
-                                        <a href="{{route('fatty.admin.foods.sub_items.data.create',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-success btn-sm mr-1" title="Add Option"><i class="fa fa-plus-circle"></i></a>
+                                        {{-- <a href="{{route('fatty.admin.foods.sub_items.data.create',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-success btn-sm mr-1" title="Add Option"><i class="fa fa-plus-circle"></i></a> --}}
 
                                         <a href="{{route('fatty.admin.foods.sub_items.edit',['food_sub_item_id'=>$subitem->food_sub_item_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
 
