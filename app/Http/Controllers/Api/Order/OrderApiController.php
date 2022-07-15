@@ -900,6 +900,7 @@ class OrderApiController extends Controller
 
                 $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                 $_SESSION['customer_orders']=$customer_orders;
+                NotiOrder::where('order_id',$order_id)->delete();
 
                 return view('admin.src.example.refund');
             }else{
@@ -996,6 +997,7 @@ class OrderApiController extends Controller
                 }
 
                 $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+                NotiOrder::where('order_id',$order_id)->delete();
                 return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_orders]]);
             }
         }else{
