@@ -78,5 +78,13 @@ class CustomerOrder extends Model
     {
         return $this->belongsTo('App\Models\City\ParcelCity','to_parcel_city_id','parcel_city_id');
     }
+    public function from_block()
+    {
+        return $this->belongsTo('App\Models\City\ParcelBlockList','from_parcel_city_id','parcel_block_id');
+    }
+    public function to_block()
+    {
+        return $this->belongsTo('App\Models\City\ParcelBlockList','to_parcel_city_id','parcel_block_id');
+    }
 
 }

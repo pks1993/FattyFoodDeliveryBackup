@@ -59,6 +59,12 @@ Route::get('admin_parcel_orders/edit/{order_id}/{customer_id}','Admin\Parcel\Par
 Route::post('admin_parcel_orders/update/{order_id}','Admin\Parcel\ParcelStateController@admin_parcel_update')->name('admin_parcel.update');
 Route::get('admin_parcel_orders/destroy/{order_id}/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_destroy')->name('admin_parcel.destroy');
 
+//Rider Order Report
+Route::get('admin_parcel_orders/report/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_rider_order_report');
+Route::get('admin_parcel_orders/report/filter/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_report_filter')->name('admin_parcel_report.filter');
+
+
+
 // Auth::routes(['verify'=>true]);
 
 Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['auth']], function(){

@@ -896,6 +896,41 @@ class ParcelStateController extends Controller
         return redirect('fatty/main/admin/daily_parcel_orders');
     }
 
+    public function admin_rider_order_report($customer_admin_id)
+    {
+        $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+        $day_date=date('M d Y');
+        $month_date=date('M Y');
+
+        $orders_month=CustomerOrder::whereMonth('created_at', '=', date('m'))->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.admin_order_list',compact('day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount'));
+    }
+
+    public function admin_parcel_report_filter(Request $request,$customer_admin_id)
+    {
+        $date=$request['date'];
+        $month=date('m', strtotime($date));
+        $day_date=date('M d Y',strtotime($date));
+        $month_date=date('M Y',strtotime($date));
+
+        $orders=CustomerOrder::whereDate('created_at',$date)->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+
+        $orders_month=CustomerOrder::whereMonth('created_at',$month)->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.admin_order_list',compact('day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount'));
+    }
+
     /**
      * Display the specified resource.
      *
