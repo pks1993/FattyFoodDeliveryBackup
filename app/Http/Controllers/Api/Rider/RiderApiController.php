@@ -489,6 +489,7 @@ class RiderApicontroller extends Controller
                     * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                     ->whereIn("order_id",$noti_order)
                     ->orderBy('created_at','desc')
+                    ->whereIn('order_status_id',['3','11'])
                     ->get();
                     $noti_val=[];
                     foreach($noti_rider as $value1){
