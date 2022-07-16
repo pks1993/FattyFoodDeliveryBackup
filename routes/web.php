@@ -62,6 +62,7 @@ Route::get('admin_parcel_orders/destroy/{order_id}/{customer_id}','Admin\Parcel\
 //Rider Order Report
 Route::get('admin_parcel_orders/report/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_rider_order_report');
 Route::get('admin_parcel_orders/report/filter/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_report_filter')->name('admin_parcel_report.filter');
+Route::get('admin_parcel_orders/calculate/price/{from_block_id}/{to_block_id}','Admin\Parcel\ParcelStateController@calculate_price');
 
 
 

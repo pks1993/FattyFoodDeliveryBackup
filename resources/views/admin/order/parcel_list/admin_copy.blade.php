@@ -102,7 +102,7 @@
                             </div>
                             <div class="col-12 p-0 text-left">
                                 @if($parcel_order->from_parcel_city_id)
-                                    From: {{ $parcel_order->from_parcel_region->city_name_mm }}
+                                    From: {{ $parcel_order->from_block->block_name }}
                                 @else
                                     From:
                                 @endif
@@ -118,7 +118,7 @@
                             </div>
                             <div class="col-12 p-0 text-left">
                                 @if($parcel_order->to_parcel_city_id)
-                                    To: {{ $parcel_order->to_parcel_region->city_name_mm }}
+                                    To: {{ $parcel_order->to_block->block_name }}
                                 @else
                                     To:
                                 @endif
@@ -139,7 +139,7 @@
                                 Remark: {{ $parcel_order->parcel_order_note }}
                             </div>
                             <div class="col-12 p-0 text-left">
-                                Booking:
+                                Booking: {{ $parcel_order->customer_booking_id }}
                             </div>
                             <div class="col-12 p-0 text-left">
                                 @if($parcel_order->rider_id)
