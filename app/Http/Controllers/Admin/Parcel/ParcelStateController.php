@@ -9,6 +9,7 @@ use App\Models\Order\ParcelState;
 use App\Models\Customer\Customer;
 use App\Models\City\ParcelCity;
 use App\Models\City\ParcelBlockList;
+use App\Models\City\ParcelFromToBlock;
 use App\Models\State\State;
 use App\Models\Order\ParcelType;
 use App\Models\Order\ParcelExtraCover;
@@ -182,6 +183,15 @@ class ParcelStateController extends Controller
     //     ->searchPane('model', $model)
     //     ->make(true);
     // }
+    public function calculate_price($from_block_id,$to_block_id)
+    {
+        $check_price=ParcelFromToBlock::where('parcel_from_block_id',$from_block_id)->where('parcel_to_block_id',$to_block_id)->first();
+        if($check_price){
+            return $check_price->delivery_fee;
+        }else{
+            return 0;
+        }
+    }
     public function admin_parcel_create(Request $request,$id)
     {
         $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
@@ -306,11 +316,23 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
         // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
-        if($delivery_fee){
-            // dd($delivery_fee);
-            $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        // if($delivery_fee){
+        //     // dd($delivery_fee);
+        //     $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        // }else{
+        //     $parcel_orders->rider_delivery_fee=0;
+        // }
+        $check_price=ParcelFromToBlock::where('parcel_from_block_id',$from_parcel_city_id)->where('parcel_to_block_id',$to_parcel_city_id)->first();
+        if($check_price){
+            $parcel_orders->rider_delivery_fee=$check_price->rider_delivery_fee;
         }else{
             $parcel_orders->rider_delivery_fee=0;
+        }
+        $check_price=ParcelFromToBlock::where('parcel_from_block_id',$from_parcel_city_id)->where('parcel_to_block_id',$to_parcel_city_id)->first();
+        if($check_price){
+            $parcel_orders->rider_delivery=$check_price->rider_delivery_fee;
+        }else{
+            $parcel_orders->rider_delivery=0;
         }
         $parcel_orders->is_admin_force_order=0;
         $parcel_orders->update();
@@ -485,8 +507,14 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
         }
-        if($delivery_fee){
-            $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        // if($delivery_fee){
+        //     $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        // }else{
+        //     $parcel_orders->rider_delivery_fee=0;
+        // }
+        $check_price=ParcelFromToBlock::where('parcel_from_block_id',$from_parcel_city_id)->where('parcel_to_block_id',$to_parcel_city_id)->first();
+        if($check_price){
+            $parcel_orders->rider_delivery_fee=$check_price->rider_delivery_fee;
         }else{
             $parcel_orders->rider_delivery_fee=0;
         }
