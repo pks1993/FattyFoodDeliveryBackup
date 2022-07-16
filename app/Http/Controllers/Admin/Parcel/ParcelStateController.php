@@ -246,6 +246,7 @@ class ParcelStateController extends Controller
                     }
             }
             $check_order->delete();
+            NotiOrder::where('order_id',$id)->delete();
             $request->session()->flash('alert-danger', 'successfully delete parcel orders!');
             return redirect('admin_parcel_orders/list/'.$customer_id);
         }else{
