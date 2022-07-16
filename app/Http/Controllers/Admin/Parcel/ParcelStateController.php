@@ -307,14 +307,14 @@ class ParcelStateController extends Controller
         $parcel_orders->payment_method_id=1;
 
         if($from_parcel_city_id){
-            $parcel_orders->from_pickup_address=$parcel_orders->from_parcel_region->city_name_mm;
-            $parcel_orders->from_pickup_latitude=$parcel_orders->from_parcel_region->latitude;
-            $parcel_orders->from_pickup_longitude=$parcel_orders->from_parcel_region->longitude;
+            $parcel_orders->from_pickup_address=$parcel_orders->from_block->block_name;
+            $parcel_orders->from_pickup_latitude=$parcel_orders->from_block->latitude;
+            $parcel_orders->from_pickup_longitude=$parcel_orders->from_block->longitude;
         }
         if($to_parcel_city_id){
-            $parcel_orders->to_drop_address=$parcel_orders->to_parcel_region->city_name_mm;
-            $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
-            $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
+            $parcel_orders->to_drop_address=$parcel_orders->to_block->block_name;
+            $parcel_orders->to_drop_latitude=$parcel_orders->to_block->latitude;
+            $parcel_orders->to_drop_longitude=$parcel_orders->to_block->longitude;
         }
         // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
         // if($delivery_fee){
@@ -696,14 +696,14 @@ class ParcelStateController extends Controller
         $parcel_orders->payment_method_id=1;
 
         if($from_parcel_city_id){
-            $parcel_orders->from_pickup_address=$parcel_orders->from_parcel_region->city_name_mm;
-            $parcel_orders->from_pickup_latitude=$parcel_orders->from_parcel_region->latitude;
-            $parcel_orders->from_pickup_longitude=$parcel_orders->from_parcel_region->longitude;
+            $parcel_orders->from_pickup_address=$parcel_orders->from_block->block_name;
+            $parcel_orders->from_pickup_latitude=$parcel_orders->from_block->latitude;
+            $parcel_orders->from_pickup_longitude=$parcel_orders->from_block->longitude;
         }
         if($to_parcel_city_id){
-            $parcel_orders->to_drop_address=$parcel_orders->to_parcel_region->city_name_mm;
-            $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
-            $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
+            $parcel_orders->to_drop_address=$parcel_orders->to_block->block_name;
+            $parcel_orders->to_drop_latitude=$parcel_orders->to_block->latitude;
+            $parcel_orders->to_drop_longitude=$parcel_orders->to_block->longitude;
         }
         // if($delivery_fee){
         //     $parcel_orders->rider_delivery_fee=$delivery_fee/2;
@@ -1094,14 +1094,14 @@ class ParcelStateController extends Controller
         }
 
         if($from_parcel_city_id){
-            $parcel_orders->from_pickup_address=$parcel_orders->from_parcel_region->city_name_mm;
-            $parcel_orders->from_pickup_latitude=$parcel_orders->from_parcel_region->latitude;
-            $parcel_orders->from_pickup_longitude=$parcel_orders->from_parcel_region->longitude;
+            $parcel_orders->from_pickup_address=$parcel_orders->from_block->block_name;
+            $parcel_orders->from_pickup_latitude=$parcel_orders->from_block->latitude;
+            $parcel_orders->from_pickup_longitude=$parcel_orders->from_block->longitude;
         }
         if($to_parcel_city_id){
-            $parcel_orders->to_drop_address=$parcel_orders->to_parcel_region->city_name_mm;
-            $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
-            $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
+            $parcel_orders->to_drop_address=$parcel_orders->to_block_name->block_name;
+            $parcel_orders->to_drop_latitude=$parcel_orders->to_block_name->latitude;
+            $parcel_orders->to_drop_longitude=$parcel_orders->to_block_name->longitude;
         }
         $parcel_orders->rider_delivery_fee=$delivery_fee/2;
         $parcel_orders->is_admin_force_order=0;
@@ -1242,14 +1242,14 @@ class ParcelStateController extends Controller
         }
 
         if($from_parcel_city_id){
-            $parcel_orders->from_pickup_address=$parcel_orders->from_parcel_region->city_name_mm;
-            $parcel_orders->from_pickup_latitude=$parcel_orders->from_parcel_region->latitude;
-            $parcel_orders->from_pickup_longitude=$parcel_orders->from_parcel_region->longitude;
+            $parcel_orders->from_pickup_address=$parcel_orders->from_block->block_name;
+            $parcel_orders->from_pickup_latitude=$parcel_orders->from_block->latitude;
+            $parcel_orders->from_pickup_longitude=$parcel_orders->from_block->longitude;
         }
         if($to_parcel_city_id){
-            $parcel_orders->to_drop_address=$parcel_orders->to_parcel_region->city_name_mm;
-            $parcel_orders->to_drop_latitude=$parcel_orders->to_parcel_region->latitude;
-            $parcel_orders->to_drop_longitude=$parcel_orders->to_parcel_region->longitude;
+            $parcel_orders->to_drop_address=$parcel_orders->to_block->block_name;
+            $parcel_orders->to_drop_latitude=$parcel_orders->to_block->latitude;
+            $parcel_orders->to_drop_longitude=$parcel_orders->to_block->longitude;
         }
         $parcel_orders->rider_delivery_fee=$delivery_fee/2;
         $parcel_orders->is_admin_force_order=0;
