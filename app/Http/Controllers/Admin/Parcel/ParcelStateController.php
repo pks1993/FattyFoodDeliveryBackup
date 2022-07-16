@@ -192,7 +192,7 @@ class ParcelStateController extends Controller
         $from_cities=ParcelCity::all();
 
         $to_cities=ParcelCity::all();
-        $riders=Rider::all();
+        $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         $customer_admin_id=$id;
         $customer=Customer::where('customer_id',$id)->first();
 
@@ -209,7 +209,7 @@ class ParcelStateController extends Controller
         $from_cities=ParcelCity::all();
 
         $to_cities=ParcelCity::all();
-        $riders=Rider::all();
+        $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         $customer_admin_id=$customer_id;
         $parcel_order=CustomerOrder::where('order_id',$id)->first();
 
@@ -609,7 +609,7 @@ class ParcelStateController extends Controller
         $from_cities=ParcelCity::all();
 
         $to_cities=ParcelCity::all();
-        $riders=Rider::all();
+        $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
 
         return view('admin.order.parcel_list.create',compact('parcel_type','extra','from_cities','to_cities','riders','customers'));
     }
@@ -763,7 +763,7 @@ class ParcelStateController extends Controller
 
         $to_cities=ParcelCity::all();
         $to_city=ParcelCity::where('parcel_city_id','!=',$orders->to_parcel_city_id)->get();
-        $riders=Rider::all();
+        $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
 
         return view('admin.order.parcel_list.edit',compact('parcel_type','extra','orders','from_cities','from_city','to_cities','to_city','riders'));
     }
@@ -894,6 +894,41 @@ class ParcelStateController extends Controller
 
         $request->session()->flash('alert-success', 'successfully update parcel orders!');
         return redirect('fatty/main/admin/daily_parcel_orders');
+    }
+
+    public function admin_rider_order_report($customer_admin_id)
+    {
+        $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+        $day_date=date('M d Y');
+        $month_date=date('M Y');
+
+        $orders_month=CustomerOrder::whereMonth('created_at', '=', date('m'))->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.admin_order_list',compact('day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount'));
+    }
+
+    public function admin_parcel_report_filter(Request $request,$customer_admin_id)
+    {
+        $date=$request['date'];
+        $month=date('m', strtotime($date));
+        $day_date=date('M d Y',strtotime($date));
+        $month_date=date('M Y',strtotime($date));
+
+        $orders=CustomerOrder::whereDate('created_at',$date)->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+
+        $orders_month=CustomerOrder::whereMonth('created_at',$month)->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.admin_order_list',compact('day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount'));
     }
 
     /**

@@ -85,6 +85,9 @@
         <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Order</a>
     </li>
     <li class="nav-item">
+        <a href="{{ url("admin_parcel_orders/report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">RiderReport</a>
+    </li>
+    <li class="nav-item">
         <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
     </li>
 
@@ -237,7 +240,7 @@
                                                 <div class="row p-1">
                                                     <div class="col-12 text-center">
 
-                                                        <strong>ORDER NO. {{ $value->order_id }}</strong>
+                                                        <strong>ORDER NO. {{ $value->customer_order_id }}</strong>
                                                         <br>
                                                         <a onclick="copyDivToClipboard({{ $value->order_id }})" class="btn btn-sm btn-secondary text-white">Copy</a>
 
@@ -275,7 +278,7 @@
 
                                                             <div class="col-12">
                                                                 <hr>
-                                                                <strong>Order: {{ $value->order_id }}</strong>
+                                                                <strong>Order: {{ $value->customer_order_id }}</strong>
                                                             </div>
 
                                                             <div class="col-12">

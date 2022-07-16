@@ -88,6 +88,7 @@
                                         <th>BookingId</th>
                                         <th>CustomerName</th>
                                         <th>OrderDate</th>
+                                        <th>Duration</th>
                                         <th>OrderType</th>
                                         <th>Action</th>
                                     </tr>
@@ -184,6 +185,7 @@
         //    {data: 'rider_id', name:'rider_id'},
         {data: 'customer_name', name:'customer_name'},
         {data: 'ordered_date', name:'ordered_date'},
+        {data: 'duration', name:'duration',className:"text-center"},
            {data: 'order_type', name:'order_type'},
            {data: 'action', name: 'action',className:'btn-group', orderable: false, searchable: false},
            ],

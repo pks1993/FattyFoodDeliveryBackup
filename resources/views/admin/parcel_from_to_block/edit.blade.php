@@ -57,9 +57,21 @@
                                         @endforeach
                                     </select>
                                   </div>
-                                  <div class="form-group">
+                                  {{-- <div class="form-group">
                                     <label for="delivery_fee" class="col-form-label">Deli Fee</label>
                                     <input type="number" value="{{ $parcel_from_to_block->delivery_fee }}" class="form-control" name="delivery_fee">
+                                  </div> --}}
+                                  <div class="form-group">
+                                    <label for="delivery_fee" class="col-form-label">Customer Deli Fee</label>
+                                    <input type="number" id="customer_delivery_fee" value="{{ $parcel_from_to_block->delivery_fee }}" class="form-control" name="delivery_fee">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="percentage" class="col-form-label">Percentage</label>
+                                    <input type="number" id="percentage" value="{{ $parcel_from_to_block->percentage }}" class="form-control" name="percentage" onchange="calDeli()">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="rider_delivery_fee" class="col-form-label">Rider Deli Fee</label>
+                                    <input type="number" id="rider_delivery_fee" value="{{ $parcel_from_to_block->rider_delivery_fee }}" class="form-control" name="rider_delivery_fee">
                                   </div>
                                   <div class="form-group">
                                     <label for="remark" class="col-form-label">Remark</label>
@@ -68,7 +80,7 @@
                                   <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-save"></i> {{ __('Update') }}
+                                            <i class="fa fa-update"></i> {{ __('Update') }}
                                         </button>
                                         <a href="{{url('fatty/main/admin/parcel_from_to_block')}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
@@ -93,5 +105,14 @@
         image.src = URL.createObjectURL(event.target.files[0]);
     };
 
+</script>
+<script>
+    function calDeli(){
+        var cus_deli=document.getElementById("customer_delivery_fee").value;
+        var percent=document.getElementById("percentage").value;
+        var price=cus_deli*percent/100;
+        document.getElementById("rider_delivery_fee").value=price;
+
+    }
 </script>
 @endsection

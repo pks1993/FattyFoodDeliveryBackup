@@ -355,21 +355,41 @@ class RiderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
-            $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-2" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
-            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-2" title="Rider Detail"><i class="fas fa-eye"></i></a>';
-            if ($post->is_admin_approved == 0) {
-                $update = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
-            } else {
-                $update = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
-            };
-            $value=$view.$location.$update;
-            // $btn = $btn.'<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" method="post" class="d-inline">
-            // '.csrf_field().'
-            // '.method_field("DELETE").'
-            // <button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are You Sure Want to Delete?\')"><i class="fa fa-trash"></button>
-            // </form>';
+            $edit = '<a href="/fatty/main/admin/riders/edit/'.$post->rider_id.'" class="btn btn-primary btn-sm mr-1" title="Edit">  <i class="fas fa-edit"></i></a>';
+            if($post->active_inactive_status==0 || $post->is_ban==1){
+                $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-1 disabled" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
+            }else{
+                $location = '<a href="/fatty/main/admin/riders/check/location/'.$post->rider_id.'" class="btn btn-info btn-sm mr-1" title="Rider Location">  <i class="fas fa-location-arrow"></i></a>';
+            }
+            $view = '<a href="/fatty/main/admin/riders/view/'.$post->rider_id.'" class="btn btn-success btn-sm mr-1" title="Rider Detail"><i class="fas fa-eye"></i></a>';
+            if($post->active_inactive_status== 1){
+                $on_off = '<a href="/fatty/main/admin/riders/activenow/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to off this rider?\')" class="btn btn-success btn-sm mr-1" title="On">  <i class="fas fa-motorcycle"></i></a>';
+            }else{
+                $on_off = '<a href="/fatty/main/admin/riders/activenow/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to on this rider?\')" class="btn btn-danger btn-sm mr-1" title="Off">  <i class="fas fa-motorcycle"></i></a>';
+            }
+
+            $value=$view.$location.$on_off.$edit;
 
             return $value;
+        })
+        ->addColumn('delete', function(Rider $post){
+            if ($post->is_admin_approved == 0) {
+                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to Approved this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Rider Admin Not Approved"><i class="fas fa-thumbs-down" title="Admin Not Approved"></i></a>';
+            } else {
+                $approved = '<a href="/fatty/main/admin/riders/admin/approved/update/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to Not Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Rider Admin Approved"><i class="fas fa-thumbs-up" title="Admin Approved"></i></a>';
+            };
+            if($post->is_ban==1){
+                $ban = '<a href="/fatty/main/admin/riders/ban/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to unBan this rider?\')" class="btn btn-danger btn-sm mr-1" title="Ban">  <i class="fas fa-ban"></i></a>';
+            }else{
+                $ban = '<a href="/fatty/main/admin/riders/ban/'.$post->rider_id.'" onclick="return confirm(\'Are you sure want to Ban this rider?\')" class="btn btn-success btn-sm mr-1" title="UnBan">  <i class="fas fa-check-circle"></i></a>';
+            }
+            $delete= '<form action="/fatty/main/admin/riders/delete/'.$post->rider_id.'" title="Delete" method="post" class="d-inline">
+            '.csrf_field().'
+            '.method_field("DELETE").'<button type="submit" class="btn btn-danger btn-sm mr-1" onclick="return confirm(\'Are you sure want to Delete?\')"><i class="fa fa-trash"></button>
+            </form>';
+
+            $data=$approved.$ban.$delete;
+            return $data;
         })
         ->addColumn('rider_image', function(Rider $item){
             if ($item->rider_image) {
@@ -395,7 +415,7 @@ class RiderController extends Controller
             $state = $item->state->state_name_mm;
             return $state;
         })
-        ->rawColumns(['rider_image','action','register_date','state'])
+        ->rawColumns(['rider_image','action','register_date','state','delete'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -595,7 +615,7 @@ class RiderController extends Controller
      */
     public function create()
     {
-        $states=State::all();
+        $states=State::where('state_id','15')->first();
         return view('admin.rider.create',compact('states'));
     }
 
@@ -644,6 +664,36 @@ class RiderController extends Controller
         return view('admin.rider.view',compact('rider'));
     }
 
+
+    public function activenow(Request $request,$id)
+    {
+        $rider=Rider::where('rider_id',$id)->first();
+        if($rider->active_inactive_status==1){
+            $rider->active_inactive_status=0;
+            $rider->update();
+            $request->session()->flash('alert-success', 'successfully update rider off !');
+        }else{
+            $rider->active_inactive_status=1;
+            $request->session()->flash('alert-success', 'successfully update rider on !');
+            $rider->update();
+        }
+        return redirect()->back();
+    }
+    public function ban_rider(Request $request,$id)
+    {
+        $rider=Rider::where('rider_id',$id)->first();
+        if($rider->is_ban==1){
+            $rider->is_ban=0;
+            $rider->update();
+            $request->session()->flash('alert-success', 'successfully update rider un ban !');
+        }else{
+            $rider->is_ban=1;
+            $request->session()->flash('alert-success', 'successfully update rider ban !');
+            $rider->update();
+        }
+        return redirect()->back();
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -652,7 +702,9 @@ class RiderController extends Controller
      */
     public function edit($id)
     {
-        //
+        $rider=Rider::find($id);
+        $states=State::where('state_id','15')->first();
+        return view('admin.rider.edit',compact('states','rider'));
     }
 
     /**
@@ -664,7 +716,24 @@ class RiderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $photoname=time();
+        $riders=Rider::where('rider_id',$id)->first();
+
+        if(!empty($request['rider_image'])){
+            Storage::disk('Rider')->delete($riders->rider_image);
+            $img_name=$photoname.'.'.$request->file('rider_image')->getClientOriginalExtension();
+            $riders->rider_image=$img_name;
+            Storage::disk('Rider')->put($img_name, File::get($request['rider_image']));
+        }
+        $riders->rider_user_name=$request['rider_user_name'];
+        $riders->rider_user_phone=$request['rider_user_phone'];
+        $riders->state_id=$request['state_id'];
+        $riders->rider_user_password=$request['rider_user_password'];
+        $riders->is_admin_approved=$request['is_admin_approved'];
+        $riders->update();
+
+        $request->session()->flash('alert-success', 'successfully update rider!');
+        return redirect('fatty/main/admin/riders');
     }
 
     /**
@@ -673,15 +742,27 @@ class RiderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+        $check_order=CustomerOrder::where('rider_id',$id)->first();
+        if($check_order){
+            $request->session()->flash('alert-warning', 'donot delete because he have some orders!');
+            return redirect('fatty/main/admin/riders');
+        }else{
+            $rider=Rider::where('rider_id',$id)->FirstOrFail();
+            Storage::disk('Rider')->delete($rider->rider_image);
+            $rider->delete();
+
+            $request->session()->flash('alert-success', 'successfully delete rider!');
+            return redirect('fatty/main/admin/riders');
+        }
+
     }
 
     public function all_rider_location()
     {
         // $riders=Restaurant::where('restaurant_latitude','!=',0)->get();
-        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('active_inactive_status',1)->where('is_ban',0)->get();
         $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
         $center_latitude=$center_rider->rider_latitude;
         $center_longitude=$center_rider->rider_longitude;
@@ -693,7 +774,7 @@ class RiderController extends Controller
 
     public function has_order()
     {
-        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',1)->where('active_inactive_status',1)->where('is_ban',0)->get();
         $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
         $center_latitude=$center_rider->rider_latitude;
         $center_longitude=$center_rider->rider_longitude;
@@ -705,7 +786,7 @@ class RiderController extends Controller
 
     public function has_not_order()
     {
-        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->get();
+        $riders=Rider::where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->where('is_order',0)->where('active_inactive_status',1)->where('is_ban',0)->get();
         $center_rider=Rider::withCount('rider_order')->where('rider_latitude','!=',0)->where('rider_latitude','!=',null)->orderBy('rider_order_count','desc')->first();
         $center_latitude=$center_rider->rider_latitude;
         $center_longitude=$center_rider->rider_longitude;
@@ -717,17 +798,25 @@ class RiderController extends Controller
 
     public function rider_map_detail($id)
     {
-        $rider = Rider::findOrFail($id);
-        return view('admin.rider.rider_map.rider_view',compact('rider'));
+        $rider = Rider::where('rider_id',$id)->where('active_inactive_status',1)->where('is_ban',0)->first();
+        if($rider){
+            return view('admin.rider.rider_map.rider_view',compact('rider'));
+        }else{
+            return response(view('error.404'), 404);
+        }
     }
 
     public function assign_order_list($id)
     {
-        $rider=Rider::find($id);
-        $rider_id=$id;
-        $rider_name=$rider->rider_user_name;
-        $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
-        return view('admin.rider.rider_map.order_list',compact('food_orders','rider_id'));
+        $rider=Rider::where('rider_id',$id)->where('active_inactive_status',1)->where('is_ban',0)->first();
+        if($rider){
+            $rider_id=$id;
+            $rider_name=$rider->rider_user_name;
+            $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
+            return view('admin.rider.rider_map.order_list',compact('food_orders','rider_id'));
+        }else{
+            return response(view('error.404'), 404);
+        }
     }
 
     public function assign_order_list_ajax($id)

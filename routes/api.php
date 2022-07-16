@@ -99,8 +99,10 @@ Route::middleware('one_device_login')->group(function(){
 
     //Customer Order
     Route::post('v1/fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@customer_index');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@v2_customer_index');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/orders/create','Api\Order\OrderApiController@store_v1');
-    // Route::post('v1/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');
+    Route::post('v1/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');
+    Route::post('v2/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@v2_customer_order_click');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/orders/cancel','Api\Order\OrderApiController@cancel_order_v1');
     Route::get('v1/fatty/202221/lashio/main/admin/order/payment/lists','Api\Order\OrderApiController@payment_list');
     Route::get('v1/fatty/202221/lashio/main/admin/order/status/lists','Api\Order\OrderApiController@status_list');
@@ -126,7 +128,6 @@ Route::middleware('one_device_login')->group(function(){
     Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/orders/total_estimate','Api\Order\ParcelOrderApiController@v2_order_estimate_cost');
 });
 
-Route::post('v1/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');
 
 //Rider Notification
 Route::get('v1/fatty/202221/lashio/main/admin/riders/notifications','Api\Notification\NotificationApiController@rider');
@@ -232,6 +233,7 @@ Route::get('restaurant/available/create/all','Api\Restaurant\RestaurantApiContro
 
 //rider parcel
 Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/click','Api\Order\OrderApiController@rider_order_click');
+Route::post('v2/fatty/202221/lashio/main/admin/rider/orders/click','Api\Order\OrderApiController@v2_rider_order_click');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/images/delete','Api\Order\ParcelOrderApiController@parcel_image_delete');
 Route::get('v1/fatty/202221/lashio/main/admin/rider/parcels/extra/list','Api\Order\ParcelOrderApiController@parcel_extra_list');
 Route::get('v1/fatty/202221/lashio/main/admin/rider/parcels/type/list','Api\Order\ParcelOrderApiController@parcel_type_list');
@@ -244,6 +246,7 @@ Route::post('fatty/main/admin/kbz/pay/notify_url','Api\Notification\Notification
 
 //force update
 Route::get('v1/fatty/main/admin/restaurant/version/check','Api\Notification\NotificationApiController@restaurant_version_check');
+Route::get('v1/fatty/main/admin/restaurant_ios/version/check','Api\Notification\NotificationApiController@restaurant_ios_version_check');
 Route::get('v1/fatty/main/admin/rider/version/check','Api\Notification\NotificationApiController@rider_version_check');
 
 

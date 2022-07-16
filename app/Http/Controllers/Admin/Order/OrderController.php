@@ -12,6 +12,8 @@ use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use App\Models\Order\NotiOrder;
+
 
 
 class OrderController extends Controller
@@ -82,6 +84,7 @@ class OrderController extends Controller
         $data=[];
         foreach($model as $value){
             $value->customer_name=$value->customer->customer_name;
+            $value->duration=$value->created_at->diffForHumans(null,true,true);
             array_push($data,$value);
         }
         return DataTables::of($model)
@@ -111,14 +114,14 @@ class OrderController extends Controller
             return $order_status;
         })
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-M-Y H:i:s');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->addColumn('order_type', function(CustomerOrder $item){
             if($item->order_type=="food"){
-                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:#bde000;color:black;">'.$item->order_type.'</a>';
+                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color: #800000;">'.$item->order_type.'</a>';
             }else{
-                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:#00dfc2;color:black;">'.$item->order_type.'</a>';
+                $order_type = '<a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color: #8A2BE2;">'.$item->order_type.'</a>';
             }
             return $order_type;
         })
@@ -805,7 +808,7 @@ class OrderController extends Controller
         $order_id=$id;
         $orders=CustomerOrder::findOrFail($id);
         // $rider_all=Rider::where('is_order',0)->get();
-        $rider_all=Rider::orderBy('is_order')->get();
+        $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         return view('admin.order.assign',compact('orders','rider_all','order_id'));
     }
 
@@ -814,12 +817,13 @@ class OrderController extends Controller
         $order_id=$id;
         $orders=CustomerOrder::findOrFail($id);
         // $rider_all=Rider::where('is_order',0)->get();
-        $rider_all=Rider::orderBy('is_order')->get();
+        $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         return view('admin.order.pending_order.assign',compact('orders','rider_all','order_id'));
     }
     public function pendingorderdefine(Request $request,$id)
     {
         CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
+        NotiOrder::where('order_id',$id)->delete();
         $check_order=CustomerOrder::where('order_id',$id)->first();
         if($check_order->rider_id){
             $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
@@ -852,6 +856,8 @@ class OrderController extends Controller
         }
         $customer_orders->update();
 
+
+
         $riders_check->is_order=1;
         $riders_check->update();
 
@@ -859,6 +865,8 @@ class OrderController extends Controller
             "order_id"=>$order_id,
             "rider_id"=>$id,
         ]);
+
+        NotiOrder::where('order_id',$order_id)->delete();
 
         $rider_token=$riders_check->rider_fcm_token;
         $orderId=(string)$customer_orders->order_id;
@@ -872,7 +880,7 @@ class OrderController extends Controller
                     'json' => [
                         "to"=>$rider_token,
                         "data"=> [
-                            "type"=> "force_order",
+                            "type"=> "new_order",
                             "order_id"=>$orderId,
                             "order_status_id"=>$orderstatusId,
                             "order_type"=>$orderType,
@@ -916,6 +924,8 @@ class OrderController extends Controller
             "rider_id"=>$id,
         ]);
 
+        NotiOrder::where('order_id',$order_id)->delete();
+
         $rider_token=$riders_check->rider_fcm_token;
         $orderId=(string)$customer_orders->order_id;
         $orderstatusId=(string)$customer_orders->order_status_id;
@@ -928,7 +938,7 @@ class OrderController extends Controller
                     'json' => [
                         "to"=>$rider_token,
                         "data"=> [
-                            "type"=> "force_order",
+                            "type"=> "new_order",
                             "order_id"=>$orderId,
                             "order_status_id"=>$orderstatusId,
                             "order_type"=>$orderType,

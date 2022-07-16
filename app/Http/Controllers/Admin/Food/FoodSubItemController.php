@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Food\FoodSubItem;
 use App\Models\Food\FoodSubItemData;
 use App\Models\Food\Food;
+use App\Models\Order\OrderFoodOption;
+use App\Models\Order\OrderFoodSection;
 
 class FoodSubItemController extends Controller
 {
@@ -167,6 +169,40 @@ class FoodSubItemController extends Controller
 
     }
 
+    public function item_edit($id)
+    {
+        $food_subdataitem=FoodSubItemData::find($id);
+        return view('admin.food.sub_item.sub_item_data.edit',compact('food_subdataitem'));
+    }
+
+    public function item_update(Request $request,$id)
+    {
+        $data=FoodSubItemData::find($id);
+        $data->item_name_mm=$request['item_name_mm'];
+        $data->item_name_en=$request['item_name_en'];
+        $data->item_name_ch=$request['item_name_ch'];
+        $data->food_sub_item_price=$request['food_sub_item_price'];
+        $data->instock=$request['instock'];
+        $data->update();
+
+        $request->session()->flash('alert-success', 'successfully update section data!');
+        return redirect('fatty/main/admin/foods/sub_items/'.$data->food_id);
+    }
+
+    public function item_destroy(Request $request,$id)
+    {
+        $data=FoodSubItemData::find($id);
+        $check_order=OrderFoodOption::where('food_sub_item_data_id',$id)->first();
+        if($check_order){
+            $request->session()->flash('alert-warning', 'this option has orders!');
+            return redirect('fatty/main/admin/foods/sub_items/'.$data->food_id);
+        }else{
+            $data->delete;
+            $request->session()->flash('alert-success', 'successfully delete section data!');
+            return redirect('fatty/main/admin/foods/sub_items/'.$data->food_id);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -199,12 +235,16 @@ class FoodSubItemController extends Controller
      */
     public function destroy(Request $request,$id)
     {
-        $food=FoodSubItem::where('food_sub_item_id','=',$id)->FirstOrFail();
-        if($food){
+        $food=FoodSubItem::where('food_sub_item_id',$id)->FirstOrFail();
+        $check_order=OrderFoodSection::where('food_sub_item_id',$id)->first();
+        if($check_order){
+            $request->session()->flash('alert-warning', 'this section have orders!');
+            return redirect()->back();
+        }else{
             FoodSubItemData::where('food_sub_item_id',$id)->delete();
+            $food->delete();
+            $request->session()->flash('alert-success', 'successfully delete food sub item!');
+            return redirect()->back();
         }
-        $food->delete();
-        $request->session()->flash('alert-danger', 'successfully delete food sub item!');
-        return redirect()->back();
     }
 }

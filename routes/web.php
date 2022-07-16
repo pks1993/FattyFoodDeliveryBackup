@@ -59,6 +59,12 @@ Route::get('admin_parcel_orders/edit/{order_id}/{customer_id}','Admin\Parcel\Par
 Route::post('admin_parcel_orders/update/{order_id}','Admin\Parcel\ParcelStateController@admin_parcel_update')->name('admin_parcel.update');
 Route::get('admin_parcel_orders/destroy/{order_id}/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_destroy')->name('admin_parcel.destroy');
 
+//Rider Order Report
+Route::get('admin_parcel_orders/report/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_rider_order_report');
+Route::get('admin_parcel_orders/report/filter/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_report_filter')->name('admin_parcel_report.filter');
+
+
+
 // Auth::routes(['verify'=>true]);
 
 Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['auth']], function(){
@@ -134,6 +140,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('riders/check/location/{rider_id}','Admin\Rider\RiderController@location')->name('riders.location');
     Route::get('riders/create','Admin\Rider\RiderController@create')->name('riders.create');
     Route::post('riders/store','Admin\Rider\RiderController@store')->name('riders.store');
+    Route::get('riders/edit/{rider_id}','Admin\Rider\RiderController@edit')->name('riders.edit');
+    Route::post('riders/update/{rider_id}','Admin\Rider\RiderController@update')->name('riders.update');
+    Route::get('riders/activenow/{rider_id}','Admin\Rider\RiderController@activenow')->name('riders.activenow');
+    Route::get('riders/ban/{rider_id}','Admin\Rider\RiderController@ban_rider')->name('riders.ban');
     Route::get('riders/admin/approved/update/{rider}','Admin\Rider\RiderController@admin_approved');
     Route::get('daily_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@daily_admin_approved');
     Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
@@ -359,6 +369,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('foods/sub_items/edit/{food_sub_item_id}','Admin\Food\FoodSubItemController@edit')->name('foods.sub_items.edit');
     Route::post('foods/sub_items/update/{food_sub_item_id}','Admin\Food\FoodSubItemController@update')->name('foods.sub_items.update');
     Route::delete('foods/sub_items/delete/{food_sub_item_id}','Admin\Food\FoodSubItemController@destroy')->name('foods.sub_items.destroy');
+
+    Route::get('foods/sub_items/section_data/edit/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_edit')->name('foods.sub_items.data.edit');
+    Route::post('foods/sub_items/section_data/update/{food_sub_item_data_id}','Admin\Food\FoodSubItemController@item_update')->name('foods.sub_items.data.update');
 
     Route::get('foods/sub_items/data/create/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_create')->name('foods.sub_items.data.create');
     Route::post('foods/sub_items/data/store/{food_sub_item_id}','Admin\Food\FoodSubItemController@item_store')->name('foods.sub_items.data.update');

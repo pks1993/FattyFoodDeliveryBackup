@@ -59,8 +59,16 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="delivery_fee" class="col-form-label">Deli Fee</label>
-            <input type="number" value="0" class="form-control" name="delivery_fee">
+            <label for="delivery_fee" class="col-form-label">Customer Deli Fee</label>
+            <input type="number" id="customer_delivery_fee" value="0" class="form-control" name="delivery_fee">
+          </div>
+          <div class="form-group">
+            <label for="percentage" class="col-form-label">Percentage</label>
+            <input type="number" id="percentage" value="0" class="form-control" name="percentage" onchange="calDeli()">
+          </div>
+          <div class="form-group">
+            <label for="rider_delivery_fee" class="col-form-label">Rider Deli Fee</label>
+            <input type="number" id="rider_delivery_fee" value="0" class="form-control" name="rider_delivery_fee">
           </div>
           <div class="form-group">
             <label for="remark" class="col-form-label">Remark</label>
@@ -101,7 +109,9 @@
                                         <th class="text-center">No.</th>
                                         <th class="text-left">From</th>
                                         <th class="text-left">To</th>
-                                        <th class="text-center">Price</th>
+                                        <th class="text-center">CusDeliFee</th>
+                                        <th class="text-center">RiderDeliFee</th>
+                                        <th class="text-center">Percentage</th>
                                         <th class="text-center">Remark</th>
                                         {{-- <th class="text-center">Date</th> --}}
                                         <th class="text-center">Delete</th>
@@ -208,10 +218,12 @@
            "processing": true,  // Show processing
            ajax: "/fatty/main/admin/parcel_from_to_block/dataTables/ajaxparcelfromtoblock",
            columns: [
-           {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
+           {data: 'DT_RowIndex', name: 'DT_RowIndex',className:"text-center" , orderable: false, searchable: false},
            {data: 'from_block_name', name:'from_block_name'},
            {data: 'to_block_name', name:'to_block_name'},
-           {data: 'price', name:'price'},
+           {data: 'cus_delivery_fee', name:'cus_delivery_fee',className:"text-center"},
+           {data: 'rider_delivery_fee', name:'rider_delivery_fee',className:"text-center"},
+           {data: 'percentage', name:'percentage',className:"text-center"},
            {data: 'remark', name:'remark'},
         //    {data: 'created_date', name:'created_date'},
            {data: 'action', name: 'action', orderable: false, searchable: false,className:'btn-group'},
@@ -235,5 +247,14 @@
             theme: 'bootstrap4'
         });
     });
+</script>
+<script>
+    function calDeli(){
+        var cus_deli=document.getElementById("customer_delivery_fee").value;
+        var percent=document.getElementById("percentage").value;
+        var price=cus_deli*percent/100;
+        document.getElementById("rider_delivery_fee").value=price;
+
+    }
 </script>
 @endpush

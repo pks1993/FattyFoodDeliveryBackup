@@ -17,7 +17,9 @@ class CreateParcelFromToBlocksTable extends Migration
             $table->id('parcel_from_to_block_id');
             $table->unsignedBigInteger('parcel_from_block_id')->default(1);
             $table->unsignedBigInteger('parcel_to_block_id')->default(1);
-            $table->string('delivery_fee')->default(0);
+            $table->integer('delivery_fee')->default(0);
+            $table->integer('rider_delivery_fee')->default(0);
+            $table->integer('percentage')->default(0);
             $table->longText('remark')->nullable();
             $table->timestamps();
         });

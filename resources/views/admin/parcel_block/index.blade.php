@@ -39,23 +39,31 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-          <div class="form-group">
-            <label for="block_name" class="col-form-label">Block Name:</label>
-            <input type="text" class="form-control" name="block_name">
-          </div>
-          <div class="form-group">
-            <label for="state_id" class="col-form-label">Message:</label>
-            <select class="form-control" name="state_id" id="state_id">
-                <option value="{{$parcel_states->state_id}}">{{$parcel_states->state_name_mm}} ( {{ $parcel_states->state_name_en }} )</option>}
-                {{-- <option value="">Select State</option>
-                @foreach($states as $st)
-                    <option value="{{$st->state_id}}">{{$st->state_name_mm}} ( {{ $st->state_name_en }} )</option>}
-                @endforeach --}}
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="block_name" class="col-form-label">Block Name:</label>
+                <input type="text" class="form-control" name="block_name" placeholder="Enter Block Name">
+            </div>
+            <div class="form-group">
+                <label for="latitude" class="col-form-label">Latitude:</label>
+                <input type="text" class="form-control" name="latitude" placeholder="21.123456">
+            </div>
+            <div class="form-group">
+                <label for="longitude" class="col-form-label">Longitude:</label>
+                <input type="text" class="form-control" name="longitude" placeholder="97.123456">
+            </div>
+            <div class="form-group">
+                <label for="state_id" class="col-form-label">State Name:</label>
+                <select class="form-control" name="state_id" id="state_id">
+                    <option value="{{$parcel_states->state_id}}">{{$parcel_states->state_name_mm}} ( {{ $parcel_states->state_name_en }} )</option>}
+                    {{-- <option value="">Select State</option>
+                    @foreach($states as $st)
+                        <option value="{{$st->state_id}}">{{$st->state_name_mm}} ( {{ $st->state_name_en }} )</option>}
+                    @endforeach --}}
 
-            </select>
-          </div>
-      </div>
+                </select>
+            </div>
+        </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary">Create</button>
@@ -77,6 +85,8 @@
                                         <th class="text-center">No.</th>
                                         <th class="text-left">BlockName</th>
                                         <th class="text-left">StateName</th>
+                                        <th class="text-left">Latitude</th>
+                                        <th class="text-left">Longitude</th>
                                         <th class="text-center">Edit</th>
                                         <th class="text-center">Delete</th>
                                     </tr>
@@ -91,6 +101,20 @@
                                                 {{ $parcel->states->state_name_mm }} ( {{ $parcel->states->state_name_en }} )
                                             @else
                                                 {{ "Unknown" }}
+                                            @endif
+                                        </td>
+                                        <td class="text-left">
+                                            @if($parcel->latitude)
+                                                {{ $parcel->latitude }}
+                                            @else
+                                                {{ "0.00" }}
+                                            @endif
+                                        </td>
+                                        <td class="text-left">
+                                            @if($parcel->longitude)
+                                                {{ $parcel->longitude }}
+                                            @else
+                                                {{ "0.00" }}
                                             @endif
                                         </td>
                                         <td>
@@ -112,6 +136,14 @@
                                                         <label for="block_name" class="col-form-label">Block Name:</label>
                                                         <input type="text" class="form-control" value="{{ $parcel->block_name }}" name="block_name">
                                                       </div>
+                                                      <div class="form-group">
+                                                        <label for="latitude" class="col-form-label">Latitude:</label>
+                                                        <input type="text" class="form-control" name="latitude" value="{{ $parcel->latitude }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="longitude" class="col-form-label">Longitude:</label>
+                                                        <input type="text" class="form-control" name="longitude" value="{{ $parcel->longitude }}">
+                                                    </div>
                                                       <div class="form-group">
                                                         <label for="state_id_edit" class="col-form-label">Message:</label>
                                                         <select class="form-control" name="state_id" id="state_id_edit">

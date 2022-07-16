@@ -105,8 +105,9 @@
                                             <th class="text-left">RiderPhone</th>
                                             <th class="text-left">StateName</th>
                                             <th class="text-left">RegisterDate</th>
-                                            <th class="text-left">Latitude</th>
-                                            <th class="text-left">Longitude</th>
+                                            <th>Latitude</th>
+                                            <th>Longitude</th>
+                                            <th>Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -126,7 +127,7 @@
 
 setTimeout(function() {
         $('#successMessage').fadeOut('fast');
-    }, 2000);
+    }, 2500);
 
         // Custom filtering function which will search data in column four between two values
     $.fn.dataTable.ext.search.push(
@@ -172,8 +173,9 @@ setTimeout(function() {
                 {data: 'rider_user_phone', name:'rider_user_phone'},
                 {data: 'state', name:'state'},
                 {data: 'register_date', name:'register_date',className: "register_date"},
-                {data: 'rider_latitude', name:'rider_latitude'},
-                {data: 'rider_longitude', name:'rider_longitude'},
+                {data: 'rider_latitude', name:'rider_latitude',className:"text-left"},
+                {data: 'rider_longitude', name:'rider_longitude',className:"text-left"},
+                {data: 'delete', name:'delete',className:"text-center"},
 
                 ],
                 dom: 'lBfrtip',

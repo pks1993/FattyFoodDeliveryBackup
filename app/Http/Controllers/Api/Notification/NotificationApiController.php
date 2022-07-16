@@ -87,7 +87,7 @@ class NotificationApiController extends Controller
                 $value->is_force_update=false;
             }
             array_push($data,$value);
-            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+            return response()->json(['success'=>true,'message'=>'this is current version for rider  ','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
@@ -96,6 +96,22 @@ class NotificationApiController extends Controller
     public function restaurant_version_check()
     {
         $value=VersionUpdate::where('os_type','restaurant')->first();
+        if($value){
+            $data=[];
+            if($value->is_force_update==1){
+                $value->is_force_update=true;
+            }else{
+                $value->is_force_update=false;
+            }
+            array_push($data,$value);
+            return response()->json(['success'=>true,'message'=>'this is current version for restaurant android','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'version data not found']);
+        }
+    }
+    public function restaurant_ios_version_check()
+    {
+        $value=VersionUpdate::where('os_type','restaurant_ios')->first();
         if($value){
             $data=[];
             if($value->is_force_update==1){
