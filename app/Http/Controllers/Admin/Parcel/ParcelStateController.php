@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use App\Models\Order\ParcelState;
 use App\Models\Customer\Customer;
 use App\Models\City\ParcelCity;
+use App\Models\City\ParcelBlockList;
 use App\Models\State\State;
 use App\Models\Order\ParcelType;
 use App\Models\Order\ParcelExtraCover;
@@ -189,9 +190,9 @@ class ParcelStateController extends Controller
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
         $parcel_type=ParcelType::all();
-        $from_cities=ParcelCity::all();
+        $from_cities=ParcelBlockList::all();
 
-        $to_cities=ParcelCity::all();
+        $to_cities=ParcelBlockList::all();
         $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         $customer_admin_id=$id;
         $customer=Customer::where('customer_id',$id)->first();
@@ -206,9 +207,11 @@ class ParcelStateController extends Controller
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
         $parcel_type=ParcelType::all();
-        $from_cities=ParcelCity::all();
+        // $from_cities=ParcelCity::all();
+        $from_cities=ParcelBlockList::all();
 
-        $to_cities=ParcelCity::all();
+        // $to_cities=ParcelCity::all();
+        $to_cities=ParcelBlockList::all();
         $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
         $customer_admin_id=$customer_id;
         $parcel_order=CustomerOrder::where('order_id',$id)->first();

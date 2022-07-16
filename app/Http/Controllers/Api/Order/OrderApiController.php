@@ -138,119 +138,151 @@ class OrderApiController extends Controller
         $kilometer=$miles * 1.609344;
         $distances=(float) number_format((float)$kilometer, 1, '.', '');
 
-        // if($distances <= 2) {
-        //     $delivery_fee=800;
-        // }elseif($distances > 2 && $distances < 3.5){
-        //     $delivery_fee=1000;
-        // }elseif($distances == 3.5){
-        //     $delivery_fee=1200;
-        // }elseif($distances > 3.5 && $distances < 4.5){
-        //     $delivery_fee=1400;
-        // }elseif($distances == 4.5){
-        //     $delivery_fee=1600;
-        // }elseif($distances > 4.5 && $distances < 6){
-        //     $delivery_fee=1800;
-        // }elseif($distances == 6){
-        //     $delivery_fee=2000;
-        // }elseif($distances > 6 && $distances < 7.5){
-        //     $delivery_fee=2200;
-
-        if($distances < 8){
-            $delivery_fee=0;
-        }elseif($distances==8){
-            $delivery_fee=2400;
-        }elseif($distances > 8 && $distances < 9){
-            $delivery_fee=2600;
-        }elseif($distances==9){
-            $delivery_fee=2800;
-        }elseif($distances > 9 && $distances < 10.5){
-            $delivery_fee=3000;
-        }elseif($distances==10.5){
-            $delivery_fee=3200;
-        }elseif($distances > 10.5 && $distances < 12){
-            $delivery_fee=3400;
-        }elseif($distances==12){
-            $delivery_fee=3600;
-        }elseif($distances > 12 && $distances < 13.5){
-            $delivery_fee=3800;
-        }elseif($distances==13.5){
-            $delivery_fee=4000;
-        }elseif($distances > 13.5 && $distances < 15){
-            $delivery_fee=4200;
-        }elseif($distances==15){
-            $delivery_fee=4400;
-        }elseif($distances > 15 && $distances < 16.5){
-            $delivery_fee=4600;
-        }elseif($distances==16.5){
-            $delivery_fee=4800;
-        }elseif($distances > 16.5 && $distances < 18){
-            $delivery_fee=5000;
-        }elseif($distances==18){
-            $delivery_fee=5200;
-        }elseif($distances > 18 && $distances < 19.5){
-            $delivery_fee=5400;
-        }elseif($distances >= 19.5){
-            $delivery_fee=5600;
-        }else{
-            $delivery_fee=5600;
-        }
-
         // if($distances < 8){
         //     $delivery_fee=0;
         // }elseif($distances==8){
-        //     $delivery_fee=2200;
-        // }elseif($distances > 8 && $distances < 9.5){
         //     $delivery_fee=2400;
-        // }elseif($distances==9.5){
+        // }elseif($distances > 8 && $distances < 9){
         //     $delivery_fee=2600;
-        // }elseif($distances > 9.5 && $distances < 11){
+        // }elseif($distances==9){
         //     $delivery_fee=2800;
-        // }elseif($distances==11){
+        // }elseif($distances > 9 && $distances < 10.5){
         //     $delivery_fee=3000;
-        // }elseif($distances > 11 && $distances < 12.5){
+        // }elseif($distances==10.5){
         //     $delivery_fee=3200;
-        // }elseif($distances==12.5){
+        // }elseif($distances > 10.5 && $distances < 12){
         //     $delivery_fee=3400;
-        // }elseif($distances > 12.5 && $distances < 14){
+        // }elseif($distances==12){
         //     $delivery_fee=3600;
-        // }elseif($distances==14){
+        // }elseif($distances > 12 && $distances < 13.5){
         //     $delivery_fee=3800;
-        // }elseif($distances > 14 && $distances < 15.5){
-        //     $delivery_fee=4100;
-        // }elseif($distances==15.5){
+        // }elseif($distances==13.5){
+        //     $delivery_fee=4000;
+        // }elseif($distances > 13.5 && $distances < 15){
+        //     $delivery_fee=4200;
+        // }elseif($distances==15){
         //     $delivery_fee=4400;
-        // }elseif($distances > 15.5 && $distances < 17){
-        //     $delivery_fee=4700;
-        // }elseif($distances==17){
+        // }elseif($distances > 15 && $distances < 16.5){
+        //     $delivery_fee=4600;
+        // }elseif($distances==16.5){
+        //     $delivery_fee=4800;
+        // }elseif($distances > 16.5 && $distances < 18){
         //     $delivery_fee=5000;
-        // }elseif($distances > 17 && $distances < 18.5){
-        //     $delivery_fee=5300;
-        // }elseif($distances==18.5){
+        // }elseif($distances==18){
+        //     $delivery_fee=5200;
+        // }elseif($distances > 18 && $distances < 19.5){
+        //     $delivery_fee=5400;
+        // }elseif($distances >= 19.5){
         //     $delivery_fee=5600;
-        // }elseif($distances > 18.5 && $distances < 20){
-        //     $delivery_fee=5900;
-        // }elseif($distances==20){
-        //     $delivery_fee=6200;
-        // }elseif($distances > 20 && $distances < 21.5){
-        //     $delivery_fee=6500;
-        // }elseif($distances==21.5){
-        //     $delivery_fee=6800;
-        // }elseif($distances > 21.5 && $distances < 23){
-        //     $delivery_fee=7100;
-        // }elseif($distances==23){
-        //     $delivery_fee=7400;
-        // }elseif($distances > 23 && $distances < 24.5){
-        //     $delivery_fee=7700;
-        // }elseif($distances==24.5){
-        //     $delivery_fee=8000;
-        // }elseif($distances > 24.5 && $distances < 26){
-        //     $delivery_fee=8300;
-        // }elseif($distances >= 26){
-        //     $delivery_fee=8600;
         // }else{
-        //     $delivery_fee=8600;
+        //     $delivery_fee=5600;
         // }
 
+        if($distances <= 2) {
+
+                $delivery_fee=800;
+
+        }elseif($distances > 2 && $distances < 3.5){
+
+                $delivery_fee=1000;
+
+        }elseif($distances == 3.5){
+
+                $delivery_fee=1200;
+
+        }elseif($distances > 3.5 && $distances < 4.5){
+
+                $delivery_fee=1400;
+
+        }elseif($distances == 4.5){
+
+                $delivery_fee=1600;
+
+        }elseif($distances > 4.5 && $distances < 6){
+
+                $delivery_fee=1800;
+
+        }elseif($distances == 6){
+
+                $delivery_fee=2000;
+
+        }elseif($distances > 6 && $distances < 7.5){
+
+                $delivery_fee=2200;
+
+        }elseif($distances==7.5){
+
+                $delivery_fee=2400;
+
+        }elseif($distances > 7.5 && $distances < 9){
+
+                $delivery_fee=2600;
+
+        }elseif($distances==9){
+
+                $delivery_fee=2800;
+
+        }elseif($distances > 9 && $distances < 10.5){
+
+                $delivery_fee=3000;
+
+        }elseif($distances==10.5){
+
+                $delivery_fee=3200;
+
+        }elseif($distances > 10.5 && $distances < 12){
+
+                $delivery_fee=3400;
+
+        }elseif($distances==12){
+
+                $delivery_fee=3600;
+
+        }elseif($distances > 12 && $distances < 13.5){
+
+                $delivery_fee=3800;
+
+        }elseif($distances==13.5){
+
+                $delivery_fee=4000;
+
+        }elseif($distances > 13.5 && $distances < 15){
+
+                $delivery_fee=4200;
+
+        }elseif($distances==15){
+
+                $delivery_fee=4400;
+
+        }elseif($distances > 15 && $distances < 16.5){
+
+                $delivery_fee=4600;
+
+        }elseif($distances==16.5){
+
+                $delivery_fee=4800;
+
+        }elseif($distances > 16.5 && $distances < 18){
+
+                $delivery_fee=5000;
+
+        }elseif($distances==18){
+
+                $delivery_fee=5200;
+
+        }elseif($distances > 18 && $distances < 19.5){
+
+                $delivery_fee=5400;
+
+        }elseif($distances >= 19.5){
+
+                $delivery_fee=5600;
+
+        }else{
+
+                $delivery_fee=5600;
+
+        }
         return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
     }
     /**

@@ -138,15 +138,15 @@
                                     {{-- <td>{{ $value->order_id }}</td> --}}
                                     <td>{{ $value->customer_order_id }}</td>
                                     <td>
-                                        @if($value->from_pickup_address)
-                                            {{ $value->from_pickup_address }}
+                                        @if($value->from_parcel_city_id)
+                                            {{ $value->from_block->block_name }}
                                         @else
                                             <span style="color: red;">{{ "Null" }}</span>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($value->to_drop_address)
-                                            {{ $value->to_drop_address }}
+                                        @if($value->to_parcel_city_id)
+                                            {{ $value->to_block->block_name }}
                                         @else
                                             <span style="color: red">{{ "Null" }}</span>
                                         @endif
@@ -251,7 +251,7 @@
                                                     <div class="col-4 text-center">
                                                         <a class="btn btn-sm btn-block btn-success text-white">
                                                             @if($value->from_parcel_city_id)
-                                                                {{ $value->from_parcel_region->city_name_mm }}
+                                                                {{ $value->from_block->block_name }}
                                                             @else
                                                                 "Empty"
                                                             @endif
@@ -266,7 +266,7 @@
                                                     <div class="col-4 text-center">
                                                         <a class="btn btn-sm btn-block btn-success text-white">
                                                             @if($value->to_parcel_city_id)
-                                                                {{ $value->to_parcel_region->city_name_mm }}
+                                                                {{ $value->to_block->block_name }}
                                                             @else
                                                                 "Empty"
                                                             @endif
@@ -287,7 +287,7 @@
 
                                                             <div class="col-12 text-left p-0">
                                                                 From:   @if($value->from_parcel_city_id)
-                                                                            {{ $value->from_parcel_region->city_name_mm }}
+                                                                            {{ $value->from_block->block_name }}
                                                                         @else
                                                                             "Empty"
                                                                         @endif
@@ -309,7 +309,7 @@
 
                                                             <div class="col-12 text-left p-0">
                                                                 To: @if($value->to_parcel_city_id)
-                                                                        {{ $value->to_parcel_region->city_name_mm }}
+                                                                        {{ $value->to_block->block_name }}
                                                                     @else
                                                                         "Empty"
                                                                     @endif
@@ -334,10 +334,10 @@
                                                             </div>
 
                                                             <div class="col-12 text-left p-0 text-danger font-weight-bold">
-                                                                Remark: {{ $value->value_note }}
+                                                                Remark: {{ $value->parcel_order_note }}
                                                             </div>
                                                             <div class="col-12 text-left p-0">
-                                                                Booking:
+                                                                Booking: {{ $value->customer_booking_id }}
                                                             </div>
                                                             <div class="col-12 text-left p-0">
                                                                 @if($value->rider_id)

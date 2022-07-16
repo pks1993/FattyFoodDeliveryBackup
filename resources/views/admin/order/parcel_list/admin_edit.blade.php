@@ -89,7 +89,7 @@
             <a class="btn btn-block text-white p-1" style="background-color: #28a745;color:white;font-size:20px;text-align:left" onclick="from_region()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> From</a>
             {{-- <div id="from_region" style="display: block"> --}}
                 @foreach ($from_cities as $item)
-                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion1(`{{$item->parcel_city_id}}`,`{{$item->city_name_mm}}`,`{{ $item->latitude }}`,`{{ $item->longitude }}`)"> {{ $item->city_name_mm }} </a>
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getFromRegion1(`{{$item->parcel_block_id}}`,`{{$item->block_name}}`,`{{ $item->latitude }}`,`{{ $item->longitude }}`)"> {{ $item->block_name }} </a>
                 @endforeach
             {{-- </div> --}}
         </div>
@@ -101,7 +101,7 @@
             <a class="btn btn-block text-white p-1" style="background-color: #007bff;color:white;font-size:20px;text-align:left" onclick="to_region()"><i class="fa fa-angle-left float-left mt-1 mr-2"></i> To</a>
             {{-- <div id="to_region" style="display: block"> --}}
                 @foreach ($to_cities as $item)
-                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getToRegion1(`{{$item->parcel_city_id}}`,`{{$item->city_name_mm}}`,`{{ $item->latitude }}`,`{{ $item->longitude }}`)"> {{ $item->city_name_mm }} </a>
+                    <a class="btn btn-block btn-secondary text-white p-2 mt-2" style="font-size: 17px;text-align:left" onclick="getToRegion1(`{{$item->parcel_block_id}}`,`{{$item->block_name}}`,`{{ $item->latitude }}`,`{{ $item->longitude }}`)"> {{ $item->block_name }} </a>
                 @endforeach
             {{-- </div> --}}
         </div>
@@ -148,7 +148,7 @@
                             <input type="hidden" class="btn btn-block" name="from_lon" id="from_lon" value="{{$parcel_order->from_pickup_longitude}}">
                             <input type="hidden" class="btn btn-block" name="from_parcel_city_id" id="from_parcel_city_id" value="{{$parcel_order->from_parcel_city_id}}">
                             @if($parcel_order->from_parcel_city_id)
-                                <input class="btn btn-block text-white p-2" id="fromRegion" value="{{$parcel_order->from_parcel_region->city_name_mm}}"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
+                                <input class="btn btn-block text-white p-2" id="fromRegion" value="{{$parcel_order->from_block->block_name}}"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
                             @else
                                 <input class="btn btn-block text-white p-2" id="fromRegion" value="From"  style="background-color: #28a745;color:white;font-size:17px;" onclick="from_region()">
                             @endif
@@ -173,7 +173,7 @@
                 <div class="form-group col-12 p-1 border2 border-primary rounded2">
                         <div class="form-group col-12 mt-2">
                             @if($parcel_order->to_parcel_city_id)
-                                <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="{{$parcel_order->to_parcel_region->city_name_mm}}"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
+                                <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="{{$parcel_order->to_block->block_name}}"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
                             @else
                                 <input class="btn btn-block text-white p-2" name="to_parcel_city_id" id="toRegion" value="To"  style="background-color: #007bff;color:white;font-size:17px;" onclick="to_region()">
                             @endif
