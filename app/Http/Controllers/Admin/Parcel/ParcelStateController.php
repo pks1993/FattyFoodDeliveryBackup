@@ -696,7 +696,7 @@ class ParcelStateController extends Controller
         $parcel_orders->estimated_end_time=$end_time;
         $parcel_orders->rider_restaurant_distance=$rider_restaurant_distance;
         $parcel_orders->payment_method_id=1;
-        $parcel_orders->state_id=1;
+        $parcel_orders->state_id=15;
 
         if($from_parcel_city_id){
             $parcel_orders->from_pickup_address=$parcel_orders->from_block->block_name;
