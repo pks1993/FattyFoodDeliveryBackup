@@ -272,7 +272,12 @@ class ParcelStateController extends Controller
         $to_drop_note=$request['to_drop_note'];
         $parcel_type_id=1;
         $parcel_order_note=$request['parcel_order_note'];
-        $delivery_fee=$request['price'];
+        $deliveryfee=$request['price'];
+        if($deliveryfee){
+            $delivery_fee=$$deliveryfee;
+        }else{
+            $delivery_fee=0;
+        }
         $rider_id=$request['rider_id'];
         $rider_restaurant_distance=$request['rider_restaurant_distance'];
 
@@ -662,7 +667,12 @@ class ParcelStateController extends Controller
         $to_drop_note=$request['to_drop_note'];
         $parcel_type_id=1;
         $parcel_order_note=$request['parcel_order_note'];
-        $delivery_fee=$request['price'];
+        $deliveryfee=$request['price'];
+        if($deliveryfee){
+            $delivery_fee=$$deliveryfee;
+        }else{
+            $delivery_fee=0;
+        }
         $rider_id=$request['rider_id'];
         $rider_restaurant_distance=$request['rider_restaurant_distance'];
 
