@@ -50,7 +50,7 @@ class NotificationApiController extends Controller
             }else{
                 $is_update=false;
             }
-            return response()->json(['success'=>true,'message'=>'this is current version for android','data'=>['is_update'=>$is_update,'is_force_update'=>$is_force_update]]);
+            return response()->json(['success'=>true,'message'=>'this is current version for android','data'=>['is_update'=>$is_update,'is_force_update'=>$is_force_update,'link'=>$value->link]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
@@ -70,7 +70,7 @@ class NotificationApiController extends Controller
 
             }
             array_push($data,$value);
-            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update,'link'=>$value->link]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
@@ -87,7 +87,7 @@ class NotificationApiController extends Controller
                 $value->is_force_update=false;
             }
             array_push($data,$value);
-            return response()->json(['success'=>true,'message'=>'this is current version for rider  ','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+            return response()->json(['success'=>true,'message'=>'this is current version for rider  ','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update,'link'=>$value->link]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
@@ -104,7 +104,7 @@ class NotificationApiController extends Controller
                 $value->is_force_update=false;
             }
             array_push($data,$value);
-            return response()->json(['success'=>true,'message'=>'this is current version for restaurant android','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+            return response()->json(['success'=>true,'message'=>'this is current version for restaurant android','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update,'link'=>$value->link]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
@@ -120,7 +120,7 @@ class NotificationApiController extends Controller
                 $value->is_force_update=false;
             }
             array_push($data,$value);
-            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update]]);
+            return response()->json(['success'=>true,'message'=>'this is current version for ios','data'=>['current_version'=>$value->current_version,'is_force_update'=>$value->is_force_update,'link'=>$value->link]]);
         }else{
             return response()->json(['success'=>false,'message'=>'version data not found']);
         }
