@@ -34,9 +34,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->whereRaw('Date(created_at) = CURDATE()')->orderBy('created_at','desc')->where('order_type','food')->first();
+        $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->whereRaw('Date(created_at) = CURDATE()')->orderBy('created_at','desc')->first();
         if($customer_check){
-            $data = CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->whereRaw('Date(created_at) = CURDATE()')->orderBy('created_at','desc')->where('order_type','food')->get();
+            $data = CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->whereRaw('Date(created_at) = CURDATE()')->orderBy('created_at','desc')->get();
             foreach ($data as $value) {
                 $restaurant_address_latitude=$value['restaurant_address_latitude'];
                 $restaurant_address_longitude=$value['restaurant_address_longitude'];
@@ -47,7 +47,7 @@ class Kernel extends ConsoleKernel
                 $created_at = Carbon::parse($created_at);
                 $diffMinutes = $created_at->diffInMinutes($now);
 
-                if($diffMinutes==2){
+                if($diffMinutes==1){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -307,7 +307,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==4){
+                }elseif($diffMinutes==2){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -521,7 +521,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==6){
+                }elseif($diffMinutes==3){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -689,7 +689,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==8){
+                }elseif($diffMinutes==4){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -811,7 +811,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==10){
+                }elseif($diffMinutes==5){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
