@@ -27,6 +27,10 @@ class SupportCenterController extends Controller
         $support_center=SupportCenter::orderBy('support_center_id','DESC')->get();
         return view('admin.support_center.index',compact('support_center'));
     }
+    public function contact_us()
+    {
+        return view('admin.support_center.contact_us');
+    }
 
     /**
      * Show the form for creating a new resource.

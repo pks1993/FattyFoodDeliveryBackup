@@ -30,6 +30,9 @@ Route::get('fatty/main/admin/today_rider_billing/data_history/detail/{Rider_paym
 Route::get('fatty/main/admin/privacy','Admin\Setting\SettingController@index');
 Route::get('fatty/main/admin/term&condition','Admin\Setting\SettingController@term');
 
+Route::get('application/contact_us','Admin\SupportCenter\SupportCenterController@contact_us');
+
+
 Route::get('/','Admin\Login\LoginController@index')->name('login');
 
 Route::post('fatty/post/login','Admin\Login\LoginController@login')->name('fatty.post.login');
