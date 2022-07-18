@@ -34,20 +34,20 @@ class AboutController extends Controller
     }
 
     public function golocation(){
-        $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['2','7','8','9','15','16','18','20'])->orderBy('created_at','desc')->whereRaw('Date(created_at) = CURDATE()')->first();
-        dd($customer_check);
-        $customer_check=CustomerOrder::orderBy('created_at','desc')->first();
-        $now = Carbon::now();
-        $created_at = Carbon::parse($customer_check->created_at);
-        $diffMinutes = $created_at->diffInMinutes($now);
-        if($diffMinutes< 2){
-            dd($diffMinutes."1");
+        // $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['2','7','8','9','15','16','18','20'])->orderBy('created_at','desc')->whereRaw('Date(created_at) = CURDATE()')->first();
+        // dd($customer_check);
+        // $customer_check=CustomerOrder::orderBy('created_at','desc')->first();
+        // $now = Carbon::now();
+        // $created_at = Carbon::parse($customer_check->created_at);
+        // $diffMinutes = $created_at->diffInMinutes($now);
+        // if($diffMinutes< 2){
+        //     dd($diffMinutes."1");
 
-        }elseif($diffMinutes<3){
-            dd($diffMinutes."2");
-        }else{
-           dd($diffMinutes."3");
-        }
+        // }elseif($diffMinutes<3){
+        //     dd($diffMinutes."2");
+        // }else{
+        //    dd($diffMinutes."3");
+        // }
 
         // $locations = "[
         //     ['Mumbai', 19.0760,72.8777],
@@ -73,12 +73,12 @@ class AboutController extends Controller
         // $diffMinutes = $created_at->diffInMinutes($now);
         // dd($diffMinutes);
 
-        // $lat1 ="21.92940808636731";
-        // $lon1 = "96.11176025122404";
-        // $lat2 ="21.926762239147155";
-        // $lon2 ="21.926762239147155";
-        // $unit = "N";
-        // // // $rad = "300";
+        $lat1 ="22.945739";
+        $lon1 = "97.7562266";
+        $lat2 ="22.92911";
+        $lon2 ="97.752657";
+        $unit = "K";
+        // // $rad = "300";
 
         // $riders=DB::table("restaurants")->select("restaurants.restaurant_id","restaurants.restaurant_latitude","restaurants.restaurant_longitude"
         // ,DB::raw("6371 * acos(cos(radians(" . $lat1 . "))
@@ -89,29 +89,29 @@ class AboutController extends Controller
         // // ->having('distance', '<', $rad)
         // ->groupBy("restaurants.restaurant_id")
         // ->get();
-        // // dd($riders);
+        // dd($riders);
 
         // return $riders;
 
-        // if (($lat1 == $lat2) && ($lon1 == $lon2)) {
-        //     return 0;
-        //   }
-        //   else {
-        //     $theta = $lon1 - $lon2;
-        //     $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-        //     $dist = acos($dist);
-        //     $dist = rad2deg($dist);
-        //     $miles = $dist * 60 * 1.1515;
-        //     $unit = strtoupper($unit);
+        if (($lat1 == $lat2) && ($lon1 == $lon2)) {
+            return 0;
+          }
+          else {
+            $theta = $lon1 - $lon2;
+            $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            $unit = strtoupper($unit);
 
-        //     if ($unit == "K") {
-        //       return ($miles * 1.609344);
-        //     } else if ($unit == "N") {
-        //       return ($miles * 0.8684);
-        //     } else {
-        //       return $miles;
-        //     }
-        //   }
+            if ($unit == "K") {
+              return ($miles * 1.609344);
+            } else if ($unit == "N") {
+              return ($miles * 0.8684);
+            } else {
+              return $miles;
+            }
+          }
     }
 
     /**
