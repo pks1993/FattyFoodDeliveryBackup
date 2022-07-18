@@ -966,7 +966,7 @@ class OrderController extends Controller
 
     public function report_parcelorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['15'])->where('order_type','parcel')->get();
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8','15'])->where('order_type','parcel')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_id){
@@ -999,7 +999,7 @@ class OrderController extends Controller
 
     public function report_foodorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->get();
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8','15'])->where('order_type','food')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_id){
