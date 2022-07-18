@@ -126,9 +126,9 @@
 <div class="col-12 mt-3" style="font-size: 15px;">
     <div class="flash-message" id="successMessage">
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-            @if(Session::has('alert-' . $msg))
-                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-            @endif
+        @if(Session::has('alert-' . $msg))
+        <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+        @endif
         @endforeach
     </div>
 </div>
@@ -141,11 +141,72 @@
                 <div class="" style="padding:5px;">
                     <div class="col-12">
                         <form action="{{ route('admin_parcel_report.filter',$customer_admin_id) }}">
-                            <input class="col-7" type="date" name="date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                            {{-- <select class="col-4" name="month" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:18px;font-weight:510;border-radius:5px;height:40px;">
+                                <option value="12">12</option>
+                                <option value="11">11</option>
+                                <option value="10">10</option>
+                                <option value="09">09</option>
+                                <option value="08">08</option>
+                                <option value="07">07</option>
+                                <option value="06">06</option>
+                                <option value="05">05</option>
+                                <option value="04">04</option>
+                                <option value="03">03</option>
+                                <option value="02">02</option>
+                                <option value="01">01</option>
+                            </select>
+                            <select class="col-4" name="year" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:18px;font-weight:510;border-radius:5px;height:40px;">
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                                <option value="2012">2012</option>
+                                <option value="2011">2011</option>
+                                <option value="2010">2010</option>
+                                <option value="2009">2009</option>
+                                <option value="2008">2008</option>
+                                <option value="2007">2007</option>
+                                <option value="2006">2006</option>
+                                <option value="2005">2005</option>
+                            </select> --}}
+                            <input class="col-7" type="month" name="date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <button class="col-4" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
+                            {{-- <button class="col-3" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button> --}}
                         </form>
                     </div>
-                    <div class="ml-1 mt-2 mr-1" style="margin-bottom: 75px;">
+                    <div class="scrollmenu col-12 mt-3">
+                        @foreach ($this_month_days as $date)
+                        {{-- {{ $today_date }} {{ date('d-m-Y', strtotime($date)) }} --}}
+                            @if(date('d-m-Y', strtotime($date))==$today_date)
+                                <a href="{{ url('admin_parcel_orders/report/date/filter/'.$customer_admin_id.'/'.date('Y-m-d',strtotime($date))) }}" style="font-size: 20px;" class="btn btn-lg btn-success mt-1" id="{{ date('d', strtotime($date)) }}" style="position: relative;">
+                                {{ date('d', strtotime($date)) }}
+                                    <span class="pl-1 pr-1" style="position: absolute; top: 0px; background-color: red; height: 15px; font-size: 10px; border-radius: 50%;">
+                                        <?php
+                                            $count=DB::select("select * from customer_orders where customer_id='$customer_admin_id' and Date(created_at)='$date' and order_type='parcel'");
+                                            echo count($count);
+                                        ?>
+                                    </span>
+                                </a>
+                            @else
+                                <a href="{{ url('admin_parcel_orders/report/date/filter/'.$customer_admin_id.'/'.date('Y-m-d',strtotime($date))) }}" style="font-size: 20px;" class="btn btn-lg btn-secondary mt-1" id="{{ date('d', strtotime($date)) }}" style="position: relative;">
+                                {{ date('d', strtotime($date)) }}
+                                    <span class="pl-1 pr-1" style="position: absolute; top: 0px; background-color: red; height: 15px; font-size: 10px; border-radius: 50%;">
+                                        <?php
+                                            $count=DB::select("select * from customer_orders where customer_id='$customer_admin_id' and Date(created_at)='$date' and order_type='parcel' ");
+                                            echo count($count);
+                                        ?>
+                                    </span>
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+                    <div class="ml-1 mt-4 mr-1" style="margin-bottom: 75px;">
                         <a class="btn btn-block mt-1 font-weight-bold" style="font-size: 14px;">
                             <div class="container-fluid">
                                 <div class="row">

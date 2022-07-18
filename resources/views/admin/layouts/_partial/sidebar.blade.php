@@ -200,6 +200,40 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 35%;">
+                            <p>Report Orders</p>
+                        </div>
+                        <div style="width: 30%;">
+                            {{-- <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
+                            
+                            </span> --}}
+                        </div>
+                        <div style="width: 20%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/riders/parcel_order/report')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Parcel Orders Report</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/riders/food_order/report')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Food Orders Report</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
                             <i class="fa fa-users" aria-hidden="true"></i>
                         </div>
                         <div style="width: 50%;">
