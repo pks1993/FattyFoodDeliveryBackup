@@ -67,7 +67,7 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane table-responsive active" id="Admin">
-                                <table border="0" cellspacing="7" cellpadding="7">
+                                <table border="0" cellspacing="5" cellpadding="5">
                                     <tbody>
                                         <tr>
                                             <td>Minimum date:</td>
