@@ -959,6 +959,76 @@ class OrderController extends Controller
         return redirect()->back();
     }
 
+    public function rider_parcel_order_report()
+    {
+        return view('admin.report.parcel_report');
+    }
+
+    public function report_parcelorderajax()
+    {
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8','15'])->where('order_type','parcel')->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_id){
+                $value->customer_name=$value->customer->customer_name;
+            }else{
+                $value->customer_name="Empty";
+            }
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Empty";
+            }
+            $value->profit=$value->bill_total_price-$value->rider_delivery_fee;
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d/m/Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true);
+    }
+    public function rider_food_order_report()
+    {
+        return view('admin.report.food_report');
+    }
+
+    public function report_foodorderajax()
+    {
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8','15'])->where('order_type','food')->get();
+        $data=[];
+        foreach($model as $value){
+            if($value->customer_id){
+                $value->customer_name=$value->customer->customer_name;
+            }else{
+                $value->customer_name="Empty";
+            }
+            if($value->rider_id){
+                $value->rider_name=$value->rider->rider_user_name;
+            }else{
+                $value->rider_name="Empty";
+            }
+            if($value->restaurant_id){
+                $value->income=($value->bill_total_price*$value->restaurant->percentage/100)." (".$value->restaurant->percentage."%)";
+            }
+            $value->profit=($value->bill_total_price*$value->restaurant->percentage/100)-$value->rider_delivery_fee;
+            array_push($data,$value);
+        }
+        return DataTables::of($model)
+        ->addIndexColumn()
+        ->addColumn('ordered_date', function(CustomerOrder $item){
+            $ordered_date = $item->created_at->format('d/m/Y');
+            return $ordered_date;
+        })
+        ->rawColumns(['ordered_date'])
+        ->searchPane('model', $model)
+        ->make(true);
+    }
+
     /**
     * Update the specified resource in storage.
     *
