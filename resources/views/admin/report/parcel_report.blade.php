@@ -127,9 +127,9 @@
 
    $(document).ready(function() {
        // Create date inputs
-       $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd/M/yy' });
+       $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd/mm/yy' });
 
-       $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd/M/yy' });
+       $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd/mm/yy' });
 
        // DataTables initialisation
        var table = $("#foods_orders").DataTable({
