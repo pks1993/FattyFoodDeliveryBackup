@@ -64,7 +64,7 @@ class Kernel extends ConsoleKernel
                         ->get();
                     }
                     if($value->order_type=="parcel"){
-                        $riders=DB::table("riders")->select("riders.rider_id"
+                        $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                         * cos(radians(riders.rider_latitude))
                         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -109,7 +109,7 @@ class Kernel extends ConsoleKernel
                             ->get();
                         }
                         if($value->order_type=="parcel"){
-                            $riders=DB::table("riders")->select("riders.rider_id"
+                            $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                             ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                             * cos(radians(riders.rider_latitude))
                             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -154,7 +154,7 @@ class Kernel extends ConsoleKernel
                                 ->get();
                             }
                             if($value->order_type=="parcel"){
-                                $riders=DB::table("riders")->select("riders.rider_id"
+                                $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                                 ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                                 * cos(radians(riders.rider_latitude))
                                 * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -199,7 +199,7 @@ class Kernel extends ConsoleKernel
                                     ->get();
                                 }
                                 if($value->order_type=="parcel"){
-                                    $riders=DB::table("riders")->select("riders.rider_id"
+                                    $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                                     ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                                     * cos(radians(riders.rider_latitude))
                                     * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -244,7 +244,7 @@ class Kernel extends ConsoleKernel
                                         ->get();
                                     }
                                     if($value->order_type=="parcel"){
-                                        $riders=DB::table("riders")->select("riders.rider_id"
+                                        $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                                         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                                         * cos(radians(riders.rider_latitude))
                                         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -324,7 +324,7 @@ class Kernel extends ConsoleKernel
                         ->get();
                     }
                     if($value->order_type=="parcel"){
-                        $riders=DB::table("riders")->select("riders.rider_id"
+                        $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                         * cos(radians(riders.rider_latitude))
                         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -369,7 +369,7 @@ class Kernel extends ConsoleKernel
                             ->get();
                         }
                         if($value->order_type=="parcel"){
-                            $riders=DB::table("riders")->select("riders.rider_id"
+                            $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                             ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                             * cos(radians(riders.rider_latitude))
                             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -414,7 +414,7 @@ class Kernel extends ConsoleKernel
                                 ->get();
                             }
                             if($value->order_type=="parcel"){
-                                $riders=DB::table("riders")->select("riders.rider_id"
+                                $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                                 ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                                 * cos(radians(riders.rider_latitude))
                                 * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -459,7 +459,7 @@ class Kernel extends ConsoleKernel
                                     ->get();
                                 }
                                 if($value->order_type=="parcel"){
-                                    $riders=DB::table("riders")->select("riders.rider_id"
+                                    $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                                     ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                                     * cos(radians(riders.rider_latitude))
                                     * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -538,7 +538,7 @@ class Kernel extends ConsoleKernel
                         ->get();
                     }
                     if($value->order_type=="parcel"){
-                        $riders=DB::table("riders")->select("riders.rider_id"
+                        $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                         * cos(radians(riders.rider_latitude))
                         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -583,7 +583,7 @@ class Kernel extends ConsoleKernel
                             ->get();
                         }
                         if($value->order_type=="parcel"){
-                            $riders=DB::table("riders")->select("riders.rider_id"
+                            $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                             ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                             * cos(radians(riders.rider_latitude))
                             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -628,7 +628,7 @@ class Kernel extends ConsoleKernel
                                 ->get();
                             }
                             if($value->order_type=="parcel"){
-                                $riders=DB::table("riders")->select("riders.rider_id"
+                                $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                                 ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                                 * cos(radians(riders.rider_latitude))
                                 * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -706,7 +706,7 @@ class Kernel extends ConsoleKernel
                         ->get();
                     }
                     if($value->order_type=="parcel"){
-                        $riders=DB::table("riders")->select("riders.rider_id"
+                        $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                         * cos(radians(riders.rider_latitude))
                         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -751,7 +751,7 @@ class Kernel extends ConsoleKernel
                             ->get();
                         }
                         if($value->order_type=="parcel"){
-                            $riders=DB::table("riders")->select("riders.rider_id"
+                            $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                             ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                             * cos(radians(riders.rider_latitude))
                             * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
@@ -826,7 +826,7 @@ class Kernel extends ConsoleKernel
                         ->get();
                     }
                     if($value->order_type=="parcel"){
-                        $riders=DB::table("riders")->select("riders.rider_id"
+                        $riders=DB::table("riders")->select("riders.rider_id","riders.rider_fcm_token"
                         ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
                         * cos(radians(riders.rider_latitude))
                         * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
