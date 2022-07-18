@@ -2423,258 +2423,263 @@ class OrderApiController extends Controller
         }else{
             $customer_booking_id="MDY-".date('ymd').(1+$booking_count);
         }
-        $customer_orders=new CustomerOrder();
-        $customer_orders->customer_order_id=$customer_order_id;
-        $customer_orders->customer_booking_id=$customer_booking_id;
-        $customer_orders->customer_id=$customer_id;
-        $customer_orders->customer_address_id=$customer_address_id;
-        $customer_orders->restaurant_id=$restaurant_id;
-        $customer_orders->order_description=$order_description;
-        $customer_orders->estimated_start_time=$start_time;
-        $customer_orders->estimated_end_time=$end_time;
-        $customer_orders->delivery_fee=$delivery_fee;
-        $customer_orders->rider_delivery_fee=$rider_delivery_fee;
-        $customer_orders->rider_restaurant_distance=$distances;
-        $customer_orders->item_total_price=$item_total_price;
-        $customer_orders->bill_total_price=$bill_total_price;
-        // $customer_orders->bill_total_price=1;
-        $customer_orders->customer_address_latitude=$customer_address_latitude;
-        $customer_orders->customer_address_longitude=$customer_address_longitude;
+        $check_close=Restaurant::where('restaurant_id',$restaurant_id)->where('restaurant_emergency_status',0)->first();
+        if($check_close){
+            $customer_orders=new CustomerOrder();
+            $customer_orders->customer_order_id=$customer_order_id;
+            $customer_orders->customer_booking_id=$customer_booking_id;
+            $customer_orders->customer_id=$customer_id;
+            $customer_orders->customer_address_id=$customer_address_id;
+            $customer_orders->restaurant_id=$restaurant_id;
+            $customer_orders->order_description=$order_description;
+            $customer_orders->estimated_start_time=$start_time;
+            $customer_orders->estimated_end_time=$end_time;
+            $customer_orders->delivery_fee=$delivery_fee;
+            $customer_orders->rider_delivery_fee=$rider_delivery_fee;
+            $customer_orders->rider_restaurant_distance=$distances;
+            $customer_orders->item_total_price=$item_total_price;
+            $customer_orders->bill_total_price=$bill_total_price;
+            // $customer_orders->bill_total_price=1;
+            $customer_orders->customer_address_latitude=$customer_address_latitude;
+            $customer_orders->customer_address_longitude=$customer_address_longitude;
 
-        $customer_orders->current_address=$current_address;
-        $customer_orders->building_system=$building_system;
-        $customer_orders->address_type=$address_type;
-        $customer_orders->customer_address_phone=$customer_address_phone;
+            $customer_orders->current_address=$current_address;
+            $customer_orders->building_system=$building_system;
+            $customer_orders->address_type=$address_type;
+            $customer_orders->customer_address_phone=$customer_address_phone;
 
 
-        $customer_orders->restaurant_address_latitude=$restaurant_address_latitude;
-        $customer_orders->restaurant_address_longitude=$restaurant_address_longitude;
-        $customer_orders->payment_method_id=$payment_method_id;
-        $customer_orders->order_status_id=$order_status_id;
-        $customer_orders->order_time=$order_time;
-        $customer_orders->order_type="food";
-        $customer_orders->is_admin_force_order=$is_admin_force_order;
-        $customer_orders->save();
+            $customer_orders->restaurant_address_latitude=$restaurant_address_latitude;
+            $customer_orders->restaurant_address_longitude=$restaurant_address_longitude;
+            $customer_orders->payment_method_id=$payment_method_id;
+            $customer_orders->order_status_id=$order_status_id;
+            $customer_orders->order_time=$order_time;
+            $customer_orders->order_type="food";
+            $customer_orders->is_admin_force_order=$is_admin_force_order;
+            $customer_orders->save();
 
-        //start History
-        CustomerOrderHistory::create([
-            "order_id"=>$customer_orders->order_id,
-            "order_status_id"=>$customer_orders->order_status_id,
-        ]);
-        //close History
-        //start customer order
-        $check=OrderCustomer::where('customer_id',$customer_id)->whereDate('created_at',date('Y-m-d'))->first();
-        if(empty($check)){
-            OrderCustomer::create([
-                "customer_id"=>$customer_id,
+            //start History
+            CustomerOrderHistory::create([
+                "order_id"=>$customer_orders->order_id,
+                "order_status_id"=>$customer_orders->order_status_id,
             ]);
-        }
-         //close customer order
-
-        $food_list=$request->food_list;
-        $food_lists=json_decode($food_list,true);
-        foreach ($food_lists as $list) {
-            $food_id=$list['food_id'];
-            $food_qty=$list['food_qty'];
-            $food_price=$list['food_price'];
-            $food_note=$list['food_note'];
-
-            $foods_check=Food::where('food_id',$food_id)->first();
-            $food_name_mm=$foods_check->food_name_mm;
-            $food_name_en=$foods_check->food_name_en;
-            $food_name_ch=$foods_check->food_name_ch;
-            $food_menu_id=$foods_check->food_menu_id;
-            $food_image=$foods_check->food_image;
-
-            if(!empty($foods_check)){
-                $foods=OrderFoods::create([
-                    "order_id"=>$customer_orders->order_id,
-                    "food_id"=>$food_id,
-                    "food_name_mm"=>$food_name_mm,
-                    "food_name_en"=>$food_name_en,
-                    "food_name_ch"=>$food_name_ch,
-                    "food_menu_id"=>$food_menu_id,
-                    "restaurant_id"=>$restaurant_id,
-                    "food_price"=>$food_price,
-                    "food_image"=>$food_image,
-                    "food_qty"=>$food_qty,
-                    "food_note"=>$food_note,
+            //close History
+            //start customer order
+            $check=OrderCustomer::where('customer_id',$customer_id)->whereDate('created_at',date('Y-m-d'))->first();
+            if(empty($check)){
+                OrderCustomer::create([
+                    "customer_id"=>$customer_id,
                 ]);
-            }else{
-                return response()->json(['success'=>false,'message'=>'food id not found!']);
             }
+             //close customer order
 
-            $sub_item=$list['sub_item'];
-            foreach($sub_item as $item){
-                $required_type=$item['required_type'];
-                $food_sub_item_id=$item['food_sub_item_id'];
+            $food_list=$request->food_list;
+            $food_lists=json_decode($food_list,true);
+            foreach ($food_lists as $list) {
+                $food_id=$list['food_id'];
+                $food_qty=$list['food_qty'];
+                $food_price=$list['food_price'];
+                $food_note=$list['food_note'];
 
-                $sub_item_check=FoodSubItem::where('food_sub_item_id',$food_sub_item_id)->first();
-                $section_name_mm=$sub_item_check->section_name_mm;
-                $section_name_en=$sub_item_check->section_name_en;
-                $section_name_ch=$sub_item_check->section_name_ch;
+                $foods_check=Food::where('food_id',$food_id)->first();
+                $food_name_mm=$foods_check->food_name_mm;
+                $food_name_en=$foods_check->food_name_en;
+                $food_name_ch=$foods_check->food_name_ch;
+                $food_menu_id=$foods_check->food_menu_id;
+                $food_image=$foods_check->food_image;
 
-                if(!empty($sub_item_check)){
-                    $sections=OrderFoodSection::create([
-                    "order_food_id"=>$foods->order_food_id,
-                    "food_sub_item_id"=>$food_sub_item_id,
-                    "section_name_mm"=>$section_name_mm,
-                    "section_name_en"=>$section_name_en,
-                    "section_name_ch"=>$section_name_ch,
-                    "required_type"=>$required_type,
-                    "food_id"=>$food_id,
-                    "restaurant_id"=>$restaurant_id,
-                ]);
+                if(!empty($foods_check)){
+                    $foods=OrderFoods::create([
+                        "order_id"=>$customer_orders->order_id,
+                        "food_id"=>$food_id,
+                        "food_name_mm"=>$food_name_mm,
+                        "food_name_en"=>$food_name_en,
+                        "food_name_ch"=>$food_name_ch,
+                        "food_menu_id"=>$food_menu_id,
+                        "restaurant_id"=>$restaurant_id,
+                        "food_price"=>$food_price,
+                        "food_image"=>$food_image,
+                        "food_qty"=>$food_qty,
+                        "food_note"=>$food_note,
+                    ]);
                 }else{
-                    return response()->json(['success'=>false,'message'=>'food sub item id not found!']);
+                    return response()->json(['success'=>false,'message'=>'food id not found!']);
                 }
 
-                $option=$item['option'];
-                foreach($option as $value){
-                    $food_sub_item_data_id=$value['food_sub_item_data_id'];
-                    $food_sub_item_price=$value['food_sub_item_price'];
+                $sub_item=$list['sub_item'];
+                foreach($sub_item as $item){
+                    $required_type=$item['required_type'];
+                    $food_sub_item_id=$item['food_sub_item_id'];
 
-                    $sub_item_data=FoodSubItemData::where('food_sub_item_data_id',$food_sub_item_data_id)->first();
-                    $item_name_mm=$sub_item_data->item_name_mm;
-                    $item_name_en=$sub_item_data->item_name_en;
-                    $item_name_ch=$sub_item_data->item_name_ch;
-                    $instock=$sub_item_data->instock;
+                    $sub_item_check=FoodSubItem::where('food_sub_item_id',$food_sub_item_id)->first();
+                    $section_name_mm=$sub_item_check->section_name_mm;
+                    $section_name_en=$sub_item_check->section_name_en;
+                    $section_name_ch=$sub_item_check->section_name_ch;
 
                     if(!empty($sub_item_check)){
-                        // $sections=OrderFoodOption::create([
-                        OrderFoodOption::create([
-                        "order_food_section_id"=>$sections->order_food_section_id,
-                        "food_sub_item_data_id"=>$food_sub_item_data_id,
-                        "item_name_mm"=>$item_name_mm,
-                        "item_name_en"=>$item_name_en,
-                        "item_name_ch"=>$item_name_ch,
-                        "food_sub_item_price"=>$food_sub_item_price,
-                        "instock"=>$instock,
+                        $sections=OrderFoodSection::create([
+                        "order_food_id"=>$foods->order_food_id,
+                        "food_sub_item_id"=>$food_sub_item_id,
+                        "section_name_mm"=>$section_name_mm,
+                        "section_name_en"=>$section_name_en,
+                        "section_name_ch"=>$section_name_ch,
+                        "required_type"=>$required_type,
                         "food_id"=>$food_id,
                         "restaurant_id"=>$restaurant_id,
                     ]);
                     }else{
-                        return response()->json(['success'=>false,'message'=>'food sub item data id not found!']);
+                        return response()->json(['success'=>false,'message'=>'food sub item id not found!']);
                     }
 
+                    $option=$item['option'];
+                    foreach($option as $value){
+                        $food_sub_item_data_id=$value['food_sub_item_data_id'];
+                        $food_sub_item_price=$value['food_sub_item_price'];
 
+                        $sub_item_data=FoodSubItemData::where('food_sub_item_data_id',$food_sub_item_data_id)->first();
+                        $item_name_mm=$sub_item_data->item_name_mm;
+                        $item_name_en=$sub_item_data->item_name_en;
+                        $item_name_ch=$sub_item_data->item_name_ch;
+                        $instock=$sub_item_data->instock;
+
+                        if(!empty($sub_item_check)){
+                            // $sections=OrderFoodOption::create([
+                            OrderFoodOption::create([
+                            "order_food_section_id"=>$sections->order_food_section_id,
+                            "food_sub_item_data_id"=>$food_sub_item_data_id,
+                            "item_name_mm"=>$item_name_mm,
+                            "item_name_en"=>$item_name_en,
+                            "item_name_ch"=>$item_name_ch,
+                            "food_sub_item_price"=>$food_sub_item_price,
+                            "instock"=>$instock,
+                            "food_id"=>$food_id,
+                            "restaurant_id"=>$restaurant_id,
+                        ]);
+                        }else{
+                            return response()->json(['success'=>false,'message'=>'food sub item data id not found!']);
+                        }
+
+
+                    }
                 }
+
+            }
+            $check=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('order_id',$customer_orders->order_id)->first();
+            $data=[];
+            if($check->customer_address_id != 0){
+                if($check->customer_address->is_default==1){
+                    $check->customer_address->is_default=true;
+                }else{
+                    $check->customer_address->is_default=false;
+                }
+                array_push($data,$check);
             }
 
-        }
-        $check=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('order_id',$customer_orders->order_id)->first();
-        $data=[];
-        if($check->customer_address_id != 0){
-            if($check->customer_address->is_default==1){
-                $check->customer_address->is_default=true;
-            }else{
-                $check->customer_address->is_default=false;
-            }
-            array_push($data,$check);
-        }
 
+            if($check){
+                if($check->payment_method_id=="2"){
+                    $merchOrderId=(string)time();
+                    $check->merch_order_id=$merchOrderId;
+                    $check->update();
 
-        if($check){
-            if($check->payment_method_id=="2"){
-                $merchOrderId=(string)time();
-                $check->merch_order_id=$merchOrderId;
-                $check->update();
-
-                if(!isset($_SESSION))
-                {
-                    session_start();
-                }
-                $_SESSION['check']=$check;
-                $_SESSION['merchOrderId']=$merchOrderId;
-                $_SESSION['tradeType']="APP";
-                $_SESSION['totalAmount']=$check->bill_total_price;
-                $_SESSION['transCurrency']="MMK";
-                $_SESSION['transType']="APP";
-                $_SESSION['customer_fcm_token']=$customer_check->fcm_token;
-
-                return view('admin.src.example.place_order');
-            }else{
-                //customer
-                $cus_client = new Client();
-                $customer_token=$customer_check->fcm_token;
-                if($customer_token){
-                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                    try{
-                        $cus_client->post($cus_url,[
-                            'json' => [
-                                "to"=>$customer_token,
-                                "data"=> [
-                                    "type"=> "new_order",
-                                    "order_id"=>$customer_orders->order_id,
-                                    "order_status_id"=>$customer_orders->order_status_id,
-                                    "order_type"=>$customer_orders->order_type,
-                                    "title_mm"=> "Order Notification",
-                                    "body_mm"=> "Your order has been confirmed successfully! Please wait for delivery!",
-                                    "title_en"=> "Order Notification",
-                                    "body_en"=> "Your order has been confirmed successfully! Please wait for delivery!",
-                                    "title_ch"=> "订单通知",
-                                    "body_ch"=> "您的订单已确认!"
-                                ],
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                ],
-                            ],
-                        ]);
-                    }catch(ClientException $e){
+                    if(!isset($_SESSION))
+                    {
+                        session_start();
                     }
-                }
+                    $_SESSION['check']=$check;
+                    $_SESSION['merchOrderId']=$merchOrderId;
+                    $_SESSION['tradeType']="APP";
+                    $_SESSION['totalAmount']=$check->bill_total_price;
+                    $_SESSION['transCurrency']="MMK";
+                    $_SESSION['transType']="APP";
+                    $_SESSION['customer_fcm_token']=$customer_check->fcm_token;
 
-
-                //restaurant
-                $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->first();
-                $restaurant_client = new Client();
-                $restaurant_token=$restaurant_check->restaurant_fcm_token;
-                $orderId=(string)$customer_orders->order_id;
-                $orderstatusId=(string)$customer_orders->order_status_id;
-                $orderType=(string)$customer_orders->order_type;
-                if($restaurant_token){
-                    $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
-                    try{
-                        $response=$restaurant_client->post($restaurant_url,[
-                            'json' => [
-                                "to"=>$restaurant_token,
-                                "data"=> [
-                                    "type"=> "new_order",
-                                    "order_id"=>$orderId,
-                                    "order_status_id"=>$orderstatusId,
-                                    "order_type"=>$orderType,
-                                    "title_mm"=> "Order Notification",
-                                    "body_mm"=> "One new order is received! Please check it!",
-                                    "title_en"=> "Order Notification",
-                                    "body_en"=> "One new order is received! Please check it!",
-                                    "title_ch"=> "订单通知",
-                                    "body_ch"=> "收到一个新订单!请查看！",
-                                    "sound" => "receiveNoti.caf",
+                    return view('admin.src.example.place_order');
+                }else{
+                    //customer
+                    $cus_client = new Client();
+                    $customer_token=$customer_check->fcm_token;
+                    if($customer_token){
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        try{
+                            $cus_client->post($cus_url,[
+                                'json' => [
+                                    "to"=>$customer_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$customer_orders->order_id,
+                                        "order_status_id"=>$customer_orders->order_status_id,
+                                        "order_type"=>$customer_orders->order_type,
+                                        "title_mm"=> "Order Notification",
+                                        "body_mm"=> "Your order has been confirmed successfully! Please wait for delivery!",
+                                        "title_en"=> "Order Notification",
+                                        "body_en"=> "Your order has been confirmed successfully! Please wait for delivery!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "您的订单已确认!"
+                                    ],
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                    ],
                                 ],
-                                "sound" => "receiveNoti.caf",
-                                "mutable_content" => true ,
-                                "content_available" => true,
-                                "notification"=> [
-                                    "title"=>"this is a title",
-                                    "body"=>"this is a body",
-                                    "sound" => "receiveNoti.caf",
-                                ],
-                            ],
-
-                        ]);
-
-
-                    }catch(ClientException $e){
+                            ]);
+                        }catch(ClientException $e){
+                        }
                     }
-                }
 
-                return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>['response'=>$response,'order'=>$check]]);
+
+                    //restaurant
+                    $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->where('restaurant_emergency_status','1')->first();
+                    $restaurant_client = new Client();
+                    $restaurant_token=$restaurant_check->restaurant_fcm_token;
+                    $orderId=(string)$customer_orders->order_id;
+                    $orderstatusId=(string)$customer_orders->order_status_id;
+                    $orderType=(string)$customer_orders->order_type;
+                    if($restaurant_token){
+                        $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                        try{
+                            $response=$restaurant_client->post($restaurant_url,[
+                                'json' => [
+                                    "to"=>$restaurant_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Notification",
+                                        "body_mm"=> "One new order is received! Please check it!",
+                                        "title_en"=> "Order Notification",
+                                        "body_en"=> "One new order is received! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "收到一个新订单!请查看！",
+                                        "sound" => "receiveNoti.caf",
+                                    ],
+                                    "sound" => "receiveNoti.caf",
+                                    "mutable_content" => true ,
+                                    "content_available" => true,
+                                    "notification"=> [
+                                        "title"=>"this is a title",
+                                        "body"=>"this is a body",
+                                        "sound" => "receiveNoti.caf",
+                                    ],
+                                ],
+
+                            ]);
+
+
+                        }catch(ClientException $e){
+                        }
+                    }
+
+                    return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>['response'=>$response,'order'=>$check]]);
+                }
+            }else{
+                return response()->json(['success'=>false,'message'=>"Error! not define orders"]);
             }
         }else{
-            return response()->json(['success'=>false,'message'=>"Error! not define orders"]);
+            return response()->json(['success'=>false,'message'=>"Restaurant donot open this days Thanks!"]);
         }
 
 

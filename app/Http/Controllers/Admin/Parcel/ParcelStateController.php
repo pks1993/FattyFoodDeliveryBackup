@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 // use Yajra\DataTables\DataTables;
 // use Illuminate\Support\Facades\Cookie;
 
@@ -932,9 +933,9 @@ class ParcelStateController extends Controller
                                         + sin(radians(" .$from_pickup_latitude. "))
                                         * sin(radians(riders.rider_latitude))) AS distance"))
                                         ->groupBy("riders.rider_id")
-                                        ->where('is_order','0')
-                                        ->where('active_inactive_status','1')
-                                        ->where('is_ban','0')
+                                        ->where('is_order',0)
+                                        ->where('active_inactive_status',1)
+                                        ->where('is_ban',0)
                                         ->get();
                                         foreach($riders as $rider){
                                             $riderid[]=$rider->rider_id;
@@ -1345,6 +1346,20 @@ class ParcelStateController extends Controller
 
     public function admin_rider_order_report($customer_admin_id)
     {
+        $firstDay = Carbon::now()->startOfMonth();;
+        $nowDay = Carbon::now();
+        $days=$firstDay->diffInDays($nowDay);
+
+        $period = CarbonPeriod::create($firstDay, $nowDay);
+        // Iterate over the period
+        foreach ($period as $date) {
+            echo $date->format('Y-m-d');
+        }
+
+        // Convert the period to an array of dates
+        $dates = $period->toArray();
+        dd($dates);
+
         $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
         $day_times=$orders->count();
         $day_amount=$orders->sum('bill_total_price');
