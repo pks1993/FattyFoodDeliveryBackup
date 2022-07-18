@@ -71,11 +71,11 @@
                                     <tbody>
                                         <tr>
                                             <td>Minimum date:</td>
-                                            <td><input type="text" id="min" value="{{ now()->format('d-m-Y') }}" name="min"></td>
+                                            <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
                                         </tr>
                                         <tr>
                                             <td>Maximum date:</td>
-                                            <td><input type="text" id="max" value="{{ now()->format('d-m-Y') }}" name="max"></td>
+                                            <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -128,9 +128,9 @@
 
    $(document).ready(function() {
        // Create date inputs
-       $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-mm-yy' });
+       $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
 
-       $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-mm-yy' });
+       $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
 
        // DataTables initialisation
        var table = $("#foods_orders").DataTable({

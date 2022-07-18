@@ -71,11 +71,11 @@
                                     <tbody>
                                         <tr>
                                             <td>Minimum date:</td>
-                                            <td><input type="text" id="min" value="{{ now()->format('d-m-Y') }}" name="min"></td>
+                                            <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
                                         </tr>
                                         <tr>
                                             <td>Maximum date:</td>
-                                            <td><input type="text" id="max" value="{{ now()->format('d-m-Y') }}" name="max"></td>
+                                            <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
                                         </tr>
                                     </tbody>
                                 </table>

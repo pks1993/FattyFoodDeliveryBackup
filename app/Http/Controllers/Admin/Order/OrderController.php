@@ -985,7 +985,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-m-Y');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->rawColumns(['ordered_date'])
@@ -1021,7 +1021,7 @@ class OrderController extends Controller
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('ordered_date', function(CustomerOrder $item){
-            $ordered_date = $item->created_at->format('d-m-Y');
+            $ordered_date = $item->created_at->format('d-M-Y');
             return $ordered_date;
         })
         ->rawColumns(['ordered_date'])
