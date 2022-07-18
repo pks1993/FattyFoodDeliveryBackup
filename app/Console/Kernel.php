@@ -63,6 +63,20 @@ class Kernel extends ConsoleKernel
                         ->where('is_ban','0')
                         ->get();
                     }
+                    if($value->order_type=="parcel"){
+                        $riders=DB::table("riders")->select("riders.rider_id"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',2.1)
+                        ->groupBy("riders.rider_id")
+                        ->where('is_order',0)
+                        ->where('active_inactive_status',1)
+                        ->where('is_ban',0)
+                        ->get();
+                    }
                     if($riders->isNotEmpty()){
                         $riderFcmToken=array();
                         foreach($riders as $rid){
@@ -92,6 +106,20 @@ class Kernel extends ConsoleKernel
                             ->where('rider_fcm_token','!=',null)
                             ->where('active_inactive_status','1')
                             ->where('is_ban','0')
+                            ->get();
+                        }
+                        if($value->order_type=="parcel"){
+                            $riders=DB::table("riders")->select("riders.rider_id"
+                            ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                            * cos(radians(riders.rider_latitude))
+                            * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                            + sin(radians(" .$from_pickup_latitude. "))
+                            * sin(radians(riders.rider_latitude))) AS distance"))
+                            ->having('distance','<',3.1)
+                            ->groupBy("riders.rider_id")
+                            ->where('is_order',0)
+                            ->where('active_inactive_status',1)
+                            ->where('is_ban',0)
                             ->get();
                         }
                         if($riders->isNotEmpty()){
@@ -125,6 +153,20 @@ class Kernel extends ConsoleKernel
                                 ->where('is_ban','0')
                                 ->get();
                             }
+                            if($value->order_type=="parcel"){
+                                $riders=DB::table("riders")->select("riders.rider_id"
+                                ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                                * cos(radians(riders.rider_latitude))
+                                * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                                + sin(radians(" .$from_pickup_latitude. "))
+                                * sin(radians(riders.rider_latitude))) AS distance"))
+                                ->having('distance','<',4.1)
+                                ->groupBy("riders.rider_id")
+                                ->where('is_order',0)
+                                ->where('active_inactive_status',1)
+                                ->where('is_ban',0)
+                                ->get();
+                            }
                             if($riders->isNotEmpty()){
                                 $riderFcmToken=array();
                                 foreach($riders as $rid){
@@ -156,6 +198,20 @@ class Kernel extends ConsoleKernel
                                     ->where('is_ban','0')
                                     ->get();
                                 }
+                                if($value->order_type=="parcel"){
+                                    $riders=DB::table("riders")->select("riders.rider_id"
+                                    ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                                    * cos(radians(riders.rider_latitude))
+                                    * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                                    + sin(radians(" .$from_pickup_latitude. "))
+                                    * sin(radians(riders.rider_latitude))) AS distance"))
+                                    ->having('distance','<',5.1)
+                                    ->groupBy("riders.rider_id")
+                                    ->where('is_order',0)
+                                    ->where('active_inactive_status',1)
+                                    ->where('is_ban',0)
+                                    ->get();
+                                }
                                 if($riders->isNotEmpty()){
                                     $riderFcmToken=array();
                                     foreach($riders as $rid){
@@ -185,6 +241,20 @@ class Kernel extends ConsoleKernel
                                         ->where('rider_fcm_token','!=',null)
                                         ->where('active_inactive_status','1')
                                         ->where('is_ban','0')
+                                        ->get();
+                                    }
+                                    if($value->order_type=="parcel"){
+                                        $riders=DB::table("riders")->select("riders.rider_id"
+                                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                                        * cos(radians(riders.rider_latitude))
+                                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                                        + sin(radians(" .$from_pickup_latitude. "))
+                                        * sin(radians(riders.rider_latitude))) AS distance"))
+                                        ->having('distance','<',6.1)
+                                        ->groupBy("riders.rider_id")
+                                        ->where('is_order',0)
+                                        ->where('active_inactive_status',1)
+                                        ->where('is_ban',0)
                                         ->get();
                                     }
                                     if($riders->isNotEmpty()){
@@ -253,6 +323,20 @@ class Kernel extends ConsoleKernel
                         ->where('is_ban','0')
                         ->get();
                     }
+                    if($value->order_type=="parcel"){
+                        $riders=DB::table("riders")->select("riders.rider_id"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',3.1)
+                        ->groupBy("riders.rider_id")
+                        ->where('is_order',0)
+                        ->where('active_inactive_status',1)
+                        ->where('is_ban',0)
+                        ->get();
+                    }
                     if($riders->isNotEmpty()){
                         $riderFcmToken=array();
                         foreach($riders as $rid){
@@ -282,6 +366,20 @@ class Kernel extends ConsoleKernel
                             ->where('rider_fcm_token','!=',null)
                             ->where('active_inactive_status','1')
                             ->where('is_ban','0')
+                            ->get();
+                        }
+                        if($value->order_type=="parcel"){
+                            $riders=DB::table("riders")->select("riders.rider_id"
+                            ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                            * cos(radians(riders.rider_latitude))
+                            * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                            + sin(radians(" .$from_pickup_latitude. "))
+                            * sin(radians(riders.rider_latitude))) AS distance"))
+                            ->having('distance','<',4.1)
+                            ->groupBy("riders.rider_id")
+                            ->where('is_order',0)
+                            ->where('active_inactive_status',1)
+                            ->where('is_ban',0)
                             ->get();
                         }
                         if($riders->isNotEmpty()){
@@ -315,6 +413,20 @@ class Kernel extends ConsoleKernel
                                 ->where('is_ban','0')
                                 ->get();
                             }
+                            if($value->order_type=="parcel"){
+                                $riders=DB::table("riders")->select("riders.rider_id"
+                                ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                                * cos(radians(riders.rider_latitude))
+                                * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                                + sin(radians(" .$from_pickup_latitude. "))
+                                * sin(radians(riders.rider_latitude))) AS distance"))
+                                ->having('distance','<',5.1)
+                                ->groupBy("riders.rider_id")
+                                ->where('is_order',0)
+                                ->where('active_inactive_status',1)
+                                ->where('is_ban',0)
+                                ->get();
+                            }
                             if($riders->isNotEmpty()){
                                 $riderFcmToken=array();
                                 foreach($riders as $rid){
@@ -344,6 +456,20 @@ class Kernel extends ConsoleKernel
                                     ->where('rider_fcm_token','!=',null)
                                     ->where('active_inactive_status','1')
                                     ->where('is_ban','0')
+                                    ->get();
+                                }
+                                if($value->order_type=="parcel"){
+                                    $riders=DB::table("riders")->select("riders.rider_id"
+                                    ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                                    * cos(radians(riders.rider_latitude))
+                                    * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                                    + sin(radians(" .$from_pickup_latitude. "))
+                                    * sin(radians(riders.rider_latitude))) AS distance"))
+                                    ->having('distance','<',6.1)
+                                    ->groupBy("riders.rider_id")
+                                    ->where('is_order',0)
+                                    ->where('active_inactive_status',1)
+                                    ->where('is_ban',0)
                                     ->get();
                                 }
                                 if($riders->isNotEmpty()){
@@ -411,6 +537,20 @@ class Kernel extends ConsoleKernel
                         ->where('is_ban','0')
                         ->get();
                     }
+                    if($value->order_type=="parcel"){
+                        $riders=DB::table("riders")->select("riders.rider_id"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',4.1)
+                        ->groupBy("riders.rider_id")
+                        ->where('is_order',0)
+                        ->where('active_inactive_status',1)
+                        ->where('is_ban',0)
+                        ->get();
+                    }
                     if($riders->isNotEmpty()){
                         $riderFcmToken=array();
                         foreach($riders as $rid){
@@ -442,6 +582,20 @@ class Kernel extends ConsoleKernel
                             ->where('is_ban','0')
                             ->get();
                         }
+                        if($value->order_type=="parcel"){
+                            $riders=DB::table("riders")->select("riders.rider_id"
+                            ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                            * cos(radians(riders.rider_latitude))
+                            * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                            + sin(radians(" .$from_pickup_latitude. "))
+                            * sin(radians(riders.rider_latitude))) AS distance"))
+                            ->having('distance','<',5.1)
+                            ->groupBy("riders.rider_id")
+                            ->where('is_order',0)
+                            ->where('active_inactive_status',1)
+                            ->where('is_ban',0)
+                            ->get();
+                        }
                         if($riders->isNotEmpty()){
                             $riderFcmToken=array();
                             foreach($riders as $rid){
@@ -471,6 +625,20 @@ class Kernel extends ConsoleKernel
                                 ->where('rider_fcm_token','!=',null)
                                 ->where('active_inactive_status','1')
                                 ->where('is_ban','0')
+                                ->get();
+                            }
+                            if($value->order_type=="parcel"){
+                                $riders=DB::table("riders")->select("riders.rider_id"
+                                ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                                * cos(radians(riders.rider_latitude))
+                                * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                                + sin(radians(" .$from_pickup_latitude. "))
+                                * sin(radians(riders.rider_latitude))) AS distance"))
+                                ->having('distance','<',6.1)
+                                ->groupBy("riders.rider_id")
+                                ->where('is_order',0)
+                                ->where('active_inactive_status',1)
+                                ->where('is_ban',0)
                                 ->get();
                             }
                             if($riders->isNotEmpty()){
@@ -537,6 +705,20 @@ class Kernel extends ConsoleKernel
                         ->where('is_ban','0')
                         ->get();
                     }
+                    if($value->order_type=="parcel"){
+                        $riders=DB::table("riders")->select("riders.rider_id"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',5.1)
+                        ->groupBy("riders.rider_id")
+                        ->where('is_order',0)
+                        ->where('active_inactive_status',1)
+                        ->where('is_ban',0)
+                        ->get();
+                    }
                     if($riders->isNotEmpty()){
                         $riderFcmToken=array();
                         foreach($riders as $rid){
@@ -566,6 +748,20 @@ class Kernel extends ConsoleKernel
                             ->where('rider_fcm_token','!=',null)
                             ->where('active_inactive_status','1')
                             ->where('is_ban','0')
+                            ->get();
+                        }
+                        if($value->order_type=="parcel"){
+                            $riders=DB::table("riders")->select("riders.rider_id"
+                            ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                            * cos(radians(riders.rider_latitude))
+                            * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                            + sin(radians(" .$from_pickup_latitude. "))
+                            * sin(radians(riders.rider_latitude))) AS distance"))
+                            ->having('distance','<',6.1)
+                            ->groupBy("riders.rider_id")
+                            ->where('is_order',0)
+                            ->where('active_inactive_status',1)
+                            ->where('is_ban',0)
                             ->get();
                         }
                         if($riders->isNotEmpty()){
@@ -627,6 +823,20 @@ class Kernel extends ConsoleKernel
                         ->groupBy("rider_id")
                         ->where('is_order',0)
                         ->where('rider_fcm_token','!=',null)
+                        ->get();
+                    }
+                    if($value->order_type=="parcel"){
+                        $riders=DB::table("riders")->select("riders.rider_id"
+                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                        * cos(radians(riders.rider_latitude))
+                        * cos(radians(riders.rider_longitude) - radians(" . $from_pickup_longitude . "))
+                        + sin(radians(" .$from_pickup_latitude. "))
+                        * sin(radians(riders.rider_latitude))) AS distance"))
+                        ->having('distance','<',6.1)
+                        ->groupBy("riders.rider_id")
+                        ->where('is_order',0)
+                        ->where('active_inactive_status',1)
+                        ->where('is_ban',0)
                         ->get();
                     }
                     if($riders->isNotEmpty()){
