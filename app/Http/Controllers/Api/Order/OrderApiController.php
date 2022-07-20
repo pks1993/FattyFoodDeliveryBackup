@@ -2631,7 +2631,7 @@ class OrderApiController extends Controller
 
 
                     //restaurant
-                    $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->where('restaurant_emergency_status','1')->first();
+                    $restaurant_check=Restaurant::where('restaurant_id',$restaurant_id)->where('restaurant_emergency_status','0')->first();
                     $restaurant_client = new Client();
                     $restaurant_token=$restaurant_check->restaurant_fcm_token;
                     $orderId=(string)$customer_orders->order_id;
