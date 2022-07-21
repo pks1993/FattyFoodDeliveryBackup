@@ -171,7 +171,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('riders/parcel_order/datatable/report/parcelorderajax','Admin\Order\OrderController@report_parcelorderajax');
     Route::get('riders/food_order/report','Admin\Order\OrderController@rider_food_order_report');
     Route::get('riders/food_order/datatable/report/foodorderajax','Admin\Order\OrderController@report_foodorderajax');
-
+    Route::get('riders/rider_order/report','Admin\Order\OrderController@rider_order_report');
+    Route::get('riders/rider_order/report_filter','Admin\Order\OrderController@rider_order_report_filter');
 
     Route::get('riders/datatable/riderajax','Admin\Rider\RiderController@riderajax');
     Route::get('rider_chart','Admin\Rider\RiderController@riderchart');

@@ -23,6 +23,9 @@ class CreateRidersTable extends Migration
             $table->string('rider_fcm_token')->nullable();
             $table->double('rider_latitude',10,2)->default(0.00);
             $table->double('rider_longitude',10,2)->default(0.00);
+            $table->unsignedBigInteger('rider_level_id')->default(1);
+            $table->integer('max_order')->default(0);
+            $table->double('max_distance')->nullable();
             $table->tinyInteger('is_ban')->nullable()->default(0);
             $table->tinyInteger('active_inactive_status')->nullable()->default(0);
             $table->tinyInteger('rider_attendance_status')->nullable()->default(0);

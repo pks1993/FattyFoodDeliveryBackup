@@ -207,7 +207,7 @@
                         </div>
                         <div style="width: 30%;">
                             {{-- <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
-                            
+
                             </span> --}}
                         </div>
                         <div style="width: 20%;text-align: right;">
@@ -216,6 +216,12 @@
                     </div>
                 </a>
                 <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/riders/rider_order/report')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Rider Orders Report</p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="{{url('fatty/main/admin/riders/parcel_order/report')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
