@@ -366,7 +366,7 @@ class ParcelStateController extends Controller
         $parcel_order_note=$request['parcel_order_note'];
         $deliveryfee=$request['price'];
         if($deliveryfee){
-            $delivery_fee=$$deliveryfee;
+            $delivery_fee=$deliveryfee;
         }else{
             $delivery_fee=0;
         }
