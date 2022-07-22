@@ -40,7 +40,7 @@
                 </div>
                 <div class="col-md-12">
                     <form action="{{ url('fatty/main/admin/riders/rider_order/report_filter') }}">
-                        <input class="col-3" type="date" name="date" value="{{ now()->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                        <input class="col-3" type="date" name="date" value="{{ $date }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                         <button class="col-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
                     </form>
                 </div>

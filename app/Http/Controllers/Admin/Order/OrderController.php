@@ -1033,23 +1033,12 @@ class OrderController extends Controller
     }
     public function rider_order_report()
     {
-        $date=now()->format('Y-m-d');
-        $riders=Rider::all();
-        // $data=[];
-        // foreach($riders1 as $rider){
-        //     $rider->order_count=$rider->rider_order->whereDate('created_at',$date)->count();
-        //     array_push($data,$rider);
-        // }
-        // $riders=array_reverse(array_sort($riders1, function ($value) {return $value['order_count'];}));
-
-        // return response()->json($riders);
-        // $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->get();
+        $date=Carbon::now()->format('Y-m-d');
+        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date);}])->orderBy('order_count','desc')->get();
+        $riders=$rider_check->where('order_count','!=',0);
         $orders=CustomerOrder::whereDate('created_at',$date)->get();
         $blocks=ParcelBlockList::all();
         $restaurants=Restaurant::all();
-        // $aa=DB::select("select sum(bill_total_price) from customer_orders where rider_id='1' and Date(created_at) ='".$date."'");
-        // dd($aa[0]);
-
 
         return view('admin.report.rider_report',compact('riders','orders','blocks','restaurants','date'));
     }
@@ -1057,13 +1046,9 @@ class OrderController extends Controller
     public function rider_order_report_filter(Request $request)
     {
         $date=$request['date'];
-        $riders=Rider::all();
+        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date);}])->orderBy('order_count','desc')->get();
+        $riders=$rider_check->where('order_count','!=',0);
         $orders=CustomerOrder::whereDate('created_at',$date)->get();
-        // if($date){
-        //     // return response()->json($orders);
-        //     $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->get();
-        // }else{
-        // }
         $blocks=ParcelBlockList::all();
         $restaurants=Restaurant::all();
 
