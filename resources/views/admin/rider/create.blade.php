@@ -95,6 +95,22 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="rider_level_id" class="col-md-12 col-form-label">{{ __('Rider Level') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <select id="rider_level_id" style="width: 100%;" class="form-control @error('rider_level_id') is-invalid @enderror" name="rider_level_id" value="{{ old('rider_level_id') }}" autocomplete="rider_level_id" autofocus>
+                                            <option value="">Choose Rider Level</option>
+                                            @foreach($rider_level as $level)
+                                                <option value="{{ $level->rider_level_id }}">{{ $level->level_name }}( {{ $level->max_order }} Orders / {{ $level->max_distance }} km )</option>
+                                            @endforeach
+                                        </select>
+                                        @error('rider_level_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
 
                                 <div class="form-group row">
                                     <label for="rider_user_password" class="col-md-12 col-form-label">{{ __('Password') }} <span  style="color: #990000;font-weight:700;">*</span></label>
@@ -171,6 +187,7 @@ $(document).ready(function () {
     //select2
     $('#state_id').select2();
     $('#is_admin_approved').select2();
+    $('#rider_level_id').select2();
 });
 //Image Show
 var loadFileImage= function(event) {

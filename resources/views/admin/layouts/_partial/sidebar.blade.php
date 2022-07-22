@@ -80,7 +80,7 @@
                         <div style="width: 30%;">
                             <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
                             <?php
-                                $count=DB::select("select * from customer_orders where order_type='food'");
+                                $count=DB::select("select * from customer_orders where order_type='food' and Date(created_at)=CURDATE()");
                                 echo count($count);
                             ?>
                             </span>
@@ -135,7 +135,7 @@
                         <div style="width: 30%;">
                             <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
                             <?php
-                                $count=DB::select("select * from customer_orders where order_type='parcel'");
+                                $count=DB::select("select * from customer_orders where order_type='parcel' and Date(created_at)=CURDATE()");
                                 echo count($count);
                             ?>
                             </span>
@@ -384,6 +384,12 @@
                         <a href="{{url('fatty/main/admin/riders')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Riders List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/riders_level')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Riders Level</p>
                         </a>
                     </li>
                     <li class="nav-item">

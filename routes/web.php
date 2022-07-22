@@ -156,6 +156,13 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('monthly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@monthly_admin_approved');
     Route::get('yearly_100_riders/admin/approved/update/{rider}','Admin\Rider\RiderController@yearly_admin_approved');
 
+    //Rider Level
+    Route::get('riders_level','Admin\Rider\RiderController@level_list');
+    Route::post('riders_level/store','Admin\Rider\RiderController@level_store')->name('riders_level.store');
+    Route::post('riders_level/update/{rider_level_id}','Admin\Rider\RiderController@level_update')->name('riders_level.update');
+    Route::delete('riders_level/delete/{rider_level_id}','Admin\Rider\RiderController@level_destroy')->name('riders_level.destroy');
+
+
     //Riders Map
     Route::get('all_riders_location','Admin\Rider\RiderController@all_rider_location');
     Route::get('all_riders_location/hasOrder','Admin\Rider\RiderController@has_order');

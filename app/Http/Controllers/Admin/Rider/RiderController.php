@@ -18,6 +18,7 @@ use App\Models\Order\CustomerOrder;
 use App\Models\Order\OrderAssign;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use App\Models\Rider\RiderLevel;
 
 class RiderController extends Controller
 {
@@ -346,12 +347,16 @@ class RiderController extends Controller
      */
     public function index()
     {
-        // $riders = Rider::latest('created_at')->paginate(10);
         return view('admin.rider.index');
     }
 
     public function riderajax(){
         $model =  Rider::latest('created_at')->get();
+        $data=[];
+        foreach($model as $value){
+            $value->rider_level_name=$value->rider_level->level_name;
+            array_push($data,$value);
+        }
         return DataTables::of($model)
         ->addIndexColumn()
         ->addColumn('action', function(Rider $post){
@@ -616,7 +621,8 @@ class RiderController extends Controller
     public function create()
     {
         $states=State::where('state_id','15')->first();
-        return view('admin.rider.create',compact('states'));
+        $rider_level=RiderLevel::all();
+        return view('admin.rider.create',compact('states','rider_level'));
     }
 
     /**
@@ -631,8 +637,17 @@ class RiderController extends Controller
             'rider_user_name' => 'required',
             'rider_user_phone' => 'required',
             'state_id' => 'required',
+            'rider_level_id'=>'required',
             'rider_user_password' => 'required|min:6|same:password_confirmation',
         ]);
+        $check_rider_level=RiderLevel::where('rider_level_id',$request['rider_level_id'])->first();
+        if($check_rider_level){
+            $max_order=$check_rider_level->max_order;
+            $max_distance=$check_rider_level->max_distance;
+        }else{
+            $max_order=0;
+            $max_distance=0;
+        }
         $photoname=time();
         $riders=new Rider();
 
@@ -646,6 +661,9 @@ class RiderController extends Controller
         $riders->state_id=$request['state_id'];
         $riders->rider_user_password=$request['rider_user_password'];
         $riders->is_admin_approved=$request['is_admin_approved'];
+        $riders->rider_level_id=$request['rider_level_id'];
+        $riders->max_order=$max_order;
+        $riders->max_distance=$max_distance;
         $riders->save();
 
         $request->session()->flash('alert-success', 'successfully store rider!');
@@ -704,7 +722,8 @@ class RiderController extends Controller
     {
         $rider=Rider::find($id);
         $states=State::where('state_id','15')->first();
-        return view('admin.rider.edit',compact('states','rider'));
+        $rider_level=RiderLevel::all();
+        return view('admin.rider.edit',compact('states','rider','rider_level'));
     }
 
     /**
@@ -716,6 +735,15 @@ class RiderController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $check_rider_level=RiderLevel::where('rider_level_id',$request['rider_level_id'])->first();
+        if($check_rider_level){
+            $max_order=$check_rider_level->max_order;
+            $max_distance=$check_rider_level->max_distance;
+        }else{
+            $max_order=0;
+            $max_distance=0;
+        }
+
         $photoname=time();
         $riders=Rider::where('rider_id',$id)->first();
 
@@ -730,6 +758,9 @@ class RiderController extends Controller
         $riders->state_id=$request['state_id'];
         $riders->rider_user_password=$request['rider_user_password'];
         $riders->is_admin_approved=$request['is_admin_approved'];
+        $riders->rider_level_id=$request['rider_level_id'];
+        $riders->max_order=$max_order;
+        $riders->max_distance=$max_distance;
         $riders->update();
 
         $request->session()->flash('alert-success', 'successfully update rider!');
@@ -924,6 +955,45 @@ class RiderController extends Controller
             }
         }
         $request->session()->flash('alert-success', 'successfully rider assign');
+        return redirect()->back();
+    }
+
+    public function level_list()
+    {
+        $rider_level=RiderLevel::orderBy('rider_level_id','desc')->get();
+        return view('admin.rider.rider_level.index',compact('rider_level'));
+    }
+    public function level_store(Request $request)
+    {
+        RiderLevel::create($request->all());
+        $request->session()->flash('alert-success', 'successfully store rider level');
+        return redirect()->back();
+    }
+
+    public function level_update(Request $request, $id)
+    {
+        RiderLevel::find($id)->update($request->all());
+        $check_rider=Rider::where('rider_level_id',$id)->first();
+        if($check_rider){
+            Rider::where('rider_level_id',$id)->update([
+                "max_order"=>$request['max_order'],
+                "max_distance"=>$request['max_distance']
+            ]);
+        }
+
+        $request->session()->flash('alert-success', "successfully updae rider ".$request['level_name']);
+        return redirect()->back();
+    }
+
+    public function level_destroy(Request $request,$id)
+    {
+        $check_rider=Rider::where('rider_level_id',$id)->first();
+        if($check_rider){
+            $request->session()->flash('alert-warning', "Donot't delete this level Because this have rider");
+        }else{
+            RiderLevel::destroy($id);
+            $request->session()->flash('alert-success', 'successfully delete rider level');
+        }
         return redirect()->back();
     }
 }

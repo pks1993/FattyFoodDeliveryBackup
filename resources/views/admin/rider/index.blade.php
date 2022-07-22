@@ -103,6 +103,9 @@
                                             <th>Image</th>
                                             <th class="text-left">RiderName</th>
                                             <th class="text-left">RiderPhone</th>
+                                            <th class="text-left">RiderLevel</th>
+                                            <th class="text-left">MaxOrder</th>
+                                            <th class="text-left">MaxDistance(Km)</th>
                                             <th class="text-left">StateName</th>
                                             <th class="text-left">RegisterDate</th>
                                             <th>Latitude</th>
@@ -171,6 +174,9 @@ setTimeout(function() {
                 {data: 'rider_image', name:'rider_image',className: "rider_image"},
                 {data: 'rider_user_name', name:'rider_user_name'},
                 {data: 'rider_user_phone', name:'rider_user_phone'},
+                {data: 'rider_level_name', name:'rider_level_name',className:"text-center"},
+                {data: 'max_order', name:'max_order',className:"text-center"},
+                {data: 'max_distance', name:'max_distance',className:"text-center"},
                 {data: 'state', name:'state'},
                 {data: 'register_date', name:'register_date',className: "register_date"},
                 {data: 'rider_latitude', name:'rider_latitude',className:"text-left"},
