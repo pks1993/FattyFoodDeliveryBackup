@@ -31,4 +31,8 @@ class Rider extends Model
     {
         return $this->hasMany('App\Models\Order\CustomerOrder','rider_id')->whereIn('order_status_id',['7','8','15']);
     }
+    public function rider_level()
+    {
+        return $this->belongsTo('App\Models\Rider\RiderLevel','rider_level_id','rider_level_id');
+    }
 }

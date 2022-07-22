@@ -64,38 +64,34 @@
                         </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="tab-pane table-responsive active" id="Admin">
-                                <table border="0" cellspacing="5" cellpadding="5">
-                                    <tbody>
-                                        <tr>
-                                            <td>Minimum date:</td>
-                                            <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Maximum date:</td>
-                                            <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table id="foods_orders" class="table table-bordered table-striped table-hover">
-                                    <thead>
-                                    <tr class="text-center">
-                                        <th>No.</th>
-                                        <th>Date</th>
-                                        <th>RiderName</th>
-                                        <th>OrderId</th>
-                                        <th>Income</th>
-                                        <th>RiderBill(DeliFee)</th>
-                                        <th>Profit</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="card-body table-responsive">
+                        <table border="0" cellspacing="5" cellpadding="5">
+                            <tbody>
+                                <tr>
+                                    <td>Minimum date:</td>
+                                    <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min"></td>
+                                </tr>
+                                <tr>
+                                    <td>Maximum date:</td>
+                                    <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table id="foods_orders" class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>No.</th>
+                                    <th>Date</th>
+                                    <th>RiderName</th>
+                                    <th>OrderId</th>
+                                    <th>Income</th>
+                                    <th>RiderBill(DeliFee)</th>
+                                    <th>Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
