@@ -76,6 +76,13 @@ Route::middleware('one_device_login')->group(function(){
     Route::post('v1/fatty/202221/lashio/main/admin/parcels/choose_address','Api\StateCity\StateCityApiController@parcel_choose_address');
     Route::post('v2/fatty/202221/lashio/main/admin/parcels/choose_address','Api\StateCity\StateCityApiController@v2_parcel_choose_address');
 
+    //Parcel Default Address
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/default_address/list','Api\StateCity\StateCityApiController@v2_parcel_default_address_list');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/default_address/store','Api\StateCity\StateCityApiController@v2_parcel_default_address_store');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/default_address/update','Api\StateCity\StateCityApiController@v2_parcel_default_address_update');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/default_address/default/create','Api\StateCity\StateCityApiController@v2_parcel_default_address_default_create');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/default_address/destroy','Api\StateCity\StateCityApiController@v2_parcel_default_address_default_destroy');
+
     //Search
     //Food
     Route::post('v1/fatty/202221/lashio/main/admin/customers/search','Api\Restaurant\RestaurantApiController@food_search_v1');
@@ -164,6 +171,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/states','Api\StateCity\StateCityA
 Route::post('v1/fatty/202221/lashio/main/admin/parcels/states','Api\StateCity\StateCityApiController@parcel_state_version1');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@parcel_choose_address');
 Route::post('v2/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@v2_parcel_choose_address');
+
 
 //Rider About
 Route::get('v1/fatty/202221/lashio/main/admin/application/riders/abouts','Api\About\AboutApiController@rider_about');
