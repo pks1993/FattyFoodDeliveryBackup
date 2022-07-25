@@ -1036,6 +1036,15 @@ class OrderController extends Controller
         $date=Carbon::now()->format('Y-m-d');
         $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date);}])->orderBy('order_count','desc')->get();
         $riders=$rider_check->where('order_count','!=',0);
+
+        // $orders=CustomerOrder::where('rider_id',17)->whereDate('created_at',$date)->get();
+        // $data=[];
+        // foreach($orders as $value){
+        //     $value->time=$value->updated_at->diffForHumans($value->created_at,true,true);
+        //     array_push($data,$value);
+        // }
+        // return response()->json($orders);
+
         $orders=CustomerOrder::whereDate('created_at',$date)->get();
         $blocks=ParcelBlockList::all();
         $restaurants=Restaurant::all();

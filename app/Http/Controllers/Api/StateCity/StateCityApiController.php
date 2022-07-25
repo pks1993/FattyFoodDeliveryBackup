@@ -13,6 +13,7 @@ use App\Models\City\ParcelBlockHistory;
 use App\Models\City\ParcelBlockList;
 use App\Models\City\ParcelFromToBlock;
 use App\Models\Customer\CustomerAddress;
+use App\Models\City\ParcelAddress;
 
 class StateCityApiController extends Controller
 {
@@ -164,5 +165,123 @@ class StateCityApiController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function v2_parcel_default_address_list(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        if($customer_id){
+            $parcel_address=ParcelAddress::where('customer_id',$customer_id)->select('parcel_default_address_id','customer_id','phone','address','is_default','parcel_block_id')->orderBy('is_default','desc')->orderBy('parcel_default_address_id','desc')->limit(50)->get();
+            if($parcel_address->isNotEmpty()){
+                $data=[];
+                foreach($parcel_address as $value){
+                    $value->block_name=$value->parcel_block->block_name;
+                    $value->state_id=$value->parcel_block->state_id;
+                    $value->latitude=$value->parcel_block->latitude;
+                    $value->longitude=$value->parcel_block->longitude;
+                    if($value->is_default==1){
+                        $value->is_default=true;
+                    }else{
+                        $value->is_default=false;
+                    }
+                    array_push($data,$value);
+                }
+            }
+            return response()->json(['success'=>true,'message'=>'parcel default address list','data'=>$parcel_address]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'Error! customer_id not found']);
+        }
+    }
+    public function v2_parcel_default_address_store(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $parcel_block_id=$request['parcel_block_id'];
+        $phone=$request['phone'];
+        $address=$request['address'];
+        $parcel_address=ParcelAddress::create([
+            "customer_id"=>$customer_id,
+            "parcel_block_id"=>$parcel_block_id,
+            "phone"=>$phone,
+            "address"=>$address,
+            "is_default"=>0,
+        ]);
+        $data=[];
+        if($parcel_address->is_default==1){
+            $parcel_address->is_default=true;
+        }else{
+            $parcel_address->is_default=false;
+        }
+        array_push($data,$parcel_address);
+        return response()->json(['success'=>true,'message'=>'successfully store parcel default address','data'=>$parcel_address]);
+    }
+    public function v2_parcel_default_address_update(Request $request)
+    {
+        $parcel_default_address_id=$request['parcel_default_address_id'];
+        $customer_id=$request['customer_id'];
+        $parcel_block_id=$request['parcel_block_id'];
+        $phone=$request['phone'];
+        $address=$request['address'];
+        $parcel_address=ParcelAddress::where('parcel_default_address_id',$parcel_default_address_id)->first();
+        if($parcel_address){
+            $parcel_address->customer_id=$customer_id;
+            $parcel_address->parcel_block_id=$parcel_block_id;
+            $parcel_address->phone=$phone;
+            $parcel_address->address=$address;
+            $parcel_address->is_default=$parcel_address->is_default;
+            $parcel_address->update();
+
+            $data=[];
+            if($parcel_address->is_default==1){
+                $parcel_address->is_default=true;
+            }else{
+                $parcel_address->is_default=false;
+            }
+            array_push($data,$parcel_address);
+            return response()->json(['success'=>true,'message'=>'successfully update parcel default address','data'=>$parcel_address]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'Error! parcel default address id not found']);
+        }
+    }
+    public function v2_parcel_default_address_default_create(Request $request)
+    {
+        $parcel_default_address_id=$request['parcel_default_address_id'];
+        $check_address=ParcelAddress::where('parcel_default_address_id',$parcel_default_address_id)->first();
+
+        if($check_address){
+            ParcelAddress::where('customer_id',$check_address->customer_id)->where('is_default','1')->update([
+                "is_default"=>0,
+            ]);
+            if($check_address->is_default=="1"){
+                ParcelAddress::where('parcel_default_address_id',$parcel_default_address_id)->update([
+                    "is_default"=>0,
+                ]);
+            }else{
+                ParcelAddress::where('parcel_default_address_id',$parcel_default_address_id)->update([
+                    "is_default"=>1,
+                ]);
+            }
+
+            $address=ParcelAddress::where('customer_id',$check_address->customer_id)->orderBy('is_default','DESC')->orderBy('parcel_default_address_id','desc')->get();
+            $data=[];
+            foreach ($address as $value) {
+                if($value->is_default==1){
+                    $value->is_default=true;
+                }else{
+                    $value->is_default=false;
+                }
+                array_push($data,$value);
+            }
+
+            return response()->json(['success'=>true,'message'=>'successfull update default','data'=>$address]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'parcel default address id not found']);
+        }
+    }
+
+    public function v2_parcel_default_address_default_destroy(Request $request)
+    {
+        $parcel_default_address_id=$request['parcel_default_address_id'];
+        ParcelAddress::destroy($parcel_default_address_id);
+        return response()->json(['success'=>true,'message'=>'successfull delete default address']);
     }
 }
