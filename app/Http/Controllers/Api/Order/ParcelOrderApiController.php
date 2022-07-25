@@ -1063,7 +1063,8 @@ class ParcelOrderApiController extends Controller
         if(!empty($parcel_image_list)){
             foreach($parcel_image_list as $list){
                 if(!empty($list)){
-                    $imagename=time()+1;
+                    $imagename=$list->getClientOriginalName();
+                    $imagename=str_replace(' ', '', $imagename);
                     $img_name=$imagename.'.'.$list->getClientOriginalExtension();
                     Storage::disk('ParcelImage')->put($img_name, File::get($list));
                 }
@@ -1821,7 +1822,9 @@ class ParcelOrderApiController extends Controller
                 // }
                 foreach($parcel_image_list as $list){
                     if(!empty($list)){
-                        $imagename=time()+1;
+                        // $imagename=time()+1;
+                        $imagename=$list->getClientOriginalName();
+                        $imagename=str_replace(' ', '', $imagename);
                         $img_name=$imagename.'.'.$list->getClientOriginalExtension();
                         Storage::disk('ParcelImage')->put($img_name, File::get($list));
                     }
