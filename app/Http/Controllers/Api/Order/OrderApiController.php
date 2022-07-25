@@ -26,6 +26,9 @@ use GuzzleHttp\Exception\ClientException;
 use App\Models\City\ParcelCity;
 use App\Models\City\ParcelBlockList;
 use App\Models\Order\NotiOrder;
+use App\Models\Order\ParcelImage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 
 class OrderApiController extends Controller
@@ -722,6 +725,14 @@ class OrderApiController extends Controller
                 }elseif($customer_orders->order_type=="parcel"){
                     $customer_orders->order_status_id=16;
                     $customer_orders->update();
+                    $images=ParcelImage::where('order_id',$order_id)->first();
+                    if($images){
+                        $par_image=ParcelImage::where('order_id',$order_id)->get();
+                        foreach($par_image as $value){
+                            Storage::disk('ParcelImage')->delete($value->parcel_image);
+                        }
+                        ParcelImage::where('order_id',$order_id)->delete();
+                    }
                     NotiOrder::where('order_id',$customer_orders->order_id)->delete();
 
                     return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
