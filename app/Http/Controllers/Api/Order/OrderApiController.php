@@ -181,7 +181,11 @@ class OrderApiController extends Controller
         //     $delivery_fee=5600;
         // }
 
-        if($distances <= 2) {
+        if($distances < 2) {
+
+                $delivery_fee=0;
+
+        }elseif($distances == 2) {
 
                 $delivery_fee=800;
 
