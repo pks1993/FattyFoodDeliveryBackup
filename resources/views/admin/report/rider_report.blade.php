@@ -47,7 +47,7 @@
             </div>
         </div>
     </section>
-    <section class="content">
+    <section class="content mb-5">
         <div class="row">
             <div class="col-md-12">
                 <div class="container-fluid text-center font-weight-bold">
@@ -71,7 +71,7 @@
                                     </div>
                                     <div class="col-6">
                                         <?php
-                                            $count=DB::select("select * from customer_orders where rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                            $count=DB::select("select * from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                             echo count($count);
                                         ?>
                                     </div>
@@ -86,7 +86,7 @@
                                     </div>
                                     <div class="col-6">
                                         <?php
-                                            $count=DB::select("select * from customer_orders where rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                            $count=DB::select("select * from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                             echo count($count);
                                         ?>
                                     </div>
@@ -119,7 +119,7 @@
                                 {{-- @foreach ($orders as $order)
                                     @if ($rider->rider_id==$order->rider_id) --}}
                                         <?php
-                                            $rider_order=DB::select("select * from customer_orders where rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                            $rider_order=DB::select("select * from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                         ?>
                                         @foreach ($rider_order as $value)
                                             @if($value->order_type=="food")
@@ -183,11 +183,14 @@
                                                     {{ $value->bill_total_price }}
                                                 </div>
                                                 <div class="col-2 text-center p-0">
-                                                    @if($value->order_status_id==16 || $value->order_status_id==15)
-                                                        {{ \Carbon\Carbon::parse($value->updated_at)->diffForHumans($value->created_at,true,true) }}
-                                                    @else
-                                                        {{ \Carbon\Carbon::parse($value->created_at)->diffForHumans(null,true,true) }}
-                                                    @endif
+                                                    <?php
+                                                        $time=0;
+                                                        $start=\Carbon\Carbon::parse($value->created_at);
+                                                        $end=\Carbon\Carbon::parse($value->updated_at);
+
+                                                        $time +=$end->diffInSeconds($start);
+                                                    ?>
+                                                    {{ \Carbon\CarbonInterval::seconds($time)->cascade()->forHumans(null,true) }}
                                                 </div>
                                                 <div class="col-12">
                                                     <hr class="mt-1 mb-1">
@@ -200,7 +203,7 @@
                                     Order Qty
                                     <br>
                                     <?php
-                                        $orderqty=DB::select("select * from customer_orders where rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                        $orderqty=DB::select("select * from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                         echo count($orderqty);
                                     ?>
                                 </div>
@@ -208,7 +211,7 @@
                                     Income
                                     <br>
                                     <?php
-                                        $order_qty=DB::select("select sum(bill_total_price) as price from customer_orders where rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                        $order_qty=DB::select("select sum(bill_total_price) as price from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                         echo $order_qty[0]->price;
                                     ?>
                                 </div>
@@ -216,7 +219,7 @@
                                     Time
                                     <br>
                                     <?php
-                                    $order_qty=DB::select("select created_at,updated_at from customer_orders where rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                    $order_qty=DB::select("select created_at,updated_at from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                     // $data=[];
                                     $time=0;
                                     foreach ($order_qty as $value) {

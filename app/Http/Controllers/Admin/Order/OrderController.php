@@ -1034,7 +1034,7 @@ class OrderController extends Controller
     public function rider_order_report()
     {
         $date=Carbon::now()->format('Y-m-d');
-        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date);}])->orderBy('order_count','desc')->get();
+        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->get();
         $riders=$rider_check->where('order_count','!=',0);
         $orders=CustomerOrder::whereDate('created_at',$date)->get();
         $blocks=ParcelBlockList::all();
@@ -1046,7 +1046,7 @@ class OrderController extends Controller
     public function rider_order_report_filter(Request $request)
     {
         $date=$request['date'];
-        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date);}])->orderBy('order_count','desc')->get();
+        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->get();
         $riders=$rider_check->where('order_count','!=',0);
         $orders=CustomerOrder::whereDate('created_at',$date)->get();
         $blocks=ParcelBlockList::all();
