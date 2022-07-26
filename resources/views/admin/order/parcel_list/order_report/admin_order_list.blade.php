@@ -295,7 +295,8 @@
                                             </div>
 
                                                     <div class="col-12 text-left p-0">
-                                                        {{ $order->from_pickup_note }}
+                                                        {{-- {{ $order->from_pickup_note }} --}}
+                                                        {!! nl2br(e($order->from_pickup_note)) !!}
                                                     </div>
 
                                                     <div class="col-12">
@@ -317,7 +318,8 @@
                                                     </div>
 
                                                     <div class="col-12 text-left p-0">
-                                                        {{ $order->to_drop_note }}
+                                                        {{-- {{ $order->to_drop_note }} --}}
+                                                        {!! nl2br(e($order->to_drop_note)) !!}
                                                     </div>
 
                                                     <div class="col-12">
@@ -329,7 +331,8 @@
                                                     </div>
 
                                                     <div class="col-12 text-left p-0 text-danger font-weight-bold">
-                                                        Remark: {{ $order->parcel_order_note }}
+                                                        {{-- Remark: {{ $order->parcel_order_note }} --}}
+                                                        Remark:  {!! nl2br(e($order->parcel_order_note)) !!}
                                                     </div>
                                                     <div class="col-12 text-left p-0">
                                                         {{-- Rider:{{ $order->rider->rider_user_name }} - <a href="tel:{{ $order->rider->rider_user_phone }}">{{ $order->rider->rider_user_phone }}</a> --}}
