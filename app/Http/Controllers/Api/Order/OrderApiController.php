@@ -141,154 +141,48 @@ class OrderApiController extends Controller
         $kilometer=$miles * 1.609344;
         $distances=(float) number_format((float)$kilometer, 1, '.', '');
 
-        // if($distances < 8){
-        //     $delivery_fee=0;
-        // }elseif($distances==8){
-        //     $delivery_fee=2400;
-        // }elseif($distances > 8 && $distances < 9){
-        //     $delivery_fee=2600;
-        // }elseif($distances==9){
-        //     $delivery_fee=2800;
-        // }elseif($distances > 9 && $distances < 10.5){
-        //     $delivery_fee=3000;
-        // }elseif($distances==10.5){
-        //     $delivery_fee=3200;
-        // }elseif($distances > 10.5 && $distances < 12){
-        //     $delivery_fee=3400;
-        // }elseif($distances==12){
-        //     $delivery_fee=3600;
-        // }elseif($distances > 12 && $distances < 13.5){
-        //     $delivery_fee=3800;
-        // }elseif($distances==13.5){
-        //     $delivery_fee=4000;
-        // }elseif($distances > 13.5 && $distances < 15){
-        //     $delivery_fee=4200;
-        // }elseif($distances==15){
-        //     $delivery_fee=4400;
-        // }elseif($distances > 15 && $distances < 16.5){
-        //     $delivery_fee=4600;
-        // }elseif($distances==16.5){
-        //     $delivery_fee=4800;
-        // }elseif($distances > 16.5 && $distances < 18){
-        //     $delivery_fee=5000;
-        // }elseif($distances==18){
-        //     $delivery_fee=5200;
-        // }elseif($distances > 18 && $distances < 19.5){
-        //     $delivery_fee=5400;
-        // }elseif($distances >= 19.5){
-        //     $delivery_fee=5600;
-        // }else{
-        //     $delivery_fee=5600;
-        // }
-
-        if($distances < 2) {
-
+        if($distances < 6){
                 $delivery_fee=0;
-
-        }elseif($distances == 2) {
-
-                $delivery_fee=800;
-
-        }elseif($distances > 2 && $distances < 3.5){
-
-                $delivery_fee=1000;
-
-        }elseif($distances == 3.5){
-
-                $delivery_fee=1200;
-
-        }elseif($distances > 3.5 && $distances < 4.5){
-
-                $delivery_fee=1400;
-
-        }elseif($distances == 4.5){
-
-                $delivery_fee=1600;
-
-        }elseif($distances > 4.5 && $distances < 6){
-
-                $delivery_fee=1800;
-
         }elseif($distances == 6){
-
-                $delivery_fee=2000;
-
+                $delivery_fee=1250;
         }elseif($distances > 6 && $distances < 7.5){
-
-                $delivery_fee=2200;
-
+                $delivery_fee=1350;
         }elseif($distances==7.5){
-
-                $delivery_fee=2400;
-
+                $delivery_fee=1450;
         }elseif($distances > 7.5 && $distances < 9){
-
-                $delivery_fee=2600;
-
+                $delivery_fee=1550;
         }elseif($distances==9){
-
-                $delivery_fee=2800;
-
+                $delivery_fee=1650;
         }elseif($distances > 9 && $distances < 10.5){
-
-                $delivery_fee=3000;
-
+                $delivery_fee=1750;
         }elseif($distances==10.5){
-
-                $delivery_fee=3200;
-
+                $delivery_fee=1850;
         }elseif($distances > 10.5 && $distances < 12){
-
-                $delivery_fee=3400;
-
+                $delivery_fee=1950;
         }elseif($distances==12){
-
-                $delivery_fee=3600;
-
+                $delivery_fee=2050;
         }elseif($distances > 12 && $distances < 13.5){
-
-                $delivery_fee=3800;
-
+                $delivery_fee=2150;
         }elseif($distances==13.5){
-
-                $delivery_fee=4000;
-
+                $delivery_fee=2250;
         }elseif($distances > 13.5 && $distances < 15){
-
-                $delivery_fee=4200;
-
+                $delivery_fee=2350;
         }elseif($distances==15){
-
-                $delivery_fee=4400;
-
+                $delivery_fee=2450;
         }elseif($distances > 15 && $distances < 16.5){
-
-                $delivery_fee=4600;
-
+                $delivery_fee=2550;
         }elseif($distances==16.5){
-
-                $delivery_fee=4800;
-
+                $delivery_fee=2650;
         }elseif($distances > 16.5 && $distances < 18){
-
-                $delivery_fee=5000;
-
+                $delivery_fee=2750;
         }elseif($distances==18){
-
-                $delivery_fee=5200;
-
+                $delivery_fee=2850;
         }elseif($distances > 18 && $distances < 19.5){
-
-                $delivery_fee=5400;
-
+                $delivery_fee=2950;
         }elseif($distances >= 19.5){
-
-                $delivery_fee=5600;
-
+                $delivery_fee=3050;
         }else{
-
-                $delivery_fee=5600;
-
+                $delivery_fee=3050;
         }
         return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
     }
@@ -3210,7 +3104,8 @@ class OrderApiController extends Controller
         }
 
         $booking_count=CustomerOrder::count();
-        $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
+        // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
+        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('restaurant_id',$restaurant_id)->count();
 
         $customer_order_id=(1+$order_count);
 
