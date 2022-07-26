@@ -52,8 +52,14 @@
                     <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
                 </div>
                 <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
-                    <div class="col" style="height: 10px;font-weight:510;">Amount</div>
-                    <div class="col text-right" style="height: 10px;">{{ number_format($rider_payment->total_amount) }} ks</div>
+                    <div class="col" style="height: 10px;font-weight:510;">Kpay Amount</div>
+                    <div class="col text-right" style="height: 10px;">{{ number_format($rider_payment->kpay_amount) }} ks</div>
+                    {{-- <div class="col text-right" style="height: 10px;">100,000 ks</div> --}}
+                    <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
+                </div>
+                <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
+                    <div class="col" style="height: 10px;font-weight:510;">Cash Amount</div>
+                    <div class="col text-right" style="height: 10px;">{{ number_format($rider_payment->cash_amount) }} ks</div>
                     {{-- <div class="col text-right" style="height: 10px;">100,000 ks</div> --}}
                     <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
                 </div>

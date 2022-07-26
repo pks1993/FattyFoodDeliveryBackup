@@ -142,7 +142,10 @@
             <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
         </li>
         <li class="nav-item">
-            <a href="{{ url("admin_parcel_orders/report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">RiderReport</a>
+            <a href="{{ url("admin_parcel_orders/report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">OrderReport</a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url("admin_parcel_orders/all_report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">AllOrderReport</a>
         </li>
         <li class="nav-item">
             <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>

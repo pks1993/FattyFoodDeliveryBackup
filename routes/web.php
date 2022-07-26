@@ -62,11 +62,18 @@ Route::get('admin_parcel_orders/edit/{order_id}/{customer_id}','Admin\Parcel\Par
 Route::post('admin_parcel_orders/update/{order_id}','Admin\Parcel\ParcelStateController@admin_parcel_update')->name('admin_parcel.update');
 Route::get('admin_parcel_orders/destroy/{order_id}/{customer_id}','Admin\Parcel\ParcelStateController@admin_parcel_destroy')->name('admin_parcel.destroy');
 
+//calculate price
+Route::get('admin_parcel_orders/calculate/price/{from_block_id}/{to_block_id}','Admin\Parcel\ParcelStateController@calculate_price');
+
 //Rider Order Report admin
 Route::get('admin_parcel_orders/report/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_rider_order_report');
 Route::get('admin_parcel_orders/report/filter/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_report_filter')->name('admin_parcel_report.filter');
 Route::get('admin_parcel_orders/report/date/filter/{customer_admin_id}/{current_date}','Admin\Parcel\ParcelStateController@admin_parcel_report_date_filter')->name('admin_parcel_report_date.filter');
-Route::get('admin_parcel_orders/calculate/price/{from_block_id}/{to_block_id}','Admin\Parcel\ParcelStateController@calculate_price');
+
+//AllRider OrderReport admin
+Route::get('admin_parcel_orders/all_report/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_rider_order_all_report');
+Route::get('admin_parcel_orders/all_report/filter/{customer_admin_id}','Admin\Parcel\ParcelStateController@admin_parcel_all_report_filter')->name('admin_parcel_all_report.filter');
+Route::get('admin_parcel_orders/all_report/date/filter/{customer_admin_id}/{current_date}','Admin\Parcel\ParcelStateController@admin_parcel_all_report_date_filter')->name('admin_parcel_all_report_date.filter');
 
 
 
