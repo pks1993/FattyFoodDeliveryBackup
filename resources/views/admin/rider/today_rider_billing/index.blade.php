@@ -96,7 +96,11 @@
                                         <td class="text-left">{{ number_format(($value->total_amount)-$value->kpay_amount) }}</td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
-                                            <a href="{{ url('fatty/main/admin/today_riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"cash_amount":'.($value->total_amount-$value->kpay_amount).',"kpay_amount":'.$value->kpay_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
+                                            @if($value->kpay_amount)
+                                                <a href="{{ url('fatty/main/admin/today_riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"kpay_amount":'.$value->kpay_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
+                                                @else
+                                                <a href="{{ url('fatty/main/admin/today_riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"kpay_amount":0,"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
