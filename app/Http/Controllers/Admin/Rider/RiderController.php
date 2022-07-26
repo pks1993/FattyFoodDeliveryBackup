@@ -205,7 +205,7 @@ class RiderController extends Controller
         foreach($data as $value){
             $rider_id=$value->rider_id;
             $total_amount=$value->total_amount;
-            $cash_amount=$value->cash_amount;
+            $cash_amount=$value->total_amount-$value->kpay_amount;
             $kpay_amount=$value->kpay_amount;
             $duration=$value->duration;
             $start_date=$value->start_date;
