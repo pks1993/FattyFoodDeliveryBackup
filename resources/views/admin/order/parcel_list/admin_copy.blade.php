@@ -111,7 +111,7 @@
                                 <a href="tel:{{ $parcel_order->from_sender_phone }}">{{ $parcel_order->from_sender_phone }}</a>
                             </div>
                             <div class="col-12 p-0 text-left">
-                                {{ $parcel_order->from_pickup_note }}
+                                {!! nl2br(e($parcel_order->from_pickup_note)) !!}
                             </div>
                             <div class="col-12 text-center">
                                 <strong>-----</strong>
@@ -127,7 +127,8 @@
                                 <a href="tel:{{ $parcel_order->to_recipent_phone }}">{{ $parcel_order->to_recipent_phone }}</a>
                             </div>
                             <div class="col-12 p-0 text-left">
-                                {{ $parcel_order->to_drop_note }}
+                                {{-- {{ $parcel_order->to_drop_note }} --}}
+                                {!! nl2br(e($parcel_order->to_drop_note)) !!}
                             </div>
                             <div class="col-12 text-center">
                                 <strong>-----</strong>
@@ -136,7 +137,8 @@
                                 Price: {{ $parcel_order->bill_total_price}} Ks
                             </div>
                             <div class="col-12 p-0 text-left text-danger font-weight-bold">
-                                Remark: {{ $parcel_order->parcel_order_note }}
+                                {{-- Remark: {{ $parcel_order->parcel_order_note }} --}}
+                                Remark: {!! nl2br(e($parcel_order->parcel_order_note)) !!}
                             </div>
                             <div class="col-12 p-0 text-left">
                                 Booking: {{ $parcel_order->customer_booking_id }}

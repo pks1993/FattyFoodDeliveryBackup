@@ -303,7 +303,8 @@
                                                             </div>
 
                                                             <div class="col-12 text-left p-0">
-                                                                {{ $value->from_pickup_note }}<br>
+                                                                {{-- {{ $value->from_pickup_note }}<br> --}}
+                                                                {!! nl2br(e($value->from_pickup_note)) !!}<br>
                                                             </div>
 
                                                             <div class="col-12">
@@ -325,7 +326,8 @@
                                                             </div>
 
                                                             <div class="col-12 text-left p-0">
-                                                                {{ $value->to_drop_note }}<br>
+                                                                {{-- {{ $value->to_drop_note }}<br> --}}
+                                                                {!! nl2br(e($value->to_drop_note)) !!}<br>
                                                             </div>
 
                                                             <div class="col-12">
@@ -337,7 +339,8 @@
                                                             </div>
 
                                                             <div class="col-12 text-left p-0 text-danger font-weight-bold">
-                                                                Remark: {{ $value->parcel_order_note }}
+                                                                {{-- Remark: {{ $value->parcel_order_note }} --}}
+                                                                Remark:  {!! nl2br(e($value->parcel_order_note)) !!}
                                                             </div>
                                                             <div class="col-12 text-left p-0">
                                                                 Booking: {{ $value->customer_booking_id }}
