@@ -85,7 +85,10 @@
         <a class="nav-link" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">Order</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url("admin_parcel_orders/report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">RiderReport</a>
+        <a href="{{ url("admin_parcel_orders/report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">OrderReport</a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url("admin_parcel_orders/all_report/".$customer_admin_id) }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">AllOrderReport</a>
     </li>
     <li class="nav-item">
         <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>

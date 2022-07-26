@@ -76,6 +76,8 @@
                                         <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
+                                        <th class="text-left">KpayAmount</th>
+                                        <th class="text-left">CashAmount</th>
                                         <th class="text-left">TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
@@ -90,9 +92,11 @@
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
+                                        <td class="text-left">{{ number_format($value->kpay_amount) }}</td>
+                                        <td class="text-left">{{ number_format(($value->total_amount)-$value->kpay_amount) }}</td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
-                                            <a href="{{ url('fatty/main/admin/today_riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
+                                            <a href="{{ url('fatty/main/admin/today_riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"cash_amount":'.($value->total_amount-$value->kpay_amount).',"kpay_amount":'.$value->kpay_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -128,6 +132,8 @@
                                         <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
+                                        <th class="text-left">KpayAmount</th>
+                                        <th class="text-left">CashAmount</th>
                                         <th class="text-left">TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
@@ -142,6 +148,8 @@
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->duration }} days </td>
+                                        <td class="text-left">{{ number_format($value->kpay_amount) }}</td>
+                                        <td class="text-left">{{ number_format($value->cash_amount) }}</td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
                                             <p class="btn btn-sm btn-danger" style="width: 80px;">Call</p>
@@ -180,6 +188,8 @@
                                         <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
+                                        <th class="text-left">KpayAmount</th>
+                                        <th class="text-left">CashAmount</th>
                                         <th class="text-left">TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
@@ -194,6 +204,9 @@
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->duration }} days </td>
+                                        {{-- <td class="text-left">{{ number_format($value->total_amount) }}</td> --}}
+                                        <td class="text-left">{{ number_format($value->kpay_amount) }}</td>
+                                        <td class="text-left">{{ number_format($value->cash_amount) }}</td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
                                             <p class="btn btn-sm btn-success" style="width: 80px;">Done</p>

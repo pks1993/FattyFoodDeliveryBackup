@@ -1625,6 +1625,79 @@ class ParcelStateController extends Controller
 
         return view('admin.order.parcel_list.order_report.admin_order_list',compact('today_date','day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount','this_month_days'));
     }
+    public function admin_rider_order_all_report($customer_admin_id)
+    {
+        $firstDay = Carbon::now()->startOfMonth();
+        $nowDay = Carbon::now();
+        $days=$firstDay->diffInDays($nowDay);
+
+        $period = CarbonPeriod::create($firstDay, $nowDay);
+        $days=$period->toArray();
+        $month_days =  array_reverse(array_sort($days, function ($value) {return $value;}));
+        foreach ($month_days as $value) {
+           $this_month_days[]= $value->format('Y-m-d H:i:s');
+        }
+        // dd($this_month_days);
+        $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+        $day_date=date('M d Y');
+        $month_date=date('M Y');
+
+        $today_date=date('d-m-Y');
+
+        $orders_month=CustomerOrder::whereMonth('created_at', '=', date('m'))->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.all_admin_order_list',compact('today_date','day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount','this_month_days'));
+    }
+
+    public function admin_parcel_all_report_filter(Request $request,$customer_admin_id)
+    {
+        $date=$request['date'];
+        // dd($date);
+        $month=date('m', strtotime($date));
+        $month_date=date('M Y',strtotime($date));
+
+        $check_month=date('m',strtotime(Carbon::now()));
+        if($month==$check_month){
+            $today_date=date('d-m-Y');
+            $search_date=date('Y-m-d');
+            $firstDay = Carbon::now()->startOfMonth();
+            $nowDay = Carbon::now();
+            $days=$firstDay->diffInDays($nowDay);
+            $day_date=date('M d Y');
+        }else{
+            $firstDay = Carbon::parse($date)->startOfMonth();
+            $nowDay = Carbon::parse($date)->endOfMonth();
+            $days=$firstDay->diffInDays($nowDay);
+            $day_date=date('M d Y',strtotime($nowDay));
+            $today_date=date('d-m-Y',strtotime($nowDay));
+            $search_date=date('Y-m-d',strtotime($nowDay));
+
+        }
+
+
+        $period = CarbonPeriod::create($firstDay, $nowDay);
+        $days=$period->toArray();
+        $month_days =  array_reverse(array_sort($days, function ($value) {return $value;}));
+        foreach ($month_days as $value) {
+           $this_month_days[]= $value->format('Y-m-d H:i:s');
+        }
+
+        $orders=CustomerOrder::whereDate('created_at',$search_date)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+
+        $orders_month=CustomerOrder::whereMonth('created_at',$month)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.all_admin_order_list',compact('today_date','day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount','this_month_days'));
+    }
 
     public function admin_parcel_report_filter(Request $request,$customer_admin_id)
     {
@@ -1718,6 +1791,55 @@ class ParcelStateController extends Controller
         $month_amount=$orders_month->sum('bill_total_price');
 
         return view('admin.order.parcel_list.order_report.admin_order_list',compact('today_date','day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount','this_month_days'));
+    }
+    public function admin_parcel_all_report_date_filter(Request $request,$customer_admin_id,$current_date)
+    {
+        $date=$current_date;
+        $month=date('m', strtotime($date));
+        $day_date=date('M d Y',strtotime($date));
+        $month_date=date('M Y',strtotime($date));
+
+        $today_date=date('d-m-Y',strtotime($date));
+
+        // $firstDay = Carbon::now()->startOfMonth();
+        // $nowDay = Carbon::now();
+        // $firstDay = Carbon::parse($date)->startOfMonth();
+        // $nowDay = Carbon::parse($date)->endOfMonth();
+        // $days=$firstDay->diffInDays($nowDay);
+
+        $check_month=date('m',strtotime(Carbon::now()));
+        if($month==$check_month){
+            // $today_date=date('d-m-Y');
+            $firstDay = Carbon::now()->startOfMonth();
+            $nowDay = Carbon::now();
+            $days=$firstDay->diffInDays($nowDay);
+        }else{
+            $firstDay = Carbon::parse($date)->startOfMonth();
+            $nowDay = Carbon::parse($date)->endOfMonth();
+            $days=$firstDay->diffInDays($nowDay);
+            // $today_date=date('d-m-Y',strtotime($nowDay));
+
+        }
+
+        // dd($date);
+
+        $period = CarbonPeriod::create($firstDay, $nowDay);
+        $days=$period->toArray();
+        $month_days =  array_reverse(array_sort($days, function ($value) {return $value;}));
+        foreach ($month_days as $value) {
+            $this_month_days[]= $value->format('Y-m-d H:i:s');
+        }
+
+        $orders=CustomerOrder::whereDate('created_at',$date)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $day_times=$orders->count();
+        $day_amount=$orders->sum('bill_total_price');
+
+
+        $orders_month=CustomerOrder::whereMonth('created_at',$month)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $month_times=$orders_month->count();
+        $month_amount=$orders_month->sum('bill_total_price');
+
+        return view('admin.order.parcel_list.order_report.all_admin_order_list',compact('today_date','day_date','month_date','customer_admin_id','orders','day_times','month_times','day_amount','month_amount','this_month_days'));
     }
 
     /**

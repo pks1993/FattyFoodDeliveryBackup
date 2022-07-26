@@ -116,10 +116,10 @@
         <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url("admin_rider_order/report/".$customer_admin_id) }}" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">OrderReport</a>
+        <a href="{{ url('admin_parcel_orders/report/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">OrderReport</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url('admin_parcel_orders/all_report/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">AllOrderReport</a>
+        <a href="{{ url("admin_rider_order/all_report/".$customer_admin_id) }}" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">AllOrderReport</a>
     </li>
     <li class="nav-item">
         <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
@@ -143,7 +143,7 @@
             <div class="col-12 p-1 rounded">
                 <div class="" style="padding:5px;">
                     <div class="col-12">
-                        <form action="{{ route('admin_parcel_report.filter',$customer_admin_id) }}">
+                        <form action="{{ route('admin_parcel_all_report.filter',$customer_admin_id) }}">
                             {{-- <select class="col-4" name="month" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:18px;font-weight:510;border-radius:5px;height:40px;">
                                 <option value="12">12</option>
                                 <option value="11">11</option>
@@ -187,7 +187,7 @@
                         @foreach ($this_month_days as $date)
                         {{-- {{ $today_date }} {{ date('d-m-Y', strtotime($date)) }} --}}
                             @if(date('d-m-Y', strtotime($date))==$today_date)
-                                <a href="{{ url('admin_parcel_orders/report/date/filter/'.$customer_admin_id.'/'.date('Y-m-d',strtotime($date))) }}" style="font-size: 20px;" class="btn btn-lg btn-success mt-1" id="{{ date('d', strtotime($date)) }}" style="position: relative;">
+                                <a href="{{ url('admin_parcel_orders/all_report/date/filter/'.$customer_admin_id.'/'.date('Y-m-d',strtotime($date))) }}" style="font-size: 20px;" class="btn btn-lg btn-success mt-1" id="{{ date('d', strtotime($date)) }}" style="position: relative;">
                                 {{ date('d', strtotime($date)) }}
                                     <span class="pl-1 pr-1" style="position: absolute; top: 0px; background-color: red; height: 15px; font-size: 10px; border-radius: 50%;">
                                         <?php
@@ -197,7 +197,7 @@
                                     </span>
                                 </a>
                             @else
-                                <a href="{{ url('admin_parcel_orders/report/date/filter/'.$customer_admin_id.'/'.date('Y-m-d',strtotime($date))) }}" style="font-size: 20px;" class="btn btn-lg btn-secondary mt-1" id="{{ date('d', strtotime($date)) }}" style="position: relative;">
+                                <a href="{{ url('admin_parcel_orders/all_report/date/filter/'.$customer_admin_id.'/'.date('Y-m-d',strtotime($date))) }}" style="font-size: 20px;" class="btn btn-lg btn-secondary mt-1" id="{{ date('d', strtotime($date)) }}" style="position: relative;">
                                 {{ date('d', strtotime($date)) }}
                                     <span class="pl-1 pr-1" style="position: absolute; top: 0px; background-color: red; height: 15px; font-size: 10px; border-radius: 50%;">
                                         <?php

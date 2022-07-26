@@ -18,6 +18,8 @@ class CreateRiderTodayPaymentsTable extends Migration
             $table->string('payment_voucher')->nullable()->default("V001");
             $table->unsignedBigInteger('rider_id')->nullable();
             $table->integer('total_amount')->nullable();
+            $table->integer('cash_amount')->nullable();
+            $table->integer('kpay_amount')->nullable();
             $table->timestamp('start_offered_date')->nullable();
             $table->timestamp('last_offered_date')->nullable();
             $table->integer('duration')->nullable();

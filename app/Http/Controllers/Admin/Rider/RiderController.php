@@ -107,7 +107,6 @@ class RiderController extends Controller
 
         $cus_order_list=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
             $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(rider_delivery_fee) as rider_delivery_fee"))->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
-
         $data=[];
         foreach($cus_order_list as $value){
             $payment=RiderPayment::where('rider_id',$value->rider_id)->orderBy('created_at')->first();
@@ -181,9 +180,18 @@ class RiderController extends Controller
             $value->last_offered_date=$last_date;
             $value->duration=$days;
             $value->total_amount=(int)$value->bill_total_price;
+
+            $kbz=CustomerOrder::whereDoesntHave('today_rider_payment',function($payment) use ($from_date){
+                $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"))->whereBetween('created_at',[$from_date,$to_date])->where('payment_method_id','2')->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+            foreach($kbz as $value1){
+                if($value1->rider_id==$value->rider_id){
+                    $value->kpay_amount=(int)$value1->bill_total_price;
+                }else{
+                    $value->kpay_amount=0;
+                }
+            }
             array_push($data,$value);
         }
-
         $cus_order_offered=RiderTodayPayment::where('status','0')->get();
         $cus_order_done=RiderTodayPayment::where('status','1')->get();
 
@@ -197,6 +205,8 @@ class RiderController extends Controller
         foreach($data as $value){
             $rider_id=$value->rider_id;
             $total_amount=$value->total_amount;
+            $cash_amount=$value->cash_amount;
+            $kpay_amount=$value->kpay_amount;
             $duration=$value->duration;
             $start_date=$value->start_date;
             $end_date=$value->end_date;
@@ -206,6 +216,8 @@ class RiderController extends Controller
         RiderTodayPayment::create([
             "rider_id"=>$rider_id,
             "total_amount"=>$total_amount,
+            "cash_amount"=>$cash_amount,
+            "kpay_amount"=>$kpay_amount,
             "start_offered_date"=>$start_date,
             "last_offered_date"=>$end_date,
             "duration"=>$duration,
