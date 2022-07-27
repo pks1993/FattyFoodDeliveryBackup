@@ -549,7 +549,7 @@ class CustomerApiController extends Controller
     */
     public function destroy(Request $request)
     {
-        $customer_id=$request['customer_id'];
+        $customer_id=$request->header('customer-id');
         $customers=Customer::where('customer_id',$customer_id)->first();
         if($customers){
             $customers->is_delete=1;
