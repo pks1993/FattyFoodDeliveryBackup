@@ -255,7 +255,7 @@ class CustomerApiController extends Controller
         // }
         $device_id=$request->header('device-id');
         $customer_phone=$request['customer_phone'];
-        $customer=Customer::where('customer_phone','=',$customer_phone)->first();
+        $customer=Customer::where('customer_phone','=',$customer_phone)->where('is_delete',0)->first();
         $otp = sprintf("%06d", mt_rand(1, 999999));
 
         if($customer){
@@ -325,7 +325,7 @@ class CustomerApiController extends Controller
     public function resend_request_otp(Request $request)
     {
         $customer_phone=$request['customer_phone'];
-        $customer=Customer::where('customer_phone',$customer_phone)->first();
+        $customer=Customer::where('customer_phone',$customer_phone)->where('is_delete',0)->first();
         $otp = sprintf("%06d", mt_rand(1, 999999));
 
 
@@ -552,10 +552,11 @@ class CustomerApiController extends Controller
         $customer_id=$request['customer_id'];
         $customers=Customer::where('customer_id',$customer_id)->first();
         if($customers){
-            $customers->delete();
-            return response()->json(['success'=>true,'message'=>'successfull destroy customers','data'=>$customers]);
+            $customers->is_delete=1;
+            $customers->update();
+            return response()->json(['success'=>true,'message'=>'successfull destroy customers']);
         }else{
-            return response()->json(['success'=>false,'message'=>'Error! customer_id not found','data'=>null]);
+            return response()->json(['success'=>false,'message'=>'Error! customer_id not found']);
         }
 
     }
