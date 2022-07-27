@@ -377,7 +377,7 @@ class ParcelStateController extends Controller
             $start_time = Carbon::now()->format('g:i A');
             $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
             $booking_count=CustomerOrder::count();
-            $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+            $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
             $customer_order_id=(1+$order_count);
             $customer_booking_id="LSO-".date('ymd').(1+$booking_count);
 

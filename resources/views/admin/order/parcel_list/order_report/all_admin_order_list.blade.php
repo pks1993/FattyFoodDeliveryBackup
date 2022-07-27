@@ -336,6 +336,11 @@
                                                     </div>
                                                     <div class="col-12 text-left p-0">
                                                         {{-- Rider:{{ $order->rider->rider_user_name }} - <a href="tel:{{ $order->rider->rider_user_phone }}">{{ $order->rider->rider_user_phone }}</a> --}}
+                                                        @if($order->rider_id)
+                                                            Rider: {{ $order->rider->rider_user_name }} - <a href="tel:{{ $order->rider->rider_user_phone }}">{{ $order->rider->rider_user_phone }}</a>
+                                                        @else
+                                                            Rider:
+                                                        @endif
                                                     </div>
                                                     <div class="col-12 text-left p-0">
                                                         Created By:{{ $order->customer->customer_name }} - <a href="tel: {{ $order->customer->customer_phone }}">{{ $order->customer->customer_phone }}</a>
