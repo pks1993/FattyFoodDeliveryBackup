@@ -516,7 +516,7 @@ class CustomerApiController extends Controller
 
         $customers=Customer::where('customer_id','=',$id)->first();
         if($customers){
-            $phone_check=Customer::where('customer_phone',$customer_phone)->where('customer_id','!=',$id)->first();
+            $phone_check=Customer::where('customer_phone',$customer_phone)->where('customer_id','!=',$id)->where('is_delete',0)->first();
             if($phone_check){
                 return response()->json(["success"=>false,"message"=>"the customer phone exits another customer",'data'=>null]);
             }else{
