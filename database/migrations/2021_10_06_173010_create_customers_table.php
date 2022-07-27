@@ -31,6 +31,7 @@ class CreateCustomersTable extends Migration
             $table->boolean('is_restricted')->nullable(false);
             $table->integer('otp')->nullable();
             $table->integer('os_type')->nullable();
+            $table->integer('is_delete')->nullable();
             $table->timestamps();
         });
     }

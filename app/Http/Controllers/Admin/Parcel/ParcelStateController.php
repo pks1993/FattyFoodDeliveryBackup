@@ -44,9 +44,10 @@ class ParcelStateController extends Controller
 
         $customers=Customer::where("customer_phone",$customer_ph)->where('customer_type_id',3)->first();
         if($customers){
-            $phone_check=substr_replace($customers->customer_phone,0, 0, 3);
-            $password_check=substr($phone_check, -6);
-            if($phone_check==$phone && $password==$password_check && $customers->customer_type_id==3 && $customers->is_restricted==0){
+            // $phone_check=substr_replace($customers->customer_phone,0, 0, 3);
+            // $password_check=substr($phone_check, -6);
+            $password_check=substr($customers->customer_phone,-6);
+            if($password==$password_check && $customers->customer_type_id==3 && $customers->is_restricted==0){
                 $request->session()->flash('alert-success', 'successfully login!');
                 return redirect('admin_parcel_orders/create/'.$customers->customer_id);
            }else{
@@ -380,10 +381,17 @@ class ParcelStateController extends Controller
             $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
             $booking_count=CustomerOrder::count();
             $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
-            $customer_order_id=(1+$order_count);
+            $customerorderid=(1+$order_count);
             $customer_booking_id="LSO-".date('ymd').(1+$booking_count);
 
 
+
+            $check_customer_order_id=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->where('customer_order_id',$customerorderid)->first();
+            if($check_customer_order_id){
+                $customer_order_id=$customerorderid+1;
+            }else{
+                $customer_order_id=$customerorderid;
+            }
             $parcel_orders=new CustomerOrder();
             $parcel_orders->customer_order_id=$customer_order_id;
             $parcel_orders->customer_booking_id=$customer_booking_id;

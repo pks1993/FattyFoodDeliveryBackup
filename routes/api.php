@@ -54,6 +54,9 @@ Route::middleware('one_device_login')->group(function(){
     Route::post('v1/fatty/202221/lashio/main/admin/customers/logout','Api\Customer\CustomerApiController@logout');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/notification/token/update','Api\Customer\CustomerApiController@fcm_token_update');
 
+    //customer delete
+    Route::post('v1/fatty/202221/lashio/main/admin/customers/destroy','Api\Customer\CustomerApiController@destroy');
+
     //Customer Home Page Api
     Route::post('v1/fatty/202221/lashio/main/admin/home_page','Api\HomePage\HomePageApiController@home_page');
     Route::post('v1/fatty/202221/lashio/main/admin/category/list','Api\HomePage\HomePageApiController@category_list');
