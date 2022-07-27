@@ -392,7 +392,7 @@ class CustomerApiController extends Controller
         $customer_phone= $request['customer_phone'];
         $otp = $request['otp'];
 
-        $customer=Customer::where('customer_phone',$customer_phone)->first();
+        $customer=Customer::where('customer_phone',$customer_phone)->where('is_delete',0)->first();
 
         if($customer){
             if ($customer->otp == $otp) {
