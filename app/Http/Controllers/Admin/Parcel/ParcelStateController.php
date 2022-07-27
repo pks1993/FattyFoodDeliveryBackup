@@ -42,7 +42,7 @@ class ParcelStateController extends Controller
         $customer_ph='+'.substr_replace($phone,(95), 0,1);
         $password=$request['password'];
 
-        $customers=Customer::where("customer_phone",$customer_ph)->first();
+        $customers=Customer::where("customer_phone",$customer_ph)->where('customer_type_id',3)->first();
         if($customers){
             $phone_check=substr_replace($customers->customer_phone,0, 0, 3);
             $password_check=substr($phone_check, -6);
@@ -196,7 +196,8 @@ class ParcelStateController extends Controller
     }
     public function admin_parcel_create(Request $request,$id)
     {
-        $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+        // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();;
         $customer_order_id=(1+$order_count);
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
@@ -213,7 +214,8 @@ class ParcelStateController extends Controller
     }
     public function admin_parcel_edit(Request $request,$id,$customer_id)
     {
-        $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+        // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
+        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
         $customer_order_id=(1+$order_count);
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
