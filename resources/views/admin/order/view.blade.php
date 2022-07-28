@@ -33,7 +33,7 @@
     <div class="row mb-3">
         <div class="col-md-6">
             <label>Order Id:</label>
-            <input type="text" class="form-control form-control-sm" value="{{ $food_order->order_id }}" readonly>
+            <input type="text" class="form-control form-control-sm" value="{{ $food_order->customer_order_id }}" readonly>
         </div>
 
         <div class="col-md-6">
@@ -50,6 +50,17 @@
             @else
             <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $food_order->customer_address->current_address }}</textarea>
             @endif
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Customer Address Phone:</label>
+            <input type="text" class="form-control form-control-sm" value="{{ $food_order->customer_address_phone }}" readonly>
+        </div>
+        <div class="col-md-6">
+            <label>Payment Method:</label>
+            <input type="text" class="form-control form-control-sm" value="{{ $food_order->payment_method->payment_method_name }}" readonly>
         </div>
     </div>
 
@@ -92,13 +103,6 @@
         <div class="col-md-12">
             <label>Order Description:</label>
             <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $food_order->order_description }}</textarea>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label>Payment Method:</label>
-            <input type="text" class="form-control form-control-sm" value="{{ $food_order->payment_method->payment_method_name }}" readonly>
         </div>
     </div>
 
