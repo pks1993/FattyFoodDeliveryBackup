@@ -3331,7 +3331,7 @@ class OrderApiController extends Controller
                     if($restaurant_token){
                         $restaurant_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                         try{
-                            $response=$restaurant_client->post($restaurant_url,[
+                            $restaurant_client->post($restaurant_url,[
                                 'json' => [
                                     "to"=>$restaurant_token,
                                     "data"=> [
@@ -3364,7 +3364,7 @@ class OrderApiController extends Controller
                         }
                     }
 
-                    return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>['response'=>$response,'order'=>$check]]);
+                    return response()->json(['success'=>true,'message'=>"succssfully customer's orders create",'data'=>['response'=>null,'order'=>$check]]);
                 }
             }else{
                 return response()->json(['success'=>false,'message'=>"Error! not define orders"]);
