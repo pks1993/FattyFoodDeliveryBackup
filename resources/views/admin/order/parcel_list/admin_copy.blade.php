@@ -173,8 +173,8 @@
 
 	    alert('Location has been copied!');
 
-	    // location.assign('http://174.138.22.156/admin_parcel_orders/list/'+id);
-	    location.assign('http://128.199.241.129/admin_parcel_orders/list/'+id);
+	    location.assign('http://174.138.22.156/admin_parcel_orders/list/'+id);
+	    // location.assign('http://128.199.241.129/admin_parcel_orders/list/'+id);
 	}
 
 </script>
