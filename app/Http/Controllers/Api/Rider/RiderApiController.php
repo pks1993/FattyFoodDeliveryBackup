@@ -563,16 +563,16 @@ class RiderApicontroller extends Controller
                         return $value['created_at'];
                     }));
                     $over_orders=$rider_orders->merge($order);
-                    $orders_array=$over_orders->toArray();
-                    $orders=array_slice($orders_array, 0, $rider_check->max_order);
+                    // $orders_array=$over_orders->toArray();
+                    // $orders=array_slice($orders_array, 0, $rider_check->max_order);
                 }else{
                     $over_orders =  array_reverse(array_sort($noti_rider, function ($value) {
                                 return $value['created_at'];
                             }));
-                    $orders=array_slice($over_orders, 0, $rider_check->max_order);
+                    // $orders=array_slice($over_orders, 0, $rider_check->max_order);
 
                 }
-                return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$orders]);
+                return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$over_orders]);
 
         }else{
             return response()->json(['success'=>false,'message'=>'Error! Rider Id not found']);

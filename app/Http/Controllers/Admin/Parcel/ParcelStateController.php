@@ -314,6 +314,7 @@ class ParcelStateController extends Controller
         $parcel_orders->estimated_start_time=$parcel_orders->start_time;
         $parcel_orders->estimated_end_time=$parcel_orders->end_time;
         $parcel_orders->rider_restaurant_distance=$rider_restaurant_distance;
+        $parcel_orders->rider_id=$rider_id;
         $parcel_orders->payment_method_id=1;
         $parcel_orders->state_id=15;
 
@@ -327,13 +328,6 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_block->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_block->longitude;
         }
-        // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
-        // if($delivery_fee){
-        //     // dd($delivery_fee);
-        //     $parcel_orders->rider_delivery_fee=$delivery_fee/2;
-        // }else{
-        //     $parcel_orders->rider_delivery_fee=0;
-        // }
         $check_price=ParcelFromToBlock::where('parcel_from_block_id',$from_parcel_city_id)->where('parcel_to_block_id',$to_parcel_city_id)->first();
         if($check_price){
             $parcel_orders->rider_delivery_fee=$check_price->rider_delivery_fee;
