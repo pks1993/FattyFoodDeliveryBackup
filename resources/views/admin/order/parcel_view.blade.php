@@ -11,7 +11,7 @@
     <div class="row mb-3">
         <div class="col-md-6">
             <label>Order Id:</label>
-            <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->order_id }}" readonly>
+            <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->customer_order_id }}" readonly>
         </div>
 
         <div class="col-md-6">
@@ -22,43 +22,41 @@
 
     <div class="row mb-3">
         <div class="col-md-6">
-            <label>Sender Name:</label>
-            <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->from_sender_name }}" readonly>
-        </div>
-
-        <div class="col-md-6">
             <label>Sender Phone:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->from_sender_phone }}" readonly>
         </div>
-    </div>
-
-
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <label>Pickup Adress:</label>
-            <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->from_pickup_address }}</textarea>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label>Recipent Name:</label>
-            <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->to_recipent_name }}" readonly>
-        </div>
-
         <div class="col-md-6">
             <label>Recipent Phone:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->to_recipent_phone }}" readonly>
         </div>
+
     </div>
 
 
     <div class="row mb-3">
-        <div class="col-md-12">
+        <div class="col-md-6">
+            <label>Pickup Adress:</label>
+            <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->from_pickup_address }}</textarea>
+        </div>
+        <div class="col-md-6">
             <label>Recipent Adress:</label>
             <textarea name="description" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->to_drop_address }}</textarea>
         </div>
     </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label>Sender Pick Note:</label>
+            <textarea name="from_pickup_note" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->from_pickup_note }}</textarea>
+        </div>
+        <div class="col-md-6">
+            <label>Recipent Drop Note:</label>
+            <textarea name="to_drop_note" class="form-control form-control-sm" cols="50" rows="3" readonly>{{ $parcel_order->to_drop_note }}</textarea>
+        </div>
+
+    </div>
+
+
 
     <div class="form-group">
         <label>Parcel images:</label><br>
@@ -77,8 +75,8 @@
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->parcel_type->parcel_type_name }}" readonly>
         </div>
         <div class="col-md-6">
-            <label>Parcel Weight:</label>
-            <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->total_estimated_weight }}" readonly>
+            <label>Payment Method:</label>
+            <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->payment_method->payment_method_name }}" readonly>
         </div>
     </div>
 
@@ -119,12 +117,12 @@
         </div>
     </div>
 
-    <div class="row mb-3">
+    {{-- <div class="row mb-3">
         <div class="col-md-6">
             <label>Payment Method:</label>
             <input type="text" class="form-control form-control-sm" value="{{ $parcel_order->payment_method->payment_method_name }}" readonly>
         </div>
-    </div>
+    </div> --}}
 
     <a href="{{ url()->previous() }}" class="btn btn-sm mr-2" style="background-color:#fff;border-color:red;color:black;"><i class="fas fa-angle-double-left"></i>&nbsp;Back</a>
     <div class="float-right">
