@@ -386,14 +386,13 @@ class ParcelStateController extends Controller
 
 
 
+            $parcel_orders=new CustomerOrder();
             $check_customer_order_id=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->where('customer_order_id',$customerorderid)->first();
             if($check_customer_order_id){
-                $customer_order_id=$customerorderid+1;
+                $parcel_orders->customer_order_id=($customerorderid)+1;
             }else{
-                $customer_order_id=$customerorderid;
+                $parcel_orders->customer_order_id=$customerorderid;
             }
-            $parcel_orders=new CustomerOrder();
-            $parcel_orders->customer_order_id=$customer_order_id;
             $parcel_orders->customer_booking_id=$customer_booking_id;
             $parcel_orders->from_parcel_city_id=$from_parcel_city_id;
             $parcel_orders->from_sender_phone=$from_sender_phone;
