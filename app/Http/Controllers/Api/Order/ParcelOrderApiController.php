@@ -140,7 +140,7 @@ class ParcelOrderApiController extends Controller
         $kilometer=$miles * 1.609344;
 
         if($from_pickup_latitude==0.00 || $from_pickup_longitude==0.00 || $to_drop_latitude==0.00 || $to_drop_longitude==0.00){
-            $distances=0;
+            $distances=null;
         }else{
             $distances=(float) number_format((float)$kilometer, 1, '.', '');
         }
