@@ -344,7 +344,7 @@ class OrderApiController extends Controller
 
                 $all_data=Paginator::merge($active_order_list,$past_order_list)->sortByDesc('created_at')->get();
 
-                return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+                return response()->json(['count'=>$count,'success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
             }elseif($order_type=="parcel"){
                 $active_order_list=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->paginate(20);
                 $data=[];
@@ -394,7 +394,7 @@ class OrderApiController extends Controller
                     array_push($item,$order);
                 }
 
-                if($active_order_list->isNotEmpty()){
+                if($past_order_list->isNotEmpty()){
                     foreach ($past_order_list as $value)
                     {
                         $past_order[]=$value;
