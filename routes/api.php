@@ -110,6 +110,7 @@ Route::middleware('one_device_login')->group(function(){
     //Customer Order
     Route::post('v1/fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@customer_index');
     Route::post('v2/fatty/202221/lashio/main/admin/customers/orders/lists','Api\Order\OrderApiController@v2_customer_index');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/orders/all_lists','Api\Order\OrderApiController@v2_all_customer_index');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/orders/create','Api\Order\OrderApiController@store_v1');
     Route::post('v1/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@customer_order_click');
     Route::post('v2/fatty/202221/lashio/main/admin/customer/orders/click','Api\Order\OrderApiController@v2_customer_order_click');
@@ -216,6 +217,8 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/location','Api\Rider\RiderA
 Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/status','Api\Rider\RiderApiController@order_status');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history','Api\Rider\RiderApiController@order_food_history');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history/filter','Api\Rider\RiderApiController@order_food_history_filter');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history_list','Api\Rider\RiderApiController@order_food_history_list');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history_list/filter','Api\Rider\RiderApiController@order_food_history_list_filter');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/details','Api\Rider\RiderApiController@order_details');
 
 Route::post('v1/fatty/202221/lashio/main/admin/rider/attendance','Api\Rider\RiderApiController@rider_attendance');
