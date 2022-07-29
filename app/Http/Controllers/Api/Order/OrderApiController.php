@@ -394,7 +394,7 @@ class OrderApiController extends Controller
                     array_push($item,$order);
                 }
 
-                if($active_order_list->isNotEmpty()){
+                if($past_order_list->isNotEmpty()){
                     foreach ($past_order_list as $value)
                     {
                         $past_order[]=$value;
