@@ -29,6 +29,8 @@ use App\Models\Order\NotiOrder;
 use App\Models\Order\ParcelImage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Facades\Paginator;
+
 
 
 class OrderApiController extends Controller
@@ -304,6 +306,105 @@ class OrderApiController extends Controller
 
 
                 return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order]);
+            }else{
+                return response()->json(['success'=>false,'message'=>'order_type not found!']);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'customer id not found!']);
+        }
+    }
+    public function v2_all_customer_index(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $order_type=$request['order_type'];
+        $date=date('Y-m-d 00:00:00', strtotime($request['date']));
+
+        $check_customer=Customer::where('customer_id',$customer_id)->first();
+        if(!empty($check_customer)){
+            if($order_type=="food"){
+                $active_order_list=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->paginate(20);
+                if($active_order_list->isNotEmpty()){
+                    foreach ($active_order_list as $item)
+                    {
+                        $active_order[]=$item;
+                    }
+                }else{
+                    $active_order=[];
+                }
+
+                $past_order_list=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->paginate(20);
+                if($past_order_list->isNotEmpty()){
+                    foreach ($past_order_list as $value)
+                    {
+                        $past_order[]=$value;
+                    }
+                }else{
+                    $past_order=[];
+                }
+
+                $all_data=Paginator::merge($active_order_list,$past_order_list)->sortByDesc('created_at')->get();
+
+                return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+            }elseif($order_type=="parcel"){
+                $active_order_list=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->paginate(20);
+                $data=[];
+                foreach($active_order_list as $value){
+                    if($value->from_parcel_city_id==0){
+                        $value->from_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value->from_parcel_city_id)->first();
+                        $value->from_parcel_city_name=$city_data->block_name;
+                    }
+                    if($value->to_parcel_city_id==0){
+                        $value->to_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value->to_parcel_city_id)->first();
+                        $value->to_parcel_city_name=$city_data->block_name;
+                    }
+                    array_push($data,$value);
+                }
+                if($active_order_list->isNotEmpty()){
+                    foreach ($active_order_list as $item)
+                    {
+                        $active_order[]=$item;
+                    }
+                }else{
+                    $active_order=[];
+                }
+
+                $past_order_list=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->paginate(20);
+                $item=[];
+                foreach($past_order_list as $order){
+                    if($order->from_parcel_city_id==0){
+                        $order->from_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$order->from_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$order->from_parcel_city_id)->first();
+                        $order->from_parcel_city_name=$city_data->block_name;
+                    }
+                    if($order->to_parcel_city_id==0){
+                        $order->to_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$order->to_parcel_city_id)->first();
+                        $order->to_parcel_city_name=$city_data->block_name;
+                    }
+                    array_push($item,$order);
+                }
+
+                if($active_order_list->isNotEmpty()){
+                    foreach ($past_order_list as $value)
+                    {
+                        $past_order[]=$value;
+                    }
+                }else{
+                    $past_order=[];
+                }
+
+                $all_data=Paginator::merge($active_order_list,$past_order_list)->sortByDesc('created_at')->get();
+                return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
             }else{
                 return response()->json(['success'=>false,'message'=>'order_type not found!']);
             }
