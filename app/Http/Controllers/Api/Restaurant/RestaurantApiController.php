@@ -18,6 +18,8 @@ use App\Models\Restaurant\RestaurantUser;
 use App\Models\Restaurant\RestaurantAvailableTime;
 use App\Models\Order\CustomerOrder;
 use Carbon\Carbon;
+use App\Facades\Paginator;
+
 
 
 
@@ -97,6 +99,60 @@ class RestaurantApiController extends Controller
         $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
 
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
+    }
+    public function restaurant_insight_list_v1(Request $request)
+    {
+        $from=Carbon::now()->subDays(11)->toDateTimeLocalString();
+        $to=Carbon::now()->addDays(1)->toDateTimeLocalString();
+        $restaurant_id=$request['restaurant_id'];
+        $current_date=$request['start_date'];
+        $next_date=$request['end_date'];
+        $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
+        $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+        // $tt=Date(Carbon::today());
+
+        $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->get();
+        $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','1')->count();
+        $KBZ=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','2')->count();
+        $WaveMoney=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','3')->count();
+        $today_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereRaw('Date(created_at) = CURDATE()')->get();
+
+        // $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeLocalString())->get();
+        $this_week_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereBetween('created_at',[$from,$to])->get();
+
+        $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>=',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<=',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
+
+        //OrderShow
+        $deliverOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+        $deliveredorder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
+        if($deliveredorder->isNotEmpty()){
+            foreach ($deliveredorder as $value)
+            {
+                $delivered_order[]=$value;
+            }
+        }else{
+            $delivered_order=[];
+        }
+
+        $rejectOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+        $rejectorder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
+        if($rejectorder->isNotEmpty()){
+            foreach ($rejectorder as $value)
+            {
+                $reject_order[]=$value;
+            }
+        }else{
+            $reject_order=[];
+        }
+
+        $deliveredorder_count=$deliveredorder->count();
+        if($deliveredorder_count==0){
+            $all_data=Paginator::merge($deliveredorder,$rejectorder)->sortByDesc('created_at')->get();
+        }else{
+            $all_data=Paginator::merge($rejectorder,$deliveredorder)->sortByDesc('created_at')->get();
+        }
+
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$deliverOrder->sum('bill_total_price'),'delivered_order_count'=>$deliverOrder->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$rejectOrder->count(),'reject_order'=>$reject_order],'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
     }
 
     /**

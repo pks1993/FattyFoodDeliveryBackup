@@ -114,8 +114,9 @@ class ParcelOrderApiController extends Controller
 
         $booking_count=CustomerOrder::count();
         // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
-        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
-        $customerorderid=(1+$order_count);
+        // $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
+        // $customerorderid=(1+$order_count);
+
 
 
         if($state_id==15){
@@ -152,11 +153,13 @@ class ParcelOrderApiController extends Controller
             $rider_delivery_fee=0;
         }
 
-        $check_customer_order_id=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->where('customer_order_id',$customerorderid)->first();
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
+        $check_customer_order_id=CustomerOrder::query()->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('customer_order_id','desc')->first();
         if($check_customer_order_id){
-            $customer_order_id=$customerorderid+1;
+            $customer_order_id=$check_customer_order_id->customer_order_id+1;
         }else{
-            $customer_order_id=$customerorderid;
+            $customer_order_id=1;
         }
         $parcel_order=CustomerOrder::create([
             "customer_id"=>$customer_id,

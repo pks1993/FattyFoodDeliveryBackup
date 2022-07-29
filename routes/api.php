@@ -238,6 +238,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/get_billing','Api\Rider\Rid
 //insightRestaurant
 // Route::post('v1/fatty/202221/lashio/main/admin/restaurants/insight','Api\Restaurant\RestaurantApiController@restaurant_insight');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/insight','Api\Restaurant\RestaurantApiController@restaurant_insight_v1');
+Route::post('v1/fatty/202221/lashio/main/admin/restaurants/insight_list','Api\Restaurant\RestaurantApiController@restaurant_insight_list_v1');
 
 //Testing
 Route::post('rider/test/store','Api\Rider\RiderApiController@test_store');
