@@ -374,18 +374,19 @@ class ParcelStateController extends Controller
             $start_time = Carbon::now()->format('g:i A');
             $end_time = Carbon::now()->addMinutes(30)->format('g:i A');
             $booking_count=CustomerOrder::count();
-            $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
-            $customerorderid=(1+$order_count);
+            // $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
+            // $customerorderid=(1+$order_count);
             $customer_booking_id="LSO-".date('ymd').(1+$booking_count);
-
+            $date_start=date('Y-m-d 00:00:00');
+            $date_end=date('Y-m-d 23:59:59');
 
 
             $parcel_orders=new CustomerOrder();
-            $check_customer_order_id=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->where('customer_order_id',$customerorderid)->first();
+            $check_customer_order_id=CustomerOrder::query()->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('customer_order_id','desc')->first();
             if($check_customer_order_id){
-                $parcel_orders->customer_order_id=($customerorderid)+1;
+                $parcel_orders->customer_order_id=$check_customer_order_id->customer_order_id+1;
             }else{
-                $parcel_orders->customer_order_id=$customerorderid;
+                $parcel_orders->customer_order_id=1;
             }
             $parcel_orders->customer_booking_id=$customer_booking_id;
             $parcel_orders->from_parcel_city_id=$from_parcel_city_id;
