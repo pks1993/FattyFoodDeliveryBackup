@@ -349,7 +349,7 @@ class OrderApiController extends Controller
                 $past_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
                 $data=$active_order1->merge($past_order1);
                 $total=count($data);
-                $per_page =10;
+                $per_page =20;
                 $current_page = $request->input("page") ?? 1;
                 $starting_point = ($current_page * $per_page) - $per_page;
                 $array = $data->toArray();
@@ -377,7 +377,7 @@ class OrderApiController extends Controller
                 $past_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
                 $data=$active_order1->merge($past_order1);
                 $total=count($data);
-                $per_page =10;
+                $per_page =20;
                 $current_page = $request->input("page") ?? 1;
                 $starting_point = ($current_page * $per_page) - $per_page;
                 $array = $data->toArray();
