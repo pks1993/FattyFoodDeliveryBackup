@@ -30,9 +30,12 @@ use App\Models\Order\ParcelImage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 // use App\Facades\Paginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+// use Illuminate\Pagination\Paginator;
+// use Illuminate\Support\Collection;
+// use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+
+
 
 
 
@@ -325,47 +328,89 @@ class OrderApiController extends Controller
         $date_start=date('Y-m-d 00:00:00', strtotime($request['date']));
         $date_end=date('Y-m-d 23:59:59', strtotime($request['date']));
 
+        // $array =CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->orderBy('order_id','desc')->where('order_type','food')->get();
+        // $total=count($array);
+        // $per_page = 5;
+        // $current_page = $request->input("page") ?? 1;
+        // $starting_point = ($current_page * $per_page) - $per_page;
+        // $array = $array->toArray();
+        // $array = array_slice($array, $starting_point, $per_page, true);
+
+        // $array = new Paginator($array, $total, $per_page, $current_page, [
+        //     'path' => $request->url(),
+        //     'query' => $request->query(),
+        // ]);
+
         $check_customer=Customer::where('customer_id',$customer_id)->first();
         if(!empty($check_customer)){
             if($order_type=="food"){
-                $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->where('order_type','food')->orderBy('created_at','desc')->paginate(10);
+                // $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->orderBy('order_id','desc')->where('order_type','food')->get();
+                $active_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->orderBy('created_at','desc')->get();
+                $past_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
+                $data=$active_order1->merge($past_order1);
+                $total=count($data);
+                $per_page =10;
+                $current_page = $request->input("page") ?? 1;
+                $starting_point = ($current_page * $per_page) - $per_page;
+                $array = $data->toArray();
+                $array = array_slice($array, $starting_point, $per_page, true);
+
+                $all_data = new Paginator($array, $total, $per_page, $current_page, [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                ]);
+
                 $past_order=[];
                 $active_order=[];
-                foreach($all_data as $value){
-                    if($value->order_status_id=="2" || $value->order_status_id=="7" || $value->order_status_id=="8" || $value->order_status_id=="9" || $value->order_status_id=="18" || $value->order_status_id=="20" ){
+                foreach($all_data as $value){                    
+                    if($value['order_status_id']=="2" || $value['order_status_id']=="7" || $value['order_status_id']=="8" || $value['order_status_id']=="9" || $value['order_status_id']=="18" || $value['order_status_id']=="20" ){
                         $past_order[]=$value;
                     }
-                    if($value->order_status_id=="5" || $value->order_status_id=="3" || $value->order_status_id=="4" || $value->order_status_id=="1" || $value->order_status_id=="6" || $value->order_status_id=="10" || $value->order_status_id=="19") {
+                    if($value['order_status_id']=="5" || $value['order_status_id']=="3" || $value['order_status_id']=="4" || $value['order_status_id']=="1" || $value['order_status_id']=="6" || $value['order_status_id']=="10" || $value['order_status_id']=="19") {
                         $active_order[]=$value;
                     }
                 }
                 return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
             }elseif($order_type=="parcel"){
-                $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['11','12','13','14','15','16','17'])->where('order_type','parcel')->paginate(10);
+                // $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['11','12','13','14','15','16','17'])->where('order_type','parcel')->paginate(10);
+                $active_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
+                $past_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
+                $data=$active_order1->merge($past_order1);
+                $total=count($data);
+                $per_page =10;
+                $current_page = $request->input("page") ?? 1;
+                $starting_point = ($current_page * $per_page) - $per_page;
+                $array = $data->toArray();
+                $array = array_slice($array, $starting_point, $per_page, true);
+
+                $all_data = new Paginator($array, $total, $per_page, $current_page, [
+                    'path' => $request->url(),
+                    'query' => $request->query(),
+                ]);
                 $past_order=[];
                 $active_order=[];
                 $item=[];
                 foreach($all_data as $value){
-                    if($value->order_status_id=="15" || $value->order_status_id=="16"){
+                    if($value['order_status_id']=="15" || $value['order_status_id']=="16"){
                         $past_order[]=$value;
                     }
-                    if($value->order_status_id=="11" || $value->order_status_id=="12" || $value->order_status_id=="13" || $value->order_status_id=="14" || $value->order_status_id=="17") {
+                    if($value['order_status_id']=="11" || $value['order_status_id']=="12" || $value['order_status_id']=="13" || $value['order_status_id']=="14" || $value['order_status_id']=="17") {
                         $active_order[]=$value;
                     }
 
-                    if($value->from_parcel_city_id==0){
-                        $value->from_parcel_city_name=null;
+                    if($value['from_parcel_city_id']==0){
+                        $value['from_parcel_city_name']=null;
                     }else{
-                        // $city_data=ParcelCity::where('parcel_city_id',$value->from_parcel_city_id)->first();
-                        $city_data=ParcelBlockList::where('parcel_block_id',$value->from_parcel_city_id)->first();
-                        $value->from_parcel_city_name=$city_data->block_name;
+                        // $city_data=ParcelCity::where('parcel_city_id',$value['from_parcel_city_id'])->first();
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value['from_parcel_city_id'])->first();
+                        $value['from_parcel_city_name']=$city_data->block_name;
                     }
-                    if($value->to_parcel_city_id==0){
-                        $value->to_parcel_city_name=null;
+                    if($value['to_parcel_city_id']==0){
+                        $value['to_parcel_city_name']=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
-                        $city_data=ParcelBlockList::where('parcel_block_id',$value->to_parcel_city_id)->first();
-                        $value->to_parcel_city_name=$city_data->block_name;
+                        $city_data=ParcelBlockList::where('parcel_block_id',$value['to_parcel_city_id'])->first();
+                        $value['to_parcel_city_name']=$city_data->block_name;
                     }
                     array_push($item,$value);
                     
@@ -379,12 +424,12 @@ class OrderApiController extends Controller
         }
     }
 
-    public function paginate($items, $perPage = 10, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
-    }
+    // public function paginate($items, $perPage = 10, $page = null, $options = [])
+    // {
+    //     $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+    //     $items = $items instanceof Collection ? $items : Collection::make($items);
+    //     return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+    // }
 
     public function restaurant_order_count(Request $request)
     {
