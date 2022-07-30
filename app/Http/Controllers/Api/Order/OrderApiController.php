@@ -362,7 +362,7 @@ class OrderApiController extends Controller
 
                 $past_order=[];
                 $active_order=[];
-                foreach($all_data as $value){                    
+                foreach($all_data as $value){
                     if($value['order_status_id']=="2" || $value['order_status_id']=="7" || $value['order_status_id']=="8" || $value['order_status_id']=="9" || $value['order_status_id']=="18" || $value['order_status_id']=="20" ){
                         $past_order[]=$value;
                     }
@@ -373,7 +373,7 @@ class OrderApiController extends Controller
                 return response()->json(['success'=>true,'message'=>"this is customer's of food order",'active_order'=>$active_order,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
             }elseif($order_type=="parcel"){
                 // $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['11','12','13','14','15','16','17'])->where('order_type','parcel')->paginate(10);
-                $active_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
+                $active_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->whereDate('created_at',$date)->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
                 $past_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
                 $data=$active_order1->merge($past_order1);
                 $total=count($data);
@@ -413,7 +413,7 @@ class OrderApiController extends Controller
                         $value['to_parcel_city_name']=$city_data->block_name;
                     }
                     array_push($item,$value);
-                    
+
                 }
                 return response()->json(['success'=>true,'message'=>"this is customer's of parcel order",'active_order'=>$active_order ,'past_order'=>$past_order,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
             }else{
