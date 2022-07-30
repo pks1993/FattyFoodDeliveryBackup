@@ -198,7 +198,7 @@ class ParcelStateController extends Controller
     public function admin_parcel_create(Request $request,$id)
     {
         // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
-        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderby('customer_order_id','desc')->first();;
+        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderby('order_id','desc')->first();;
         $customer_order_id=(1+$order_count->customer_order_id);
         $customer_order_count=(1+$order_count->customer_order_id);
         $extra=ParcelExtraCover::all();
@@ -219,7 +219,7 @@ class ParcelStateController extends Controller
         // $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
         // $customer_order_id=(1+$order_count);
         // $customer_order_count=(1+$order_count);
-        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderby('customer_order_id','desc')->first();;
+        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderby('order_id','desc')->first();;
         $customer_order_id=(1+$order_count->customer_order_id);
         $customer_order_count=(1+$order_count->customer_order_id);
         $extra=ParcelExtraCover::all();
