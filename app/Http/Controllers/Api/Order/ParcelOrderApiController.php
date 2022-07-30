@@ -155,7 +155,7 @@ class ParcelOrderApiController extends Controller
 
         $date_start=date('Y-m-d 00:00:00');
         $date_end=date('Y-m-d 23:59:59');
-        $check_customer_order_id=CustomerOrder::query()->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('customer_order_id','desc')->first();
+        $check_customer_order_id=CustomerOrder::query()->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->first();
         if($check_customer_order_id){
             $customer_order_id=$check_customer_order_id->customer_order_id+1;
         }else{
