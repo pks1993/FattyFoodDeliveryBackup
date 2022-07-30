@@ -124,46 +124,33 @@ class RestaurantApiController extends Controller
 
         //OrderShow
         $deliverOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
-        // $deliveredorder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
-        // if($deliveredorder->isNotEmpty()){
-        //     foreach ($deliveredorder as $value)
-        //     {
-        //         $delivered_order[]=$value;
-        //     }
-        // }else{
-        //     $delivered_order=[];
-        // }
-
-        $rejectOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
-        // $rejectorder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
-        // if($rejectorder->isNotEmpty()){
-        //     foreach ($rejectorder as $value)
-        //     {
-        //         $reject_order[]=$value;
-        //     }
-        // }else{
-        //     $reject_order=[];
-        // }
-
-        // $deliveredorder_count=$deliveredorder->count();
-        // if($deliveredorder_count==0){
-        //     $all_data=Paginator::merge($deliveredorder,$rejectorder)->sortByDesc('created_at')->get();
-        // }else{
-        //     $all_data=Paginator::merge($rejectorder,$deliveredorder)->sortByDesc('created_at')->get();
-        // }
-
-        $all_data=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['2','7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
-        $reject_order=[];
-        $delivered_order=[];
-        foreach($all_data as $value){
-            if($value->order_status_id=="2" ){
-                $reject_order[]=$value;
-            }
-            if($value->order_status_id=="7" || $value->order_status_id=="8") {
+        $deliveredorder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
+        if($deliveredorder->isNotEmpty()){
+            foreach ($deliveredorder as $value)
+            {
                 $delivered_order[]=$value;
             }
+        }else{
+            $delivered_order=[];
         }
 
+        $rejectOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+        $rejectorder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
+        if($rejectorder->isNotEmpty()){
+            foreach ($rejectorder as $value)
+            {
+                $reject_order[]=$value;
+            }
+        }else{
+            $reject_order=[];
+        }
+
+        $deliveredorder_count=$deliveredorder->count();
+        if($deliveredorder_count==0){
+            $all_data=Paginator::merge($deliveredorder,$rejectorder)->sortByDesc('created_at')->get();
+        }else{
+            $all_data=Paginator::merge($rejectorder,$deliveredorder)->sortByDesc('created_at')->get();
+        }
 
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$deliverOrder->sum('bill_total_price'),'delivered_order_count'=>$deliverOrder->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$rejectOrder->count(),'reject_order'=>$reject_order],'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
     }
