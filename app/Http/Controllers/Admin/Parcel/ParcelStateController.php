@@ -230,7 +230,7 @@ class ParcelStateController extends Controller
         // $customer_order_id=(1+$order_count);
         // $customer_order_count=(1+$order_count);
         $date_start=date('Y-m-d 00:00:00');
-         $date_end=date('Y-m-d 23:59:59');
+        $date_end=date('Y-m-d 23:59:59');
         $order_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderby('order_id','desc')->first();;
         if($order_count){
             $customer_order_count=$order_count->customer_order_id+1;
@@ -1677,6 +1677,8 @@ class ParcelStateController extends Controller
         $firstDay = Carbon::now()->startOfMonth();
         $nowDay = Carbon::now();
         $days=$firstDay->diffInDays($nowDay);
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
 
         $period = CarbonPeriod::create($firstDay, $nowDay);
         $days=$period->toArray();
@@ -1685,7 +1687,7 @@ class ParcelStateController extends Controller
            $this_month_days[]= $value->format('Y-m-d H:i:s');
         }
         // dd($this_month_days);
-        $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('customer_id',$customer_admin_id)->where('order_type','parcel')->orderBy('order_id','desc')->get();
         $day_times=$orders->count();
         $day_amount=$orders->sum('bill_total_price');
 
@@ -1705,6 +1707,8 @@ class ParcelStateController extends Controller
         $firstDay = Carbon::now()->startOfMonth();
         $nowDay = Carbon::now();
         $days=$firstDay->diffInDays($nowDay);
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
 
         $period = CarbonPeriod::create($firstDay, $nowDay);
         $days=$period->toArray();
@@ -1713,7 +1717,7 @@ class ParcelStateController extends Controller
            $this_month_days[]= $value->format('Y-m-d H:i:s');
         }
         // dd($this_month_days);
-        $orders=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderBy('order_id','desc')->get();
+        $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->get();
         $day_times=$orders->count();
         $day_amount=$orders->sum('bill_total_price');
 
