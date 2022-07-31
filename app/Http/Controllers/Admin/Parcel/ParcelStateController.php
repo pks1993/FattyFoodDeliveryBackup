@@ -128,6 +128,8 @@ class ParcelStateController extends Controller
     }
     public function admin_parcel_list(Request $request,$id)
     {
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
         $order_count=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->count();
         $customer_order_count=(1+$order_count);
         $extra=ParcelExtraCover::all();
@@ -138,7 +140,7 @@ class ParcelStateController extends Controller
         $to_cities=ParcelCity::all();
         $riders=Rider::all();
         $customer_admin_id=$id;
-        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->orderBy('created_at','desc')->whereRaw('Date(created_at) = CURDATE()')->get();
+        $parcel_orders=CustomerOrder::where('order_type','parcel')->where('customer_id',$id)->orderBy('created_at','desc')->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->get();
 
         return view('admin.order.parcel_list.admin_list',compact('parcel_type','extra','from_cities','to_cities','riders','customers','customer_order_count','customer_admin_id','parcel_orders'));
     }
@@ -197,8 +199,10 @@ class ParcelStateController extends Controller
     }
     public function admin_parcel_create(Request $request,$id)
     {
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
         // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('order_type','parcel')->count();
-        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderby('order_id','desc')->first();
+        $order_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderby('order_id','desc')->first();
         if($order_count){
             $customer_order_count=$order_count->customer_order_id+1;
         }else{
@@ -206,6 +210,7 @@ class ParcelStateController extends Controller
         }
         // $customer_order_id=(1+$order_count->customer_order_id);
         // $customer_order_count=(1+$order_count->customer_order_id);
+
         $extra=ParcelExtraCover::all();
         $customers=Customer::all();
         $parcel_type=ParcelType::all();
@@ -224,7 +229,9 @@ class ParcelStateController extends Controller
         // $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
         // $customer_order_id=(1+$order_count);
         // $customer_order_count=(1+$order_count);
-        $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->orderby('order_id','desc')->first();;
+        $date_start=date('Y-m-d 00:00:00');
+         $date_end=date('Y-m-d 23:59:59');
+        $order_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderby('order_id','desc')->first();;
         if($order_count){
             $customer_order_count=$order_count->customer_order_id+1;
         }else{
