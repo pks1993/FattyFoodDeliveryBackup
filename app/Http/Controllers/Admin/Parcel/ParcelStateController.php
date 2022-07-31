@@ -356,6 +356,54 @@ class ParcelStateController extends Controller
         $from_pickup_latitude=$parcel_orders->from_pickup_latitude;
         $from_pickup_longitude=$parcel_orders->from_pickup_longitude;
 
+        $riderFcmToken=Rider::where('rider_id',$rider_id)->pluck('rider_fcm_token')->toArray();
+
+        $orders=CustomerOrder::where('order_id',$parcel_orders->order_id)->first();
+        if($orders->rider_id){
+            Rider::where('rider_id',$orders->rider_id)->update(['is_order'=>0]);
+            $orders->rider_id=$rider_id;
+        }else{
+            $orders->rider_id=$rider_id;
+        }
+        $orders->is_force_assign=1;
+        $orders->order_status_id=12;
+        $orders->update();
+
+        $riders=Rider::where('rider_id',$rider_id)->first();
+        $riders->is_order=1;
+        $riders->update();
+
+        $rider_token=$riderFcmToken;
+        // return response()->json($rider_token);
+        $orderId=(string)$parcel_orders->order_id;
+        $orderstatusId=(string)$parcel_orders->order_status_id;
+        $orderType=(string)$parcel_orders->order_type;
+        if($rider_token){
+            $rider_client = new Client();
+            $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+            try{
+                $rider_client->post($cus_url,[
+                    'json' => [
+                        "to"=>$rider_token,
+                        "data"=> [
+                            "type"=> "new_order",
+                            "order_id"=>$orderId,
+                            "order_status_id"=>$orderstatusId,
+                            "order_type"=>$orderType,
+                            "title_mm"=> "New Parcel Order",
+                            "body_mm"=> "One new order is received! Please check it!",
+                            "title_en"=> "New Parcel Order",
+                            "body_en"=> "One new order is received! Please check it!",
+                            "title_ch"=> "New Parcel Order",
+                            "body_ch"=> "One new order is received! Please check it!"
+                        ],
+                    ],
+                ]);
+            }catch(ClientException $e){
+
+            }
+        }
+
         $request->session()->flash('alert-success', 'successfully create parcel orders!');
         // return redirect('admin_parcel_orders/list/'.$request['customer_id']);
         return redirect('admin_parcel_orders/copy/'.$id);
