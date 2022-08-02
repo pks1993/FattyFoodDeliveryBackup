@@ -404,6 +404,49 @@ class OrderController extends Controller
         ->make(true);
     }
 
+    public function dailyparcelorderlist(Request $request)
+    {
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
+        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+        $all_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+
+        return view('admin.order.daily_parcel_orders.daily_index',compact('total_orders','all_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
+    }
+    public function dailyparcelorderdatefilter(Request $request)
+    {
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+        $all_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+
+        return view('admin.order.daily_parcel_orders.daily_index',compact('total_orders','all_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
+    }
+
+    public function dailyparcelordersearch(Request $request)
+    {
+        $search_name=$request['search_name'];
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        if($search_name){
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+        }else{
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+        }
+        $all_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+
+        return view('admin.order.daily_parcel_orders.daily_index',compact('total_orders','all_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
+    }
+
     public function dailyparcelorderindex()
     {
         return view('admin.order.daily_parcel_orders.index');
