@@ -478,6 +478,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
     Route::get('orders/datatable/dailyparcelorderajax','Admin\Order\OrderController@dailyparcelorderajax');
 
+    Route::get('daily_parcel_orders/list','Admin\Order\OrderController@dailyparcelorderlist');
+    Route::get('daily_parcel_orders/date_filter','Admin\Order\OrderController@dailyparcelorderdatefilter');
+    Route::get('daily_parcel_orders/search','Admin\Order\OrderController@dailyparcelordersearch');
+
     Route::get('monthly_parcel_orders','Admin\Order\OrderController@monthlyparcelorderindex');
     Route::get('orders/datatable/monthlyparcelorderajax','Admin\Order\OrderController@monthlyparcelorderajax');
 
