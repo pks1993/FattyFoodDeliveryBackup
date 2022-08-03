@@ -14,7 +14,7 @@ require_once __DIR__ . '/../lib/PaymentClient.php';
 $servername = "localhost";
 $username = "root";
 $password = "Fatty@Orikino#412F";
-$dbname = "FattyDatabase";
+$dbname = "FattyApplication";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -434,9 +434,13 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::delete('ads/down_ads/delete/{down_ads_id}','Admin\Ads\DownAdsController@destroy')->name('down_ads.destroy');
     Route::post('ads/down_ads/sort_update','Admin\Ads\DownAdsController@sort_update');
 
-    //Order
+    //assign Order
     Route::get('foods/orders/lists','Admin\Order\OrderController@index');
     Route::get('orders/datatable/assginorderajax','Admin\Order\OrderController@assignorderajax');
+
+    //assign order update
+    Route::get('foods/orders/date_filter','Admin\Order\OrderController@assign_order_datefilter');
+    Route::get('foods/orders/search','Admin\Order\OrderController@assign_order_search');
 
     Route::get('foods/orders/assign/{order_id}','Admin\Order\OrderController@assign')->name('food_orders.assign');
     Route::post('foods/orders/assign/notification/{rider_id}','Admin\Order\OrderController@assign_noti')->name('food_orders.assign.notification');
@@ -478,6 +482,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
     Route::get('orders/datatable/dailyparcelorderajax','Admin\Order\OrderController@dailyparcelorderajax');
 
+    //daily parcel order list
     Route::get('daily_parcel_orders/list','Admin\Order\OrderController@dailyparcelorderlist');
     Route::get('daily_parcel_orders/date_filter','Admin\Order\OrderController@dailyparcelorderdatefilter');
     Route::get('daily_parcel_orders/search','Admin\Order\OrderController@dailyparcelordersearch');

@@ -43,9 +43,6 @@
                         <div id="shiva"><span class="count"><h3>{{ $all_count }}</h3></span></div>
                         <p>Total Parcel Orders</p>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
-                    </div>
                 </div>
             </div>
             <div class="col-sm-3 col-xs-3">
@@ -53,9 +50,6 @@
                     <div class="inner">
                         <div id="shiva"><span class="count"><h3>{{ $processing_orders }}</h3></span></div>
                         <p>Total Processing Orders</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
                     </div>
                 </div>
             </div>
@@ -65,9 +59,6 @@
                         <div id="shiva"><span class="count"><h3>{{ $delivered_orders }}</h3></span></div>
                         <p>Total Delivered Orders</p>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
-                    </div>
                 </div>
             </div>
             <div class="col-sm-3 col-xs-3">
@@ -75,9 +66,6 @@
                     <div class="inner">
                         <div id="shiva"><span class="count"><h3>{{ $cancel_orders }}</h3></span></div>
                         <p>Total Cancel Orders</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
                     </div>
                 </div>
             </div>
@@ -117,6 +105,7 @@
                                     <th>BookingId</th>
                                     <th>OrderDate</th>
                                     <th>OrderTime</th>
+                                    <th>Duration</th>
                                     <th>CustomerName</th>
                                     <th>RiderName</th>
                                     <th>PaymentMethod</th>
@@ -168,6 +157,13 @@
                                     <td class="text-left">{{ $item->customer_booking_id }}</td>
                                     <td>{{ date('d/M/Y',strtotime($item->created_at)) }}</td>
                                     <td>{{ $item->order_time }}</td>
+                                    <td>
+                                        @if($item->order_status_id==16 || $item->order_status_id==15)
+                                            {{ $item->updated_at->diffForHumans($item->created_at,true,true) }}
+                                        @else
+                                            {{ $item->created_at->diffForHumans(null,true,true) }}
+                                        @endif
+                                    </td>
                                     <td class="text-left">
                                         @if($item->customer_id)
                                             {{ $item->customer->customer_name }}

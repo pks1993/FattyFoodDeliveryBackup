@@ -52,42 +52,62 @@
             <div class="col-md-12">
                 <div class="container-fluid text-center font-weight-bold">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
                             Driver
                         </div>
-
-                        <div class="col-6" id="sort_by_qty">
+                        <div class="col-4">
                             <a class="btn btn-sm btn-success text-white">Qty</a>
+                        </div>
+                        <div class="col-4">
+                            <a class="btn btn-sm btn-success text-white">Price</a>
                         </div>
                     </div>
                 </div>
                 <div id="qty">
                     @foreach ($riders as $rider)
                         <a class="btn btn-block border mt-1" id="show{{ $rider->rider_id }}">
-                            <div class="container-fluid">
+                            <div class="container-fluid text-center">
                                 <div class="row" id="{{ $rider->rider_id }}" onclick="showOrderDetail(this)">
-                                    <div class="col-6 text-left">
+                                    <div class="col-4 text-left">
                                         {{ $rider->rider_user_name }}
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <?php
                                             $count=DB::select("select * from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                             echo count($count);
+                                        ?>
+                                    </div>
+                                    <div class="col-4">
+                                        <?php
+                                            $count=DB::select("select sum(bill_total_price) as price from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                            foreach ($count as $value) {
+                                                $price=$value->price;
+                                            }
+                                            echo $price;
                                         ?>
                                     </div>
                                 </div>
                             </div>
                         </a>
                         <a class="btn btn-block btn-success text-white border mt-1" id="hide{{ $rider->rider_id }}" style="display: none;">
-                            <div class="container-fluid">
+                            <div class="container-fluid text-center">
                                 <div class="row" id="{{ $rider->rider_id }}" onclick="hideOrderDetail(this)">
-                                    <div class="col-6">
+                                    <div class="col-4 text-left">
                                         {{ $rider->rider_user_name }}
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <?php
                                             $count=DB::select("select * from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
                                             echo count($count);
+                                        ?>
+                                    </div>
+                                    <div class="col-4">
+                                        <?php
+                                            $count=DB::select("select sum(bill_total_price) as price from customer_orders where order_status_id in (15,7,8) and rider_id='$rider->rider_id' and Date(created_at) ='".$date."'");
+                                            foreach ($count as $value) {
+                                                $price=$value->price;
+                                            }
+                                            echo $price;
                                         ?>
                                     </div>
                                 </div>

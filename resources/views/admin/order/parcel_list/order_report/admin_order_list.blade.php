@@ -110,19 +110,19 @@
 {{-- <ul class="nav nav-pills navbar-inverse" style="background-color: #343a40;"> --}}
 <ul class="nav nav-pills navbar-inverse">
     <li class="nav-item">
-        <a href="{{ url('admin_parcel_orders/create/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Home</a>
+        <a href="{{ url('admin_parcel_orders/create/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:13px;font-weight:545;">Home</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Order</a>
+        <a href="{{ url('admin_parcel_orders/list/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:13px;font-weight:545;">Orders</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url("admin_rider_order/report/".$customer_admin_id) }}" style="background-color:#28a745;width: 100%;color: #FFF;font-size:15px;font-weight:510;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">OrderReport</a>
+        <a href="{{ url("admin_rider_order/report/".$customer_admin_id) }}" style="background-color:#28a745;width: 100%;color: #FFF;font-size:13px;font-weight:545;" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home" aria-selected="true">MyReport</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url('admin_parcel_orders/all_report/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">AllOrderReport</a>
+        <a href="{{ url('admin_parcel_orders/all_report/'.$customer_admin_id) }}" class="nav-link" style="width: 100%;color: #FFF;font-size:13px;font-weight:545;">AllReport</a>
     </li>
     <li class="nav-item">
-        <a href="{{ url("admin_parcel_orders/logout_check") }}" style="width: 100%;color: #FFF;font-size:15px;font-weight:510;">Logout</a>
+        <a href="{{ url("admin_parcel_orders/logout_check") }}" title="Log Out" style="width: 100%;color: #FFF;font-weight:545;"><i class="fa fa-sign-out" style="font-size: 16px;" aria-hidden="true"></i></a>
     </li>
 
 </ul>
