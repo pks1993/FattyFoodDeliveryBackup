@@ -24,7 +24,7 @@ class OrderController extends Controller
 
     public function pending()
     {
-        $orders=CustomerOrder::orderBy('created_at','DESC')->where('order_status_id',8)->get();
+        $orders=CustomerOrder::orderBy('created_at','DESC')->where('order_status_id',8)->paginate(15);
         return view('admin.order.pending_order.index',compact('orders'));
     }
 
@@ -75,10 +75,46 @@ class OrderController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-    public function index()
+    public function index(Request $request)
     {
-        $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
-        return view('admin.order.index',compact('food_orders'));
+        // $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        // $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        // $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
+        $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        $total_order=$orders->count();
+        return view('admin.order.index',compact('orders','date_start','date_end','total_order'));
+    }
+    public function assign_order_datefilter(Request $request)
+    {
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        $total_order=$orders->count();
+        return view('admin.order.index',compact('orders','date_start','date_end','total_order'));
+    }
+
+    public function assign_order_search(Request $request)
+    {
+        $search_name=$request['search_name'];
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        if($search_name){
+            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->orderBy('order_id','desc')->paginate(15);
+        }else{
+            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        }
+        $total_order=$orders->count();
+        return view('admin.order.index',compact('orders','date_start','date_end','total_order'));
     }
 
     public function assignorderajax()
