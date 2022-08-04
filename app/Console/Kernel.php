@@ -34,9 +34,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->orderBy('created_at','desc')->first();
         $date_start=date('Y-m-d 00:00:00');
         $date_end=date('Y-m-d 23:59:59');
+        $customer_check=CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->orderBy('created_at','desc')->first();
         if($customer_check){
             $data = CustomerOrder::whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->orderBy('created_at','desc')->get();
             foreach ($data as $value) {
