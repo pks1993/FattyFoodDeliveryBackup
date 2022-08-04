@@ -442,8 +442,16 @@ class OrderController extends Controller
 
     public function dailyparcelorderlist(Request $request)
     {
-        $date_start=date('Y-m-d 00:00:00');
-        $date_end=date('Y-m-d 23:59:59');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
         $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
         $all_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
         $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();

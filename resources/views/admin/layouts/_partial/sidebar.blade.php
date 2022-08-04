@@ -147,7 +147,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="{{url('fatty/main/admin/daily_parcel_orders')}}" class="nav-link">
+                        <a href="{{url('fatty/main/admin/daily_parcel_orders/list')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Daily Parcel Orders</p>
                             <span class="label label-primary pull-right" style="background-color: blue !important;display: inline;float: right!important;margin-left: 10px;padding: .5em .6em .5em;font-size: 75%;font-weight: 700;line-height: 1;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em;">
@@ -158,7 +158,7 @@
                             </span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a href="{{url('fatty/main/admin/daily_parcel_orders/list')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Daily Orders Update</p>
@@ -169,7 +169,7 @@
                                 ?>
                             </span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a href="{{url('fatty/main/admin/monthly_parcel_orders')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
