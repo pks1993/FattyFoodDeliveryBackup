@@ -526,7 +526,7 @@ class ParcelStateController extends Controller
                     {
                         $rider_fcm_token=array();
                         foreach($riders as $rid){
-                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                             $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -558,7 +558,7 @@ class ParcelStateController extends Controller
                                 {
                                     $rider_fcm_token=array();
                                     foreach($riders as $rid){
-                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                         $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                         $total_count=$check_order_count+$check_noti_count;
                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -590,7 +590,7 @@ class ParcelStateController extends Controller
                                             {
                                                 $rider_fcm_token=array();
                                                 foreach($riders as $rid){
-                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                     $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -622,7 +622,7 @@ class ParcelStateController extends Controller
                                                         {
                                                             $rider_fcm_token=array();
                                                             foreach($riders as $rid){
-                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                 $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -654,7 +654,7 @@ class ParcelStateController extends Controller
                                                                     {
                                                                         $rider_fcm_token=array();
                                                                         foreach($riders as $rid){
-                                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                             $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -686,7 +686,7 @@ class ParcelStateController extends Controller
                                                                                 {
                                                                                     $rider_fcm_token=array();
                                                                                     foreach($riders as $rid){
-                                                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                                         $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -747,7 +747,7 @@ class ParcelStateController extends Controller
                         {
                             $rider_fcm_token=array();
                             foreach($riders as $rid){
-                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                 $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -779,7 +779,7 @@ class ParcelStateController extends Controller
                                     {
                                         $rider_fcm_token=array();
                                         foreach($riders as $rid){
-                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                             $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -811,7 +811,7 @@ class ParcelStateController extends Controller
                                                 {
                                                     $rider_fcm_token=array();
                                                     foreach($riders as $rid){
-                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                         $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -843,7 +843,7 @@ class ParcelStateController extends Controller
                                                             {
                                                                 $rider_fcm_token=array();
                                                                 foreach($riders as $rid){
-                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                     $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -875,7 +875,7 @@ class ParcelStateController extends Controller
                                                                         {
                                                                             $rider_fcm_token=array();
                                                                             foreach($riders as $rid){
-                                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                                 $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                             $total_count=$check_order_count+$check_noti_count;
                                                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -931,7 +931,7 @@ class ParcelStateController extends Controller
                             {
                                 $rider_fcm_token=array();
                                 foreach($riders as $rid){
-                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                     $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                     $total_count=$check_order_count+$check_noti_count;
                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -963,7 +963,7 @@ class ParcelStateController extends Controller
                                         {
                                             $rider_fcm_token=array();
                                             foreach($riders as $rid){
-                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                 $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                 $total_count=$check_order_count+$check_noti_count;
                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -995,7 +995,7 @@ class ParcelStateController extends Controller
                                                     {
                                                         $rider_fcm_token=array();
                                                         foreach($riders as $rid){
-                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                             $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                             $total_count=$check_order_count+$check_noti_count;
                                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1027,7 +1027,7 @@ class ParcelStateController extends Controller
                                                                 {
                                                                     $rider_fcm_token=array();
                                                                     foreach($riders as $rid){
-                                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                         $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                                         $total_count=$check_order_count+$check_noti_count;
                                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1078,7 +1078,7 @@ class ParcelStateController extends Controller
                                 {
                                     $rider_fcm_token=array();
                                     foreach($riders as $rid){
-                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                         $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                         $total_count=$check_order_count+$check_noti_count;
                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1110,7 +1110,7 @@ class ParcelStateController extends Controller
                                             {
                                                 $rider_fcm_token=array();
                                                 foreach($riders as $rid){
-                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                     $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                     $total_count=$check_order_count+$check_noti_count;
                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1142,7 +1142,7 @@ class ParcelStateController extends Controller
                                                         {
                                                             $rider_fcm_token=array();
                                                             foreach($riders as $rid){
-                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                                 $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                                 $total_count=$check_order_count+$check_noti_count;
                                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1188,7 +1188,7 @@ class ParcelStateController extends Controller
                                     {
                                         $rider_fcm_token=array();
                                         foreach($riders as $rid){
-                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                             $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                             $total_count=$check_order_count+$check_noti_count;
                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1220,7 +1220,7 @@ class ParcelStateController extends Controller
                                                 {
                                                     $rider_fcm_token=array();
                                                     foreach($riders as $rid){
-                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                         $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                         $total_count=$check_order_count+$check_noti_count;
                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
@@ -1261,7 +1261,7 @@ class ParcelStateController extends Controller
                                         {
                                             $rider_fcm_token=array();
                                             foreach($riders as $rid){
-                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->count();
                                                 $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                                                 $total_count=$check_order_count+$check_noti_count;
                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
