@@ -1069,6 +1069,8 @@ class OrderApiController extends Controller
     public function restaurant_status_v1(Request $request)
     {
         $order_id=$request['order_id'];
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
         if(!empty($order_id)){
             $order_status_id=(int)$request['order_status_id'];
             $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
@@ -1128,231 +1130,6 @@ class OrderApiController extends Controller
                         }
                     }
 
-                    // if($customer_check->customer_type_id!=3){
-                        //rider
-                        // $riders=DB::table("riders")->select("riders.rider_id"
-                        // ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        // * cos(radians(riders.rider_latitude))
-                        // * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        // + sin(radians(" .$restaurant_address_latitude. "))
-                        // * sin(radians(riders.rider_latitude))) AS distance"))
-                        // ->having('distance','<',1.1)
-                        // ->groupBy("riders.rider_id")
-                        // ->where('is_order','0')
-                        // ->where('active_inactive_status','1')
-                        // ->where('is_ban','0')
-                        // ->get();
-                        // if($riders->isNotEmpty())
-                        // {
-                        //     foreach($riders as $rider){
-                        //         $rider_id[]=$rider->rider_id;
-                        //     }
-                        //     $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //     $rider_fcm_token=array();
-                        //     foreach($riders_check as $rid){
-                        //         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //         if(empty($check_noti_order)){
-                        //             NotiOrder::create([
-                        //                 "rider_id"=>$rid->rider_id,
-                        //                 "order_id"=>$order_id,
-                        //             ]);
-                        //         }
-                        //         if($rid->rider_fcm_token){
-                        //             array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //         }
-                        //     }
-                        // }else{
-                        //     $riders=DB::table("riders")->select("riders.rider_id"
-                        //     ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //     * cos(radians(riders.rider_latitude))
-                        //     * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //     + sin(radians(" .$restaurant_address_latitude. "))
-                        //     * sin(radians(riders.rider_latitude))) AS distance"))
-                        //     ->having('distance','<',2.1)
-                        //     ->groupBy("riders.rider_id")
-                        //     ->where('is_order','0')
-                        //     ->where('active_inactive_status','1')
-                        //     ->where('is_ban','0')
-                        //     ->get();
-                        //     if($riders->isNotEmpty()){
-                        //         foreach($riders as $rider){
-                        //             $rider_id[]=$rider->rider_id;
-                        //         }
-                        //         $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //         $rider_fcm_token=array();
-                        //         foreach($riders_check as $rid){
-                        //             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //             if(empty($check_noti_order)){
-                        //                 NotiOrder::create([
-                        //                     "rider_id"=>$rid->rider_id,
-                        //                     "order_id"=>$order_id,
-                        //                 ]);
-                        //             }
-                        //             if($rid->rider_fcm_token){
-                        //                 array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //             }
-                        //         }
-                        //     }else{
-                        //         $riders=DB::table("riders")->select("riders.rider_id"
-                        //         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //         * cos(radians(riders.rider_latitude))
-                        //         * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //         + sin(radians(" .$restaurant_address_latitude. "))
-                        //         * sin(radians(riders.rider_latitude))) AS distance"))
-                        //         ->having('distance','<',3.1)
-                        //         ->groupBy("riders.rider_id")
-                        //         ->where('is_order','0')
-                        //         ->where('active_inactive_status','1')
-                        //         ->where('is_ban','0')
-                        //         ->get();
-                        //         if($riders->isNotEmpty()){
-                        //             foreach($riders as $rider){
-                        //                 $rider_id[]=$rider->rider_id;
-                        //             }
-                        //             $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //             $rider_fcm_token=array();
-                        //             foreach($riders_check as $rid){
-                        //                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //                 if(empty($check_noti_order)){
-                        //                     NotiOrder::create([
-                        //                         "rider_id"=>$rid->rider_id,
-                        //                         "order_id"=>$order_id,
-                        //                     ]);
-                        //                 }
-                        //                 if($rid->rider_fcm_token){
-                        //                     array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //                 }
-                        //             }
-                        //         }else{
-                        //             $riders=DB::table("riders")->select("riders.rider_id"
-                        //             ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //             * cos(radians(riders.rider_latitude))
-                        //             * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //             + sin(radians(" .$restaurant_address_latitude. "))
-                        //             * sin(radians(riders.rider_latitude))) AS distance"))
-                        //             ->having('distance','<',4.1)
-                        //             ->groupBy("riders.rider_id")
-                        //             ->where('is_order','0')
-                        //             ->where('active_inactive_status','1')
-                        //             ->where('is_ban','0')
-                        //             ->get();
-                        //             if($riders->isNotEmpty()){
-                        //                 foreach($riders as $rider){
-                        //                     $rider_id[]=$rider->rider_id;
-                        //                 }
-                        //                 $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //                 $rider_fcm_token=array();
-                        //                 foreach($riders_check as $rid){
-                        //                     $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //                     if(empty($check_noti_order)){
-                        //                         NotiOrder::create([
-                        //                             "rider_id"=>$rid->rider_id,
-                        //                             "order_id"=>$order_id,
-                        //                         ]);
-                        //                     }
-                        //                     if($rid->rider_fcm_token){
-                        //                         array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //                     }
-                        //                 }
-                        //             }else{
-                        //                 $riders=DB::table("riders")->select("riders.rider_id"
-                        //                 ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //                 * cos(radians(riders.rider_latitude))
-                        //                 * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //                 + sin(radians(" .$restaurant_address_latitude. "))
-                        //                 * sin(radians(riders.rider_latitude))) AS distance"))
-                        //                 ->having('distance','<',5.1)
-                        //                 ->groupBy("riders.rider_id")
-                        //                 ->where('is_order','0')
-                        //                 ->where('active_inactive_status','1')
-                        //                 ->where('is_ban','0')
-                        //                 ->get();
-                        //                 if($riders->isNotEmpty()){
-                        //                     foreach($riders as $rider){
-                        //                         $rider_id[]=$rider->rider_id;
-                        //                     }
-                        //                     $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //                     $rider_fcm_token=array();
-                        //                     foreach($riders_check as $rid){
-                        //                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //                         if(empty($check_noti_order)){
-                        //                             NotiOrder::create([
-                        //                                 "rider_id"=>$rid->rider_id,
-                        //                                 "order_id"=>$order_id,
-                        //                             ]);
-                        //                         }
-                        //                         if($rid->rider_fcm_token){
-                        //                             array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //                         }
-                        //                     }
-                        //                 }else{
-                        //                     $riders=DB::table("riders")->select("riders.rider_id"
-                        //                     ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //                     * cos(radians(riders.rider_latitude))
-                        //                     * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //                     + sin(radians(" .$restaurant_address_latitude. "))
-                        //                     * sin(radians(riders.rider_latitude))) AS distance"))
-                        //                     ->having('distance','<',6.1)
-                        //                     ->groupBy("riders.rider_id")
-                        //                     ->where('is_order','0')
-                        //                     ->where('active_inactive_status','1')
-                        //                     ->where('is_ban','0')
-                        //                     ->get();
-                        //                     if($riders->isNotEmpty()){
-                        //                         foreach($riders as $rider){
-                        //                             $rider_id[]=$rider->rider_id;
-                        //                         }
-                        //                         $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //                         $rider_fcm_token=array();
-                        //                         foreach($riders_check as $rid){
-                        //                             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //                             if(empty($check_noti_order)){
-                        //                                 NotiOrder::create([
-                        //                                     "rider_id"=>$rid->rider_id,
-                        //                                     "order_id"=>$order_id,
-                        //                                 ]);
-                        //                             }
-                        //                             if($rid->rider_fcm_token){
-                        //                                 array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //                             }
-                        //                         }
-                        //                     }else{
-                        //                         $riders=DB::table("riders")->select("riders.rider_id"
-                        //                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //                         * cos(radians(riders.rider_latitude))
-                        //                         * cos(radians(riders.rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //                         + sin(radians(" .$restaurant_address_latitude. "))
-                        //                         * sin(radians(riders.rider_latitude))) AS distance"))
-                        //                         ->groupBy("riders.rider_id")
-                        //                         ->where('is_order','0')
-                        //                         ->where('active_inactive_status','1')
-                        //                         ->where('is_ban','0')
-                        //                         ->get();
-                        //                         foreach($riders as $rider){
-                        //                             $rider_id[]=$rider->rider_id;
-                        //                         }
-                        //                         $riders_check=Rider::whereIn('rider_id',$rider_id)->select('rider_id','rider_fcm_token')->get();
-                        //                         $rider_fcm_token=array();
-                        //                         foreach($riders_check as $rid){
-                        //                             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                        //                             if(empty($check_noti_order)){
-                        //                                 NotiOrder::create([
-                        //                                     "rider_id"=>$rid->rider_id,
-                        //                                     "order_id"=>$order_id,
-                        //                                 ]);
-                        //                             }
-                        //                             if($rid->rider_fcm_token){
-                        //                                 array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        //                             }
-                        //                         }
-                        //                     }
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-
-                        // }
-
                         //Rider
                         $riders=DB::table("riders")->select("riders.rider_id",'riders.max_order','rider_fcm_token'
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -1371,9 +1148,10 @@ class OrderApiController extends Controller
                         {
                             $rider_fcm_token=array();
                             foreach($riders as $rid){
-                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
-                    $total_count=$check_order_count+$check_noti_count;
+                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                $total_count=$check_order_count+$check_noti_count;
+
                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                     $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
                                     if(empty($check_noti_order)){
@@ -1403,8 +1181,8 @@ class OrderApiController extends Controller
                                     {
                                         $rider_fcm_token=array();
                                         foreach($riders as $rid){
-                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1435,8 +1213,8 @@ class OrderApiController extends Controller
                                                 {
                                                     $rider_fcm_token=array();
                                                     foreach($riders as $rid){
-                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1467,8 +1245,8 @@ class OrderApiController extends Controller
                                                             {
                                                                 $rider_fcm_token=array();
                                                                 foreach($riders as $rid){
-                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1499,8 +1277,8 @@ class OrderApiController extends Controller
                                                                         {
                                                                             $rider_fcm_token=array();
                                                                             foreach($riders as $rid){
-                                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                                     $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1531,8 +1309,8 @@ class OrderApiController extends Controller
                                                                                     {
                                                                                         $rider_fcm_token=array();
                                                                                         foreach($riders as $rid){
-                                                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                                                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1592,8 +1370,8 @@ class OrderApiController extends Controller
                             {
                                 $rider_fcm_token=array();
                                 foreach($riders as $rid){
-                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1624,8 +1402,8 @@ class OrderApiController extends Controller
                                         {
                                             $rider_fcm_token=array();
                                             foreach($riders as $rid){
-                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                     $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1656,8 +1434,8 @@ class OrderApiController extends Controller
                                                     {
                                                         $rider_fcm_token=array();
                                                         foreach($riders as $rid){
-                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1688,8 +1466,8 @@ class OrderApiController extends Controller
                                                                 {
                                                                     $rider_fcm_token=array();
                                                                     foreach($riders as $rid){
-                                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1720,8 +1498,8 @@ class OrderApiController extends Controller
                                                                             {
                                                                                 $rider_fcm_token=array();
                                                                                 foreach($riders as $rid){
-                                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1776,8 +1554,8 @@ class OrderApiController extends Controller
                                 {
                                     $rider_fcm_token=array();
                                     foreach($riders as $rid){
-                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1808,8 +1586,8 @@ class OrderApiController extends Controller
                                             {
                                                 $rider_fcm_token=array();
                                                 foreach($riders as $rid){
-                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1840,8 +1618,8 @@ class OrderApiController extends Controller
                                                         {
                                                             $rider_fcm_token=array();
                                                             foreach($riders as $rid){
-                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                     $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1872,8 +1650,8 @@ class OrderApiController extends Controller
                                                                     {
                                                                         $rider_fcm_token=array();
                                                                         foreach($riders as $rid){
-                                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1923,8 +1701,8 @@ class OrderApiController extends Controller
                                     {
                                         $rider_fcm_token=array();
                                         foreach($riders as $rid){
-                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1955,8 +1733,8 @@ class OrderApiController extends Controller
                                                 {
                                                     $rider_fcm_token=array();
                                                     foreach($riders as $rid){
-                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                        $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                        $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                         if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                             $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -1987,8 +1765,8 @@ class OrderApiController extends Controller
                                                             {
                                                                 $rider_fcm_token=array();
                                                                 foreach($riders as $rid){
-                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -2033,8 +1811,8 @@ class OrderApiController extends Controller
                                         {
                                             $rider_fcm_token=array();
                                             foreach($riders as $rid){
-                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                 if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                     $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -2065,8 +1843,8 @@ class OrderApiController extends Controller
                                                     {
                                                         $rider_fcm_token=array();
                                                         foreach($riders as $rid){
-                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                            $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                            $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                             if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                                 $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
@@ -2106,8 +1884,8 @@ class OrderApiController extends Controller
                                             {
                                                 $rider_fcm_token=array();
                                                 foreach($riders as $rid){
-                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->whereRaw('Date(created_at) = CURDATE()')->count();
-                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->whereRaw('Date(created_at) = CURDATE()')->count();
+                                                    $check_order_count=CustomerOrder::where('rider_id',$rid->rider_id)->whereIn('order_status_id',['4','5','6','10','12','13','14','17'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
+                                                    $check_noti_count=Notiorder::where('rider_id',$rid->rider_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->count();
                     $total_count=$check_order_count+$check_noti_count;
                                                     if($total_count <= $rid->max_order && $rid->distance <= $rid->max_distance){
                                                         $check_noti_order=NotiOrder::where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
