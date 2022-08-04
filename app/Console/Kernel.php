@@ -47,7 +47,7 @@ class Kernel extends ConsoleKernel
                 $created_at = Carbon::parse($created_at);
                 $diffMinutes = $created_at->diffInMinutes($now);
 
-                if($diffMinutes==1){
+                if($diffMinutes==5){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token","riders.max_order"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -877,7 +877,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==2){
+                }elseif($diffMinutes==10){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token","riders.max_order"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -1442,7 +1442,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==3){
+                }elseif($diffMinutes==15){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token","riders.max_order"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -1795,7 +1795,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==4){
+                }elseif($diffMinutes==20){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token","riders.max_order"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
@@ -1989,7 +1989,7 @@ class Kernel extends ConsoleKernel
                         }
                     }
                     $schedule->command('send:notification');
-                }elseif($diffMinutes==5){
+                }elseif($diffMinutes==25){
                     if($value->order_type=="food"){
                         $riders=Rider::select("rider_id","rider_fcm_token","riders.max_order"
                         ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
