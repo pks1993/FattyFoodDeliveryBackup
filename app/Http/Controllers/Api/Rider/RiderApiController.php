@@ -465,8 +465,8 @@ class RiderApicontroller extends Controller
 
                 }
             }
-                $rider_latitude=$rider_check->rider_latitude;
-                $rider_longitude=$rider_check->rider_longitude;
+                // $rider_latitude=$rider_check->rider_latitude;
+                // $rider_longitude=$rider_check->rider_longitude;
                 // $distance="1000";
 
                 $noti_order=Notiorder::where('rider_id',$rider_id)->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id')->toArray();
@@ -571,6 +571,11 @@ class RiderApicontroller extends Controller
                             }));
                     // $orders=array_slice($over_orders, 0, $rider_check->max_order);
 
+                }
+
+                if($rider_check){
+                    $rider_check->exist_order=count($over_orders);
+                    $rider_check->update();
                 }
                 return response()->json(['success'=>true,'message'=>'this is orders for riders','data'=>$over_orders]);
 
@@ -1284,9 +1289,11 @@ class RiderApicontroller extends Controller
                     $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
                     if($check_order){
                         $rider->is_order=1;
+                        $rider->exist_order=($rider->exist_order)-1;
                         $rider->update();
                     }else{
                         $rider->is_order=0;
+                        $rider->exist_order=($rider->exist_order)-1;
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
@@ -1646,9 +1653,11 @@ class RiderApicontroller extends Controller
                     $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
                     if($check_order){
                         $rider->is_order=1;
+                        $rider->exist_order=($rider->exist_order)-1;
                         $rider->update();
                     }else{
                         $rider->is_order=0;
+                        $rider->exist_order=($rider->exist_order)-1;
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
@@ -1719,6 +1728,7 @@ class RiderApicontroller extends Controller
                     }
                 }elseif($order_status_id=="16"){
                     $rider->is_order=0;
+                    $rider->exist_order=($rider->exist_order)-1;
                     $rider->update();
                     //rider
                     $rider_client = new Client();
@@ -1782,6 +1792,7 @@ class RiderApicontroller extends Controller
                     }
                 }elseif($order_status_id=="8"){
                     $rider->is_order=0;
+                    $rider->exist_order=($rider->exist_order)-1;
                     $rider->update();
 
                     //rider

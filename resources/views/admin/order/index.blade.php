@@ -21,13 +21,7 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-7">
-                    <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm">
-                        <i class="fa fa-location-arrow"></i> All Rider Location
-                    </a>
-                    <a class="btn btn-danger btn-sm" style="color: white">
-                        Total Orders >> <b>{{ $total_order }}</b>
-                    </a>
+                <div class="col-sm-7" style="height: 30px;">
                     <div class="flash-message" id="successMessage">
                         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                             @if(Session::has('alert-' . $msg))
@@ -49,9 +43,17 @@
                        <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
                        <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
                     </form> --}}
-                    {{-- <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm">
-                        <i class="fa fa-location-arrow"></i> All Rider Location
-                    </a> --}}
+                    <form method='post' action="">
+                        @csrf
+                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
+                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
+                        <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm mb-1">
+                            <i class="fa fa-location-arrow"></i> All Rider Location
+                        </a>
+                        <a class="btn btn-danger btn-sm mb-1" style="color: white">
+                            Total Orders >> <b>{{ $total_order }}</b> <<
+                        </a>
+                     </form>
                 </div>
             </div>
         </div>
