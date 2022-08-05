@@ -465,6 +465,7 @@ class OrderController extends Controller
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
         $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+        // return response($total_orders);
         $all_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
         $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
         $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();

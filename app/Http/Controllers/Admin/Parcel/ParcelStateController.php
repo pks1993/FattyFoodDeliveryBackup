@@ -455,9 +455,9 @@ class ParcelStateController extends Controller
             $booking_count=CustomerOrder::count();
             // $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('order_type','parcel')->count();
             // $customerorderid=(1+$order_count);
-            $customer_booking_id="LSO-".date('ymd').(1+$booking_count);
             $date_start=date('Y-m-d 00:00:00');
             $date_end=date('Y-m-d 23:59:59');
+            $customer_booking_id="LSO-".date('ymd').(1+$booking_count);
 
 
             $parcel_orders=new CustomerOrder();
@@ -524,17 +524,158 @@ class ParcelStateController extends Controller
                     * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
                     + sin(radians(" .$from_pickup_latitude. "))
                     * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                    ->having('distance','<=',1)
-                    ->groupBy("rider_id")
                     ->where('active_inactive_status','1')
                     ->where('is_ban','0')
                     ->where('rider_fcm_token','!=','null')
                     ->get();
-                    if($riders->isNotEmpty())
-                    {
-                        $rider_fcm_token=[];
-                        foreach($riders as $rid){
-                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                    // if($riders->isNotEmpty())
+                    // {
+                    //     $rider_fcm_token=[];
+                    //     foreach($riders as $rid){
+                    //         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                    //             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                    //             if(empty($check_noti_order)){
+                    //                 NotiOrder::create([
+                    //                     "rider_id"=>$rid->rider_id,
+                    //                     "order_id"=>$parcel_orders->order_id,
+                    //                 ]);
+                    //             }
+                    //             $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //         }else{
+                    //             $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                    //             ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                    //             * cos(radians(rider_latitude))
+                    //             * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
+                    //             + sin(radians(" .$from_pickup_latitude. "))
+                    //             * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                    //             ->having('distance','<=',3)
+                    //             ->groupBy("rider_id")
+                    //             ->where('active_inactive_status','1')
+                    //             ->where('is_ban','0')
+                    //             ->where('rider_fcm_token','!=','null')
+                    //             ->get();
+                    //             if($riders->isNotEmpty()){
+                    //                 $rider_fcm_token=[];
+                    //                 foreach($riders as $rid){
+                    //                     if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                    //                         $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                    //                         if(empty($check_noti_order)){
+                    //                             NotiOrder::create([
+                    //                                 "rider_id"=>$rid->rider_id,
+                    //                                 "order_id"=>$parcel_orders->order_id,
+                    //                             ]);
+                    //                         }
+                    //                         $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //                     }
+                    //                 }
+                    //             }else{
+                    //                 $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                    //                 ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                    //                 * cos(radians(rider_latitude))
+                    //                 * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
+                    //                 + sin(radians(" .$from_pickup_latitude. "))
+                    //                 * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                    //                 ->having('distance','<=',5)
+                    //                 ->groupBy("rider_id")
+                    //                 ->where('active_inactive_status','1')
+                    //                 ->where('is_ban','0')
+                    //                 ->where('rider_fcm_token','!=','null')
+                    //                 ->get();
+                    //                 if($riders->isNotEmpty()){
+                    //                     $rider_fcm_token=[];
+                    //                     foreach($riders as $rid){
+                    //                         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                    //                             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                    //                             if(empty($check_noti_order)){
+                    //                                 NotiOrder::create([
+                    //                                     "rider_id"=>$rid->rider_id,
+                    //                                     "order_id"=>$parcel_orders->order_id,
+                    //                                 ]);
+                    //                             }
+                    //                             $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //                         }
+                    //                     }
+                    //                 }else{
+                    //                     $rider_fcm_token=[];
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    // }else{
+                    //     $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                    //     ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                    //     * cos(radians(rider_latitude))
+                    //     * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
+                    //     + sin(radians(" .$from_pickup_latitude. "))
+                    //     * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                    //     ->having('distance','<=',3)
+                    //     ->groupBy("rider_id")
+                    //     ->where('active_inactive_status','1')
+                    //     ->where('is_ban','0')
+                    //     ->where('rider_fcm_token','!=','null')
+                    //     ->get();
+                    //     if($riders->isNotEmpty())
+                    //     {
+                    //         $rider_fcm_token=[];
+                    //         foreach($riders as $rid){
+                    //             if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                    //                 $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                    //                 if(empty($check_noti_order)){
+                    //                     NotiOrder::create([
+                    //                         "rider_id"=>$rid->rider_id,
+                    //                         "order_id"=>$parcel_orders->order_id,
+                    //                     ]);
+                    //                 }
+                    //                 $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //             }else{
+                    //                 $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                    //                 ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
+                    //                 * cos(radians(rider_latitude))
+                    //                 * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
+                    //                 + sin(radians(" .$from_pickup_latitude. "))
+                    //                 * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                    //                 ->having('distance','<=',5)
+                    //                 ->groupBy("rider_id")
+                    //                 ->where('active_inactive_status','1')
+                    //                 ->where('is_ban','0')
+                    //                 ->where('rider_fcm_token','!=','null')
+                    //                 ->get();
+                    //                 if($riders->isNotEmpty()){
+                    //                     $rider_fcm_token=[];
+                    //                     foreach($riders as $rid){
+                    //                         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                    //                             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                    //                             if(empty($check_noti_order)){
+                    //                                 NotiOrder::create([
+                    //                                     "rider_id"=>$rid->rider_id,
+                    //                                     "order_id"=>$parcel_orders->order_id,
+                    //                                 ]);
+                    //                             }
+                    //                             $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //                         }
+                    //                     }
+                    //                 }else{
+                    //                     $rider_fcm_token=[];
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    // }
+
+                    $rider_fcm_token=[];
+                    foreach($riders as $rid){
+                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                            if(empty($check_noti_order)){
+                                NotiOrder::create([
+                                    "rider_id"=>$rid->rider_id,
+                                    "order_id"=>$parcel_orders->order_id,
+                                ]);
+                            }
+                            $rider_fcm_token[] =$rid->rider_fcm_token;
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
                                 $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
                                 if(empty($check_noti_order)){
                                     NotiOrder::create([
@@ -543,84 +684,9 @@ class ParcelStateController extends Controller
                                     ]);
                                 }
                                 $rider_fcm_token[]=$rid->rider_fcm_token;
-                            }else{
-                                $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                                ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
-                                * cos(radians(rider_latitude))
-                                * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
-                                + sin(radians(" .$from_pickup_latitude. "))
-                                * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                                ->having('distance','<=',3)
-                                ->groupBy("rider_id")
-                                ->where('active_inactive_status','1')
-                                ->where('is_ban','0')
-                                ->where('rider_fcm_token','!=','null')
-                                ->get();
-                                if($riders->isNotEmpty()){
-                                    $rider_fcm_token=[];
-                                    foreach($riders as $rid){
-                                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
-                                            if(empty($check_noti_order)){
-                                                NotiOrder::create([
-                                                    "rider_id"=>$rid->rider_id,
-                                                    "order_id"=>$parcel_orders->order_id,
-                                                ]);
-                                            }
-                                            $rider_fcm_token[]=$rid->rider_fcm_token;
-                                        }
-                                    }
-                                }else{
-                                    $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                                    ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
-                                    * cos(radians(rider_latitude))
-                                    * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
-                                    + sin(radians(" .$from_pickup_latitude. "))
-                                    * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                                    ->having('distance','<=',5)
-                                    ->groupBy("rider_id")
-                                    ->where('active_inactive_status','1')
-                                    ->where('is_ban','0')
-                                    ->where('rider_fcm_token','!=','null')
-                                    ->get();
-                                    if($riders->isNotEmpty()){
-                                        $rider_fcm_token=[];
-                                        foreach($riders as $rid){
-                                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
-                                                if(empty($check_noti_order)){
-                                                    NotiOrder::create([
-                                                        "rider_id"=>$rid->rider_id,
-                                                        "order_id"=>$parcel_orders->order_id,
-                                                    ]);
-                                                }
-                                                $rider_fcm_token[]=$rid->rider_fcm_token;
-                                            }
-                                        }
-                                    }else{
-                                        $rider_fcm_token=[];
-                                    }
-                                }
                             }
-                        }
-                    }else{
-                        $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                        ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
-                        * cos(radians(rider_latitude))
-                        * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
-                        + sin(radians(" .$from_pickup_latitude. "))
-                        * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                        ->having('distance','<=',3)
-                        ->groupBy("rider_id")
-                        ->where('active_inactive_status','1')
-                        ->where('is_ban','0')
-                        ->where('rider_fcm_token','!=','null')
-                        ->get();
-                        if($riders->isNotEmpty())
-                        {
-                            $rider_fcm_token=[];
-                            foreach($riders as $rid){
-                                if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
+                            if(empty($rider_fcm_token)){
+                                if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
                                     $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
                                     if(empty($check_noti_order)){
                                         NotiOrder::create([
@@ -629,36 +695,18 @@ class ParcelStateController extends Controller
                                         ]);
                                     }
                                     $rider_fcm_token[]=$rid->rider_fcm_token;
-                                }else{
-                                    $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                                    ,DB::raw("6371 * acos(cos(radians(" . $from_pickup_latitude . "))
-                                    * cos(radians(rider_latitude))
-                                    * cos(radians(rider_longitude) - radians(" . $from_pickup_longitude . "))
-                                    + sin(radians(" .$from_pickup_latitude. "))
-                                    * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                                    ->having('distance','<=',5)
-                                    ->groupBy("rider_id")
-                                    ->where('active_inactive_status','1')
-                                    ->where('is_ban','0')
-                                    ->where('rider_fcm_token','!=','null')
-                                    ->get();
-                                    if($riders->isNotEmpty()){
-                                        $rider_fcm_token=[];
-                                        foreach($riders as $rid){
-                                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
-                                                if(empty($check_noti_order)){
-                                                    NotiOrder::create([
-                                                        "rider_id"=>$rid->rider_id,
-                                                        "order_id"=>$parcel_orders->order_id,
-                                                    ]);
-                                                }
-                                                $rider_fcm_token[]=$rid->rider_fcm_token;
-                                            }
-                                        }
-                                    }else{
-                                        $rider_fcm_token=[];
+                                }
+                            }
+                            if(empty($rider_fcm_token)){
+                                if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                                    $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$parcel_orders->order_id)->first();
+                                    if(empty($check_noti_order)){
+                                        NotiOrder::create([
+                                            "rider_id"=>$rid->rider_id,
+                                            "order_id"=>$parcel_orders->order_id,
+                                        ]);
                                     }
+                                    $rider_fcm_token[]=$rid->rider_fcm_token;
                                 }
                             }
                         }
