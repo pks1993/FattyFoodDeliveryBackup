@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting\Privacy;
 use App\Models\Setting\TermsConditions;
+use App\Models\Setting\VersionUpdate;
+
 
 class SettingController extends Controller
 {
@@ -24,6 +26,24 @@ class SettingController extends Controller
     {
         $data=TermsConditions::where('terms_conditions_id','1')->first();
         return view('admin.setting.term.index',compact('data'));
+    }
+
+    public function version_list()
+    {
+        $version_data=VersionUpdate::get();
+        return view('admin.setting.version.index',compact('version_data'));
+    }
+
+    public function version_update(Request $request,$version_update_id)
+    {
+        VersionUpdate::where('version_update_id',$version_update_id)->update([
+            "link"=>$request['link'],
+            "current_version"=>$request['current_version'],
+            "is_force_update"=>$request['is_force_update'],
+            "is_available"=>$request['is_available'],
+        ]);
+        $request->session()->flash('alert-success', 'successfully update customer!');
+        return redirect()->back();
     }
 
     /**
