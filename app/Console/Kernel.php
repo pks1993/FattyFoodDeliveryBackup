@@ -689,10 +689,10 @@ class Kernel extends ConsoleKernel
                 $restaurant_address_longitude=$value['restaurant_address_longitude'];
                 $from_pickup_latitude=$value['from_pickup_latitude'];
                 $from_pickup_longitude=$value['from_pickup_longitude'];
-                $created_at=$value['created_at'];
+                $updated_at=$value['updated_at'];
                 $now = Carbon::now();
-                $created_at = Carbon::parse($created_at);
-                $diffMinutes = $created_at->diffInMinutes($now);
+                $updated_at = Carbon::parse($updated_at);
+                $diffMinutes = $updated_at->diffInMinutes($now);
 
                 $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order','rider_latitude','rider_longitude','max_distance')
                 ->where('active_inactive_status','1')

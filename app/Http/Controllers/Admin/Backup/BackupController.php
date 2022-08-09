@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin\Backup;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Customer\Customer;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DataExport;
+use App\Exports\ParcelOrderExport;
 
 class BackupController extends Controller
 {
@@ -24,6 +24,20 @@ class BackupController extends Controller
         if ($request->input('exportcsv') != null ){
             return Excel::download(new DataExport, 'backup.csv');
         }
+
+        return redirect()->back();
+    }
+
+    public function daily_parcel_orders(Request $request)
+    {
+        $current_date=date('Ymd');
+        if ($request->input('all_parcel_exportexcel') != null ){
+            return Excel::download(new ParcelOrderExport, 'all_parcel_'.$current_date.'.xlsx');
+        }
+
+        // if ($request->input('daily_parcel_exportexcel') != null ){
+        //     return Excel::download(new ParcelOrderExport, 'daily_parcel_'.$current_date.'.xlsx');
+        // }
 
         return redirect()->back();
     }

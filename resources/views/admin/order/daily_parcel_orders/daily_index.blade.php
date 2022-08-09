@@ -24,7 +24,7 @@
             <div class="col-sm-3 col-xs-3">
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <div id="shiva"><span class="count"><h3>{{ $all_count }}</h3></span></div>
+                        <div id="shiva"><span class="count"><h3>{{ $filter_count }}</h3></span></div>
                         <p>Total Parcel Orders</p>
                     </div>
                 </div>
@@ -53,13 +53,13 @@
                     </div>
                 </div>
             </div>
-            {{-- <div class="col-sm-12">
-                <form method='post' action="{{ route('fatty.admin.backup.daily_parcel_orders') }}">
+            <div class="col-sm-12">
+                {{-- <form method='post' action="{{ route('fatty.admin.backup.daily_parcel_orders') }}">
                    @csrf
-                   <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="all_parcel_exportexcel" value='Excel Export'>
-                   <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="daily_parcel_exportexcel" value='Excel Export'>
-                </form>
-            </div> --}}
+                   <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="all_parcel_exportexcel" value='All Excel Export ( {{ $all_count }} )'>
+                   <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="daily_parcel_exportexcel" value='Daily Excel Export ( {{ $filter_count }} )'>
+                </form> --}}
+            </div>
         </div>
     </div>
 </section>

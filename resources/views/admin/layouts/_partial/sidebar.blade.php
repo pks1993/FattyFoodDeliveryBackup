@@ -692,6 +692,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/version_list')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>All Verion Update</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <form id="frm-logout" action="{{ route('fatty.admin.logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>

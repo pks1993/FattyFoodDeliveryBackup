@@ -57,7 +57,7 @@
                                     <td class="text-left">{{$group->user->name}}</td>
                                     <td class="btn-group">
                                         <a href="{{route('fatty.admin.rider_group.edit',['rider_group_id'=>$group->rider_group_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-                                    
+
                                         <form action="{{route('fatty.admin.rider_group.destroy', $group->rider_group_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
                                             @csrf
                                             @method('delete')
