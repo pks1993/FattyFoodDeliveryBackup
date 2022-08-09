@@ -18,6 +18,8 @@ class CreateVersionUpdatesTable extends Migration
             $table->string('current_version')->nullable();
             $table->boolean('is_force_update')->default(0);
             $table->string('os_type')->nullable()->default('android');
+            $table->string('is_available')->default(1);
+            $table->string('os_type_id')->default(0);
             $table->timestamps();
         });
     }
