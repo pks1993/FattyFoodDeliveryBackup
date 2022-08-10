@@ -470,7 +470,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('orders/datatable/dailyfoodorderajax','Admin\Order\OrderController@dailyfoodorderajax');
     Route::get('complete_order/update/{order_id}','Admin\Order\OrderController@completeorderupdate')->name('complete_order.update');
 
-    // Route::get('daily_food_orders/list','Admin\Order\OrderController@dailyfoodorderlist');
+    Route::get('daily_food_orders/list','Admin\Order\OrderController@dailyfoodorderlist');
 
     Route::get('monthly_food_orders','Admin\Order\OrderController@monthlyfoodorderindex');
     Route::get('orders/datatable/monthlyfoodorderajax','Admin\Order\OrderController@monthlyfoodorderajax');

@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-sm-3 col-xs-3">
                 <div class="small-box bg-secondary">
-                    <div class="inner">
+                    <div class="col-12">
                         <div id="shiva"><span class="count"><h3>{{ $filter_count }}</h3></span></div>
                         <p>Total Parcel Orders</p>
                     </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="col-sm-3 col-xs-3">
                 <div class="small-box bg-info">
-                    <div class="inner">
+                    <div class="col-12">
                         <div id="shiva"><span class="count"><h3>{{ $processing_orders }}</h3></span></div>
                         <p>Total Processing Orders</p>
                     </div>
@@ -39,7 +39,7 @@
             </div>
             <div class="col-sm-3 col-xs-3">
                 <div class="small-box bg-success">
-                    <div class="inner">
+                    <div class="col-12">
                         <div id="shiva"><span class="count"><h3>{{ $delivered_orders }}</h3></span></div>
                         <p>Total Delivered Orders</p>
                     </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="col-sm-3 col-xs-3">
                 <div class="small-box bg-danger">
-                    <div class="inner">
+                    <div class="col-12">
                         <div id="shiva"><span class="count"><h3>{{ $cancel_orders }}</h3></span></div>
                         <p>Total Cancel Orders</p>
                     </div>
