@@ -176,7 +176,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
                                 <div class="form-group row">
                                     <label for="address" class="col-md-12 col-form-label">{{ __('Address') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
@@ -244,11 +243,32 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="form-group row">
+                                    <label for="restaurant_user_phone" class="col-md-12 col-form-label">{{ __('Restaurant Login Phone') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="restaurant_user_phone" class="form-control @error('restaurant_user_phone') is-invalid @enderror" value="{{ $restaurants->restaurant_user->restaurant_user_phone }}" name="restaurant_user_phone" autocomplete="restaurant_user_phone">{{ old('restaurant_user_phone') }}
+                                        @error('restaurant_user_phone')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="restaurant_user_password" class="col-md-12 col-form-label">{{ __('Restaurant Login Password') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="text" id="restaurant_user_password" class="form-control @error('restaurant_user_password') is-invalid @enderror" value="{{ $restaurants->restaurant_user->restaurant_user_password }}" name="restaurant_user_password" autocomplete="restaurant_user_password">{{ old('restaurant_user_password') }}
+                                        @error('restaurant_user_password')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <div class="form-group row mb-0">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Are you sure create?')">
-                                            <i class="fa fa-edit"></i> {{ __('Edit') }}
+                                            <i class="fa fa-edit"></i> {{ __('Update') }}
                                         </button>
                                         <a href="{{url('fatty/main/admin/restaurants')}}" class="btn btn-secondary btn-sm" onclick="return confirm('Are you sure cancel?')">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}

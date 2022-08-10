@@ -90,11 +90,11 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table id="restaurants" class="table table-hover">
+                                <table id="restaurants" class="table table-hover table-bordered">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No.</th>
-                                            <th>Restaurant_Status</th>
+                                            <th>Restaurants_Admin_Status</th>
                                             <th>Recommended</th>
                                             <th>Image</th>
                                             <th>RegisterDate</th>
@@ -105,13 +105,14 @@
                                             <th>Address</th>
                                             <th>CityName</th>
                                             <th>StateName</th>
-                                            <th>UserPhone</th>
+                                            <th>ContactPhone</th>
+                                            <th>LoginPhone</th>
+                                            <th>LoginPassword</th>
                                             <th>Percentage</th>
-                                            <th>UserPassword</th>
                                             <th>Foods</th>
                                             <th>Menus</th>
                                             <th>PreparationTime</th>
-                                            <th>Action</th>
+                                            <th> Actions </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -181,9 +182,10 @@
                     {data: 'restaurant_address', name:'restaurant_address'},
                     {data: 'city_name_mm', name:'city_name_mm',className: "text-center"},
                     {data: 'state_name_mm', name:'state_name_mm',className: "text-center"},
-                    {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "restaurant_user_phone"},
+                    {data: 'restaurant_phone', name:'restaurant_phone',className: "text-center"},
+                    {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "text-center"},
+                    {data: 'restaurant_user_password', name:'restaurant_user_password',className: "text-center"},
                     {data: 'percentage', name: 'percentage',className:'text-center', orderable: false, searchable: false},
-                    {data: 'restaurant_user_password', name:'restaurant_user_password',className: "restaurant_user_password"},
                     {data: 'restaurant_food', name:'restaurant_food',orderable: false,searchable:false,className: "text-center"},
                     {data: 'restaurant_menu', name:'restaurant_menu',orderable: false,searchable:false,className: "text-center"},
                     {data: 'preparation_time', name: 'preparation_time', orderable: false, searchable: false},
