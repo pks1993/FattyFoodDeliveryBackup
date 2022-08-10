@@ -211,6 +211,106 @@ class OrderController extends Controller
                         $check_rider->update();
                     }
             }
+
+            $orderId=(string)$check_order->order_id;
+            $orderstatusId=(string)$check_order->order_status_id;
+            $orderType=(string)$check_order->order_type;
+            //rider
+            $rider_client = new Client();
+            $rider_token=$check_order->rider->rider_fcm_token;
+            if($rider_token){
+                $cus_url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                try{
+                    $rider_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$rider_token,
+                            "data"=> [
+                                "type"=> "rider_order_finished",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "Order Finished",
+                                "body_mm"=> "Good Day! Order is finished.Thanks very much!",
+                                "title_en"=> "Order Finished",
+                                "body_en"=> "Good Day! Order is finished.Thanks very much!",
+                                "title_ch"=> "订单已结束",
+                                "body_ch"=> "您的订单已结束! 再见！"
+                            ],
+                        ],
+                    ]);
+
+                }catch(ClientException $e){
+                }
+            }
+            //restaurant
+            $res_client = new Client();
+            if($check_order->restaurant->restaurant_fcm_token){
+                $res_token=$check_order->restaurant->restaurant_fcm_token;
+                $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
+                try{
+                    $res_client->post($res_url,[
+                        'json' => [
+                            "to"=>$res_token,
+                            "data"=> [
+                                "type"=> "rider_order_finished",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "Order Finished",
+                                "body_mm"=> "Good Day! Order is finished.Thanks very much!",
+                                "title_en"=> "Order Finished",
+                                "body_en"=> "Good Day! Order is finished.Thanks very much!",
+                                "title_ch"=> "订单已结束",
+                                "body_ch"=> "订单已结束!",
+                                "sound" => "receiveNoti.caf",
+                            ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
+                            "sound" => "receiveNoti.caf",
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                                "sound" => "receiveNoti.caf",
+                            ],
+                        ],
+                    ]);
+
+                }catch(ClientException $e){
+                }
+            }
+            //customer
+            $cus_client = new Client();
+            if($check_order->customer->fcm_token){
+                $cus_token=$check_order->customer->fcm_token;
+                $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                try{
+                    $cus_client->post($cus_url,[
+                        'json' => [
+                            "to"=>$cus_token,
+                            "data"=> [
+                                "type"=> "rider_order_finished",
+                                "order_id"=>$orderId,
+                                "order_status_id"=>$orderstatusId,
+                                "order_type"=>$orderType,
+                                "title_mm"=> "Order Finished",
+                                "body_mm"=> "Good Day! Your order is finished. Thanks very much!",
+                                "title_en"=> "Order Finished",
+                                "body_en"=> "Good Day! Your order is finished. Thanks very much!",
+                                "title_ch"=> "订单已结束",
+                                "body_ch"=> "您的订单已结束! 祝您用餐愉快！再见！"
+                            ],
+                            "mutable_content" => true ,
+                            "content_available" => true,
+                            "notification"=> [
+                                "title"=>"this is a title",
+                                "body"=>"this is a body",
+                            ],
+                        ],
+                    ]);
+
+                }catch(ClientException $e){
+                }
+            }
             $request->session()->flash('alert-success', 'successfully completed order!');
             return redirect()->back();
         }else{
