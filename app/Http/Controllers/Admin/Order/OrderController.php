@@ -195,9 +195,9 @@ class OrderController extends Controller
 
     public function completeorderupdate(Request $request,$id)
     {
-        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',7)->first();
+        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
         if($check_order){
-            CustomerOrder::where('order_id',$id)->update(['order_status_id'=>7]);
+            CustomerOrder::where('order_id',$id)->update(['order_status_id'=>7,'is_admin_completed'=>1]);
             NotiOrder::where('order_id',$id)->delete();
             $check_order=CustomerOrder::where('order_id',$id)->first();
             if($check_order->rider_id){
@@ -973,9 +973,9 @@ class OrderController extends Controller
     }
     public function pendingorderdefine(Request $request,$id)
     {
-        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',7)->first();
+        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
         if($check_order){
-            CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
+            CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8,'is_admin_completed'=>1]);
             NotiOrder::where('order_id',$id)->delete();
             $check_order=CustomerOrder::where('order_id',$id)->first();
             if($check_order->rider_id){
