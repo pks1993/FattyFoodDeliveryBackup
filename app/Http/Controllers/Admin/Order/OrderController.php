@@ -188,7 +188,7 @@ class OrderController extends Controller
     //     $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
     //     $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
     //     $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
-    //     $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',8)->count();
+    //     $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
 
     //     return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
     // }

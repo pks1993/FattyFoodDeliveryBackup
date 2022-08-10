@@ -21,51 +21,51 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-xs-3" style="height: 60px;">
-                <div class="small-box bg-secondary" style="height: 60px;">
-                    <div class="inner">
-                        <div id="shiva"><span class="count"><h4 style="font-weight:520">{{ $filter_count }}</h4></span></div>
-                        <p style="font-size: 13px;">Total Food Orders</p>
+            <div class="col-sm-2 col-xs-2">
+                <div class="small-box bg-secondary">
+                    <div class="col-12">
+                        <div><span class="count"><h4 style="font-weight:520">{{ $filter_count }}</h4></span></div>
+                        <p style="font-size: 14px;">Total Food Orders</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3 col-xs-3">
+            <div class="col-sm-2 col-xs-2">
                 <div class="small-box bg-primary">
-                    <div class="inner">
-                        <div id="shiva"><span class="count"><h4 style="font-weight:520">{{ $pending_orders }}</h4></span></div>
-                        <p style="font-size: 13px;">Total Pending Orders</p>
+                    <div class="col-12">
+                        <div><span class="count"><h4 style="font-weight:520">{{ $pending_orders }}</h4></span></div>
+                        <p style="font-size: 14px;">Total Pending Orders</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3 col-xs-3">
+            <div class="col-sm-2 col-xs-2">
                 <div class="small-box bg-info">
-                    <div class="inner">
-                        <div id="shiva"><span class="count"><h4 style="font-weight:520">{{ $processing_orders }}</h4></span></div>
-                        <p style="font-size: 13px;">Total Processing Orders</p>
+                    <div class="col-12">
+                        <div><span class="count"><h4 style="font-weight:520">{{ $processing_orders }}</h4></span></div>
+                        <p style="font-size: 14px;">Total Processing Orders</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3 col-xs-3">
+            <div class="col-sm-2 col-xs-2">
                 <div class="small-box bg-success">
-                    <div class="inner">
-                        <div id="shiva"><span class="count"><h4 style="font-weight:520">{{ $delivered_orders }}</h4></span></div>
-                        <p style="font-size: 13px;">Total Delivered Orders</p>
+                    <div class="col-12">
+                        <div><span class="count"><h4 style="font-weight:520">{{ $delivered_orders }}</h4></span></div>
+                        <p style="font-size: 14px;">Total Delivered Orders</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3 col-xs-3">
+            <div class="col-sm-2 col-xs-2">
                 <div class="small-box bg-danger">
-                    <div class="inner">
-                        <div id="shiva"><span class="count"><h4 style="font-weight:520">{{ $customer_cancel_orders }}</h4></span></div>
-                        <p style="font-size: 13px;">Total Customer Cancel Orders</p>
+                    <div class="col-12">
+                        <div><span class="count"><h4 style="font-weight:520">{{ $customer_cancel_orders }}</h4></span></div>
+                        <p style="font-size: 14px;">Total Customer Cancel</p>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3 col-xs-3">
+            <div class="col-sm-2 col-xs-2">
                 <div class="small-box bg-danger">
-                    <div class="inner">
-                        <div id="shiva"><span class="count"><h4 style="font-weight:520">{{ $restaurant_cancel_orders }}</h4></span></div>
-                        <p style="font-size: 13px;">Total Restaurant Cancel Orders</p>
+                    <div class="col-12">
+                        <div><span class="count"><h4 style="font-weight:520">{{ $restaurant_cancel_orders }}</h4></span></div>
+                        <p style="font-size: 14px;">Total Restaurant Cancel</p>
                     </div>
                 </div>
             </div>

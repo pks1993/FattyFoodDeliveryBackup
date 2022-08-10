@@ -766,6 +766,11 @@ class RestaurantController extends Controller
         }
         $restaurants->update();
 
+        RestaurantUser::where('restaurant_user_id',$restaurants->restaurant_user_id)->update([
+            "restaurant_user_phone"=>$request['restaurant_user_phone'],
+            "restaurant_user_password"=>$request['restaurant_user_password'],
+        ]);
+
 
         $request->session()->flash('alert-success', 'successfully update restaurant!');
         return redirect('fatty/main/admin/restaurants');
