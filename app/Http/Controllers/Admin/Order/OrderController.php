@@ -169,6 +169,56 @@ class OrderController extends Controller
         ->make(true);
     }
 
+    // public function dailyfoodorderlist(Request $request)
+    // {
+    //     if($request['start_date']){
+    //         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+    //     }else{
+    //         $date_start=date('Y-m-d 00:00:00');
+    //     }
+    //     if($request['end_date']){
+    //         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+    //     }else{
+    //         $date_end=date('Y-m-d 23:59:59');
+    //     }
+    //     $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+    //     $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
+    //     $all_count=CustomerOrder::where('order_type','food')->count();
+    //     $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
+    //     $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
+    //     $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
+    //     $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
+    //     $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',8)->count();
+
+    //     return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
+    // }
+
+    public function completeorderupdate(Request $request,$id)
+    {
+        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
+        if($check_order){
+            CustomerOrder::where('order_id',$id)->update(['order_status_id'=>7,'is_admin_completed'=>1]);
+            NotiOrder::where('order_id',$id)->delete();
+            $check_order=CustomerOrder::where('order_id',$id)->first();
+            if($check_order->rider_id){
+                $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
+                    if($has_order){
+                        $check_rider->is_order=1;
+                        $check_rider->update();
+                    }else{
+                        $check_rider->is_order=0;
+                        $check_rider->update();
+                    }
+            }
+            $request->session()->flash('alert-success', 'successfully completed order!');
+            return redirect()->back();
+        }else{
+            $request->session()->flash('alert-warning', 'warning completed order! this order not exists in start delivery condation');
+            return redirect()->back();
+        }
+    }
+
     public function dailyfoodorderindex()
     {
         return view('admin.order.daily_food_orders.index');
@@ -261,10 +311,17 @@ class OrderController extends Controller
             }
             return $order_status;
         })
-        ->addColumn('action', function(CustomerOrder $post){
-            $view = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-primary btn-sm mr-2"><i class="fas fa-eye"></i></a>';
-            $pending = '<a href="/fatty/main/admin/pending/orders/define/'.$post->order_id.'" onclick="return confirm(\'Are You Sure Want to Pending Order?\')" class="btn btn-primary btn-sm mr-2"><i class="fas fa-plus-circle"></i></a>';
-            $btn=$view.$pending;
+        ->addColumn('detail', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/food_orders/view/'.$post->order_id.'" class="btn btn-info btn-sm mr-2" title="order detail"><i class="fas fa-eye"></i></a>';
+
+            return $btn;
+        })
+        ->addColumn('pending', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/pending/orders/define/'.$post->order_id.'" onclick="return confirm(\'Are You Sure Want to Pending Order?\')" class="btn btn-primary btn-sm mr-2" title="Order Pending"><i class="fas fa-plus-circle"></i></a>';
+            return $btn;
+        })
+        ->addColumn('complete', function(CustomerOrder $post){
+            $btn = '<a href="/fatty/main/admin/complete_order/update/'.$post->order_id.'" onclick="return confirm(\'Are You Sure Want to Complete Order?\')" class="btn btn-success btn-sm mr-2" title="Order Complete"><i class="fas fa-plus-circle"></i></a>';
 
             return $btn;
         })
@@ -282,7 +339,7 @@ class OrderController extends Controller
             }
             return $btn;
         })
-        ->rawColumns(['action','ordered_date','customer_type','status','payment_method_name'])
+        ->rawColumns(['pending','ordered_date','customer_type','status','payment_method_name','detail','complete'])
         ->searchPane('model', $model)
         ->make(true);
     }
@@ -916,22 +973,28 @@ class OrderController extends Controller
     }
     public function pendingorderdefine(Request $request,$id)
     {
-        CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8]);
-        NotiOrder::where('order_id',$id)->delete();
-        $check_order=CustomerOrder::where('order_id',$id)->first();
-        if($check_order->rider_id){
-            $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
-            $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
-                if($has_order){
-                    $check_rider->is_order=1;
-                    $check_rider->update();
-                }else{
-                    $check_rider->is_order=0;
-                    $check_rider->update();
-                }
+        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
+        if($check_order){
+            CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8,'is_admin_completed'=>1]);
+            NotiOrder::where('order_id',$id)->delete();
+            $check_order=CustomerOrder::where('order_id',$id)->first();
+            if($check_order->rider_id){
+                $has_order=CustomerOrder::where('rider_id',$check_order->rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+                $check_rider=Rider::where('rider_id',$check_order->rider_id)->first();
+                    if($has_order){
+                        $check_rider->is_order=1;
+                        $check_rider->update();
+                    }else{
+                        $check_rider->is_order=0;
+                        $check_rider->update();
+                    }
+            }
+            $request->session()->flash('alert-success', 'successfully Pending Order!');
+            return redirect()->back();
+        }else{
+            $request->session()->flash('alert-warning', 'warning pending order! this order not exists in start delivery condation');
+            return redirect()->back();
         }
-        $request->session()->flash('alert-success', 'successfully Pending Order!');
-        return redirect()->back();
     }
 
     public function assign_noti(Request $request,$id)
