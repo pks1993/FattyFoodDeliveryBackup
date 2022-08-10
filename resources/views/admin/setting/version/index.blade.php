@@ -77,16 +77,16 @@
                                     <td>{{ $item->current_version }}</td>
                                     <td style="color: white">
                                         @if($item->is_force_update==1)
-                                            <a class="brn btn-sm btn-success">True</a>
+                                            <a class="brn btn-sm btn-success">Open</a>
                                         @else
-                                            <a class="brn btn-sm btn-danger">False</a>
+                                            <a class="brn btn-sm btn-danger">Close</a>
                                         @endif
                                     </td>
                                     <td style="color: white">
                                         @if($item->is_available==1)
-                                            <a class="brn btn-sm btn-success">True</a>
+                                            <a class="brn btn-sm btn-success">Open</a>
                                         @else
-                                            <a class="brn btn-sm btn-danger">False</a>
+                                            <a class="brn btn-sm btn-danger">Close</a>
                                         @endif
                                     </td>
                                     <td>
@@ -119,11 +119,11 @@
                                                             <label for="is_force_update" class="col-form-label">ForceUpdate:</label>
                                                             <select class="form-control" name="is_force_update" id="is_force_update">
                                                                 @if($item->is_force_update==0)
-                                                                    <option value="0">False</option>
-                                                                    <option value="1">True</option>
+                                                                    <option value="0">Close</option>
+                                                                    <option value="1">Open</option>
                                                                 @else
-                                                                    <option value="1">True</option>
-                                                                    <option value="0">False</option>
+                                                                    <option value="1">Open</option>
+                                                                    <option value="0">Close</option>
                                                                 @endif
                                                             </select>
                                                         </div>
@@ -131,11 +131,11 @@
                                                             <label for="is_available" class="col-form-label">Available:</label>
                                                             <select class="form-control" name="is_available" id="is_available">
                                                                 @if($item->is_available==0)
-                                                                    <option value="0">False</option>
-                                                                    <option value="1">True</option>
+                                                                    <option value="0">Close</option>
+                                                                    <option value="1">Open</option>
                                                                 @else
-                                                                    <option value="1">True</option>
-                                                                    <option value="0">False</option>
+                                                                    <option value="1">Open</option>
+                                                                    <option value="0">Close</option>
                                                                 @endif
                                                             </select>
                                                         </div>

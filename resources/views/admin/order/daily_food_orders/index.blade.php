@@ -83,6 +83,8 @@
                                         <th>PaymentMethod</th>
                                         <th>TotalPrice</th>
                                         <th>Detail</th>
+                                        <th>Pending</th>
+                                        <th>Complete</th>
                                     </tr>
                                 </thead>
                                 <tbody style="text-align:center">
@@ -149,7 +151,9 @@
             {data: 'rider_name', name:'rider_name'},
             {data: 'payment_method_name', name:'payment_method_name'},
             {data: 'bill_total_price', name:'bill_total_price'},
-            {data: 'action', name: 'action', orderable: false, searchable: false,className:'btn-group'},
+            {data: 'detail', name: 'detail', orderable: false, searchable: false},
+            {data: 'pending', name: 'pending', orderable: false, searchable: false},
+            {data: 'complete', name: 'complete', orderable: false, searchable: false},
             ],
             dom: 'lBfrtip',
             buttons: [
