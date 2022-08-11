@@ -82,9 +82,16 @@ Route::get('admin_parcel_orders/all_report/date/filter/{customer_admin_id}/{curr
 // Auth::routes(['verify'=>true]);
 
 Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['auth']], function(){
-
+    //version_update
     Route::get('version_list','Admin\Setting\SettingController@version_list');
     Route::post('version_update/{version_update_id}','Admin\Setting\SettingController@version_update')->name('version.update');
+    Route::get('force_update/{version_update_id}','Admin\Setting\SettingController@force_update');
+    Route::get('available_update/{version_update_id}','Admin\Setting\SettingController@available_update');
+
+    //kpay_onoff
+    Route::get('kpay_onoff_list','Admin\Setting\SettingController@kpay_onoff_list');
+    Route::get('kpay_onoff_android/update/{kpay_onoff_id}','Admin\Setting\SettingController@kpay_onoff_update_android')->name('kpay_onoff_android.update');
+    Route::post('kpay_update/{kpay_onoff_id}','Admin\Setting\SettingController@kpay_update')->name('kpay.update');
 
     Route::get('rider_location','Admin\Login\LoginController@location_check');
 

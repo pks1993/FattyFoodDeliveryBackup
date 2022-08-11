@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Setting\Privacy;
 use App\Models\Setting\TermsConditions;
 use App\Models\Setting\VersionUpdate;
-
+use App\Models\Order\PaymentMethod;
+use App\Models\Order\PaymentMethodClose;
 
 class SettingController extends Controller
 {
@@ -43,6 +44,67 @@ class SettingController extends Controller
             "is_available"=>$request['is_available'],
         ]);
         $request->session()->flash('alert-success', 'successfully update customer!');
+        return redirect()->back();
+    }
+
+    public function force_update(Request $request,$version_update_id)
+    {
+        $check=VersionUpdate::where('version_update_id',$version_update_id)->first();
+        if($check->is_force_update==1){
+            $check->is_force_update=0;
+            $check->update();
+            $request->session()->flash('alert-success', 'successfully close force_update!');
+        }else{
+            $check->is_force_update=1;
+            $check->update();
+            $request->session()->flash('alert-success', 'successfully open force_update!');
+        }
+        return redirect()->back();
+    }
+    public function available_update(Request $request,$version_update_id)
+    {
+        $check=VersionUpdate::where('version_update_id',$version_update_id)->first();
+        if($check->is_available==1){
+            $check->is_available=0;
+            $check->update();
+            $request->session()->flash('alert-success', 'successfully close available!');
+        }else{
+            $check->is_available=1;
+            $check->update();
+            $request->session()->flash('alert-success', 'successfully open available!');
+        }
+        return redirect()->back();
+    }
+    
+
+    public function kpay_onoff_list()
+    {
+        $payment_data=PaymentMethod::get();
+        $close_payment_data=PaymentMethodClose::get();
+        return view('admin.setting.kpay_onoff.index',compact('payment_data','close_payment_data'));
+    }
+
+    public function kpay_onoff_update_android(Request $request,$payment_method_id)
+    {
+        $check=PaymentMethod::where('payment_method_id',$payment_method_id)->first();
+        if($check->on_off_status==1){
+            $check->on_off_status=0;
+            $check->update();
+            $request->session()->flash('alert-success', 'successfully close payment!');
+        }else{
+            $check->on_off_status=1;
+            $check->update();
+            $request->session()->flash('alert-success', 'successfully open payment!');
+        }
+        return redirect()->back();
+    }
+
+    public function kpay_update(Request $request,$payment_method_close_id)
+    {
+        PaymentMethodClose::where('payment_method_close_id',$payment_method_close_id)->update([
+            "version"=>$request['version'],
+        ]);
+        $request->session()->flash('alert-success', 'successfully pamyment method!');
         return redirect()->back();
     }
 
