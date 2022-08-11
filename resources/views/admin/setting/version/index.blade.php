@@ -77,16 +77,16 @@
                                     <td>{{ $item->current_version }}</td>
                                     <td style="color: white">
                                         @if($item->is_force_update==1)
-                                            <a class="brn btn-sm btn-success">Open</a>
+                                            <a href="{{ url('fatty/main/admin/force_update/'.$item->version_update_id) }}" onclick="return confirm('Are you sure want to close force_update?')" class="btn btn-sm btn-success" title="Open ForceUpdate">{{ "Open" }}</a>
                                         @else
-                                            <a class="brn btn-sm btn-danger">Close</a>
+                                            <a href="{{ url('fatty/main/admin/force_update/'.$item->version_update_id) }}" onclick="return confirm('Are you sure want to open force_update?')" class="btn btn-sm btn-danger" title="Close ForceUpdate">{{ "Close" }}</a>
                                         @endif
                                     </td>
                                     <td style="color: white">
                                         @if($item->is_available==1)
-                                            <a class="brn btn-sm btn-success">Open</a>
+                                            <a href="{{ url('fatty/main/admin/available_update/'.$item->version_update_id) }}" onclick="return confirm('Are you sure want to close available?')" class="btn btn-sm btn-success" title="Availble">{{ "Open" }}</a>
                                         @else
-                                            <a class="brn btn-sm btn-danger">Close</a>
+                                            <a href="{{ url('fatty/main/admin/available_update/'.$item->version_update_id) }}" onclick="return confirm('Are you sure want to open available?')" class="btn btn-sm btn-danger" title="NotAvailable">{{ "Close" }}</a>
                                         @endif
                                     </td>
                                     <td>
