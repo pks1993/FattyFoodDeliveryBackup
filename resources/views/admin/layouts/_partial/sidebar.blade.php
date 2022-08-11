@@ -704,6 +704,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/kpay_onoff_list')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Payment Method</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{url('fatty/main/admin/version_list')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>All Verion Update</p>
