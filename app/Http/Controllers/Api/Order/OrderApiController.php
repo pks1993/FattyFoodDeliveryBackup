@@ -647,6 +647,12 @@ class OrderApiController extends Controller
             //Customer
             $cus_client = new Client();
             $cus_token=$customer_orders->customer->fcm_token;
+            if($customer_orders->order_type=="food"){
+                $orderstatusId=9;
+                $orderstatus_Id="9";
+            }else{
+                $orderstatusId=16;
+            }
             if($cus_token){
                 $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
                 try{
@@ -656,7 +662,7 @@ class OrderApiController extends Controller
                             "data"=> [
                                 "type"=> "customer_cancel_order",
                                 "order_id"=>$customer_orders->order_id,
-                                "order_status_id"=>$customer_orders->order_status_id,
+                                "order_status_id"=>$orderstatusId,
                                 "order_type"=>$customer_orders->order_type,
                                 "title_mm"=> "Order Canceled!",
                                 "body_mm"=> "New order has been canceled by customer!",
@@ -685,7 +691,6 @@ class OrderApiController extends Controller
                 $res_client = new Client();
                 $res_token=$restaurant_check->restaurant_fcm_token;
                 $orderId=(string)$customer_orders->order_id;
-                $orderstatusId=(string)$customer_orders->order_status_id;
                 $orderType=(string)$customer_orders->order_type;
                 $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                 if($res_token){
@@ -696,7 +701,7 @@ class OrderApiController extends Controller
                                  "data"=> [
                                      "type"=> "customer_cancel_order",
                                      "order_id"=>$orderId,
-                                     "order_status_id"=>$orderstatusId,
+                                     "order_status_id"=>$orderstatus_Id,
                                      "order_type"=>$orderType,
                                      "title_mm"=> "Order Canceled by Customer",
                                      "body_mm"=> "New order has been canceled by customer!",
@@ -733,45 +738,45 @@ class OrderApiController extends Controller
                         $_SESSION['customer_orders']=$customer_orders;
 
                         return view('admin.src.example.refund');
-                    }else{
-                        $customer_orders->order_status_id=9;
-                        $customer_orders->update();
-
-                        return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
-                    }
-                }elseif($customer_orders->order_type=="parcel"){
-                    $customer_orders->order_status_id=16;
-                    $customer_orders->update();
-                    $images=ParcelImage::where('order_id',$order_id)->first();
-                    if($images){
-                        $par_image=ParcelImage::where('order_id',$order_id)->get();
-                        foreach($par_image as $value){
-                            Storage::disk('ParcelImage')->delete($value->parcel_image);
-                        }
-                        ParcelImage::where('order_id',$order_id)->delete();
-                    }
-                    $all_rider=NotiOrder::where('order_id',$customer_orders->order_id)->get();
-                    foreach($all_rider as $value){
-                        $rider_check=Rider::where('rider_id',$value->rider_id)->first();
-                        if($rider_check->exist_order != 0){
-                            $rider_check->exist_order=$rider_check->exist_order-1;
-                            $rider_check->update();
-                        }
-                    }
-                    // return response()->json($rider);
-
-                    NotiOrder::where('order_id',$customer_orders->order_id)->delete();
-
-                    return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
-                }
-            }else{
-                $orders=CustomerOrder::where('order_id',$order_id)->first();
-                if($orders){
-                    return response()->json(['success'=>false,'message'=>"order status is not same pending such as 1,11 and 19",'check_order'=>['order_id'=>$orders->order_id,'order_type'=>$orders->order_type,'order_status_id'=>$orders->order_status_id]]);
                 }else{
-                    return response()->json(['success'=>false,'message'=>"order id not found"]);
+                    $customer_orders->order_status_id=9;
+                    $customer_orders->update();
+
+                    return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
                 }
+            }elseif($customer_orders->order_type=="parcel"){
+                $customer_orders->order_status_id=16;
+                $customer_orders->update();
+                $images=ParcelImage::where('order_id',$order_id)->first();
+                if($images){
+                    $par_image=ParcelImage::where('order_id',$order_id)->get();
+                    foreach($par_image as $value){
+                        Storage::disk('ParcelImage')->delete($value->parcel_image);
+                    }
+                    ParcelImage::where('order_id',$order_id)->delete();
+                }
+                $all_rider=NotiOrder::where('order_id',$customer_orders->order_id)->get();
+                foreach($all_rider as $value){
+                    $rider_check=Rider::where('rider_id',$value->rider_id)->first();
+                    if($rider_check->exist_order != 0){
+                        $rider_check->exist_order=$rider_check->exist_order-1;
+                        $rider_check->update();
+                    }
+                }
+                // return response()->json($rider);
+
+                NotiOrder::where('order_id',$customer_orders->order_id)->delete();
+
+                return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
             }
+        }else{
+            $orders=CustomerOrder::where('order_id',$order_id)->first();
+            if($orders){
+                return response()->json(['success'=>false,'message'=>"order status is not same pending such as 1,11 and 19",'check_order'=>['order_id'=>$orders->order_id,'order_type'=>$orders->order_type,'order_status_id'=>$orders->order_status_id]]);
+            }else{
+                return response()->json(['success'=>false,'message'=>"order id not found"]);
+            }
+        }
     }
 
     public function restaurant_cancle_order(Request $request)
@@ -903,7 +908,7 @@ class OrderApiController extends Controller
                                 "data"=> [
                                     "type"=> "customer_cancel_order",
                                     "order_id"=>$check_order->order_id,
-                                    "order_status_id"=>$check_order->order_status_id,
+                                    "order_status_id"=>2,
                                     "order_type"=>$check_order->order_type,
                                     "title_mm"=> "Order Canceled by Restaurant!",
                                     "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
@@ -927,7 +932,7 @@ class OrderApiController extends Controller
                 $res_client = new Client();
                 $res_token=$check_order->restaurant->restaurant_fcm_token;
                 $orderId=(string)$check_order->order_id;
-                $orderstatusId=(string)$check_order->order_status_id;
+                $orderstatusId=(string)2;
                 $orderType=(string)$check_order->order_type;
                 $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                 if($res_token){
@@ -1006,7 +1011,7 @@ class OrderApiController extends Controller
                                 "data"=> [
                                     "type"=> "customer_cancel_order",
                                     "order_id"=>$check_order->order_id,
-                                    "order_status_id"=>$check_order->order_status_id,
+                                    "order_status_id"=>2,
                                     "order_type"=>$check_order->order_type,
                                     "title_mm"=> "Order Canceled by Restaurant!",
                                     "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
@@ -1031,7 +1036,7 @@ class OrderApiController extends Controller
                 $res_client = new Client();
                 $res_token=$check_order->restaurant->restaurant_fcm_token;
                 $orderId=(string)$check_order->order_id;
-                $orderstatusId=(string)$check_order->order_status_id;
+                $orderstatusId=(string)2;
                 $orderType=(string)$check_order->order_type;
                 $res_url = "https://api.pushy.me/push?api_key=67bfd013e958a88838428fb32f1f6ef1ab01c7a1d5da8073dc5c84b2c2f3c1d1";
                 if($res_token){
