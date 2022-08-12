@@ -494,16 +494,26 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
 
     //parcel order
-    Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
-    Route::get('orders/datatable/dailyparcelorderajax','Admin\Order\OrderController@dailyparcelorderajax');
-
     //daily parcel order list
     Route::get('daily_parcel_orders/list','Admin\Order\OrderController@dailyparcelorderlist');
     Route::get('daily_parcel_orders/date_filter','Admin\Order\OrderController@dailyparcelorderdatefilter');
     Route::get('daily_parcel_orders/search','Admin\Order\OrderController@dailyparcelordersearch');
 
+    Route::get('daily_parcel_orders','Admin\Order\OrderController@dailyparcelorderindex');
+    Route::get('orders/datatable/dailyparcelorderajax','Admin\Order\OrderController@dailyparcelorderajax');
+
+    //monthly parcel order list
+    Route::get('monthly_parcel_orders/list','Admin\Order\OrderController@monthlyparcelorderlist');
+    Route::get('monthly_parcel_orders/date_filter','Admin\Order\OrderController@monthlyparcelorderdatefilter');
+    Route::get('monthly_parcel_orders/search','Admin\Order\OrderController@monthlyparcelordersearch');
+
     Route::get('monthly_parcel_orders','Admin\Order\OrderController@monthlyparcelorderindex');
     Route::get('orders/datatable/monthlyparcelorderajax','Admin\Order\OrderController@monthlyparcelorderajax');
+
+    //yearly parcel order list
+    Route::get('yearly_parcel_orders/list','Admin\Order\OrderController@yearlyparcelorderlist');
+    Route::get('yearly_parcel_orders/date_filter','Admin\Order\OrderController@yearlyparcelorderdatefilter');
+    Route::get('yearly_parcel_orders/search','Admin\Order\OrderController@yearlyparcelordersearch');
 
     Route::get('yearly_parcel_orders','Admin\Order\OrderController@yearlyparcelorderindex');
     Route::get('orders/datatable/yearlyparcelorderajax','Admin\Order\OrderController@yearlyparcelorderajax');
