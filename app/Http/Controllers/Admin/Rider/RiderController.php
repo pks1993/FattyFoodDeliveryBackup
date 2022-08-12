@@ -167,7 +167,7 @@ class RiderController extends Controller
         }
 
         $cus_order_list=CustomerOrder::whereDoesntHave('today_rider_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"))->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"),DB::raw("SUM(payment_total_amount) as kpay_total_price"))->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
 
         $data=[];
         foreach($cus_order_list as $value){
@@ -179,19 +179,24 @@ class RiderController extends Controller
             }
             $value->last_offered_date=$last_date;
             $value->duration=$days;
+            $value->kpay_amount=(int)$value->kpay_total_price;
+            $value->cash_amount=(int)($value->bill_total_price-$value->kpay_total_price);
             $value->total_amount=(int)$value->bill_total_price;
 
-            $kbz=CustomerOrder::whereDoesntHave('today_rider_payment',function($payment) use ($from_date){
-                $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"))->whereBetween('created_at',[$from_date,$to_date])->where('payment_method_id','2')->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
-            foreach($kbz as $value1){
-                if($value1->rider_id==$value->rider_id){
-                    $value->kpay_amount=(int)$value1->bill_total_price;
-                }else{
-                    $value->kpay_amount=0;
-                }
-            }
+            // $kbz=CustomerOrder::whereDoesntHave('today_rider_payment',function($payment) use ($from_date){
+            //     $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(bill_total_price) as bill_total_price"))->whereBetween('created_at',[$from_date,$to_date])->where('payment_method_id','2')->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+
+            // foreach($kbz as $value1){
+            //     if($value1->rider_id==$value->rider_id){
+            //         $value->kpay_amount=(int)$value1->bill_total_price;
+            //     }else{
+            //         $value->kpay_amount=0;
+            //     }
+            // }
             array_push($data,$value);
         }
+
+        // return response()->json($cus_order_list);
         $cus_order_offered=RiderTodayPayment::where('status','0')->get();
         $cus_order_done=RiderTodayPayment::where('status','1')->get();
 

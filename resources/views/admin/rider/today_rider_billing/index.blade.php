@@ -93,7 +93,7 @@
                                         <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ number_format($value->kpay_amount) }}</td>
-                                        <td class="text-left">{{ number_format(($value->total_amount)-$value->kpay_amount) }}</td>
+                                        <td class="text-left">{{ number_format($value->cash_amount) }}</td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
                                             @if($value->kpay_amount)
