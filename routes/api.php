@@ -163,6 +163,9 @@ Route::post('v1/fatty/202221/lashio/main/admin/restaurants/preparing_time/define
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/preparing_time/list','Api\Restaurant\RestaurantApiController@preparing_list');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/details','Api\Restaurant\RestaurantApiController@restaurant_details');
 
+Route::post('v1/fatty/202221/lashio/main/admin/send/noti','Api\Restaurant\RestaurantApiController@send_noti');
+
+
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants_token/update','Api\Restaurant\RestaurantApiController@restaurant_token_update');
 
 //Food Menu Api

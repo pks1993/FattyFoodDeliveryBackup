@@ -16,6 +16,7 @@ use GuzzleHttp\Exception\ClientException;
 use App\Models\Order\NotiOrder;
 use App\Models\Restaurant\Restaurant;
 use DB;
+use App\Models\Order\FoodOrderDeliFees;
 
 
 
@@ -182,6 +183,43 @@ class OrderController extends Controller
             $date_end=date('Y-m-d 23:59:59');
         }
         $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
+        $all_count=CustomerOrder::where('order_type','food')->count();
+        $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
+        $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
+        $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
+        $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
+        $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
+
+        return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
+    }
+
+    public function dailyfoodorderdatefilter(Request $request)
+    {
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
+        $all_count=CustomerOrder::where('order_type','food')->count();
+        $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
+        $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
+        $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
+        $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
+        $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
+
+        return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
+    }
+
+    public function dailyfoodordersearch(Request $request)
+    {
+        $search_name=$request['search_name'];
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        if($search_name){
+            $total_orders=CustomerOrder::where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+        }else{
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+        }
         $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
         $all_count=CustomerOrder::where('order_type','food')->count();
         $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
@@ -1433,4 +1471,26 @@ class OrderController extends Controller
     {
         //
     }
+
+    public function food_order_delivery_fee(Request $request)
+    {
+        $food_fees=FoodOrderDeliFees::all();
+        return view('admin.order.delivery_fee.index',compact('food_fees'));
+    }
+
+    public function food_order_delivery_fee_create(Request $request)
+    {
+        FoodOrderDeliFees::create($request->all());
+        $request->session()->flash('alert-success', 'successfully define food delivery fee');
+        return redirect()->back();
+    }
+    public function food_order_delivery_fee_update(Request $request,$id)
+    {
+        FoodOrderDeliFees::find($id)->update($request->all());
+
+        $request->session()->flash('alert-success', 'successfully update food delivery fee');
+        return redirect()->back();
+    }
+
+
 }
