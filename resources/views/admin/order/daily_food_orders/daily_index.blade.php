@@ -85,24 +85,24 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                {{-- <div class="card-header">
+                <div class="card-header">
                     <div class="col-12">
-                        <form action="{{ url('fatty/main/admin/daily_parcel_orders/date_filter') }}">
+                        <form action="{{ url('fatty/main/admin/daily_food_orders/date_filter') }}">
                             <input class="col-5 col-md-2" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <input class="col-5 col-md-2" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
                         </form>
                     </div>
-                </div> --}}
+                </div>
                 <div class="card-body">
-                    {{-- <div class="div mb-2">
-                        <form action="{{ url('fatty/main/admin/daily_parcel_orders/search') }}">
+                    <div class="div mb-2">
+                        <form action="{{ url('fatty/main/admin/daily_food_orders/search') }}">
                             <input class="col-9 col-md-4" type="type" name="search_name" placeholder="Filter Enter Order Id OR Booking Id" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <input type="hidden" name="start_date" value="{{ $date_start }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <input type="hidden" name="end_date" value="{{ $date_end }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <button class="col-2 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
                         </form>
-                    </div> --}}
+                    </div>
                     <div class="table-responsive">
                         <table id="orders" class="table table-bordered table-striped table-sm">
                             <thead>

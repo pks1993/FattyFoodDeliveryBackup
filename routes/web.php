@@ -478,6 +478,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('complete_order/update/{order_id}','Admin\Order\OrderController@completeorderupdate')->name('complete_order.update');
 
     Route::get('daily_food_orders/list','Admin\Order\OrderController@dailyfoodorderlist');
+    Route::get('daily_food_orders/date_filter','Admin\Order\OrderController@dailyfoodorderdatefilter');
+    Route::get('daily_food_orders/search','Admin\Order\OrderController@dailyfoodordersearch');
 
     Route::get('monthly_food_orders','Admin\Order\OrderController@monthlyfoodorderindex');
     Route::get('orders/datatable/monthlyfoodorderajax','Admin\Order\OrderController@monthlyfoodorderajax');
@@ -486,6 +488,12 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('orders/datatable/yearlyfoodorderajax','Admin\Order\OrderController@yearlyfoodorderajax');
 
     Route::get('food_orders_chart','Admin\Order\OrderController@foodorderchart');
+
+    //food_order_delivery_fee
+    Route::get('food_order_delivery_fee','Admin\Order\OrderController@food_order_delivery_fee');
+    Route::post('food_order_delivery_fee/create','Admin\Order\OrderController@food_order_delivery_fee_create')->name('food_order_delivery_fee.create');
+    Route::post('food_order_delivery_fee/update/{food_order_deli_fee_id}','Admin\Order\OrderController@food_order_delivery_fee_update')->name('food_order_delivery_fee.update');
+
 
     //Pending Orders
     Route::get('pending/orders/lists','Admin\Order\OrderController@pending');
