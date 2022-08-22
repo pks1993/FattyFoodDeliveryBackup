@@ -125,8 +125,8 @@ class RestaurantApiController extends Controller
         $this_month_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('created_at','>=',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<=',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
 
         //OrderShow
-        $deliverOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
-        $deliveredorder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
+        $deliverOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->get();
+        $deliveredorder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->paginate(20);
         if($deliveredorder->isNotEmpty()){
             foreach ($deliveredorder as $value)
             {
@@ -136,8 +136,8 @@ class RestaurantApiController extends Controller
             $delivered_order=[];
         }
 
-        $rejectOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
-        $rejectorder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->paginate(20);
+        $rejectOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->get();
+        $rejectorder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->paginate(20);
         if($rejectorder->isNotEmpty()){
             foreach ($rejectorder as $value)
             {
@@ -154,7 +154,7 @@ class RestaurantApiController extends Controller
             $all_data=Paginator::merge($rejectorder,$deliveredorder)->sortByDesc('created_at')->get();
         }
 
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$deliverOrder->sum('bill_total_price'),'delivered_order_count'=>$deliverOrder->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$rejectOrder->count(),'reject_order'=>$reject_order],'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('item_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('item_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('item_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('item_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$deliverOrder->sum('item_total_price'),'delivered_order_count'=>$deliverOrder->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$rejectOrder->count(),'reject_order'=>$reject_order],'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
     }
 
     /**
@@ -828,7 +828,7 @@ class RestaurantApiController extends Controller
             ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere("food_name_ch","LIKE","%$search_name%")
             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
-            ->limit(100)
+            ->limit(25)
             ->get();
 
             $item=[];
@@ -863,7 +863,7 @@ class RestaurantApiController extends Controller
             ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
             // ->having('distance','<',500)
-            ->limit(100)
+            ->limit(50)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
             $data=[];
             foreach($restaurant as $value){
