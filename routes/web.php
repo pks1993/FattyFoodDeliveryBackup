@@ -494,6 +494,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('food_order_delivery_fee/create','Admin\Order\OrderController@food_order_delivery_fee_create')->name('food_order_delivery_fee.create');
     Route::post('food_order_delivery_fee/update/{food_order_deli_fee_id}','Admin\Order\OrderController@food_order_delivery_fee_update')->name('food_order_delivery_fee.update');
 
+    //near_restaurant
+    Route::get('near_restaurant_distance','Admin\Restaurant\RestaurantController@near_restaurant_distance');
+    Route::post('near_restaurant_distance/update/{near_restaurant_distance_id}','Admin\Restaurant\RestaurantController@near_restaurant_distance_update')->name('near_restaurant_distance.update');
+
 
     //Pending Orders
     Route::get('pending/orders/lists','Admin\Order\OrderController@pending');
