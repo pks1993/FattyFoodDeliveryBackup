@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use DB;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 use Carbon\Carbon;
+use App\Models\Restaurant\NearRestaurntDistance;
 
 
 class RestaurantController extends Controller
@@ -1078,6 +1079,20 @@ class RestaurantController extends Controller
         }
         $food->delete();
         $request->session()->flash('alert-danger', 'successfully delete food!');
+        return redirect()->back();
+    }
+
+    public function near_restaurant_distance()
+    {
+        $distance=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+        return view('admin.restaurant.near_restaurant_distance.index',compact('distance'));
+    }
+    public function near_restaurant_distance_update(Request $request,$id)
+    {
+        $distance=NearRestaurntDistance::where('near_restaurant_distance_id',$id)->first();
+        $distance->limit_distance=$request['limit_distance'];
+        $distance->update();
+        $request->session()->flash('alert-success', 'successfully update limit distance!');
         return redirect()->back();
     }
 

@@ -843,7 +843,7 @@ class RestaurantApiController extends Controller
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
-            ->having('distance','<',$near_distance)
+            ->having('distance','<=',$near_distance)
             ->limit(50)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
             $data=[];
@@ -1124,7 +1124,7 @@ class RestaurantApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        ->having('distance','<',$near_distance)
+        ->having('distance','<=',$near_distance)
         ->orderBy('distance','ASC')
         ->whereIn('restaurant_category_id',$category_id)
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();

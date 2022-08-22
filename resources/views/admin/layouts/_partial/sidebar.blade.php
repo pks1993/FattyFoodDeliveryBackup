@@ -510,6 +510,12 @@
                             <p>Restaurant Chart</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('fatty/main/admin/near_restaurant_distance') }}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Restaurant Limit Distance</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item has-treeview">
