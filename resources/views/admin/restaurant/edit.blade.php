@@ -214,7 +214,7 @@
                                 <div class="form-group row">
                                     <label for="percentage" class="col-md-12 col-form-label">{{ __('Percentage') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
-                                        <input type="number" value="{{ $restaurants->percentage }}" id="percentage" class="form-control @error('percentage') is-invalid @enderror" name="percentage" autocomplete="percentage">{{ old('percentage') }}
+                                        <input type="number" step="0.01" value="{{ $restaurants->percentage }}" id="percentage" class="form-control @error('percentage') is-invalid @enderror" name="percentage" autocomplete="percentage">{{ old('percentage') }}
                                         @error('percentage')
                                             <span class="invalid-feedback" role="alert">
                                               <strong>{{ $message }}</strong>

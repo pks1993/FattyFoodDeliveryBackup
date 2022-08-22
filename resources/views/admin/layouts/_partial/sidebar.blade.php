@@ -128,6 +128,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/food_order_delivery_fee')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Food Deli Fee</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{url('fatty/main/admin/food_orders_chart')}}" class="nav-link">
                             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                             <p>Food Orders Chart</p>

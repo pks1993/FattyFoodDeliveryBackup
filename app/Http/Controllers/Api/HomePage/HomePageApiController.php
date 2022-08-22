@@ -21,6 +21,7 @@ use App\Models\Wishlist\Wishlist;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Carbon;
 use App\Models\Order\FoodOrderDeliFees;
+use App\Models\Restaurant\NearRestaurntDistance;
 
 
 
@@ -38,6 +39,12 @@ class HomePageApiController extends Controller
 
     public function home_page(Request $request)
     {
+        $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+        if($near_distance_chek){
+            $near_distance=$near_distance_chek->limit_distance;
+        }else{
+            $near_distance=20;
+        }
         $customer_id=$request['customer_id'];
         $latitude=$request['latitude'];
         $longitude=$request['longitude'];
@@ -76,8 +83,8 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
-        // ->orderBy('distance','ASC')
+        ->having('distance','<=',$near_distance)
+        ->orderBy('distance','ASC')
         ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
         ->join('states','states.state_id','=','restaurants.state_id')
@@ -117,7 +124,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<=',$near_distance)
         ->orderBy('distance','ASC')
         // ->orderBy('restaurant_emergency_status','ASC')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
@@ -315,6 +322,10 @@ class HomePageApiController extends Controller
             $near=$near_restaurant->where('restaurant_emergency_status',1);
             $data=$near_restaurant->where('restaurant_emergency_status',0)->merge($near);
 
+            // $data =  array_values(array_sort($near_restaurant, function ($item) {
+            //     return $item['restaurant_emergency_status'];
+            // }));
+
             //DESC
             // $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
             //     return $value['distance'];
@@ -336,6 +347,12 @@ class HomePageApiController extends Controller
 
     public function recommend_list(Request $request)
     {
+        $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+        if($near_distance_chek){
+            $near_distance=$near_distance_chek->limit_distance;
+        }else{
+            $near_distance=20;
+        }
         $customer_id=$request['customer_id'];
         $latitude=$request['latitude'];
         $longitude=$request['longitude'];
@@ -349,7 +366,8 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-            // ->having('distance','<',500)
+            ->having('distance','<=',$near_distance)
+            ->orderBy('distance','ASC')
             // ->orderByRaw('(distance - sort_id) desc')
             ->orderBy('sort_id')
             ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
@@ -545,7 +563,11 @@ class HomePageApiController extends Controller
 
             }
 
-            return response()->json(['success'=>true,'message'=>'this is recommend restaurant','data'=>$recommend]);
+            $data =  array_values(array_sort($recommend, function ($item) {
+                return $item['restaurant_emergency_status'];
+            }));
+
+            return response()->json(['success'=>true,'message'=>'this is recommend restaurant','data'=>$data]);
         }else{
             return response()->json(['success'=>false,'message'=>'customer_id not found']);
         }
@@ -553,6 +575,12 @@ class HomePageApiController extends Controller
 
     public function click_category_data(Request $request)
     {
+        $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+        if($near_distance_chek){
+            $near_distance=$near_distance_chek->limit_distance;
+        }else{
+            $near_distance=20;
+        }
         $category_id=$request['category_id'];
         $customer_id=$request['customer_id'];
         $latitude=$request['latitude'];
@@ -565,7 +593,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
+        ->having('distance','<=',$near_distance)
         ->orderBy('distance','ASC')
         ->join('states','states.state_id','=','restaurants.state_id')
         ->join('cities','cities.city_id','=','restaurants.city_id')
@@ -758,10 +786,13 @@ class HomePageApiController extends Controller
                 array_push($restaurants_val,$value);
 
             }
+            $data =  array_values(array_sort($restaurants, function ($item) {
+                return $item['restaurant_emergency_status'];
+            }));
 
 
 
-        return response()->json(['success'=>true,'message'=>'this is  restaurant data','data'=>$restaurants]);
+        return response()->json(['success'=>true,'message'=>'this is  restaurant data','data'=>$data]);
     }
 
     public function click_restaurant_data(Request $request)
