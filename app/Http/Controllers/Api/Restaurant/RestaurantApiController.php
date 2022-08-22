@@ -127,6 +127,11 @@ class RestaurantApiController extends Controller
         //OrderShow
         $deliverOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->get();
         $deliveredorder=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->paginate(20);
+        $data=[];
+        foreach($deliveredorder as $item){
+            $item->bill_total_price=$item->item_total_price;
+            array_push($data,$item);
+        }
         if($deliveredorder->isNotEmpty()){
             foreach ($deliveredorder as $value)
             {
@@ -138,6 +143,11 @@ class RestaurantApiController extends Controller
 
         $rejectOrder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->get();
         $rejectorder=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'item_total_price')->paginate(20);
+        $data1=[];
+        foreach($rejectorder as $item1){
+            $item1->bill_total_price=$item1->item_total_price;
+            array_push($data1,$item1);
+        }
         if($rejectorder->isNotEmpty()){
             foreach ($rejectorder as $value)
             {
