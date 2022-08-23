@@ -564,8 +564,17 @@ class CustomerApiController extends Controller
     public function location(Request $request)
     {
         $customer_id=$request['customer_id'];
-        $latitude=$request['latitude'];
         $longitude=$request['longitude'];
+        if($request['latitude']==0.0){
+            $latitude=null;
+        }else{
+            $latitude=$request['latitude'];
+        }
+        if($request['longitude']==0.0){
+            $longitude=null;
+        }else{
+            $longitude=$request['longitude'];
+        }
         $customers=Customer::where('customer_id',$customer_id)->first();
         if(!empty($customers)){
             $customers->latitude=$latitude;
@@ -578,7 +587,9 @@ class CustomerApiController extends Controller
                     "customer_id"=>$customer_id,
                 ]);
             }
-            return response()->json(['success'=>true,'message' => 'the customer location have been updated','data'=>$customers]);
+
+            $customer=Customer::where('customer_id',$customer_id)->first();
+            return response()->json(['success'=>true,'message' => 'the customer location have been updated','data'=>$customer]);
         }else{
             return response()->json(['success'=>false,'message' => 'error something, customer id is not same!','data'=>null]);
         }
