@@ -90,8 +90,8 @@ class HomePageApiController extends Controller
         ->join('states','states.state_id','=','restaurants.state_id')
         ->join('cities','cities.city_id','=','restaurants.city_id')
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])
-        ->orderBy('sort_id')
         ->limit(20)
+        ->orderBy('sort_id')
         ->get();
         $recommend_data=[];
         foreach($recommend as $data){
@@ -369,10 +369,10 @@ class HomePageApiController extends Controller
             ->having('distance','<=',$near_distance)
             // ->orderBy('distance','ASC')
             // ->orderByRaw('(distance - sort_id) desc')
-            ->orderBy('sort_id')
             ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
             ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])
+            ->orderBy('sort_id')
             ->get();
 
             $restaurants_val=[];
