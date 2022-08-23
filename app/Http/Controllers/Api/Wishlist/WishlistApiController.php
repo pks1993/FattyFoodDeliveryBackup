@@ -9,6 +9,7 @@ use App\Models\Restaurant\Restaurant;
 use App\Models\Restaurant\RestaurantAvailableTime;
 use Illuminate\Support\Carbon;
 use DB;
+use App\Models\Restaurant\NearRestaurntDistance;
 
 class WishlistApiController extends Controller
 {
@@ -31,6 +32,12 @@ class WishlistApiController extends Controller
 
      public function list_v1(Request $request)
     {
+        $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+        if($near_distance_chek){
+            $near_distance=$near_distance_chek->limit_distance;
+        }else{
+            $near_distance=20;
+        }
         $customer_id=$request['customer_id'];
         $latitude=$request['latitude'];
         $longitude=$request['longitude'];
@@ -41,7 +48,6 @@ class WishlistApiController extends Controller
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
-        // ->having('distance','<',500)
         ->orderBy('distance','ASC')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
         ->join('states','states.state_id','=','restaurants.state_id')
@@ -194,6 +200,7 @@ class WishlistApiController extends Controller
                         }
                     }
                 }
+                $value->restaurant->limit_distance=$near_distance;
 
             array_push($data,$value);
         }
