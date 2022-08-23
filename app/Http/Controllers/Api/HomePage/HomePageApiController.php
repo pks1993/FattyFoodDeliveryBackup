@@ -84,7 +84,7 @@ class HomePageApiController extends Controller
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
         ->having('distance','<=',$near_distance)
-        ->orderBy('distance','ASC')
+        // ->orderBy('distance','ASC')
         ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
         ->join('states','states.state_id','=','restaurants.state_id')
@@ -367,7 +367,7 @@ class HomePageApiController extends Controller
                 + sin(radians($latitude))
                 * sin(radians(restaurant_latitude))) AS distance"))
             ->having('distance','<=',$near_distance)
-            ->orderBy('distance','ASC')
+            // ->orderBy('distance','ASC')
             // ->orderByRaw('(distance - sort_id) desc')
             ->orderBy('sort_id')
             ->join('restaurants','restaurants.restaurant_id','=','recommend_restaurants.restaurant_id')
@@ -815,22 +815,45 @@ class HomePageApiController extends Controller
 
     public function click_menu_data(Request $request)
     {
+        $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+        if($near_distance_chek){
+            $near_distance=$near_distance_chek->limit_distance;
+        }else{
+            $near_distance=20;
+        }
         $customer_id=$request['customer_id'];
+        $check_customer=Customer::where('customer_id',$customer_id)->first();
+        $latitude=$check_customer->latitude;
+        $longitude=$check_customer->longitude;
+
         $restaurant_id=$request['restaurant_id'];
+            // $restaurants=Restaurant::with(['available_time','menu'=>function($menu){
+            //     $menu->has('food')->get();
+            // },'menu.food'=>function($foods){
+            //     $foods->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->orderBy('food_emergency_status')->get();
+            // },'menu.food.sub_item'=>function($sub_item){
+            //     $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->has('option')->get();
+            // },'menu.food.sub_item.option'])->orderby('created_at')->where('restaurant_id',$restaurant_id)->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->first();
             $restaurants=Restaurant::with(['available_time','menu'=>function($menu){
                 $menu->has('food')->get();
             },'menu.food'=>function($foods){
                 $foods->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->orderBy('food_emergency_status')->get();
             },'menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->has('option')->get();
-            },'menu.food.sub_item.option'])->orderby('created_at')->where('restaurant_id',$restaurant_id)->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->first();
+            },'menu.food.sub_item.option'])->select('restaurants.*',DB::raw("6371 * acos(cos(radians($latitude))
+            * cos(radians(restaurant_latitude))
+            * cos(radians(restaurant_longitude) - radians($longitude))
+            + sin(radians($latitude))
+            * sin(radians(restaurant_latitude))) AS distance"))
+            ->orderby('created_at')
+            ->where('restaurant_id',$restaurant_id)
+            ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->first();
             $data=[];
             if($restaurants->wishlist==1){
                 $restaurants->is_wish=true;
             }else{
                 $restaurants->is_wish=false;
             }
-
             if($restaurants->restaurant_emergency_status==0){
                 $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$restaurants->restaurant_id)->first();
                 if($available->on_off==0){
@@ -843,6 +866,13 @@ class HomePageApiController extends Controller
                         $restaurants->restaurant_emergency_status=1;
                     }
                 }
+            }
+            if($restaurants->distance==0){
+                $restaurants->distance=0.01;
+                $restaurants->limit_distance=$near_distance;
+            }else{
+                $restaurants->distance=(float)number_format((float)$restaurants->distance, 2, '.', '');
+                $restaurants->limit_distance=$near_distance;
             }
             array_push($data,$restaurants);
 
