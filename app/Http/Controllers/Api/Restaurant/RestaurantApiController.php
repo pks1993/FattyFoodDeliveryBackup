@@ -931,7 +931,6 @@ class RestaurantApiController extends Controller
                 }else{
                     $value->is_wish=false;
                 }
-
                 $value->distance=(float)$distances_customer_restaurant;
                 $value->distance_time=(int)$distances*2 + $value->average_time;
                 $value->delivery_fee=$customer_delivery_fee;
@@ -975,7 +974,7 @@ class RestaurantApiController extends Controller
                 ->get();
 
                 $item=[];
-                foreach($food as $value){
+                foreach($food_check as $value){
                     if($value->restaurant->restaurant_emergency_status==0){
                         $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant->restaurant_id)->first();
                         if($available->on_off==0){
@@ -989,6 +988,20 @@ class RestaurantApiController extends Controller
                             }
                         }
                     }
+
+                    $theta = $longitude - $value->restaurant->restaurant_longitude;
+                    $dist = sin(deg2rad($latitude)) * sin(deg2rad($value->restaurant->restaurant_latitude)) +  cos(deg2rad($latitude)) * cos(deg2rad($value->restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                    $dist = acos($dist);
+                    $dist = rad2deg($dist);
+                    $miles = $dist * 60 * 1.1515;
+                    $kilometer=$miles * 1.609344;
+                    $distances=(float) number_format((float)$kilometer, 1, '.', '');
+                    if($distances){
+                        $value->restaurant->distance=$distances;
+                    }else{
+                        $value->restaurant->distance=0.01;
+                    }
+                    $value->restaurant->limit_distance=$near_distance;
 
                     array_push($item,$value);
                 }
