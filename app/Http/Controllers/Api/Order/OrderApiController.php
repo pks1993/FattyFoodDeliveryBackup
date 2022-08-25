@@ -1378,6 +1378,10 @@ class OrderApiController extends Controller
                 // return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
 
                 if($request['order_status_id']=="3"){
+                    CustomerOrderHistory::create([
+                        "order_id"=>$order_id,
+                        "order_status_id"=>5,
+                    ]);
                     // customer
                     $cus_client = new Client();
                     $cus_token=$customer_check->fcm_token;
