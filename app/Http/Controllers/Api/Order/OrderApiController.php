@@ -400,6 +400,7 @@ class OrderApiController extends Controller
         $date=date('Y-m-d 00:00:00', strtotime($request['date']));
         $date_start=date('Y-m-d 00:00:00', strtotime($request['date']));
         $date_end=date('Y-m-d 23:59:59', strtotime($request['date']));
+        $language=$request->header('language');
 
         // $array =CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->orderBy('order_id','desc')->where('order_type','food')->get();
         // $total=count($array);
@@ -419,7 +420,103 @@ class OrderApiController extends Controller
             if($order_type=="food"){
                 // $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->orderBy('order_id','desc')->where('order_type','food')->get();
                 $active_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['1','3','4','5','6','10','19'])->where('order_type','food')->orderBy('created_at','desc')->get();
+                $active_data=[];
+                foreach($active_order1 as $item1){
+                    if($language==null){
+                        if($item1->order_status->order_status_name){
+                            $status_name=$item1->order_status->order_status_name;
+                        }else{
+                            if($item1->order_status->order_status_name_mm){
+                                $status_name=$item1->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="my" ){
+                        if($item1->order_status->order_status_name_mm){
+                            $status_name=$item1->order_status->order_status_name_mm;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="en"){
+                        if($item1->order_status->order_status_name){
+                            $status_name=$item1->order_status->order_status_name;
+                        }else{
+                            if($item1->order_status->order_status_name_mm){
+                                $status_name=$item1->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="zh"){
+                        if($item1->order_status->order_status_name_ch){
+                            $status_name=$item1->order_status->order_status_name_ch;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }else{
+                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                    }
+                    $item1->order_status->order_status_name=$status_name;
+                    array_push($active_data,$item1);
+                }
                 $past_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->get();
+                $past_data=[];
+                foreach($past_order1 as $item1){
+                    if($language==null){
+                        if($item1->order_status->order_status_name){
+                            $status_name=$item1->order_status->order_status_name;
+                        }else{
+                            if($item1->order_status->order_status_name_mm){
+                                $status_name=$item1->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="my" ){
+                        if($item1->order_status->order_status_name_mm){
+                            $status_name=$item1->order_status->order_status_name_mm;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="en"){
+                        if($item1->order_status->order_status_name){
+                            $status_name=$item1->order_status->order_status_name;
+                        }else{
+                            if($item1->order_status->order_status_name_mm){
+                                $status_name=$item1->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="zh"){
+                        if($item1->order_status->order_status_name_ch){
+                            $status_name=$item1->order_status->order_status_name_ch;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }else{
+                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                    }
+                    $item1->order_status->order_status_name=$status_name;
+                    array_push($past_data,$item1);
+                }
                 $data=$active_order1->merge($past_order1);
                 $total=count($data);
                 $per_page =20;
@@ -447,7 +544,103 @@ class OrderApiController extends Controller
             }elseif($order_type=="parcel"){
                 // $all_data=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('customer_id',$customer_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['11','12','13','14','15','16','17'])->where('order_type','parcel')->paginate(10);
                 $active_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('customer_id',$customer_id)->whereIn('order_status_id',['11','12','13','14','17'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
+                $active_data=[];
+                foreach($active_order1 as $item){
+                    if($language==null){
+                        if($item->order_status->order_status_name){
+                            $status_name=$item->order_status->order_status_name;
+                        }else{
+                            if($item->order_status->order_status_name_mm){
+                                $status_name=$item->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="my" ){
+                        if($item->order_status->order_status_name_mm){
+                            $status_name=$item->order_status->order_status_name_mm;
+                        }else{
+                            if($item->order_status->order_status_name){
+                                $status_name=$item->order_status->order_status_name;
+                            }else{
+                                $status_name=$item->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="en"){
+                        if($item->order_status->order_status_name){
+                            $status_name=$item->order_status->order_status_name;
+                        }else{
+                            if($item->order_status->order_status_name_mm){
+                                $status_name=$item->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="zh"){
+                        if($item->order_status->order_status_name_ch){
+                            $status_name=$item->order_status->order_status_name_ch;
+                        }else{
+                            if($item->order_status->order_status_name){
+                                $status_name=$item->order_status->order_status_name;
+                            }else{
+                                $status_name=$item->order_status->order_status_name_ch;
+                            }
+                        }
+                    }else{
+                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                    }
+                    $item->order_status->order_status_name=$status_name;
+                    array_push($active_data,$item);
+                }
                 $past_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
+                $past_data=[];
+                foreach($past_order1 as $item1){
+                    if($language==null){
+                        if($item1->order_status->order_status_name){
+                            $status_name=$item1->order_status->order_status_name;
+                        }else{
+                            if($item1->order_status->order_status_name_mm){
+                                $status_name=$item1->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="my" ){
+                        if($item1->order_status->order_status_name_mm){
+                            $status_name=$item1->order_status->order_status_name_mm;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="en"){
+                        if($item1->order_status->order_status_name){
+                            $status_name=$item1->order_status->order_status_name;
+                        }else{
+                            if($item1->order_status->order_status_name_mm){
+                                $status_name=$item1->order_status->order_status_name_mm;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }elseif($language=="zh"){
+                        if($item1->order_status->order_status_name_ch){
+                            $status_name=$item1->order_status->order_status_name_ch;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
+                    }else{
+                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                    }
+                    $item1->order_status->order_status_name=$status_name;
+                    array_push($past_data,$item1);
+                }
                 $data=$active_order1->merge($past_order1);
                 $total=count($data);
                 $per_page =20;
@@ -2035,21 +2228,22 @@ class OrderApiController extends Controller
     {
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+        $language=$request->header('language');
 
         // if($customer_orders->rider_id){
-        //     $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
-        //     $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
-        //     $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
-        //     $dist = acos($dist);
-        //     $dist = rad2deg($dist);
+            //     $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
+            //     $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
+            //     $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
+            //     $dist = acos($dist);
+            //     $dist = rad2deg($dist);
         //     $miles = $dist * 60 * 1.1515;
         //     $kilometer=$miles * 1.609344;
         //     $distances=(float) number_format((float)$kilometer, 2, '.', '');
         // }else{
-        //     $distances=0.00;
-        // }
-        if($customer_orders->order_type=="food"){
-            $theta = $customer_orders->customer_address_longitude - $customer_orders->restaurant_address_longitude;
+            //     $distances=0.00;
+            // }
+            if($customer_orders->order_type=="food"){
+                $theta = $customer_orders->customer_address_longitude - $customer_orders->restaurant_address_longitude;
             $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($customer_orders->customer_address_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($theta));
             $dist = acos($dist);
             $dist = rad2deg($dist);
@@ -2070,6 +2264,49 @@ class OrderApiController extends Controller
             if($distances==0){
                 $distances=0.01;
             }
+        }
+        if($language==null){
+            if($customer_orders->order_status->order_status_name){
+                $status_name=$customer_orders->order_status->order_status_name;
+            }else{
+                if($customer_orders->order_status->order_status_name_mm){
+                    $status_name=$customer_orders->order_status->order_status_name_mm;
+                }else{
+                    $status_name=$customer_orders->order_status->order_status_name_ch;
+                }
+            }
+        }elseif($language=="my" ){
+            if($customer_orders->order_status->order_status_name_mm){
+                $status_name=$customer_orders->order_status->order_status_name_mm;
+            }else{
+                if($customer_orders->order_status->order_status_name){
+                    $status_name=$customer_orders->order_status->order_status_name;
+                }else{
+                    $status_name=$customer_orders->order_status->order_status_name_ch;
+                }
+            }
+        }elseif($language=="en"){
+            if($customer_orders->order_status->order_status_name){
+                $status_name=$customer_orders->order_status->order_status_name;
+            }else{
+                if($customer_orders->order_status->order_status_name_mm){
+                    $status_name=$customer_orders->order_status->order_status_name_mm;
+                }else{
+                    $status_name=$customer_orders->order_status->order_status_name_ch;
+                }
+            }
+        }elseif($language=="zh"){
+            if($customer_orders->order_status->order_status_name_ch){
+                $status_name=$customer_orders->order_status->order_status_name_ch;
+            }else{
+                if($customer_orders->order_status->order_status_name){
+                    $status_name=$customer_orders->order_status->order_status_name;
+                }else{
+                    $status_name=$customer_orders->order_status->order_status_name_ch;
+                }
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
         }
 
         $data=[];
@@ -2101,6 +2338,7 @@ class OrderApiController extends Controller
         }else{
             $customer_orders->rider_parcel_address=json_decode($customer_orders->rider_parcel_address,true);
         }
+        $customer_orders->order_status->order_status_name=$status_name;
 
         $customer_orders->distance=$distances;
         array_push($data,$customer_orders);
