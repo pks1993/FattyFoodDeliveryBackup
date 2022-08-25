@@ -1247,6 +1247,8 @@ class RestaurantApiController extends Controller
                         }
                     }
                 }
+                $value->limit_distance=$near_distance;
+
                 array_push($restaurants_val,$value);
 
             }
