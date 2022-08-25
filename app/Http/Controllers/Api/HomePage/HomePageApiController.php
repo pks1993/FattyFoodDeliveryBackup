@@ -742,9 +742,11 @@ class HomePageApiController extends Controller
             $near_distance=20;
         }
         $customer_id=$request['customer_id'];
-        $check_customer=Customer::where('customer_id',$customer_id)->first();
-        $latitude=$check_customer->latitude;
-        $longitude=$check_customer->longitude;
+        // $check_customer=Customer::where('customer_id',$customer_id)->first();
+        // $latitude=$check_customer->latitude;
+        // $longitude=$check_customer->longitude;
+        $latitude=$request['latitude'];
+        $longitude=$request['longitude'];
 
         $restaurant_id=$request['restaurant_id'];
             // $restaurants=Restaurant::with(['available_time','menu'=>function($menu){
