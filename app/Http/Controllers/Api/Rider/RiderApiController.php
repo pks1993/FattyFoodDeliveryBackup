@@ -1214,6 +1214,10 @@ class RiderApicontroller extends Controller
                     }
                 }
                 elseif($order_status_id=="6"){
+                    CustomerOrderHistory::create([
+                        "order_id"=>$order_id,
+                        "order_status_id"=>5,
+                    ]);
                     //restaurant
                     $res_client = new Client();
                     if($order->restaurant->restaurant_fcm_token){
