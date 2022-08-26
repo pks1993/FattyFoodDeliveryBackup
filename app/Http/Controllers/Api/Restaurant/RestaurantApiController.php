@@ -962,7 +962,7 @@ class RestaurantApiController extends Controller
                 },'sub_item.option' => function($option){
                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
                 },'restaurant'=>function ($restaurant){
-                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status')->get();
+                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude')->get();
                 },'restaurant.category' => function ($category){
                     $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
                 }])
@@ -976,36 +976,36 @@ class RestaurantApiController extends Controller
                 ->get();
 
                 $item=[];
-                foreach($food_check as $value){
-                    if($value->restaurant->restaurant_emergency_status==0){
-                        $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant->restaurant_id)->first();
+                foreach($food_check as $value1){
+                    if($value1->restaurant->restaurant_emergency_status==0){
+                        $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value1->restaurant->restaurant_id)->first();
                         if($available->on_off==0){
-                            $value->restaurant->restaurant_emergency_status=1;
+                            $value1->restaurant->restaurant_emergency_status=1;
                         }else{
                             $current_time = Carbon::now()->format('H:i:s');
                             if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
-                                $value->restaurant->restaurant_emergency_status=0;
+                                $value1->restaurant->restaurant_emergency_status=0;
                             }else{
-                                $value->restaurant->restaurant_emergency_status=1;
+                                $value1->restaurant->restaurant_emergency_status=1;
                             }
                         }
                     }
 
-                    $theta = $longitude - $value->restaurant->restaurant_longitude;
-                    $dist = sin(deg2rad($latitude)) * sin(deg2rad($value->restaurant->restaurant_latitude)) +  cos(deg2rad($latitude)) * cos(deg2rad($value->restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                    $theta = $request['longitude'] - $value1->restaurant->restaurant_longitude;
+                    $dist = sin(deg2rad($request['latitude'])) * sin(deg2rad($value1->restaurant->restaurant_latitude)) +  cos(deg2rad($request['latitude'])) * cos(deg2rad($value1->restaurant->restaurant_latitude)) * cos(deg2rad($theta));
                     $dist = acos($dist);
                     $dist = rad2deg($dist);
                     $miles = $dist * 60 * 1.1515;
                     $kilometer=$miles * 1.609344;
                     $distances=(float) number_format((float)$kilometer, 1, '.', '');
                     if($distances){
-                        $value->restaurant->distance=$distances;
+                        $value1->restaurant->distance=$distances;
                     }else{
-                        $value->restaurant->distance=0.01;
+                        $value1->restaurant->distance=0.01;
                     }
-                    $value->restaurant->limit_distance=$near_distance;
+                    $value1->restaurant->limit_distance=$near_distance;
 
-                    array_push($item,$value);
+                    array_push($item,$value1);
                 }
                 $food =  array_values(array_sort($food_check, function ($item) {
                     return $item['food_emergency_status'];
