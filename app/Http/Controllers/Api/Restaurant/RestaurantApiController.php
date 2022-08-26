@@ -1038,7 +1038,7 @@ class RestaurantApiController extends Controller
         if($search_name){
             $restaurant=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($foods){
-            $foods->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
+            $foods->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'=>function($data){$data->where('instock',1)->get();}])
             ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
@@ -1051,7 +1051,7 @@ class RestaurantApiController extends Controller
             ->limit(50)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
             $data=[];
-            $res_id=[];
+            // $res_id=[];
             foreach($restaurant as $value){
                 // $res_id[]=$value->restaurant_id;
                 $distances= number_format((float)$value->distance, 1, '.', '');
@@ -1164,7 +1164,7 @@ class RestaurantApiController extends Controller
                 $food_check=Food::with(['sub_item'=>function($sub_item){
                     $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
                 },'sub_item.option' => function($option){
-                    $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
+                    $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->where('instock',1)->get();
                 },'restaurant'=>function ($restaurant){
                     $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude')->get();
                 },'restaurant.category' => function ($category){
@@ -1339,7 +1339,7 @@ class RestaurantApiController extends Controller
 
         $restaurants=Restaurant::with(['category'=> function($category){
         $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
-        $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
+        $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'=>function($data){$data->where('instock',1)->get();}])
         ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))

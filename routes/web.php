@@ -315,6 +315,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('restaurants/food/edit/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_edit');
     Route::post('restaurants/food/update/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_update')->name('restaurants_food.update');
     Route::delete('restaurants/food/delete/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_destroy')->name('restaurants_food.destroy');
+    Route::get('restaurants/food/list/restaurants/food/recommend/update/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_recommend')->name('restaurants_food_recommend.update');
+    Route::get('restaurants/food/list/restaurants/food/open/update/{food_id}','Admin\Restaurant\RestaurantController@restaurant_food_open')->name('restaurants_food_open.update');
 
     //restaurant billing
     Route::get('restaurants_billing/list','Admin\Restaurant\RestaurantController@restaurant_billing_list')->name('restaurants_billing.list');
