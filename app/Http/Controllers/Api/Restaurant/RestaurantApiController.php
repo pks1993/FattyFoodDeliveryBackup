@@ -817,6 +817,211 @@ class RestaurantApiController extends Controller
 
     }
 
+    // public function food_search_v1(Request $request)
+    // {
+    //     $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
+    //     if($near_distance_chek){
+    //         $near_distance=$near_distance_chek->limit_distance;
+    //     }else{
+    //         $near_distance=20;
+    //     }
+    //     $search_name=$request['search_name'];
+    //     $customer_id=$request['customer_id'];
+    //     $latitude=$request['latitude'];
+    //     $longitude=$request['longitude'];
+    //     // DB::raw("REPLACE(`restaurant_name_en`, ' ', '') AS name_en") (selece data)
+    //     if($search_name){
+
+    //         $restaurant=Restaurant::with(['category'=> function($category){
+    //         $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($foods){
+    //         $foods->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
+    //         ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
+    //             * cos(radians(restaurant_latitude))
+    //             * cos(radians(restaurant_longitude) - radians($longitude))
+    //             + sin(radians($latitude))
+    //             * sin(radians(restaurant_latitude))) AS distance"))
+    //         ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
+    //         ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
+    //         ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
+    //         ->having('distance','<=',$near_distance)
+    //         ->limit(50)
+    //         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
+    //         $data=[];
+    //         $res_id=[];
+    //         foreach($restaurant as $value){
+    //             $res_id[]=$value->restaurant_id;
+    //             $distances= number_format((float)$value->distance, 1, '.', '');
+    //             $distances_customer_restaurant= number_format((float)$value->distance, 2, '.', '');
+
+    //             if($distances <= 0.5){
+    //                 $define_distance=0.5;
+    //             }elseif($distances > 0.5 && $distances <= 1){
+    //                 $define_distance=1;
+    //             }elseif($distances > 1 && $distances <= 1.5){
+    //                 $define_distance=1.5;
+    //             }elseif($distances > 1.5 && $distances <= 2){
+    //                 $define_distance=2;
+    //             }elseif($distances > 2 && $distances <= 2.5){
+    //                 $define_distance=2.5;
+    //             }elseif($distances > 2.5 && $distances <= 3){
+    //                 $define_distance=3;
+    //             }elseif($distances > 3 && $distances <= 3.5){
+    //                 $define_distance=3.5;
+    //             }elseif($distances > 3.5 && $distances <= 4){
+    //                 $define_distance=4;
+    //             }elseif($distances > 4 && $distances <= 4.5){
+    //                 $define_distance=4.5;
+    //             }elseif($distances > 4.5 && $distances <= 5){
+    //                 $define_distance=5;
+    //             }elseif($distances > 5 && $distances <= 6){
+    //                 $define_distance=6;
+    //             }elseif($distances > 6 && $distances <= 7){
+    //                 $define_distance=7;
+    //             }elseif($distances > 7 && $distances <= 8){
+    //                 $define_distance=8;
+    //             }elseif($distances > 8 && $distances <= 9){
+    //                 $define_distance=9;
+    //             }elseif($distances > 9 && $distances <= 10){
+    //                 $define_distance=10;
+    //             }elseif($distances > 10 && $distances <= 11){
+    //                 $define_distance=11;
+    //             }elseif($distances > 11 && $distances <= 12){
+    //                 $define_distance=12;
+    //             }elseif($distances > 12 && $distances <= 13){
+    //                 $define_distance=13;
+    //             }elseif($distances > 13 && $distances <= 14){
+    //                 $define_distance=14;
+    //             }elseif($distances > 14 && $distances <= 15){
+    //                 $define_distance=15;
+    //             }elseif($distances > 15 && $distances <= 16){
+    //                 $define_distance=16;
+    //             }elseif($distances > 16 && $distances <= 17){
+    //                 $define_distance=17;
+    //             }elseif($distances > 17 && $distances <= 18){
+    //                 $define_distance=18;
+    //             }elseif($distances > 18 && $distances <= 19){
+    //                 $define_distance=19;
+    //             }elseif($distances > 19 && $distances <= 20){
+    //                 $define_distance=20;
+    //             }elseif($distances > 20 && $distances <= 21){
+    //                 $define_distance=21;
+    //             }elseif($distances > 21 && $distances <= 22){
+    //                 $define_distance=22;
+    //             }elseif($distances > 22 && $distances <= 23){
+    //                 $define_distance=23;
+    //             }elseif($distances > 23 && $distances <= 24){
+    //                 $define_distance=24;
+    //             }elseif($distances > 24 && $distances <= 25){
+    //                 $define_distance=25;
+    //             }else{
+    //                 $define_distance=25;
+    //             }
+
+    //             if($define_distance){
+    //                 $check=FoodOrderDeliFees::where('distance',$define_distance)->first();
+    //                 $rider_delivery_fee=$check->rider_delivery_fee;
+    //                 $customer_delivery_fee=$check->customer_delivery_fee;
+    //             }else{
+    //                 $rider_delivery_fee=0;
+    //                 $customer_delivery_fee=0;
+    //             }
+
+    //             if($value->wishlist==1){
+    //                 $value->is_wish=true;
+    //             }else{
+    //                 $value->is_wish=false;
+    //             }
+    //             $value->distance=(float)$distances_customer_restaurant;
+    //             $value->distance_time=(int)$distances*2 + $value->average_time;
+    //             $value->delivery_fee=$customer_delivery_fee;
+    //             $value->rider_delivery_fee=$rider_delivery_fee;
+
+    //             if($value->restaurant_emergency_status==0){
+    //                 $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+    //                 if($available->on_off==0){
+    //                     $value->restaurant_emergency_status=1;
+    //                 }else{
+    //                     $current_time = Carbon::now()->format('H:i:s');
+    //                     if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+    //                         $value->restaurant_emergency_status=0;
+    //                     }else{
+    //                         $value->restaurant_emergency_status=1;
+    //                     }
+    //                 }
+    //             }
+
+    //             $value->limit_distance=$near_distance;
+
+    //             array_push($data,$value);
+    //         }
+    //         $food=[];
+
+    //         if($res_id){
+    //             $food_check=Food::with(['sub_item'=>function($sub_item){
+    //                 $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
+    //             },'sub_item.option' => function($option){
+    //                 $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
+    //             },'restaurant'=>function ($restaurant){
+    //                 $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude')->get();
+    //             },'restaurant.category' => function ($category){
+    //                 $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
+    //             }])
+    //             ->orwhere("food_name_mm","LIKE","%$search_name%")
+    //             // ->orwhere("food_name_en","LIKE","%$search_name%")
+    //             ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
+    //             ->orwhere("food_name_ch","LIKE","%$search_name%")
+    //             ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
+    //             ->whereIn('restaurant_id',$res_id)
+    //             ->limit(25)
+    //             ->get();
+
+    //             $item=[];
+    //             foreach($food_check as $value1){
+    //                 if($value1->restaurant->restaurant_emergency_status==0){
+    //                     $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value1->restaurant->restaurant_id)->first();
+    //                     if($available->on_off==0){
+    //                         $value1->restaurant->restaurant_emergency_status=1;
+    //                     }else{
+    //                         $current_time = Carbon::now()->format('H:i:s');
+    //                         if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+    //                             $value1->restaurant->restaurant_emergency_status=0;
+    //                         }else{
+    //                             $value1->restaurant->restaurant_emergency_status=1;
+    //                         }
+    //                     }
+    //                 }
+
+    //                 $theta = $request['longitude'] - $value1->restaurant->restaurant_longitude;
+    //                 $dist = sin(deg2rad($request['latitude'])) * sin(deg2rad($value1->restaurant->restaurant_latitude)) +  cos(deg2rad($request['latitude'])) * cos(deg2rad($value1->restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+    //                 $dist = acos($dist);
+    //                 $dist = rad2deg($dist);
+    //                 $miles = $dist * 60 * 1.1515;
+    //                 $kilometer=$miles * 1.609344;
+    //                 $distances=(float) number_format((float)$kilometer, 1, '.', '');
+    //                 if($distances){
+    //                     $value1->restaurant->distance=$distances;
+    //                 }else{
+    //                     $value1->restaurant->distance=0.01;
+    //                 }
+    //                 $value1->restaurant->limit_distance=$near_distance;
+
+    //                 array_push($item,$value1);
+    //             }
+    //             $food =  array_values(array_sort($food_check, function ($item) {
+    //                 return $item['food_emergency_status'];
+    //             }));
+    //         }
+
+    //         $restaurant =  array_values(array_sort($restaurant, function ($item) {
+    //             return $item['restaurant_emergency_status'];
+    //         }));
+
+    //         return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>$food,'restaurant'=>$restaurant]]);
+    //     }else{
+    //         return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>[],'restaurant'=>[]]]);
+    //     }
+    // }
+
     public function food_search_v1(Request $request)
     {
         $near_distance_chek=NearRestaurntDistance::where('near_restaurant_distance_id',1)->first();
@@ -831,10 +1036,9 @@ class RestaurantApiController extends Controller
         $longitude=$request['longitude'];
         // DB::raw("REPLACE(`restaurant_name_en`, ' ', '') AS name_en") (selece data)
         if($search_name){
-
             $restaurant=Restaurant::with(['category'=> function($category){
             $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($foods){
-            $foods->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
+            $foods->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'=>function($data){$data->where('instock',1)->get();}])
             ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
@@ -847,9 +1051,9 @@ class RestaurantApiController extends Controller
             ->limit(50)
             ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])->get();
             $data=[];
-            $res_id=[];
+            // $res_id=[];
             foreach($restaurant as $value){
-                $res_id[]=$value->restaurant_id;
+                // $res_id[]=$value->restaurant_id;
                 $distances= number_format((float)$value->distance, 1, '.', '');
                 $distances_customer_restaurant= number_format((float)$value->distance, 2, '.', '');
 
@@ -954,15 +1158,15 @@ class RestaurantApiController extends Controller
 
                 array_push($data,$value);
             }
-            $food=[];
+            // $food=[];
 
-            if($res_id){
+            // if($res_id){
                 $food_check=Food::with(['sub_item'=>function($sub_item){
                     $sub_item->select('food_sub_item_id','section_name_mm','section_name_en','section_name_ch','required_type','food_id','restaurant_id')->get();
                 },'sub_item.option' => function($option){
-                    $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->get();
+                    $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->where('instock',1)->get();
                 },'restaurant'=>function ($restaurant){
-                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status')->get();
+                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude')->get();
                 },'restaurant.category' => function ($category){
                     $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
                 }])
@@ -971,46 +1175,46 @@ class RestaurantApiController extends Controller
                 ->orwhereRaw("REPLACE(`food_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
                 ->orwhere("food_name_ch","LIKE","%$search_name%")
                 ->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')
-                ->whereIn('restaurant_id',$res_id)
+                // ->whereIn('restaurant_id',$res_id)
                 ->limit(25)
                 ->get();
 
                 $item=[];
-                foreach($food_check as $value){
-                    if($value->restaurant->restaurant_emergency_status==0){
-                        $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant->restaurant_id)->first();
+                foreach($food_check as $value1){
+                    if($value1->restaurant->restaurant_emergency_status==0){
+                        $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value1->restaurant->restaurant_id)->first();
                         if($available->on_off==0){
-                            $value->restaurant->restaurant_emergency_status=1;
+                            $value1->restaurant->restaurant_emergency_status=1;
                         }else{
                             $current_time = Carbon::now()->format('H:i:s');
                             if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
-                                $value->restaurant->restaurant_emergency_status=0;
+                                $value1->restaurant->restaurant_emergency_status=0;
                             }else{
-                                $value->restaurant->restaurant_emergency_status=1;
+                                $value1->restaurant->restaurant_emergency_status=1;
                             }
                         }
                     }
 
-                    $theta = $longitude - $value->restaurant->restaurant_longitude;
-                    $dist = sin(deg2rad($latitude)) * sin(deg2rad($value->restaurant->restaurant_latitude)) +  cos(deg2rad($latitude)) * cos(deg2rad($value->restaurant->restaurant_latitude)) * cos(deg2rad($theta));
+                    $theta = $request['longitude'] - $value1->restaurant->restaurant_longitude;
+                    $dist = sin(deg2rad($request['latitude'])) * sin(deg2rad($value1->restaurant->restaurant_latitude)) +  cos(deg2rad($request['latitude'])) * cos(deg2rad($value1->restaurant->restaurant_latitude)) * cos(deg2rad($theta));
                     $dist = acos($dist);
                     $dist = rad2deg($dist);
                     $miles = $dist * 60 * 1.1515;
                     $kilometer=$miles * 1.609344;
                     $distances=(float) number_format((float)$kilometer, 1, '.', '');
                     if($distances){
-                        $value->restaurant->distance=$distances;
+                        $value1->restaurant->distance=$distances;
                     }else{
-                        $value->restaurant->distance=0.01;
+                        $value1->restaurant->distance=0.01;
                     }
-                    $value->restaurant->limit_distance=$near_distance;
+                    $value1->restaurant->limit_distance=$near_distance;
 
-                    array_push($item,$value);
+                    array_push($item,$value1);
                 }
                 $food =  array_values(array_sort($food_check, function ($item) {
                     return $item['food_emergency_status'];
                 }));
-            }
+            // }
 
             $restaurant =  array_values(array_sort($restaurant, function ($item) {
                 return $item['restaurant_emergency_status'];
@@ -1021,6 +1225,8 @@ class RestaurantApiController extends Controller
             return response()->json(['success'=>true,'message'=>'successfull all data','data'=>['food'=>[],'restaurant'=>[]]]);
         }
     }
+
+
     public function food_search(Request $request)
     {
         $search_name=$request['search_name'];
@@ -1133,7 +1339,7 @@ class RestaurantApiController extends Controller
 
         $restaurants=Restaurant::with(['category'=> function($category){
         $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image');},'food'=> function($food){
-        $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'])
+        $food->where('food_recommend_status','1')->select('food_id','food_name_mm','food_name_en','food_name_ch','food_menu_id','restaurant_id','food_price','food_image','food_emergency_status','food_recommend_status')->get();},'food.sub_item'=>function($sub_item){$sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();},'food.sub_item.option'=>function($data){$data->where('instock',1)->get();}])
         ->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status','restaurant_latitude','restaurant_longitude','average_time','rush_hour_time',DB::raw("6371 * acos(cos(radians($latitude))
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
