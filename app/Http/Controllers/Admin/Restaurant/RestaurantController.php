@@ -32,6 +32,28 @@ use App\Models\Restaurant\NearRestaurntDistance;
 
 class RestaurantController extends Controller
 {
+    public function restaurant_food_open(Request $request,$id){
+        $check=Food::where('food_id',$id)->first();
+        if($check->food_emergency_status==1){
+            Food::where('food_id',$id)->update(['food_emergency_status'=>0]);
+        }else{
+            Food::where('food_id',$id)->update(['food_emergency_status'=>1]);
+        }
+
+        $request->session()->flash('alert-success', 'successfully food recommend by admin!');
+        return redirect()->back();
+    }
+    public function restaurant_food_recommend(Request $request,$id){
+        $check=Food::where('food_id',$id)->first();
+        if($check->food_recommend_status==1){
+            Food::where('food_id',$id)->update(['food_recommend_status'=>0]);
+        }else{
+            Food::where('food_id',$id)->update(['food_recommend_status'=>1]);
+        }
+
+        $request->session()->flash('alert-success', 'successfully food recommend by admin!');
+        return redirect()->back();
+    }
     public function restaurant_billing_list_url($id)
     {
         $restaurant_id=$id;
@@ -907,34 +929,19 @@ class RestaurantController extends Controller
         })
         ->addColumn('status', function(Food $post){
             if ($post->food_emergency_status==0) {
-                $food_emergency_status = '<a href="#"  class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Open"><i class="fas fa-lock-open"></i></a>';
+                $food_emergency_status = '<a href="restaurants/food/open/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Close?\')"  class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Open"><i class="fas fa-lock-open"></i></a>';
             } else {
-                $food_emergency_status = '<a href="#" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Close"><i class="fas fa-lock"></i></a>';
+                $food_emergency_status = '<a href="restaurants/food/open/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Open?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Close"><i class="fas fa-lock"></i></a>';
             };
             if ($post->food_recommend_status==1) {
-                $food_recommend_status = '<a href="#"  class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Recommend"><i class="fas fa-thumbs-up"></i></a>';
+                $food_recommend_status = '<a href="restaurants/food/recommend/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Close Recommend?\')"  class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Recommend"><i class="fas fa-thumbs-up"></i></a>';
             } else {
-                $food_recommend_status = '<a href="#"  class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Not Recommend"><i class="fas fa-thumbs-down"></i></a>';
+                $food_recommend_status = '<a href="restaurants/food/recommend/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Open Recommend?\')"  class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Not Recommend"><i class="fas fa-thumbs-down"></i></>';
             };
             $view_detail = '<a href="/fatty/main/admin/restaurants/food/detail/view/'.$post->food_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Food Detail"><i class="fas fa-eye"></i></a>';
             $value=$view_detail.$food_emergency_status.$food_recommend_status;
             return $value;
         })
-        // ->addColumn('status', function(Food $post){
-        //     if ($post->food_emergency_status==0) {
-        //         $food_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Close this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Open"><i class="fas fa-lock-open"></i></a>';
-        //     } else {
-        //         $food_emergency_status = '<a href="/fatty/main/admin/restaurants/opening/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Open this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Close"><i class="fas fa-lock"></i></a>';
-        //     };
-        //     if ($post->food_recommend_status==1) {
-        //         $food_recommend_status = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Approved this restaurant?\')" class="btn btn-success btn-sm mr-1" style="color: white;" title="Food Recommend"><i class="fas fa-thumbs-up"></i></a>';
-        //     } else {
-        //         $food_recommend_status = '<a href="/fatty/main/admin/restaurants/approved/update/'.$post->food_id.'" onclick="return confirm(\'Are You Sure Want to Reject this restaurant?\')" class="btn btn-danger btn-sm mr-1" style="color: white;" title="Food Not Recommend"><i class="fas fa-thumbs-down"></i></a>';
-        //     };
-        //     $view_detail = '<a href="/fatty/main/admin/restaurants/food/detail/view/'.$post->food_id.'" class="btn btn-info btn-sm mr-1" style="color: white;" title="Food Detail"><i class="fas fa-eye"></i></a>';
-        //     $value=$view_detail.$food_emergency_status.$food_recommend_status;
-        //     return $value;
-        // })
         ->addColumn('action', function(Food $post){
             $delete = '<form action="/fatty/main/admin/restaurants/food/delete/'.$post->food_id.'" method="post" class="d-inline">
             '.csrf_field().'
