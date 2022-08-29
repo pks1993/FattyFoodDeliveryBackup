@@ -195,6 +195,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     //Rider System Admin
     Route::get('riders/parcel_order/report','Admin\Order\OrderController@rider_parcel_order_report');
     Route::get('riders/parcel_order/datatable/report/parcelorderajax','Admin\Order\OrderController@report_parcelorderajax');
+
     Route::get('riders/food_order/report','Admin\Order\OrderController@rider_food_order_report');
     Route::get('riders/food_order/datatable/report/foodorderajax','Admin\Order\OrderController@report_foodorderajax');
     Route::get('riders/rider_order/report','Admin\Order\OrderController@rider_order_report');

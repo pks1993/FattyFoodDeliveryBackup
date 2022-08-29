@@ -564,7 +564,7 @@ class CustomerApiController extends Controller
     public function location(Request $request)
     {
         $customer_id=$request['customer_id'];
-        $longitude=$request['longitude'];
+        // $longitude=$request['longitude'];
         if($request['latitude']==0.0){
             $latitude=null;
         }else{

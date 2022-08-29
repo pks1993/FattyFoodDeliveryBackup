@@ -1356,14 +1356,25 @@ class OrderController extends Controller
         return redirect()->back();
     }
 
-    public function rider_parcel_order_report()
+    public function rider_parcel_order_report(Request $request)
     {
-        return view('admin.report.parcel_report');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->whereBetween('created_at',[$date_start,$date_end])->paginate(50);
+        return view('admin.report.parcel_report',compact('orders','date_start','date_end'));
     }
 
     public function report_parcelorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8','15'])->where('order_type','parcel')->get();
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_id){
@@ -1389,14 +1400,25 @@ class OrderController extends Controller
         ->searchPane('model', $model)
         ->make(true);
     }
-    public function rider_food_order_report()
+    public function rider_food_order_report(Request $request)
     {
-        return view('admin.report.food_report');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->whereBetween('created_at',[$date_start,$date_end])->paginate(50);
+        return view('admin.report.food_report',compact('orders','date_start','date_end'));
     }
 
     public function report_foodorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8','15'])->where('order_type','food')->get();
+        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->get();
         $data=[];
         foreach($model as $value){
             if($value->customer_id){
