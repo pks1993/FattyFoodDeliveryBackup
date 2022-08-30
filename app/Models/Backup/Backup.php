@@ -47,7 +47,7 @@ class Backup extends Model
                 $value->rider_id="Empty";
             }
             $value->income=($value->bill_total_price*$value->restaurant->percentage/100)." (".$value->restaurant->percentage."%)";
-            $value->profit=$value->bill_total_price-$value->rider_delivery_fee;
+            $value->profit=($value->bill_total_price*$value->restaurant->percentage/100)-$value->rider_delivery_fee;
             array_push($data,$value);
         }
         return $records;
