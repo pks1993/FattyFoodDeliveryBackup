@@ -211,10 +211,10 @@
             "info": false,
             "autoWidth": false,
             "processing": false,  // Show processing
-            dom: 'lBfrtip',
-            buttons: [
-            'excel', 'pdf', 'print'
-            ],
+            // dom: 'lBfrtip',
+            // buttons: [
+            // 'excel', 'pdf', 'print'
+            // ],
         });
     });
     setTimeout(function() {
