@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\Exportable;
 
 
 
-class ParcelOrderExport implements FromCollection ,WithHeadings
+class AllFoodOrderReport implements FromCollection ,WithHeadings
 {
     use Exportable;
 
@@ -23,7 +23,7 @@ class ParcelOrderExport implements FromCollection ,WithHeadings
 
     public function headings(): array {
         return [
-            "order_id","Date","RiderName", "customer_order_id", "customer_booking_id", "Income","rider_delivery_fee","profit",
+            "order_id","restaurant_id","Date","RiderName", "customer_order_id", "customer_booking_id", "TranstationAmount","rider_delivery_fee","Income(%)","profit",
         ];
     }
 
@@ -31,6 +31,7 @@ class ParcelOrderExport implements FromCollection ,WithHeadings
     * @return \Illuminate\Support\Collection
     */
     public function collection() {
-        return collect(Backup::getAllParcelOrders($this->from_date,$this->to_date));
+        return collect(Backup::getAllFoodOrders($this->from_date,$this->to_date));
     }
+
 }

@@ -86,6 +86,13 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
+                    {{-- <div class="col-12">
+                    <form method='post' action="{{ route('fatty.admin.backup.daily_parcel_orders') }}">
+                        @csrf
+                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="all_parcel_exportexcel" value='All Excel Export'>
+                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="daily_parcel_exportexcel" value='Daily Excel Export'>
+                     </form>
+                    </div> --}}
                     <div class="col-12">
                         <form action="{{ url('fatty/main/admin/daily_food_orders/date_filter') }}">
                             <input class="col-5 col-md-2" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
