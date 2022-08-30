@@ -34,23 +34,51 @@ class BackupController extends Controller
 
     public function daily_parcel_orders(Request $request)
     {
-        $current_date=date('Ymd');
-        if ($request->input('all_parcel_exportexcel') != null ){
-            return Excel::download(new ParcelOrderExport, 'all_parcel_order_'.$current_date.'.xlsx');
-        }
+        // $current_date=date('Ymd');
+        // if ($request->input('all_parcel_exportexcel') != null ){
+        //     return Excel::download(new ParcelOrderExport, 'all_parcel_order_'.$current_date.'.xlsx');
+        // }
 
         // if ($request->input('daily_parcel_exportexcel') != null ){
         //     return Excel::download(new ParcelOrderExport, 'daily_parcel_'.$current_date.'.xlsx');
         // }
+
+        // $from_date=$request->from_date;
+        // $to_date = $request->to_date;
+        // dd($from_date);
+        if($request['from_date']){
+            $from_date=date('Y-m-d 00:00:00',strtotime($request['from_date']));
+        }else{
+            $from_date=date('Y-m-d 00:00:00');
+        }
+        if($request['to_date']){
+            $to_date=date('Y-m-d 23:59:59',strtotime($request['to_date']));
+        }else{
+            $to_date=date('Y-m-d 23:59:59');
+        }
+        $current_date=date('Ymd');
+        if ($request->input('all_parcel_exportexcel') != null ){
+            return Excel::download(new ParcelOrderExport($from_date,$to_date), 'all_parcel_order_'.$current_date.'.xlsx');
+        }
 
         return redirect()->back();
     }
 
     public function all_food_orders(Request $request)
     {
+        if($request['from_date']){
+            $from_date=date('Y-m-d 00:00:00',strtotime($request['from_date']));
+        }else{
+            $from_date=date('Y-m-d 00:00:00');
+        }
+        if($request['to_date']){
+            $to_date=date('Y-m-d 23:59:59',strtotime($request['to_date']));
+        }else{
+            $to_date=date('Y-m-d 23:59:59');
+        }
         $current_date=date('Ymd');
         if ($request->input('all_food_order_exportexcel') != null ){
-            return Excel::download(new AllFoodOrderReport, 'all_food_order_'.$current_date.'.xlsx');
+            return Excel::download(new AllFoodOrderReport($from_date,$to_date), 'all_food_order_'.$current_date.'.xlsx');
         }
         return redirect()->back();
     }
