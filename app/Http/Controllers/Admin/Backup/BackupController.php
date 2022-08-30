@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Admin\Backup;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Facades\FromView;
+
 use App\Exports\DataExport;
 use App\Exports\ParcelOrderExport;
+use App\Exports\AllFoodOrderReport;
+use App\Models\Customer\Customer;
 
 class BackupController extends Controller
 {
@@ -32,7 +36,7 @@ class BackupController extends Controller
     {
         $current_date=date('Ymd');
         if ($request->input('all_parcel_exportexcel') != null ){
-            return Excel::download(new ParcelOrderExport, 'all_parcel_'.$current_date.'.xlsx');
+            return Excel::download(new ParcelOrderExport, 'all_parcel_order_'.$current_date.'.xlsx');
         }
 
         // if ($request->input('daily_parcel_exportexcel') != null ){
@@ -41,6 +45,16 @@ class BackupController extends Controller
 
         return redirect()->back();
     }
+
+    public function all_food_orders(Request $request)
+    {
+        $current_date=date('Ymd');
+        if ($request->input('all_food_order_exportexcel') != null ){
+            return Excel::download(new AllFoodOrderReport, 'all_food_order_'.$current_date.'.xlsx');
+        }
+        return redirect()->back();
+    }
+
 
     /**
      * Show the form for creating a new resource.

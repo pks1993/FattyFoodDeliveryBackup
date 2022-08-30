@@ -7,11 +7,11 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 
-class ParcelOrderExport implements FromCollection ,WithHeadings
+class AllFoodOrderReport implements FromCollection ,WithHeadings
 {
     public function headings(): array {
         return [
-            "No.","Date","RiderName", "customer_order_id", "customer_booking_id", "Income","rider_delivery_fee","profit",
+            "No.","restaurant_id","Date","RiderName", "customer_order_id", "customer_booking_id", "TranstationAmount","rider_delivery_fee","Income(%)","profit",
         ];
     }
 
@@ -19,6 +19,7 @@ class ParcelOrderExport implements FromCollection ,WithHeadings
     * @return \Illuminate\Support\Collection
     */
     public function collection() {
-        return collect(Backup::getAllParcelOrders());
+        return collect(Backup::getAllFoodOrders());
     }
+
 }

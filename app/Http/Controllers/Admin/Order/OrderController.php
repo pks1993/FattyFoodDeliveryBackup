@@ -482,9 +482,17 @@ class OrderController extends Controller
         ->make(true);
     }
 
-    public function monthlyfoodorderindex()
+    public function monthlyfoodorderindex(Request $request)
     {
-        return view('admin.order.monthly_food_orders.index');
+        if($request['start_date']){
+            $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
+        }else{
+            $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        }
+        $orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('created_at','DESC')->paginate(30);
+        return view('admin.order.monthly_food_orders.index',compact('orders','date_start','date_end'));
     }
 
     public function monthlyfoodorderajax(){
@@ -598,9 +606,15 @@ class OrderController extends Controller
         ->make(true);
     }
 
-    public function yearlyfoodorderindex()
+    public function yearlyfoodorderindex(Request $request)
     {
-        return view('admin.order.yearly_food_orders.index');
+        if($request['start_date']){
+            $date_start=$request['start_date'];
+        }else{
+            $date_start=Carbon::now()->startOfYear()->format('Y');
+        }
+        $orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','food')->orderBy('created_at','DESC')->paginate(30);
+        return view('admin.order.yearly_food_orders.index',compact('orders','date_start'));
     }
 
     public function yearlyfoodorderajax(){

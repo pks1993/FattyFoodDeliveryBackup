@@ -73,7 +73,7 @@
                 <div class="card-header">
                     <div class="col-12">
                         <form action="{{ url('fatty/main/admin/yearly_parcel_orders/date_filter') }}">
-                            <input class="col-5 col-md-2" type="text" id="start_date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px" autocomplete="off">
+                            <input class="col-5 col-md-2" type="text" id="start_date" name="start_date" value="{{ $date_start }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px" autocomplete="off">
                             <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
                         </form>
                     </div>
