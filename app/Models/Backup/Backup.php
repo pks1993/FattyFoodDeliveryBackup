@@ -33,7 +33,22 @@ class Backup extends Model
             }else{
                 $value->rider_id="Empty";
             }
-            $value->profit=$value->bill_total_price-$value->rider_delivery_fee;
+            if($value->rider_delivery_fee==0){
+                $value->rider_delivery_fee="0";
+            }else{
+                $value->rider_delivery_fee=$value->rider_delivery_fee;
+            }
+            if($value->bill_total_price==0){
+                $value->bill_total_price="0";
+            }else{
+                $value->bill_total_price=$value->bill_total_price;
+            }
+            if(((float)$value->bill_total_price)-((float)$value->rider_delivery_fee)){
+                $value->profit=((float)$value->bill_total_price)-((float)$value->rider_delivery_fee);
+            }else{
+                $value->profit="0";
+            }
+
             array_push($data,$value);
         }
         return $records;
@@ -47,8 +62,22 @@ class Backup extends Model
             }else{
                 $value->rider_id="Empty";
             }
-            $value->income=($value->bill_total_price*$value->restaurant->percentage/100)." (".$value->restaurant->percentage."%)";
-            $value->profit=($value->bill_total_price*$value->restaurant->percentage/100)-$value->rider_delivery_fee;
+            if($value->rider_delivery_fee==0){
+                $value->rider_delivery_fee="0";
+            }else{
+                $value->rider_delivery_fee=$value->rider_delivery_fee;
+            }
+            if($value->bill_total_price==0){
+                $value->bill_total_price="0";
+            }else{
+                $value->bill_total_price=$value->bill_total_price;
+            }
+            $value->income=(float)($value->bill_total_price*$value->restaurant->percentage/100)." (".$value->restaurant->percentage."%)";
+            if(($value->bill_total_price*$value->restaurant->percentage/100)-$value->rider_delivery_fee){
+                $value->profit=(float)($value->bill_total_price*$value->restaurant->percentage/100)-$value->rider_delivery_fee;
+            }else{
+                $value->profit="0";
+            }
             array_push($data,$value);
         }
         return $records;
