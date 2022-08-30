@@ -55,38 +55,141 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane table-responsive active" id="Admin">
-                            <table border="0" cellspacing="5" cellpadding="5">
-                                <tbody>
-                                    <tr>
-                                        <td>From Month:</td>
-                                        <td><input type="text" id="min" value="{{ now()->format('m-Y') }}" name="min" autocomplete="off"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>To Month:</td>
-                                        <td><input type="text" id="max" name="max" value="{{ now()->format('m-Y') }}" autocomplete="off"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="col-12">
+                                <form action="{{ url('fatty/main/admin/monthly_food_orders') }}">
+                                    <input class="col-5 col-md-2" type="month" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->startOfMonth()->format('Y-m') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                            <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
+                            <div class="mt-3">
+                                {{ $orders->appends(request()->input())->links() }}
+                            </div>
                             <table id="orders" class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th>OrderStatus</th>
                                         <th>CustomerType</th>
+                                        <th>OrderId(BookingId)</th>
                                         <th>OrdereDate</th>
-                                        <th>OrderId</th>
-                                        <th>BookingId</th>
                                         <th>OrderTime</th>
+                                        <th>Duration</th>
                                         <th>CustomerName</th>
                                         <th>RestaurantName</th>
                                         <th>RiderName</th>
-                                        <th>PaymentMethod</th>
+                                        <th>DeliFeeRider</th>
+                                        <th>DeliFeeCustomer</th>
                                         <th>TotalPrice</th>
+                                        <th>PaymentMethod</th>
                                         <th>Detail</th>
+                                        <th>Pending</th>
+                                        <th>Complete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach ($orders as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            @if($item->order_status_id=='1')
+                                                <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Pending(NotAcceptShop)</a>
+                                            @elseif($item->order_status_id=='2')
+                                                <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">CancelByShop</a>
+                                            @elseif($item->order_status_id=='9')
+                                                <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">CancelByCustomer</a>
+                                            @elseif($item->order_status_id=='3')
+                                                <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">AcceptByShop</a>
+                                            @elseif($item->order_status_id=='4')
+                                                <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">AcceptByRider</a>
+                                            @elseif($item->order_status_id=='5')
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">ReadyToPickup </a>
+                                            @elseif($item->order_status_id=='7')
+                                                <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">AcceptCustomer</a>
+                                            @elseif($item->order_status_id=='8')
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:red;">PendingOrder(CustomerNotFound)</a>
+                                            @elseif($item->order_status_id=='6')
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">StartDelivery</a>
+                                            @elseif($item->order_status_id=='10')
+                                                <a class="btn btn-info btn-sm mr-2" style="color: white;width: 100%;">RiderArrivedShop</a>
+                                            @elseif($item->order_status_id=='18')
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:yellow;">KBZ Pending</a>
+                                            @elseif($item->order_status_id=='19')
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:green;">KBZ Success</a>
+                                            @elseif($item->order_status_id=='20')
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:red;">KBZ Fail</a>
+                                            @else
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:black">CheckError</a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($item->customer_id==null)
+                                                <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
+                                            @else
+                                                @if($item->customer->customer_type_id==null)
+                                                    <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
+                                                @elseif($item->customer->customer_type_id==2)
+                                                    <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                                @elseif($item->customer->customer_type_id==1)
+                                                    <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                                @else
+                                                    <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td>#{{ $item->customer_order_id }} ( {{ $item->customer_booking_id}} )</td>
+                                        <td>{{ date('d/M/Y',strtotime($item->created_at)) }}</td>
+                                        <td>{{ $item->order_time }}</td>
+                                        <td>
+                                            @if($item->order_status_id==7 || $item->order_status_id==8 || $item->order_status_id==2 || $item->order_status_id==9)
+                                                {{ $item->updated_at->diffForHumans($item->created_at,true,true) }}
+                                            @else
+                                                {{ $item->created_at->diffForHumans(null,true,true) }}
+                                            @endif
+                                        </td>
+                                        <td class="text-left">
+                                            @if($item->customer_id)
+                                                {{ $item->customer->customer_name }}
+                                            @else
+                                                {{ "Empty" }}
+                                            @endif
+                                        </td>
+                                        <td class="text-left">
+                                            @if($item->restaurant_id)
+                                                {{ $item->restaurant->restaurant_name_mm }}
+                                            @else
+                                                {{ "Empty" }}
+                                            @endif
+                                        </td>
+                                        <td class="text-left">
+                                            @if($item->rider_id)
+                                                {{ $item->rider->rider_user_name }}
+                                            @else
+                                                {{ "Empty" }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->rider_delivery_fee }}</td>
+                                        <td>{{ $item->delivery_fee }}</td>
+                                        <td>{{ $item->bill_total_price }}</td>
+                                        <td class="text-left">
+                                            @if($item->payment_method_id==1)
+                                                <span class="btn btn-sm btn-primary">{{ "Cash_On_Delivery" }}</span>
+                                            @elseif($item->payment_method_id==2)
+                                                <span class="btn btn-sm btn-success">{{ "Kpay" }}</span>
+                                            @else
+                                                <span class="btn btn-sm btn-secondary">{{ "Empty" }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="/fatty/main/admin/food_orders/view/{{ $item->order_id }}" class="btn btn-info btn-sm mr-2" title="order detail"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                        <td>
+                                            <a href="/fatty/main/admin/pending/orders/define/{{ $item->order_id }}" onclick="return confirm('Are You Sure Want to Pending Order?')" class="btn btn-primary btn-sm mr-2" title="Order Pending"><i class="fas fa-plus-circle"></i></a>
+                                        </td>
+                                        <td>
+                                            <a href="/fatty/main/admin/complete_order/update/{{ $item->order_id }}" onclick="return confirm('Are You Sure Want to Complete Order?')" class="btn btn-success btn-sm mr-2" title="Order Complete"><i class="fas fa-plus-circle"></i></a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -100,143 +203,18 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        $.fn.dataTable.ext.search.push(
-        function( settings, data, dataIndex ) {
-            var min = $('#min').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-                dateFormat: 'MM yy',
-                onChangeMonthYear: function(year, month, widget) {
-                    setTimeout(function() {
-                        $('.ui-datepicker-calendar').hide();
-                    });
-                },
-                onClose: function(dateText, inst) {
-                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                    $(this).datepicker('setDate', new Date(year, month, 1));
-                    table.draw();
-                },
-            }).click(function(){
-                $('.ui-datepicker-calendar').hide();
-            });
-            var minDate = min.val();
-            var minData = minDate.split('-');
-            var minMonth = minData[0];
-            var minYear = minData[1];
-
-            var max = $('#max').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-                dateFormat: 'MM yy',
-                onChangeMonthYear: function(year, month, widget) {
-                    setTimeout(function() {
-                        $('.ui-datepicker-calendar').hide();
-                    });
-                },
-                onClose: function(dateText, inst) {
-                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                    $(this).datepicker('setDate', new Date(year, month, 1));
-                    table.draw();
-                },
-            }).click(function(){
-                $('.ui-datepicker-calendar').hide();
-            });
-            var maxDate = max.val();
-            var maxData = maxDate.split('-');
-            var maxMonth = maxData[0];
-            var maxYear = maxData[1];
-
-
-
-            var date = data[3].split('-');
-            console.log(date[1] >= minMonth && minYear <= date[2] && date[1] <= maxMonth && maxYear >= date[2]);
-
-            if ((isNaN(minDate) == false && isNaN(maxDate) == false) ||
-            (date[1] == minMonth && minYear == date[2]) ||
-            ((date[1] >= minMonth || date[1] <= minMonth && minYear < date[2]) && minYear <= date[2] && (date[1] <= maxMonth || date[1] >= maxMonth && maxYear > date[2]) && maxYear >= date[2])
-            )  {
-                return true;
-            }
-            return false;
-        }
-        );
-
-        // Create date inputs
-        $("#min").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            showButtonPanel: true,
-            dateFormat: 'mm-yy',
-            onChangeMonthYear: function(year, month, widget) {
-                setTimeout(function() {
-                    $('.ui-datepicker-calendar').hide();
-                });
-            },
-            onClose: function(dateText, inst) {
-                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                $(this).datepicker('setDate', new Date(year, month, 1));
-                table.draw();
-            },
-        }).click(function(){
-            $('.ui-datepicker-calendar').hide();
-        });
-
-        $("#max").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            showButtonPanel: true,
-            dateFormat: 'mm-yy',
-            onChangeMonthYear: function(year, month, widget) {
-                setTimeout(function() {
-                    $('.ui-datepicker-calendar').hide();
-                });
-            },
-            onClose: function(dateText, inst) {
-                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                $(this).datepicker('setDate', new Date(year, month, 1));
-                table.draw();
-            },
-        }).click(function(){
-            $('.ui-datepicker-calendar').hide();
-        });
-
-        // DataTables initialisation
         var table = $("#orders").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-            "paging": true, // Allow data to be paged
-            "lengthChange": true,
-            "searching": true, // Search box and search function will be actived
-            "info": true,
-            "autoWidth": true,
-            "processing": true,  // Show processing
-            ajax: "/fatty/main/admin/orders/datatable/monthlyfoodorderajax",
-            columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex' , orderable: false, searchable: false},
-            {data: 'customer_order_id', name:'customer_order_id'},
-            {data: 'customer_booking_id', name:'customer_booking_id'},
-            {data: 'ordered_date', name:'ordered_date'},
-            {data: 'order_time', name:'order_time'},
-            {data: 'order_status_name', name:'order_status_name'},
-            {data: 'customer_name', name:'customer_name'},
-            {data: 'restaurant_name', name:'restaurant_name'},
-            {data: 'rider_name', name:'rider_name'},
-            {data: 'payment_method_name', name:'payment_method_name'},
-            {data: 'bill_total_price', name:'bill_total_price'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
-            ],
+            "paging": false, // Allow data to be paged
+            "lengthChange": false,
+            "searching": false, // Search box and search function will be actived
+            "info": false,
+            "autoWidth": false,
+            "processing": false,  // Show processing
             dom: 'lBfrtip',
             buttons: [
             'excel', 'pdf', 'print'
             ],
-        });
-        $('#min, #max').on('change', function () {
-            table.draw();
         });
     });
     setTimeout(function() {

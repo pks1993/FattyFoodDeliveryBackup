@@ -104,6 +104,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     //Export Excel
     Route::post('fatty/main/admin/backup/customers','Admin\Backup\BackupController@index')->name('backup.customers');
     Route::post('fatty/main/admin/backup/daily/parcel_orders','Admin\Backup\BackupController@daily_parcel_orders')->name('backup.daily_parcel_orders');
+    Route::post('fatty/main/admin/backup/all/food_orders','Admin\Backup\BackupController@all_food_orders')->name('backup.all_food_orders');
 
 
     //User

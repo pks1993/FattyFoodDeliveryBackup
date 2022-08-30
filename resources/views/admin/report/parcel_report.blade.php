@@ -37,13 +37,6 @@
                         <li class="breadcrumb-item active">Lists</li>
                     </ol>
                 </div>
-                <div class="col-md-12">
-                    {{-- <form method='post' action="{{ route('fatty.admin.backup.restaurants') }}">
-                       @csrf
-                       <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
-                       <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
-                    </form> --}}
-                </div>
             </div>
         </div>
     </section>
@@ -53,12 +46,14 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            {{-- <div class="col-md-6">
-                                <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm">
-                                    <i class="fa fa-location-arrow"></i> All Rider Location
-                                </a>
-                            </div> --}}
-                            <div class="col-md-12" style="text-align: right;">
+                            <div class="col-md-6">
+                                <form method='post' action="{{ route('fatty.admin.backup.daily_parcel_orders') }}">
+                                @csrf
+                                    <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="all_parcel_exportexcel" value='All Excel Export'>
+                                    <!-- <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="all_food_order_exportexcel" value='All Excel Export'> -->
+                                </form>
+                            </div>
+                            <div class="col-md-6" style="text-align: right;">
                                 <h4><b>{{ "Parcel Orders Information" }}</b></h4>
                             </div>
                         </div>

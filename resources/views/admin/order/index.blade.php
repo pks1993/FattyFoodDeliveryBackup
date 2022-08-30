@@ -43,10 +43,10 @@
                        <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
                        <input type="submit" class="btn btn-sm" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
                     </form> --}}
-                    <form method='post' action="">
+                    <form method='get' action="">
                         @csrf
-                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
-                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'>
+                        {{-- <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="exportexcel" value='Excel Export'>
+                        <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="exportcsv" value='CSV Export'> --}}
                         <a href="{{url('fatty/main/admin/all_riders_location')}}" class="btn btn-info btn-sm mb-1">
                             <i class="fa fa-location-arrow"></i> All Rider Location
                         </a>

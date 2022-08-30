@@ -357,9 +357,20 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function dailyactiveindex()
+    public function dailyactiveindex(Request $request)
     {
-        return view('admin.customer.daily_active_customer.index');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $customers=ActiveCustomer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->get();
+        return view('admin.customer.daily_active_customer.index',compact('customers'));
     }
 
     public function dailyactiveajax()
