@@ -66,242 +66,76 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                {{-- <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-6 pagination">
-                            {{ $customers->appends(request()->input())->links() }}
-                        </div>
-                        <div class="col-md-6" style="text-align: right;">
-                            <h4><b>{{ "Customers Information" }}</b></h4>
-                        </div>
+                <div class="card-body table-responsive">
+                    <form action="{{ url('fatty/main/admin/monthly_active_customers') }}">
+                        <input class="col-5 col-md-2" type="month" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->startOfMonth()->format('Y-m') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                        <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
+                    </form>
+                    <div class="mt-3">
+                        {{ $customers->appends(request()->input())->links() }}
                     </div>
-                </div> --}}
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div class="tab-pane table-responsive active" id="Admin">
-                            <table border="0" cellspacing="5" cellpadding="5">
-                                <tbody>
-                                    <tr>
-                                        <td>From Month:</td>
-                                        <td><input type="text" id="min" value="{{ now()->format('m-Y') }}" name="min" autocomplete="off"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>To Month:</td>
-                                        <td><input type="text" id="max" value="{{ now()->format('m-Y') }}" name="max" autocomplete="off"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table id="customers" class="table table-bordered table-striped table-hover">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th>No.</th>
-                                        <th class="text-left">Customer Name</th>
-                                        <th class="text-left">Customer Phone</th>
-                                        <th class="text-left">Register Date</th>
-                                        <th class="text-left">Order Count</th>
-                                        <th class="text-left">Order Amount</th>
-                                        {{-- <th>Image</th> --}}
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{--
-                                        @foreach($customers as $key=>$customer)
-                                        <tr class="text-center">
-                                            <td> {{ ($tno*15)+$key+1 }} </td>
-                                            <td class="text-left">
-                                                @if($customer->customer_name==null)
-                                                <p style="color: red;">{{ "Empty" }}</p>
-                                                @else
-                                                {{ $customer->customer_name }}
-                                                @endif
-                                            </td>
-                                            <td class="text-left">{{ $customer->customer_phone}}</td>
-                                            <td class="text-left">{{ $customer->created_at->format('d.m.Y') }}</td>
-                                            <td class="text-left">{{ $customer->order_count }}</td>
-                                            <td class="text-left">{{ $customer->order_amount }}</td>  --}}
-                                            {{-- <td>
-                                                @if($customer->image)
-                                                <img src="../../../uploads/customer/{{$customer->image}}" class="img-rounded" style="width: 55px;height: 45px;" data-toggle="modal" data-target="#customer{{ $customer->customer_id }}">
-                                                @else
-                                                <img src="{{asset('../image/person.png')}}" class="img-rounded" style="width: 55px;height: 45px;">
-                                                @endif
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="customer{{ $customer->customer_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLabel">{{ $customer->name }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td> --}}
-                                            {{-- <td class="btn-group text-center">
-                                                <a href="{{route('fatty.admin.customers.edit',['customer_id'=>$customer->customer_id])}}" class="btn btn-primary btn-sm mr-1"><i class="fa fa-edit"></i></a>
-
-                                                <form action="{{route('fatty.admin.customers.destroy', $customer->customer_id)}}" method="post" onclick="return confirm('Do you want to delete this item?')">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        @endforeach --}}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <table id="customers" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th>No.</th>
+                                <th class="text-left">CustomerName</th>
+                                <th class="text-left">CustomerPhone</th>
+                                <th class="text-left">OrderDate</th>
+                                <th class="text-left">OrderCount</th>
+                                <th class="text-left">OrderAmount</th>
+                                <th class="text-left">CustomerType</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($customers as $value)
+                            <tr class="text-center">
+                                <td>{{ $loop->iteration }}</td>
+                                <td class="text-left">
+                                    @if($value->customer->customer_name)
+                                        {{ $value->customer->customer_name }}
+                                    @else
+                                        <span style="color: red">{{ "Empty" }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $value->customer->customer_phone }}</td>
+                                <td>{{ date('d/M/Y',strtotime($value->created_at)) }}</td>
+                                <td>{{ $value->customer->order_count }}</td>
+                                <td>{{ $value->customer->order_amount }}</td>
+                                <td>
+                                    @if($value->customer->customer_type_id==1)
+                                        <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                    @elseif($value->customer->customer_type_id==2)
+                                        <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                    @else
+                                        <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                    @endif
+                                </td>
+                                <td class="btn-group">
+                                    <a href="/fatty/main/admin/customers/view/ {{ $value->customer_id }}" title="View Detail" class="btn btn-info btn-sm mr-2"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
     @endsection
     @push('scripts')
     <script>
         $(document).ready(function() {
-            $.fn.dataTable.ext.search.push(
-            function( settings, data, dataIndex ) {
-                var min = $('#min').datepicker({
-                    changeMonth: true,
-                    changeYear: true,
-                    showButtonPanel: true,
-                    dateFormat: 'MM yy',
-                    onChangeMonthYear: function(year, month, widget) {
-                        setTimeout(function() {
-                            $('.ui-datepicker-calendar').hide();
-                        });
-                    },
-                    onClose: function(dateText, inst) {
-                        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                        $(this).datepicker('setDate', new Date(year, month, 1));
-                        table.draw();
-                    },
-                }).click(function(){
-                    $('.ui-datepicker-calendar').hide();
-                });
-                var minDate = min.val();
-                var minData = minDate.split('-');
-                var minMonth = minData[0];
-                var minYear = minData[1];
-
-                var max = $('#max').datepicker({
-                    changeMonth: true,
-                    changeYear: true,
-                    showButtonPanel: true,
-                    dateFormat: 'MM yy',
-                    onChangeMonthYear: function(year, month, widget) {
-                        setTimeout(function() {
-                            $('.ui-datepicker-calendar').hide();
-                        });
-                    },
-                    onClose: function(dateText, inst) {
-                        var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                        var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                        $(this).datepicker('setDate', new Date(year, month, 1));
-                        table.draw();
-                    },
-                }).click(function(){
-                    $('.ui-datepicker-calendar').hide();
-                });
-                var maxDate = max.val();
-                var maxData = maxDate.split('-');
-                var maxMonth = maxData[0];
-                var maxYear = maxData[1];
-
-
-
-                var date = data[3].split('-');
-                console.log(date[1] >= minMonth && minYear <= date[2] && date[1] <= maxMonth && maxYear >= date[2]);
-
-                if ((isNaN(minDate) == false && isNaN(maxDate) == false) ||
-                (date[1] == minMonth && minYear == date[2]) ||
-                ((date[1] >= minMonth || date[1] <= minMonth && minYear < date[2]) && minYear <= date[2] && (date[1] <= maxMonth || date[1] >= maxMonth && maxYear > date[2]) && maxYear >= date[2])
-                )  {
-                    return true;
-                }
-                return false;
-            }
-            );
-
-            // Create date inputs
-            $("#min").datepicker({
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-                dateFormat: 'mm-yy',
-                onChangeMonthYear: function(year, month, widget) {
-                    setTimeout(function() {
-                        $('.ui-datepicker-calendar').hide();
-                    });
-                },
-                onClose: function(dateText, inst) {
-                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                    $(this).datepicker('setDate', new Date(year, month, 1));
-                    table.draw();
-                },
-            }).click(function(){
-                $('.ui-datepicker-calendar').hide();
-            });
-
-            $("#max").datepicker({
-                changeMonth: true,
-                changeYear: true,
-                showButtonPanel: true,
-                dateFormat: 'mm-yy',
-                onChangeMonthYear: function(year, month, widget) {
-                    setTimeout(function() {
-                        $('.ui-datepicker-calendar').hide();
-                    });
-                },
-                onClose: function(dateText, inst) {
-                    var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
-                    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
-                    $(this).datepicker('setDate', new Date(year, month, 1));
-                    table.draw();
-                },
-            }).click(function(){
-                $('.ui-datepicker-calendar').hide();
-            });
-        // DataTables initialisation
         var table = $("#customers").DataTable({
                 "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-                "paging": true, // Allow data to be paged
-                "lengthChange": true,
-                "searching": true, // Search box and search function will be actived
-                "info": true,
-                "autoWidth": true,
-                "processing": true,  // Show processing
-                ajax: "/fatty/main/admin/customers/datatable/monthlyactiveajax",
-                columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-                {data: 'customer_name', name:'customer_name'},
-                {data: 'customer_phone', name:'customer_phone'},
-                {data: 'register_date', name:'register_date',className: "register_date"},
-                {data: 'order_count', name:'order_count',className: "order_count"},
-                {data: 'order_amount', name:'order_amount',className: "order_amount"},
-                {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
-                ],
-                dom: 'lBfrtip',
-                buttons: [
-                 'excel', 'pdf', 'print'
-                ],
+                "paging": false, // Allow data to be paged
+                "lengthChange": false,
+                "searching": false, // Search box and search function will be actived
+                "info": false,
+                "autoWidth": false,
+                "processing": false,  // Show processing
             });
-        // Refilter the table
-        $('#min, #max').on('change', function () {
-            table.draw();
-        });
     });
     </script>
     @endpush

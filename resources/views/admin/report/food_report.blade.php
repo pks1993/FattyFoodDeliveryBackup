@@ -59,8 +59,10 @@
                                 </a> --}}
                                 <form method='post' action="{{ route('fatty.admin.backup.all_food_orders') }}">
                                     @csrf
+                                    <input class="col-5 col-md-2" type="hidden" name="from_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                    <input class="col-5 col-md-2" type="hidden" name="to_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                                     {{-- <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="all_parcel_exportexcel" value='All Excel Export'> --}}
-                                    <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="all_food_order_exportexcel" value='All Excel Export'>
+                                    <input type="submit" class="btn btn-sm mb-1" style="background-color: #000335;color: #FFFFFF;" name="all_food_order_exportexcel" value='Excel Export'>
                                 </form>
                             </div>
                             <div class="col-md-6" style="text-align: right;">

@@ -11,6 +11,7 @@ use Yajra\DataTables\DataTables;
 use App\Models\Order\CustomerOrder;
 use App\Models\Customer\ActiveCustomer;
 use App\Models\Customer\OrderCustomer;
+use Illuminate\Support\Carbon;
 
 
 class CustomerController extends Controller
@@ -23,17 +24,16 @@ class CustomerController extends Controller
                 $check_customer->is_restricted=1;
                 $check_customer->update();
                 $request->session()->flash('alert-success', 'successfully update block customer!');
-                return redirect('fatty/main/admin/customers');
+                return redirect()->back();
             }else{
                 $check_customer->is_restricted=0;
                 $check_customer->update();
                 $request->session()->flash('alert-success', 'successfully update unblock customer!');
-                return redirect('fatty/main/admin/customers');
+                return redirect()->back();
             }
-
         }else{
             $request->session()->flash('alert-danger', 'customer does not has in this database!');
-            return redirect('fatty/main/admin/customers');
+            return redirect()->back();
         }
     }
     /**
@@ -41,9 +41,20 @@ class CustomerController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.customer.all_customer.index');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        return view('admin.customer.all_customer.index',compact('date_start','date_end','customers'));
     }
 
     public function ssd(){
@@ -97,9 +108,20 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function dailyindex()
+    public function dailyindex(Request $request)
     {
-        return view('admin.customer.daily_customer.index');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        return view('admin.customer.daily_customer.index',compact('date_start','date_end','customers'));
     }
 
     public function dailyajax(){
@@ -145,9 +167,17 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function monthlyindex()
+    public function monthlyindex(Request $request)
     {
-        return view('admin.customer.monthly_customer.index');
+        if($request['start_date']){
+            $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
+        }else{
+            $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        }
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        return view('admin.customer.monthly_customer.index',compact('date_start','customers','date_end'));
     }
 
     public function monthlyajax(){
@@ -183,9 +213,15 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function yearlyindex()
+    public function yearlyindex(Request $request)
     {
-        return view('admin.customer.yearly_customer.index');
+        if($request['start_date']){
+            $date_start=$request['start_date'];
+        }else{
+            $date_start=Carbon::now()->startOfYear()->format('Y');
+        }
+        $customers=Customer::whereYear('created_at',$date_start)->orderBy('created_at','desc')->paginate(50);
+        return view('admin.customer.yearly_customer.index',compact('date_start','customers'));
     }
 
     public function yearlyajax(){
@@ -222,9 +258,20 @@ class CustomerController extends Controller
     }
 
     //ordered usere
-    public function dailyorderedindex()
+    public function dailyorderedindex(Request $request)
     {
-        return view('admin.customer.daily_ordered_customer.index');
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        return view('admin.customer.daily_ordered_customer.index',compact('date_start','date_end','customers'));
     }
 
     public function dailyorderedajax(){
@@ -263,9 +310,17 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function monthlyorderedindex()
+    public function monthlyorderedindex(Request $request)
     {
-        return view('admin.customer.monthly_ordered_customer.index');
+        if($request['start_date']){
+            $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
+        }else{
+            $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        }
+        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        return view('admin.customer.monthly_ordered_customer.index',compact('customers','date_start','date_end'));
     }
 
     public function monthlyorderedajax(){
@@ -316,9 +371,15 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function yearlyorderedindex()
+    public function yearlyorderedindex(Request $request)
     {
-        return view('admin.customer.yearly_ordered_customer.index');
+        if($request['start_date']){
+            $date_start=$request['start_date'];
+        }else{
+            $date_start=Carbon::now()->startOfYear()->format('Y');
+        }
+        $customers=OrderCustomer::with(['customer'])->whereYear('created_at',$date_start)->orderBy('created_at','desc')->has('customer')->paginate(50);
+        return view('admin.customer.yearly_ordered_customer.index',compact('customers','date_start'));
     }
 
     public function yearlyorderedajax(){
@@ -369,8 +430,8 @@ class CustomerController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $customers=ActiveCustomer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->get();
-        return view('admin.customer.daily_active_customer.index',compact('customers'));
+        $customers=ActiveCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        return view('admin.customer.daily_active_customer.index',compact('customers','date_start','date_end'));
     }
 
     public function dailyactiveajax()
@@ -410,9 +471,17 @@ class CustomerController extends Controller
         ->make(true);
     }
 
-    public function monthlyactiveindex()
+    public function monthlyactiveindex(Request $request)
     {
-        return view('admin.customer.monthly_active_customer.index');
+        if($request['start_date']){
+            $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
+        }else{
+            $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        }
+        $customers=ActiveCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        return view('admin.customer.monthly_active_customer.index',compact('customers','date_start','date_end'));
     }
 
     public function monthlyactiveajax(){
@@ -450,9 +519,15 @@ class CustomerController extends Controller
         ->searchPane('model', $model)
         ->make(true);
     }
-    public function yearlyactiveindex()
+    public function yearlyactiveindex(Request $request)
     {
-        return view('admin.customer.yearly_active_customer.index');
+        if($request['start_date']){
+            $date_start=$request['start_date'];
+        }else{
+            $date_start=Carbon::now()->startOfYear()->format('Y');
+        }
+        $customers=ActiveCustomer::with(['customer'])->whereYear('created_at',$date_start)->orderBy('created_at','desc')->has('customer')->paginate(50);
+        return view('admin.customer.yearly_active_customer.index',compact('customers','date_start'));
     }
 
     public function yearlyactiveajax(){
@@ -613,8 +688,9 @@ class CustomerController extends Controller
     */
     public function edit($id)
     {
+        $previous_url=url()->previous();
         $customers=Customer::findOrFail($id);
-        return view('admin.customer.all_customer.edit',compact('customers'));
+        return view('admin.customer.all_customer.edit',compact('customers','previous_url'));
     }
 
     /**
@@ -626,6 +702,7 @@ class CustomerController extends Controller
     */
     public function update(Request $request, $id)
     {
+        $previous_url=url()->previous();
         $this->validate($request, [
             'customer_phone' => 'required',
         ]);
@@ -646,7 +723,11 @@ class CustomerController extends Controller
         $customers->customer_type_id=$request['customer_type_id'];
         $customers->update();
         $request->session()->flash('alert-success', 'successfully update customer!');
-        return redirect('fatty/main/admin/customers');
+        if($previous_url==$request['url']){
+            return redirect('fatty/main/admin/customers');
+        }else{
+            return redirect($request['url']);
+        }
     }
 
     /**
@@ -661,15 +742,16 @@ class CustomerController extends Controller
 
         if($check){
             $request->session()->flash('alert-warning', "don't delete accont because this user have orders!");
-            return redirect('fatty/main/admin/customers');
+            // return redirect('fatty/main/admin/customers');
         }else{
             $customers=Customer::where('customer_id','=',$id)->FirstOrFail();
             Storage::disk('CustomersImages')->delete($customers->image);
             $customers->delete();
 
             $request->session()->flash('alert-success', 'successfully delete customer!');
-            return redirect('fatty/main/admin/customers');
+            // return redirect('fatty/main/admin/customers');
         }
+        return redirect()->back();
 
     }
 }

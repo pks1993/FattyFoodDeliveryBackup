@@ -66,51 +66,60 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                {{-- <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-6 pagination">
-                            {{ $customers->appends(request()->input())->links() }}
-                        </div>
-                        <div class="col-md-6" style="text-align: right;">
-                            <h4><b>{{ "Customers Information" }}</b></h4>
-                        </div>
-                    </div>
-                </div> --}}
                 <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div class="tab-pane table-responsive active" id="Admin">
-                            <table border="0" cellspacing="5" cellpadding="5">
-                                <tbody>
-                                    <tr>
-                                        <td>Minimum date:</td>
-                                        <td><input type="text" id="min" value="{{ now()->format('d-M-Y') }}" name="min" autocomplete="off"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Maximum date:</td>
-                                        <td><input type="text" id="max" value="{{ now()->format('d-M-Y') }}" name="max" autocomplete="off"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <table id="customers" class="table table-bordered table-striped table-hover">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th>No.</th>
-                                        <th class="text-left">CustomerName</th>
-                                        <th class="text-left">Customer Phone</th>
-                                        <th class="text-left">RegisterDate</th>
-                                        <th class="text-left">OrderCount</th>
-                                        <th class="text-left">OrderAmount</th>
-                                        {{-- <th>Image</th> --}}
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="card-body table-responsive">
+                    <form action="{{ url('fatty/main/admin/daily_active_customers') }}">
+                        <input class="col-5 col-md-2" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                        <input class="col-5 col-md-2" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                        <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
+                    </form>
+                    <div class="mt-3">
+                        {{ $customers->appends(request()->input())->links() }}
                     </div>
+                    <table id="customers" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr class="text-center">
+                                <th>No.</th>
+                                <th class="text-left">CustomerName</th>
+                                <th class="text-left">CustomerPhone</th>
+                                <th class="text-left">OrderDate</th>
+                                <th class="text-left">OrderCount</th>
+                                <th class="text-left">OrderAmount</th>
+                                <th class="text-left">CustomerType</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($customers as $value)
+                            <tr class="text-center">
+                                <td>{{ $loop->iteration }}</td>
+                                <td class="text-left">
+                                    @if($value->customer->customer_name)
+                                        {{ $value->customer->customer_name }}
+                                    @else
+                                        <span style="color: red">{{ "Empty" }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ $value->customer->customer_phone }}</td>
+                                <td>{{ date('d/M/Y',strtotime($value->created_at)) }}</td>
+                                <td>{{ $value->customer->order_count }}</td>
+                                <td>{{ $value->customer->order_amount }}</td>
+                                <td>
+                                    @if($value->customer->customer_type_id==1)
+                                        <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                    @elseif($value->customer->customer_type_id==2)
+                                        <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                    @else
+                                        <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                    @endif
+                                </td>
+                                <td class="btn-group">
+                                    <a href="/fatty/main/admin/customers/view/ {{ $value->customer_id }}" title="View Detail" class="btn btn-info btn-sm mr-2"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -119,59 +128,16 @@
 @endsection
 @push('scripts')
 <script>
-    // Custom filtering function which will search data in column four between two values
-    $.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        var min = $('#min').datepicker("getDate");
-        var max = $('#max').datepicker("getDate");
-        var date = new Date( data[3] );
-
-        if (
-        ( min === null && max === null ) ||
-        ( min === null && date <= max ) ||
-        ( min <= date   && max === null ) ||
-        ( min <= date   && date <= max )
-        ) {
-            return true;
-        }
-        return false;
-    }
-    );
-
-
     $(document).ready(function() {
-        // Create date inputs
-        $("#min").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
-
-        $("#max").datepicker({ onSelect: function () { table.draw(); }, changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
-
         // DataTables initialisation
         var table = $("#customers").DataTable({
             "lengthMenu": [[15,25,50, 100, 250,500, -1], [15,25,50,100, 250, 500, "All"]],
-            "paging": true, // Allow data to be paged
-            "lengthChange": true,
-            "searching": true, // Search box and search function will be actived
-            "info": true,
-            "autoWidth": true,
-            "processing": true,  // Show processing
-            ajax: "/fatty/main/admin/customers/datatable/dailyactiveajax",
-            columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex' ,className: "number" , orderable: false, searchable: false},
-            {data: 'customer_name', name:'customer_name'},
-            {data: 'customer_phone', name:'customer_phone'},
-            {data: 'register_date', name:'register_date',className: "register_date"},
-            {data: 'order_count', name:'order_count',className: "order_count"},
-            {data: 'order_amount', name:'order_amount',className: "order_amount"},
-            {data: 'action', name: 'action', orderable: false, searchable: false,className: "action"},
-            ],
-            dom: 'lBfrtip',
-            buttons: [
-            'excel', 'pdf', 'print'
-            ],
-        });
-        // Refilter the table
-        $('#min, #max').on('change', function () {
-            table.draw();
+            "paging": false, // Allow data to be paged
+            "lengthChange": false,
+            "searching": false, // Search box and search function will be actived
+            "info": false,
+            "autoWidth": false,
+            "processing": false,  // Show processing
         });
     });
 </script>
