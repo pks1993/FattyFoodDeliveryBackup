@@ -17,4 +17,9 @@ class Customer extends Model
     {
         return $this->hasMany('App\Models\Customer\CustomerAddress','customer_id');
     }
+
+    public function customer_type()
+    {
+        return $this->hasOne('App\Models\Customer\CustomerType','customer_type_id','customer_type_id');
+    }
 }

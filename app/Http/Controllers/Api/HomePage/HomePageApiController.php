@@ -133,130 +133,130 @@ class HomePageApiController extends Controller
         ->withCount(['wishlist as wishlist' => function($query) use ($customer_id){$query->select(DB::raw('IF(count(*) > 0,1,0)'))->where('customer_id',$customer_id);}])
         ->get();
 
-            $restaurants_val=[];
-            foreach($near_restaurant as $value){
-                $distance=$value->distance;
-                $distances=number_format((float)$distance, 1, '.', '');
-                $distances_customer_restaurant=number_format((float)$distance, 3, '.', '');
+        $restaurants_val=[];
+        foreach($near_restaurant as $value){
+            $distance=$value->distance;
+            $distances=number_format((float)$distance, 1, '.', '');
+            $distances_customer_restaurant=number_format((float)$distance, 3, '.', '');
 
-                if($distances <= 0.5){
-                    $define_distance=0.5;
-                }elseif($distances > 0.5 && $distances <= 1){
-                    $define_distance=1;
-                }elseif($distances > 1 && $distances <= 1.5){
-                    $define_distance=1.5;
-                }elseif($distances > 1.5 && $distances <= 2){
-                    $define_distance=2;
-                }elseif($distances > 2 && $distances <= 2.5){
-                    $define_distance=2.5;
-                }elseif($distances > 2.5 && $distances <= 3){
-                    $define_distance=3;
-                }elseif($distances > 3 && $distances <= 3.5){
-                    $define_distance=3.5;
-                }elseif($distances > 3.5 && $distances <= 4){
-                    $define_distance=4;
-                }elseif($distances > 4 && $distances <= 4.5){
-                    $define_distance=4.5;
-                }elseif($distances > 4.5 && $distances <= 5){
-                    $define_distance=5;
-                }elseif($distances > 5 && $distances <= 6){
-                    $define_distance=6;
-                }elseif($distances > 6 && $distances <= 7){
-                    $define_distance=7;
-                }elseif($distances > 7 && $distances <= 8){
-                    $define_distance=8;
-                }elseif($distances > 8 && $distances <= 9){
-                    $define_distance=9;
-                }elseif($distances > 9 && $distances <= 10){
-                    $define_distance=10;
-                }elseif($distances > 10 && $distances <= 11){
-                    $define_distance=11;
-                }elseif($distances > 11 && $distances <= 12){
-                    $define_distance=12;
-                }elseif($distances > 12 && $distances <= 13){
-                    $define_distance=13;
-                }elseif($distances > 13 && $distances <= 14){
-                    $define_distance=14;
-                }elseif($distances > 14 && $distances <= 15){
-                    $define_distance=15;
-                }elseif($distances > 15 && $distances <= 16){
-                    $define_distance=16;
-                }elseif($distances > 16 && $distances <= 17){
-                    $define_distance=17;
-                }elseif($distances > 17 && $distances <= 18){
-                    $define_distance=18;
-                }elseif($distances > 18 && $distances <= 19){
-                    $define_distance=19;
-                }elseif($distances > 19 && $distances <= 20){
-                    $define_distance=20;
-                }elseif($distances > 20 && $distances <= 21){
-                    $define_distance=21;
-                }elseif($distances > 21 && $distances <= 22){
-                    $define_distance=22;
-                }elseif($distances > 22 && $distances <= 23){
-                    $define_distance=23;
-                }elseif($distances > 23 && $distances <= 24){
-                    $define_distance=24;
-                }elseif($distances > 24 && $distances <= 25){
-                    $define_distance=25;
-                }else{
-                    $define_distance=25;
-                }
-
-                if($define_distance){
-                    $check=FoodOrderDeliFees::where('distance',$define_distance)->first();
-                    $rider_delivery_fee=$check->rider_delivery_fee;
-                    $customer_delivery_fee=$check->customer_delivery_fee;
-                }else{
-                    $rider_delivery_fee=0;
-                    $customer_delivery_fee=0;
-                }
-
-                if($value->wishlist==1){
-                    $value->is_wish=true;
-                }else{
-                    $value->is_wish=false;
-                }
-
-                $value->distance=(float) $distances_customer_restaurant;
-                $value->distance_time=(int)$distances*2 + $value->average_time;
-                $value->delivery_fee=$customer_delivery_fee;
-                $value->rider_delivery_fee=$rider_delivery_fee;
-
-                if($value->restaurant_emergency_status==0){
-                    $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
-                    if($available->on_off==0){
-                        $value->restaurant_emergency_status=1;
-                    }else{
-                        $current_time = Carbon::now()->format('H:i:s');
-                        if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
-                            $value->restaurant_emergency_status=0;
-                        }else{
-                            $value->restaurant_emergency_status=1;
-                        }
-                    }
-                }
-                array_push($restaurants_val,$value);
+            if($distances <= 0.5){
+                $define_distance=0.5;
+            }elseif($distances > 0.5 && $distances <= 1){
+                $define_distance=1;
+            }elseif($distances > 1 && $distances <= 1.5){
+                $define_distance=1.5;
+            }elseif($distances > 1.5 && $distances <= 2){
+                $define_distance=2;
+            }elseif($distances > 2 && $distances <= 2.5){
+                $define_distance=2.5;
+            }elseif($distances > 2.5 && $distances <= 3){
+                $define_distance=3;
+            }elseif($distances > 3 && $distances <= 3.5){
+                $define_distance=3.5;
+            }elseif($distances > 3.5 && $distances <= 4){
+                $define_distance=4;
+            }elseif($distances > 4 && $distances <= 4.5){
+                $define_distance=4.5;
+            }elseif($distances > 4.5 && $distances <= 5){
+                $define_distance=5;
+            }elseif($distances > 5 && $distances <= 6){
+                $define_distance=6;
+            }elseif($distances > 6 && $distances <= 7){
+                $define_distance=7;
+            }elseif($distances > 7 && $distances <= 8){
+                $define_distance=8;
+            }elseif($distances > 8 && $distances <= 9){
+                $define_distance=9;
+            }elseif($distances > 9 && $distances <= 10){
+                $define_distance=10;
+            }elseif($distances > 10 && $distances <= 11){
+                $define_distance=11;
+            }elseif($distances > 11 && $distances <= 12){
+                $define_distance=12;
+            }elseif($distances > 12 && $distances <= 13){
+                $define_distance=13;
+            }elseif($distances > 13 && $distances <= 14){
+                $define_distance=14;
+            }elseif($distances > 14 && $distances <= 15){
+                $define_distance=15;
+            }elseif($distances > 15 && $distances <= 16){
+                $define_distance=16;
+            }elseif($distances > 16 && $distances <= 17){
+                $define_distance=17;
+            }elseif($distances > 17 && $distances <= 18){
+                $define_distance=18;
+            }elseif($distances > 18 && $distances <= 19){
+                $define_distance=19;
+            }elseif($distances > 19 && $distances <= 20){
+                $define_distance=20;
+            }elseif($distances > 20 && $distances <= 21){
+                $define_distance=21;
+            }elseif($distances > 21 && $distances <= 22){
+                $define_distance=22;
+            }elseif($distances > 22 && $distances <= 23){
+                $define_distance=23;
+            }elseif($distances > 23 && $distances <= 24){
+                $define_distance=24;
+            }elseif($distances > 24 && $distances <= 25){
+                $define_distance=25;
+            }else{
+                $define_distance=25;
             }
 
-            $near=$near_restaurant->where('restaurant_emergency_status',1);
-            $data=$near_restaurant->where('restaurant_emergency_status',0)->merge($near);
+            if($define_distance){
+                $check=FoodOrderDeliFees::where('distance',$define_distance)->first();
+                $rider_delivery_fee=$check->rider_delivery_fee;
+                $customer_delivery_fee=$check->customer_delivery_fee;
+            }else{
+                $rider_delivery_fee=0;
+                $customer_delivery_fee=0;
+            }
 
-            // $data =  array_values(array_sort($near_restaurant, function ($item) {
-            //     return $item['restaurant_emergency_status'];
-            // }));
+            if($value->wishlist==1){
+                $value->is_wish=true;
+            }else{
+                $value->is_wish=false;
+            }
 
-            //DESC
-            // $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
-            //     return $value['distance'];
-            // }));
-            //ASC
-            // $near_restaurant =  array_reverse(array_sort($near_restaurant, function ($value) {
-            //     return $value['distance'];
-            // }));
+            $value->distance=(float) $distances_customer_restaurant;
+            $value->distance_time=(int)$distances*2 + $value->average_time;
+            $value->delivery_fee=$customer_delivery_fee;
+            $value->rider_delivery_fee=$rider_delivery_fee;
+
+            if($value->restaurant_emergency_status==0){
+                $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
+                if($available->on_off==0){
+                    $value->restaurant_emergency_status=1;
+                }else{
+                    $current_time = Carbon::now()->format('H:i:s');
+                    if($available->opening_time <= $current_time && $available->closing_time >= $current_time){
+                        $value->restaurant_emergency_status=0;
+                    }else{
+                        $value->restaurant_emergency_status=1;
+                    }
+                }
+            }
+            array_push($restaurants_val,$value);
+        }
+
+        $near=$near_restaurant->where('restaurant_emergency_status',1);
+        $data=$near_restaurant->where('restaurant_emergency_status',0)->merge($near);
+
+        // $data =  array_values(array_sort($near_restaurant, function ($item) {
+        //     return $item['restaurant_emergency_status'];
+        // }));
+
+        //DESC
+        // $near_restaurant =  array_values(array_sort($near_restaurant, function ($value) {
+        //     return $value['distance'];
+        // }));
+        //ASC
+        // $near_restaurant =  array_reverse(array_sort($near_restaurant, function ($value) {
+        //     return $value['distance'];
+        // }));
 
 
-            return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$data,'categories'=>$assign,'recommend_restaurant'=>$recommend,'up_ads'=>$up_ads,'down_ads'=>$down_ads,'customer'=>$check_customer]);
+        return response()->json(['success'=>true,'message' => 'this is home page data','wishlist_count'=>$count,'near_restaurant'=>$data,'categories'=>$assign,'recommend_restaurant'=>$recommend,'up_ads'=>$up_ads,'down_ads'=>$down_ads,'customer'=>$check_customer]);
     }
 
     public function category_list(Request $request)

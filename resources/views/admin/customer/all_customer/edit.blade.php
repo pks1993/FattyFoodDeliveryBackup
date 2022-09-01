@@ -28,13 +28,18 @@
                                     <h2 class="card-title"><b>" Edit {{ $customers->name }} ( ID# {{ $customers->customer_id }} ) "</b></h2>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
-                                    <a href="{{url('fatty/main/admin/customers')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                    @if(url()->previous()==url()->current())
+                                        <a href="{{url('fatty/main/admin/customers')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                    @else
+                                        <a href="{{url()->previous()}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('fatty.admin.customers.update',$customers->customer_id) }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="url" value="{{ $previous_url }}">
                                 <div class="form-group row">
                                     <label for="customer_name" class="col-md-12 col-form-label">{{ __('Customer Name') }} </label>
                                     <div class="col-md-12">
@@ -126,9 +131,15 @@
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fa fa-edit"></i> {{ __('Update') }}
                                         </button>
-                                        <a href="{{url('fatty/main/admin/customers')}}" class="btn btn-secondary btn-sm">
-                                            <i class="fa fa-ban"></i> {{ __('Cancel') }}
-                                        </a>
+                                        @if(url()->current()==url()->previous())
+                                            <a href="{{url('fatty/main/admin/customers')}}" class="btn btn-secondary btn-sm">
+                                                <i class="fa fa-ban"></i> {{ __('Cancel') }}
+                                            </a>
+                                        @else
+                                            <a href="{{url()->previous()}}" class="btn btn-secondary btn-sm">
+                                                <i class="fa fa-ban"></i> {{ __('Cancel') }}
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             </form>

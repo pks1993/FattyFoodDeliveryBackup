@@ -17,20 +17,20 @@ class AdminTableSeeder extends Seeder
     public function run()
     {
         $user = User::create([
-            'name' => 'FattyMainAdmin', 
+            'name' => 'FattyMainAdmin',
             'email' => 'fattymainadmin@gmail.com',
             'phone' => '09972213949',
             'password' => bcrypt('fattyadmin@2021'),
             'zone_id' => '0',
             'is_main_admin'=> '1',
         ]);
-  
+
         $role = Role::create(['name' => 'Fatty Super Admin']);
-   
+
         $permissions = Permission::pluck('id','id')->all();
-  
+
         $role->syncPermissions($permissions);
-   
+
         $user->assignRole([$role->id]);
 
     }
