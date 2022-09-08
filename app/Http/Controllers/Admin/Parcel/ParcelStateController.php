@@ -822,11 +822,15 @@ class ParcelStateController extends Controller
             $extra=ParcelExtraCover::where('parcel_extra_cover_id','!=',$orders->parcel_extra_cover_id)->get();
         }
         $parcel_type=ParcelType::where('parcel_type_id','!=',$orders->parcel_type_id)->get();
-        $from_cities=ParcelCity::all();
-        $from_city=ParcelCity::where('parcel_city_id','!=',$orders->from_parcel_city_id)->get();
+        // $from_cities=ParcelCity::all();
+        // $from_city=ParcelCity::where('parcel_city_id','!=',$orders->from_parcel_city_id)->get();
+        $from_cities=ParcelBlockList::all();
+        $from_city=ParcelBlockList::where('parcel_block_id','!=',$orders->from_parcel_city_id)->get();
 
-        $to_cities=ParcelCity::all();
-        $to_city=ParcelCity::where('parcel_city_id','!=',$orders->to_parcel_city_id)->get();
+        $to_cities=ParcelBlockList::all();
+        $to_city=ParcelBlockList::where('parcel_block_id','!=',$orders->to_parcel_city_id)->get();
+        // $to_cities=ParcelCity::all();
+        // $to_city=ParcelCity::where('parcel_city_id','!=',$orders->to_parcel_city_id)->get();
         $riders=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
 
         return view('admin.order.parcel_list.edit',compact('parcel_type','extra','orders','from_cities','from_city','to_cities','to_city','riders'));
@@ -957,7 +961,7 @@ class ParcelStateController extends Controller
         }
 
         $request->session()->flash('alert-success', 'successfully update parcel orders!');
-        return redirect('fatty/main/admin/daily_parcel_orders');
+        return redirect('fatty/main/admin/daily_parcel_orders/list');
     }
 
     public function admin_rider_order_report($customer_admin_id)
