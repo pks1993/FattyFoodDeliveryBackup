@@ -46,7 +46,7 @@ class CustomerController extends Controller
         if($request['start_date']){
             $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         }else{
-            $date_start=date('Y-m-d 00:00:00');
+            $date_start="2022-01-01 00:00:00";
         }
         if($request['end_date']){
             $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
