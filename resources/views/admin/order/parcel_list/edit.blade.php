@@ -118,7 +118,7 @@
                                     <h3 class="card-title">Edit this parcel</h3>
                                 </div>
                                 <div class="col-md-6" style="text-align: right">
-                                    <a href="{{url('fatty/main/admin/daily_parcel_orders')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
+                                    <a href="{{url('fatty/main/admin/daily_parcel_orders/list')}}" class="btn btn-primary btn-sm"><i class="fa fa-angle-double-left"></i> Back to <span>lists</span></a>
                                 </div>
                             </div>
                         </div>
@@ -338,7 +338,7 @@
                                         <button type="submit" class="btn btn-primary btn-sm">
                                             <i class="fa fa-save"></i> {{ __('Update') }}
                                         </button>
-                                        <a href="{{url('fatty/main/admin/daily_parcel_orders')}}" class="btn btn-secondary btn-sm">
+                                        <a href="{{url('fatty/main/admin/daily_parcel_orders/list')}}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-ban"></i> {{ __('Cancel') }}
                                         </a>
                                     </div>
