@@ -1019,34 +1019,34 @@ class RiderApicontroller extends Controller
 
         if(!empty($order) && !empty($rider)){
             if(($order->rider_id == null && ($order->order_status_id==3 || $order->order_status_id==5 || $order->order_status_id==11)) || $order->rider_id==$rider_id){
-                // $check_order=CustomerOrder::where('order_id',$order_id)->first();
-                // if($check_order->rider_id==null || $check_order->rider_id==$rider_id){
-                //     $order->rider_id=$rider->rider_id;
-                //     $order->rider_address_latitude=$rider->rider_latitude;
-                //     $order->rider_address_longitude=$rider->rider_longitude;
-                //     $order->order_status_id=$order_status_id;
-                //     $order->update();
-                // }else{
-                //     return response()->json(['success'=>false,'message'=>'this order get other rider']);
-                // }
-                $check_order_first=CustomerOrder::where('order_id',$order_id)->whereNull('rider_id')->first();
-                if($check_order_first){
-                    $check_order_first->rider_id=$rider_id;
-                    $check_order_first->rider_address_latitude=$rider->rider_latitude;
-                    $check_order_first->rider_address_longitude=$rider->rider_longitude;
-                    $check_order_first->update();
+                $check_order=CustomerOrder::where('order_id',$order_id)->first();
+                if($check_order->rider_id==null || $check_order->rider_id==$rider_id){
+                    $order->rider_id=$rider->rider_id;
+                    $order->rider_address_latitude=$rider->rider_latitude;
+                    $order->rider_address_longitude=$rider->rider_longitude;
+                    $order->order_status_id=$order_status_id;
+                    $order->update();
                 }else{
-                    // return response()->json(['success'=>false,'message'=>'this order get other rider']);
-                    $check_order_two=CustomerOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->first();
-                    if($check_order_two){
-                        $check_order_two->rider_address_latitude=$rider->rider_latitude;
-                        $check_order_two->rider_address_longitude=$rider->rider_longitude;
-                        $check_order_two->order_status_id=$order_status_id;
-                        $check_order_two->update();
-                    }else{
-                        return response()->json(['success'=>false,'message'=>'this order get other rider']);
-                    }
+                    return response()->json(['success'=>false,'message'=>'this order get other rider']);
                 }
+                // $check_order_first=CustomerOrder::where('order_id',$order_id)->whereNull('rider_id')->first();
+                // if($check_order_first){
+                //     $check_order_first->rider_id=$rider_id;
+                //     $check_order_first->rider_address_latitude=$rider->rider_latitude;
+                //     $check_order_first->rider_address_longitude=$rider->rider_longitude;
+                //     $check_order_first->update();
+                // }else{
+                //     // return response()->json(['success'=>false,'message'=>'this order get other rider']);
+                //     $check_order_two=CustomerOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->first();
+                //     if($check_order_two){
+                //         $check_order_two->rider_address_latitude=$rider->rider_latitude;
+                //         $check_order_two->rider_address_longitude=$rider->rider_longitude;
+                //         $check_order_two->order_status_id=$order_status_id;
+                //         $check_order_two->update();
+                //     }else{
+                //         return response()->json(['success'=>false,'message'=>'this order get other rider']);
+                //     }
+                // }
 
 
 
