@@ -1401,12 +1401,12 @@ class OrderApiController extends Controller
                                     "order_id"=>$order_id,
                                     "order_status_id"=>0,
                                     "order_type"=>$check_order->order_type,
-                                    "title_mm"=> "Order Canceled by Restaurant!",
-                                    "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
-                                    "title_en"=> "Order Canceled by Restaurant!",
-                                    "body_en"=> "It’s sorry as your order is canceled by restaurant!",
-                                    "title_ch"=> "订单已被取消",
-                                    "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                                    "title_mm"=> "အားနာပါတယ်",
+                                    "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
+                                    "title_en"=> "Sorry !",
+                                    "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
+                                    "title_ch"=> "非常抱歉！",
+                                    "body_ch"=> "非常抱歉！商家取消了订单中的商品"
                                 ],
                                 "mutable_content" => true ,
                                 "content_available" => true,
@@ -1434,6 +1434,9 @@ class OrderApiController extends Controller
                 if($select_all==0){
                     return view('admin.src.example.each_refund');
                 }else{
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'order_status_id'=>2,
+                    ]);
                     return view('admin.src.example.refund');
                 }
 
@@ -1459,12 +1462,12 @@ class OrderApiController extends Controller
                                     "order_id"=>$order_id,
                                     "order_status_id"=>0,
                                     "order_type"=>$check_order->order_type,
-                                    "title_mm"=> "Each Order Canceled by Restaurant!",
-                                    "body_mm"=> "It’s sorry as your order item is canceled by restaurant!",
-                                    "title_en"=> "Order Canceled by Restaurant!",
-                                    "body_en"=> "It’s sorry as your order is canceled by restaurant!",
-                                    "title_ch"=> "订单已被取消",
-                                    "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                                    "title_mm"=> "အားနာပါတယ်",
+                                    "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
+                                    "title_en"=> "Sorry !",
+                                    "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
+                                    "title_ch"=> "非常抱歉！",
+                                    "body_ch"=> "非常抱歉！商家取消了订单中的商品"
                                 ],
                                 "mutable_content" => true ,
                                 "content_available" => true,
@@ -1477,6 +1480,12 @@ class OrderApiController extends Controller
 
                     }catch(ClientException $e){
                     }
+                }
+
+                if($select_all==1){
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'order_status_id'=>2,
+                    ]);
                 }
 
                 $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
