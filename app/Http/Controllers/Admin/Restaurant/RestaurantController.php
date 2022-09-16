@@ -783,6 +783,8 @@ class RestaurantController extends Controller
         $restaurants->average_time=$request['average_time'];
         $restaurants->rush_hour_time=$request['rush_hour_time'];
         $restaurants->percentage=$request['percentage'];
+        $restaurants->define_amount=$request['define_amount'];
+        $restaurants->restaurant_delivery_fee=$request['restaurant_delivery_fee'];
 
 
         if(!empty($request['restaurant_image'])){
