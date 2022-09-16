@@ -1347,6 +1347,127 @@ class OrderApiController extends Controller
 
     }
 
+    public function restaurant_each_order_cancel(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $remark=$request['remark'];
+        $cancel_data=$request['cancel_data'];
+        $select_all=$request['select_all'];
+        $price=0;
+        $check_order=CustomerOrder::where('order_id',$order_id)->first();
+
+        if($check_order){
+            if($check_order->order_status_id==19){
+                if($cancel_data){
+                    foreach($cancel_data as $value){
+                        OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
+                        $price +=$value['food_qty']*$value['food_price'];
+                    }
+                    CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
+                }
+
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    try{
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_each_order_cancel",
+                                    "order_id"=>$order_id,
+                                    "order_status_id"=>0,
+                                    "order_type"=>$check_order->order_type,
+                                    "title_mm"=> "Order Canceled by Restaurant!",
+                                    "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                    "title_en"=> "Order Canceled by Restaurant!",
+                                    "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                    "title_ch"=> "订单已被取消",
+                                    "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }catch(ClientException $e){
+                    }
+                }
+
+                if(!isset($_SESSION))
+                {
+                    session_start();
+                }
+                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+
+                $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
+                $_SESSION['customer_orders']=$customer_orders;
+                $_SESSION['refundAmount']=$price;
+                NotiOrder::where('order_id',$order_id)->delete();
+
+                if($select_all==0){
+                    return view('admin.src.example.each_refund');
+                }else{
+                    return view('admin.src.example.refund');
+                }
+
+            }else{
+                if($cancel_data){
+                    foreach($cancel_data as $value){
+                        OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
+                        $price +=$value['food_qty']*$value['food_price'];
+                    }
+                    CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
+                }
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    try{
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_each_order_cancel",
+                                    "order_id"=>$order_id,
+                                    "order_status_id"=>0,
+                                    "order_type"=>$check_order->order_type,
+                                    "title_mm"=> "Each Order Canceled by Restaurant!",
+                                    "body_mm"=> "It’s sorry as your order item is canceled by restaurant!",
+                                    "title_en"=> "Order Canceled by Restaurant!",
+                                    "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                    "title_ch"=> "订单已被取消",
+                                    "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+
+                    }catch(ClientException $e){
+                    }
+                }
+
+                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+                NotiOrder::where('order_id',$order_id)->delete();
+                return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_orders]]);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found']);
+        }
+
+    }
+
     public function restaurant_status_v1(Request $request)
     {
         $order_id=$request['order_id'];

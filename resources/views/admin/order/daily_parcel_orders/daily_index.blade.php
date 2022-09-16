@@ -104,7 +104,7 @@
                                     <th>PaymentMethod</th>
                                     <th>RiderDeliFee</th>
                                     <th>TotalPrice</th>
-                                    <th>Detail</th>
+                                    <th class="text-center">Detail</th>
                                 </tr>
                             </thead>
                                 @foreach ($total_orders as $item)

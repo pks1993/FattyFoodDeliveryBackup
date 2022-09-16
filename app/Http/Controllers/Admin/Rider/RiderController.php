@@ -844,11 +844,52 @@ class RiderController extends Controller
         return view('admin.rider.rider_map.index',compact('riders','center_latitude','center_longitude','all_count','has_count','has_not_count'));
     }
 
-    public function rider_map_detail($id)
+    public function rider_map_detail(Request $request,$id)
     {
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start=date('Y-m-d 00:00:00');
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->orderBy('order_id','desc')->paginate(20);
+        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->count();
+        $processing_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->whereIn('order_status_id',[4,5,6,10,12,13,14,17])->count();
+        $delivered_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->whereIn('order_status_id',[7,15,8])->count();
+        $total_amount=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->orderBy('order_id','desc')->sum('bill_total_price');
+        $total_delivery_fee=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->orderBy('order_id','desc')->sum('rider_delivery_fee');
+
         $rider = Rider::where('rider_id',$id)->where('active_inactive_status',1)->where('is_ban',0)->first();
+        $rider_id=$id;
         if($rider){
-            return view('admin.rider.rider_map.rider_view',compact('rider'));
+            return view('admin.rider.rider_map.rider_view',compact('total_delivery_fee','total_amount','rider_id','date_start','date_end','rider','total_orders','filter_count','processing_count','delivered_count'));
+        }else{
+            return response(view('error.404'), 404);
+        }
+    }
+
+    public function rider_map_detail_search(Request $request,$id)
+    {
+        $search_name=$request['search_name'];
+        $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        if($search_name){
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->orderBy('order_id','desc')->paginate(20);
+        }else{
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->orderBy('order_id','desc')->paginate(20);
+        }
+        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->count();
+        $processing_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->whereIn('order_status_id',[4,5,6,10,12,13,14,17])->count();
+        $delivered_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$id)->whereIn('order_status_id',[7,15,8])->count();
+
+        $rider = Rider::where('rider_id',$id)->where('active_inactive_status',1)->where('is_ban',0)->first();
+        $rider_id=$id;
+        if($rider){
+            return view('admin.rider.rider_map.rider_view',compact('rider_id','date_start','date_end','rider','total_orders','filter_count','processing_count','delivered_count'));
         }else{
             return response(view('error.404'), 404);
         }
@@ -860,7 +901,7 @@ class RiderController extends Controller
         if($rider){
             $rider_id=$id;
             $rider_name=$rider->rider_user_name;
-            $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
+            $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->orderBy('created_at')->paginate(30);
             return view('admin.rider.rider_map.order_list',compact('food_orders','rider_id'));
         }else{
             return response(view('error.404'), 404);

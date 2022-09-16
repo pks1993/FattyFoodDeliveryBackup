@@ -26,6 +26,7 @@ class CreateOrderFoodsTable extends Migration
             $table->string('food_image')->nullable();
             $table->bigInteger('food_qty')->nullable();
             $table->text('food_note')->nullable();
+            $table->boolean('is_cancel')->nullable()->default(0);
             $table->timestamps();
         });
     }

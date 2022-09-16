@@ -1192,14 +1192,102 @@ class OrderController extends Controller
     */
     public function show($id)
     {
+        $previous_url=url()->previous();
         $food_order = CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->withCount(['foods'])->findOrFail($id);
-        return view('admin.order.view')->with('food_order',$food_order);
+        if($food_order->customer_address_latitude){
+            $customer_address_latitude=$food_order->customer_address_latitude;
+        }else{
+            $customer_address_latitude=0;
+        }
+        if($food_order->customer_address_longitude){
+            $customer_address_longitude=$food_order->customer_address_longitude;
+        }else{
+            $customer_address_longitude=0;
+        }
+
+        if($food_order->rider_address_latitude){
+            $rider_address_latitude=$food_order->rider_address_latitude;
+        }else{
+            $rider_address_latitude=0;
+        }
+        if($food_order->rider_address_longitude){
+            $rider_address_longitude=$food_order->rider_address_longitude;
+        }else{
+            $rider_address_longitude=0;
+        }
+
+        if($food_order->restaurant_address_latitude){
+            $restaurant_address_latitude=$food_order->restaurant_address_latitude;
+        }else{
+            $restaurant_address_latitude=0;
+        }
+        if($food_order->restaurant_address_longitude){
+            $restaurant_address_longitude=$food_order->restaurant_address_longitude;
+        }else{
+            $restaurant_address_longitude=0;
+        }
+        if($food_order->restaurant_id){
+            $res_name=$food_order->restaurant->restaurant_name_en;
+        }else{
+            $res_name="Restaurant";
+        }
+        if($food_order->customer_id)
+        {
+            $cus_name=$food_order->customer->customer_name;
+        }else{
+            $cus_name="Customer";
+        }
+        if($food_order->rider_id){
+            $rider_name=$food_order->rider->rider_user_name;
+        }else{
+            $rider_name="Rider";
+        }
+        return view('admin.order.view',compact('rider_name','cus_name','res_name','food_order','previous_url','restaurant_address_longitude','restaurant_address_latitude','rider_address_longitude','rider_address_latitude','customer_address_longitude','customer_address_latitude'));
     }
 
     public function parcel_show($id)
     {
+        $previous_url=url()->previous();
         $parcel_order = CustomerOrder::findOrFail($id);
-        return view('admin.order.parcel_view')->with('parcel_order',$parcel_order);
+        if($parcel_order->from_pickup_latitude){
+            $from_pickup_latitude=$parcel_order->from_pickup_latitude;
+        }else{
+            $from_pickup_latitude=0;
+        }
+
+        if($parcel_order->from_pickup_longitude){
+            $from_pickup_longitude=$parcel_order->from_pickup_longitude;
+        }else{
+            $from_pickup_longitude=0;
+        }
+
+        if($parcel_order->rider_address_latitude){
+            $rider_address_latitude=$parcel_order->rider_address_latitude;
+        }else{
+            $rider_address_latitude=0;
+        }
+        if($parcel_order->rider_address_longitude){
+            $rider_address_longitude=$parcel_order->rider_address_longitude;
+        }else{
+            $rider_address_longitude=0;
+        }
+
+        if($parcel_order->to_drop_latitude){
+            $to_drop_latitude=$parcel_order->to_drop_latitude;
+        }else{
+            $to_drop_latitude=0;
+        }
+        if($parcel_order->to_drop_longitude){
+            $to_drop_longitude=$parcel_order->to_drop_longitude;
+        }else{
+            $to_drop_longitude=0;
+        }
+        if($parcel_order->rider_id){
+            $rider_name=$parcel_order->rider->rider_user_name;
+        }else{
+            $rider_name="Rider";
+        }
+        return view('admin.order.parcel_view',compact('parcel_order','previous_url','rider_name','to_drop_longitude','to_drop_latitude','rider_address_longitude','rider_address_latitude','from_pickup_longitude','from_pickup_latitude'));
     }
 
     /**
