@@ -207,6 +207,8 @@ Route::post('v1/fatty/202221/lashio/main/admin/restaurants/orders/click','Api\Or
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/orders/status','Api\Order\OrderApiController@restaurant_status_v1');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/cancle_orders/status','Api\Order\OrderApiController@restaurant_cancle_order');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/cancel_orders/status','Api\Order\OrderApiController@restaurant_cancel_order_v1');
+Route::post('v1/fatty/202221/lashio/main/admin/restaurants/each_order/cancel/status','Api\Order\OrderApiController@restaurant_each_order_cancel');
+
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/orders/details','Api\Restaurant\RestaurantApiController@restaurant_order_details');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/activenow','Api\Restaurant\RestaurantApiController@activenow');
 Route::post('v1/fatty/202221/lashio/main/admin/foods/onoff','Api\Restaurant\RestaurantApiController@food_onoff');

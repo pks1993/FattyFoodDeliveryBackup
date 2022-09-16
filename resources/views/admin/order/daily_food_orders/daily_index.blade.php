@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="div mb-2">
+                    <div class="mb-2">
                         <form action="{{ url('fatty/main/admin/daily_food_orders/search') }}">
                             <input class="col-9 col-md-4" type="type" name="search_name" placeholder="Filter Enter Order Id OR Booking Id" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
                             <input type="hidden" name="start_date" value="{{ $date_start }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
@@ -128,7 +128,7 @@
                                     <th>DeliFeeRider</th>
                                     <th>DeliFeeCustomer</th>
                                     <th>TotalPrice</th>
-                                    <th>PaymentMethod</th>
+                                    <th>PaymentType</th>
                                     <th>Detail</th>
                                     <th>Pending</th>
                                     <th>Complete</th>
@@ -220,11 +220,11 @@
                                     <td>{{ $item->bill_total_price }}</td>
                                     <td class="text-left">
                                         @if($item->payment_method_id==1)
-                                            <span class="btn btn-sm btn-primary">{{ "Cash_On_Delivery" }}</span>
+                                            <span class="btn btn-sm btn-primary" style="width: 100%;">{{ "Cash_On_Delivery" }}</span>
                                         @elseif($item->payment_method_id==2)
-                                            <span class="btn btn-sm btn-success">{{ "Kpay" }}</span>
+                                            <span class="btn btn-sm btn-success" style="width: 100%;">{{ "Kpay" }}</span>
                                         @else
-                                            <span class="btn btn-sm btn-secondary">{{ "Empty" }}</span>
+                                            <span class="btn btn-sm btn-secondary" style="width: 100%;">{{ "Empty" }}</span>
                                         @endif
                                     </td>
                                     <td>

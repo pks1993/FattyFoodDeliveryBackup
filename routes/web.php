@@ -188,6 +188,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('all_riders_location/hasOrder','Admin\Rider\RiderController@has_order');
     Route::get('all_riders_location/hasNotOrder','Admin\Rider\RiderController@has_not_order');
     Route::get('riders/detail/{rider_id}','Admin\Rider\RiderController@rider_map_detail');
+    Route::get('riders/detail/search/{rider_id}','Admin\Rider\RiderController@rider_map_detail_search');
     Route::get('assign/order/list/{rider_id}','Admin\Rider\RiderController@assign_order_list');
     Route::get('orders/datatable/assign_order_list_ajax/{rider_id}','Admin\Rider\RiderController@assign_order_list_ajax');
     Route::get('orders/assign/{order_id}/{rider_id}','Admin\Rider\RiderController@assign_order_noti');

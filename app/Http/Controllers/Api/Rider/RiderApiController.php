@@ -1029,6 +1029,7 @@ class RiderApicontroller extends Controller
                 // }else{
                 //     return response()->json(['success'=>false,'message'=>'this order get other rider']);
                 // }
+
                 $check_order_first=CustomerOrder::where('order_id',$order_id)->whereNull('rider_id')->first();
                 $check_order_two=CustomerOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->first();
                 if($check_order_first){

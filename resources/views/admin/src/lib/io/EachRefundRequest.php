@@ -15,10 +15,14 @@ class RefundRequest extends PaymentRequest
 
     const JSON_KEY_REFUND_REQUEST_NO = "refund_request_no";
 
+    const JSON_KEY_REFUND_AMOUNT = "refund_amount";
+
 
     protected $refundReason;
 
     protected $refundRequestNo;
+
+    protected $refundAmount;
 
 
     public static function builder()
@@ -32,6 +36,7 @@ class RefundRequest extends PaymentRequest
 
         PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_REASON, $this->refundReason);
         PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_REQUEST_NO, $this->refundRequestNo);
+        PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_AMOUNT, $this->refundAmount);
 
         return $bizContent;
     }
@@ -50,6 +55,22 @@ class RefundRequest extends PaymentRequest
     public function setRefundReason($refundReason)
     {
         $this->refundReason = $refundReason;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRefundAmount()
+    {
+        return $this->refundAmount;
+    }
+
+    /**
+     * @param mixed $refundReason
+     */
+    public function setRefundAmount($refundAmount)
+    {
+        $this->refundAmount = $refundAmount;
     }
 
     /**
@@ -79,6 +100,12 @@ class RefundRequestBuilder
         $this->refundRequest = new RefundRequest();
     }
 
+    function refundAmount($refundAmount)
+    {
+        $this->refundRequest->setRefundAmount($refundAmount);
+        return $this;
+    }
+
     function refundReason($refundReason)
     {
         $this->refundRequest->setRefundReason($refundReason);
@@ -104,6 +131,8 @@ class RefundRequestBuilder
     {
         PaymentUtils::assertNotEmpty($this->refundRequest->getRefundReason(), 'Refund reason');
         PaymentUtils::assertNotEmpty($this->refundRequest->getMerchOrderId(), 'Merchant order id');
+        PaymentUtils::assertNotEmpty($this->refundRequest->getRefundAmount(), 'Refund Amount');
+
 
         $this->refundRequest->setMethod(PaymentConstant::API_METHOD_REFUND);
 
