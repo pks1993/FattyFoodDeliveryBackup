@@ -33,6 +33,8 @@ class CreateRestaurantsTable extends Migration
             $table->tinyInteger('restaurant_emergency_status')->nullable()->default(0);
             $table->integer('average_time')->nullable()->default(0);
             $table->integer('rush_hour_time')->nullable()->default(0);
+            $table->integer('define_amount')->nullable()->default(0);
+            $table->integer('restaurant_delivery_fee')->nullable()->default(0);
             $table->timestamps();
         });
     }

@@ -139,7 +139,7 @@ class OrderApiController extends Controller
         $customer_address_latitude=$request['customer_address_latitude'];
         $customer_address_longitude=$request['customer_address_longitude'];
         $restaurant_id=$request['restaurant_id'];
-
+        $item_total_price=$request['item_total_price'];
 
         $restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
 
@@ -264,6 +264,18 @@ class OrderApiController extends Controller
             $delivery_fee=$check->customer_delivery_fee;
         }else{
             $delivery_fee=0;
+        }
+
+        if($item_total_price){
+            if($restaurant->restaurant_delivery_fee != 0){
+                if($item_total_price < $restaurant->define_amount){
+                    $delivery_fee=$delivery_fee + $restaurant->restaurant_delivery_fee  ;
+                }else{
+                    $delivery_fee=$delivery_fee;
+                }
+            }else{
+                $delivery_fee=$delivery_fee;
+            }
         }
 
         return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
@@ -402,6 +414,13 @@ class OrderApiController extends Controller
         $date_end=date('Y-m-d 23:59:59', strtotime($request['date']));
         $language=$request->header('language');
 
+        $system_deli=FoodOrderDeliFees::where('customer_delivery_fee',0)->orderBy('distance','desc')->first();
+        if($system_deli){
+            $system_deli_distance=$system_deli->distance;
+        }else {
+            $system_deli_distance=0;
+        }
+
         // $array =CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->orderBy('order_id','desc')->where('order_type','food')->get();
         // $total=count($array);
         // $per_page = 5;
@@ -465,6 +484,7 @@ class OrderApiController extends Controller
                     }else{
                         return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
                     }
+                    $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
                     array_push($active_data,$item1);
                 }
@@ -514,6 +534,7 @@ class OrderApiController extends Controller
                     }else{
                         return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
                     }
+                    $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
                     array_push($past_data,$item1);
                 }
