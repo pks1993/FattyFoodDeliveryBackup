@@ -143,6 +143,16 @@ class OrderApiController extends Controller
 
         $restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
 
+        $restaurant_delivery_fee=$restaurant->restaurant_delivery_fee;
+        $define_amount=$restaurant->define_amount;
+        $system_deli=FoodOrderDeliFees::where('customer_delivery_fee',0)->orderBy('distance','desc')->first();
+        if($system_deli){
+            $system_deli_distance=$system_deli->distance;
+        }else {
+            $system_deli_distance=0;
+        }
+
+
         $theta = $customer_address_longitude - $restaurant->restaurant_longitude;
         $dist = sin(deg2rad($customer_address_latitude)) * sin(deg2rad($restaurant->restaurant_latitude)) +  cos(deg2rad($customer_address_latitude)) * cos(deg2rad($restaurant->restaurant_latitude)) * cos(deg2rad($theta));
         $dist = acos($dist);
@@ -278,7 +288,7 @@ class OrderApiController extends Controller
             }
         }
 
-        return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
+        return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee,'restaurant_delivery_fee'=>$restaurant_delivery_fee,'define_amount'=>$define_amount,'system_deli_distance'=>$system_deli_distance]]);
     }
     /**
      * Display a listing of the resource.
