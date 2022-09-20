@@ -25,7 +25,7 @@ class ExampleConfig implements ConfigInterface
     public function getNotifyUrl()
     {
         // return "http://128.199.241.129/api/fatty/main/admin/kbz/pay/notify_url";
-        return "http://188.166.226.161/api/fa?tty/main/admin/kbz/pay/notify_url";
+        return "http://188.166.226.161/api/fatty/main/admin/kbz/pay/notify_url";
     }
 
     public function getMerchantKey()

@@ -1388,7 +1388,7 @@ class OrderApiController extends Controller
         $check_order=CustomerOrder::where('order_id',$order_id)->first();
 
         if($check_order){
-            if($check_order->order_status_id==19){
+            if($check_order->order_status_id==19 || $check_order->payment_method_id==2 ){
                 if($cancel_data){
                     foreach($cancel_data as $value){
                         OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
@@ -1429,19 +1429,52 @@ class OrderApiController extends Controller
                     }catch(ClientException $e){
                     }
                 }
+                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+		//if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
+		//	$item_total_price=($customer_orders->item_total_price)-($price);
+		//	$delivery_fee=$customer_orders->devlivery_fee;
+		//	$bill_total_price=$item_total_price+$delivery_fee;
+		//}else{
+		//	$item_price=($customer_orders->item_total_price)-($price);
+		//	if($item_price < $customer_orders->restaurant->define_amount){
+			//	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
+			//	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
+				//$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
+			//}else{
+			//	$delivery_fee=$customer_orders->delivery_fee;
+			//	$item_total_price=$item_price;
+			//	$bill_total_price=($customer_orders->bill_total_price)-($price);
+			//}
+		//}'
 
-                if(!isset($_SESSION))
+		$item_total_price=($customer_orders->item_total_price)-($price);
+               	$delivery_fee=$customer_orders->devlivery_fee;
+                //$bill_total_price=$item_total_price+$delivery_fee;
+		$bill_total_price=($customer_orders->bill_total_price)-($price);
+
+		$customer_orders->delivery_fee=$delivery_fee;
+		$customer_orders->item_total_price=$item_total_price;
+		$customer_orders->bill_total_price=$bill_total_price;
+		$customer_orders->update();
+		$check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+
+		if(!isset($_SESSION))
                 {
                     session_start();
                 }
-                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+		$customer_order=CustomerOrder::where('order_id',$order_id)->first();
 
-                $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
-                $_SESSION['customer_orders']=$customer_orders;
+                $_SESSION['merchOrderId']=$customer_order->merch_order_id;
+                $_SESSION['customer_orders']=$customer_order;
                 $_SESSION['refundAmount']=$price;
                 NotiOrder::where('order_id',$order_id)->delete();
 
                 if($select_all==0){
+			if($check_food==0){
+				CustomerOrder::where('order_id',$order_id)->update([
+                        		'order_status_id'=>2,
+                    		]);
+			}
                     return view('admin.src.example.each_refund');
                 }else{
                     CustomerOrder::where('order_id',$order_id)->update([
@@ -1492,15 +1525,49 @@ class OrderApiController extends Controller
                     }
                 }
 
+$check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+
                 if($select_all==1){
                     CustomerOrder::where('order_id',$order_id)->update([
                         'order_status_id'=>2,
                     ]);
-                }
+                }else{
+			if($check_food==0){
+				CustomerOrder::where('order_id',$order_id)->update([
+                        		'order_status_id'=>2,
+                    		]);
+			}
+			$customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+               // 	if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
+                      //  	$item_total_price=($customer_orders->item_total_price)-($price);
+                    //    	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                  //      	$delivery_fee=$customer_orders->delivery_fee;
+                //	}else{
+                        //	$item_price=($customer_orders->item_total_price)-($price);
+                        //	if($item_price < $customer_orders->restaurant->define_amount){
+                                //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
+                              //  	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
+                            //    	$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
+                        //	}else{
+                          //      	$delivery_fee=$customer_orders->delivery_fee;
+                            //    	$item_total_price=$item_price;
+                          //      	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                        //	}
+                	//}
 
-                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+			$item_total_price=($customer_orders->item_total_price)-($price);
+                        $bill_total_price=($customer_orders->bill_total_price)-($price);
+                        $delivery_fee=$customer_orders->delivery_fee;
+
+                	$customer_orders->delivery_fee=$delivery_fee;
+                	$customer_orders->item_total_price=$item_total_price;
+                	$customer_orders->bill_total_price=$bill_total_price;
+                	$customer_orders->update();
+		}
+
+                $customer_order=CustomerOrder::where('order_id',$order_id)->first();
                 NotiOrder::where('order_id',$order_id)->delete();
-                return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_orders]]);
+                return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_order]]);
             }
         }else{
             return response()->json(['success'=>false,'message'=>'order id not found']);

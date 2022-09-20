@@ -12,9 +12,9 @@ require_once __DIR__ . '/../lib/PaymentClient.php';
 
 //production
 $servername = "localhost";
-$username = "sithu";
-$password = "Sithu@orikino#2022";
-$dbname = "FattyDatabase";
+$username = "root";
+$password = "Fatty@Orikino#412F";
+$dbname = "FattyApplication";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
