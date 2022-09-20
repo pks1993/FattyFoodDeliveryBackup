@@ -47,7 +47,7 @@ class WishlistApiController extends Controller
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
-                * sin(radians(restaurant_latitude))) AS distance"))
+                * sin(radians(restaurant_latitude))) AS distance"),'define_amount')
         ->orderBy('distance','ASC')
         ->join('restaurant_categories','restaurant_categories.restaurant_category_id','=','restaurants.restaurant_category_id')
         ->join('states','states.state_id','=','restaurants.state_id')
