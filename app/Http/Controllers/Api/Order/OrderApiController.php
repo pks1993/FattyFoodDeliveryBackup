@@ -1430,39 +1430,40 @@ class OrderApiController extends Controller
                     }
                 }
                 $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
-		//if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
-		//	$item_total_price=($customer_orders->item_total_price)-($price);
-		//	$delivery_fee=$customer_orders->devlivery_fee;
-		//	$bill_total_price=$item_total_price+$delivery_fee;
-		//}else{
-		//	$item_price=($customer_orders->item_total_price)-($price);
-		//	if($item_price < $customer_orders->restaurant->define_amount){
-			//	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
-			//	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
-				//$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
-			//}else{
-			//	$delivery_fee=$customer_orders->delivery_fee;
-			//	$item_total_price=$item_price;
-			//	$bill_total_price=($customer_orders->bill_total_price)-($price);
-			//}
-		//}'
+                //if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
+                //	$item_total_price=($customer_orders->item_total_price)-($price);
+                //	$delivery_fee=$customer_orders->devlivery_fee;
+                //	$bill_total_price=$item_total_price+$delivery_fee;
+                //}else{
+                //	$item_price=($customer_orders->item_total_price)-($price);
+                //	if($item_price < $customer_orders->restaurant->define_amount){
+                    //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
+                    //	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
+                        //$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
+                    //}else{
+                    //	$delivery_fee=$customer_orders->delivery_fee;
+                    //	$item_total_price=$item_price;
+                    //	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                    //}
+                //}
 
-		$item_total_price=($customer_orders->item_total_price)-($price);
-               	$delivery_fee=$customer_orders->devlivery_fee;
-                //$bill_total_price=$item_total_price+$delivery_fee;
-		$bill_total_price=($customer_orders->bill_total_price)-($price);
+            $item_total_price=($customer_orders->item_total_price)-($price);
+            $delivery_fee=$customer_orders->devlivery_fee;
+            //$bill_total_price=$item_total_price+$delivery_fee;
+            $bill_total_price=($customer_orders->bill_total_price)-($price);
 
-		$customer_orders->delivery_fee=$delivery_fee;
-		$customer_orders->item_total_price=$item_total_price;
-		$customer_orders->bill_total_price=$bill_total_price;
-		$customer_orders->update();
-		$check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+            $customer_orders->delivery_fee=$delivery_fee;
+            $customer_orders->item_total_price=$item_total_price;
+            $customer_orders->bill_total_price=$bill_total_price;
+            $customer_orders->update();
+            $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
 
-		if(!isset($_SESSION))
-                {
-                    session_start();
-                }
-		$customer_order=CustomerOrder::where('order_id',$order_id)->first();
+            if(!isset($_SESSION))
+            {
+                session_start();
+            }
+
+            $customer_order=CustomerOrder::where('order_id',$order_id)->first();
 
                 $_SESSION['merchOrderId']=$customer_order->merch_order_id;
                 $_SESSION['customer_orders']=$customer_order;
@@ -1525,7 +1526,7 @@ class OrderApiController extends Controller
                     }
                 }
 
-$check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+                $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
 
                 if($select_all==1){
                     CustomerOrder::where('order_id',$order_id)->update([

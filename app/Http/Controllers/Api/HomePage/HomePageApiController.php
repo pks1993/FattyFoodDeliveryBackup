@@ -123,7 +123,7 @@ class HomePageApiController extends Controller
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
-                * sin(radians(restaurant_latitude))) AS distance"))
+                * sin(radians(restaurant_latitude))) AS distance"),'define_amount')
         ->having('distance','<=',$near_distance)
         ->orderBy('distance','ASC')
         // ->orderBy('restaurant_emergency_status','ASC')
