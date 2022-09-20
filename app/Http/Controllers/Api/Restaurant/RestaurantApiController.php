@@ -1043,7 +1043,7 @@ class RestaurantApiController extends Controller
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
-                * sin(radians(restaurant_latitude))) AS distance"))
+                * sin(radians(restaurant_latitude))) AS distance"),'define_amount')
             ->orwhere('restaurant_name_mm',"LIKE","%$search_name%")
             ->orwhereRaw("REPLACE(`restaurant_name_en`, ' ' ,'') LIKE ?", ['%'.str_replace(' ', '', $search_name).'%'])
             ->orwhere('restaurant_name_ch',"LIKE","%$search_name%")
@@ -1166,7 +1166,7 @@ class RestaurantApiController extends Controller
                 },'sub_item.option' => function($option){
                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->where('instock',1)->get();
                 },'restaurant'=>function ($restaurant){
-                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude')->get();
+                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude','define_amount')->get();
                 },'restaurant.category' => function ($category){
                     $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
                 }])
@@ -1344,7 +1344,7 @@ class RestaurantApiController extends Controller
                 * cos(radians(restaurant_latitude))
                 * cos(radians(restaurant_longitude) - radians($longitude))
                 + sin(radians($latitude))
-                * sin(radians(restaurant_latitude))) AS distance"))
+                * sin(radians(restaurant_latitude))) AS distance"),'define_amount')
         ->having('distance','<=',$near_distance)
         ->orderBy('distance','ASC')
         ->whereIn('restaurant_category_id',$category_id)
