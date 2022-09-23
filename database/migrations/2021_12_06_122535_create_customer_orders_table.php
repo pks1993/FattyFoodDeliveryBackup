@@ -76,6 +76,8 @@ class CreateCustomerOrdersTable extends Migration
             $table->tinyInteger('is_review_status')->nullable()->default(0);
             $table->tinyInteger('is_force_assign')->nullable()->default(0);
             $table->tinyInteger('is_admin_completed')->nullable()->default(0);
+            $table->tinyInteger('is_multi_order')->nullable()->default(0);
+            $table->tinyInteger('is_multi_order_cancel')->nullable()->default(0);
             $table->timestamps();
         });
     }

@@ -215,6 +215,47 @@
                 </ul>
             </li>
             <li class="nav-item has-treeview">
+                <a href="{{url('fatty/main/admin/multi_order')}}" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-list" style="margin-right: 5px" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 20%;">
+                            <p>Multi Order Limit</p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 35%;">
+                            <p>Multi Orders Block</p>
+                        </div>
+                        <div style="width: 50%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/order_block')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Group Block</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/order_block_route')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Route Block</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
