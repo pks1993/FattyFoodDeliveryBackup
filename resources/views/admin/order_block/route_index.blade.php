@@ -100,10 +100,10 @@
                         <tbody>
                             @foreach($order_block as $item)
                             <tr class="text-center">
-                                <td>{{ $loop->iteration }}/ {{ $item->order_route_block_id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td class="text-left"> {{ $item->group_block->start_block->block_name }}   <span style="font-weight: 800;font-size:20px;">&nbsp;- &nbsp;</span>   {{ $item->group_block->end_block->block_name }} </td>
-                                <td class="text-left"> {{ $item->start_block->block_name }} ({{ $item->start_block_id }}) </td>
-                                <td class="text-left"> {{ $item->end_block->block_name }} ({{ $item->end_block_id }}) </td>
+                                <td class="text-left"> {{ $item->start_block->block_name }} </td>
+                                <td class="text-left"> {{ $item->end_block->block_name }} </td>
                                 <td>
                                     <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#q{{ $item->order_route_block_id }}"><i class="fa fa-edit"></i></button>
                                     <form method="post" action="{{route('fatty.admin.order_block_route.update',$item->order_route_block_id)}}" id="form">
