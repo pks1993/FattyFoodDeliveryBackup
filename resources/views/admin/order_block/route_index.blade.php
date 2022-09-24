@@ -102,8 +102,8 @@
                             <tr class="text-center">
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="text-left"> {{ $item->group_block->start_block->block_name }}   <span style="font-weight: 800;font-size:20px;">&nbsp;- &nbsp;</span>   {{ $item->group_block->end_block->block_name }} </td>
-                                <td class="text-left"> {{ $item->start_block->block_name }} </td>
-                                <td class="text-left"> {{ $item->end_block->block_name }} </td>
+                                <td class="text-left"> {{ $item->start_block->block_name }} ({{ $item->start_block_id }}) </td>
+                                <td class="text-left"> {{ $item->end_block->block_name }} ({{ $item->end_block_id }}) </td>
                                 <td>
                                     <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#q{{ $item->order_route_block_id }}"><i class="fa fa-edit"></i></button>
                                     <form method="post" action="{{route('fatty.admin.order_block_route.update',$item->order_route_block_id)}}" id="form">
@@ -121,7 +121,7 @@
                                                 <form>
                                                     <div class="form-group">
                                                         <label for="order_start_block_id" class="col-form-label">Group Name:</label>
-                                                        <select class="form-control" name="order_start_block_id" id="order_start_block_id_edit" required>
+                                                        <select class="form-control" name="order_start_block_id" id="order_start_block_id_edit">
                                                             <option value="{{$item->order_start_block_id}}">{{ $item->group_block->start_block->block_name }}   <span style="font-weight: 800;font-size:20px;">&nbsp;- &nbsp;</span>   {{ $item->group_block->end_block->block_name }}</option>
                                                             @foreach($group_block as $block)
                                                                 <option value="{{$block->order_start_block_id}}">{{ $block->start_block->block_name }}   <span style="font-weight: 800;font-size:20px;">&nbsp;- &nbsp;</span>   {{ $block->end_block->block_name }}</option>

@@ -46,8 +46,12 @@
                     <input type="number" class="form-control" name="multi_order_limit" placeholder="0">
                 </div>
                 <div class="form-group">
-                    <label for="multi_order_time" class="col-form-label">Limit Time:</label>
-                    <input type="number" class="form-control" name="multi_order_time" placeholder="0">
+                    <label for="food_multi_order_time" class="col-form-label">Food Limit Time:</label>
+                    <input type="number" class="form-control" name="food_multi_order_time" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label for="parcel_multi_order_time" class="col-form-label">Parcel Limit Time:</label>
+                    <input type="number" class="form-control" name="parcel_multi_order_time" placeholder="0">
                 </div>
                 <div class="form-group">
                     <label for="cancel_count_limit" class="col-form-label">Cancel Limit Count:</label>
@@ -74,7 +78,8 @@
                             <tr>
                                 <th class="text-center">No.</th>
                                 <th class="text-left">Order Limit</th>
-                                <th class="text-left">Order Limit Time</th>
+                                <th class="text-left">Food Limit Time</th>
+                                <th class="text-left">Parcel Limit Time</th>
                                 <th class="text-left">Cancel Limit</th>
                                 <th class="text-center">Edit</th>
                             </tr>
@@ -84,7 +89,8 @@
                             <tr class="text-center">
                                 <td>{{ $multi_order->multi_order_limit_id }}</td>
                                 <td>{{ $multi_order->multi_order_limit }}</td>
-                                <td>{{ $multi_order->multi_order_time }}</td>
+                                <td>{{ $multi_order->food_multi_order_time }}</td>
+                                <td>{{ $multi_order->parcel_multi_order_time }}</td>
                                 <td>{{ $multi_order->cancel_count_limit }}</td>
                                 <td>
                                     <button type="button" class="btn btn-primary btn-sm mr-1" data-toggle="modal" data-target="#q{{ $multi_order->multi_order_limit_id }}"><i class="fa fa-edit"></i></button>
@@ -105,8 +111,12 @@
                                                     <input type="number" class="form-control" name="multi_order_limit" value="{{ $multi_order->multi_order_limit }}">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="multi_order_time" class="col-form-label">Limit Time:</label>
-                                                    <input type="number" class="form-control" name="multi_order_time" value="{{ $multi_order->multi_order_time }}">
+                                                    <label for="food_multi_order_time" class="col-form-label">Food Limit Time:</label>
+                                                    <input type="number" class="form-control" name="food_multi_order_time" value="{{ $multi_order->food_multi_order_time }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="parcel_multi_order_time" class="col-form-label">Parcel Limit Time:</label>
+                                                    <input type="number" class="form-control" name="parcel_multi_order_time" value="{{ $multi_order->parcel_multi_order_time }}">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="cancel_count_limit" class="col-form-label">Cancel Limit Count:</label>
