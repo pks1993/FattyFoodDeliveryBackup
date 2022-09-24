@@ -222,6 +222,9 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/home_page','Api\Rider\Rider
 Route::post('v1/fatty/202221/lashio/main/admin/rider/location/update','Api\Rider\RiderApiController@rider_location');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/location','Api\Rider\RiderApiController@rider_location_get');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/status','Api\Rider\RiderApiController@order_status');
+
+// Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/status','Api\Rider\RiderApiController@order_status');
+
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history','Api\Rider\RiderApiController@order_food_history');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history/filter','Api\Rider\RiderApiController@order_food_history_filter');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history_list','Api\Rider\RiderApiController@order_food_history_list');

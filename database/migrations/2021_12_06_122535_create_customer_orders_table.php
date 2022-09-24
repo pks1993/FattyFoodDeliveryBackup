@@ -57,6 +57,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->unsignedBigInteger('parcel_type_id')->nullable();
             $table->unsignedBigInteger('from_parcel_city_id')->nullable();
             $table->unsignedBigInteger('to_parcel_city_id')->nullable();
+            $table->unsignedBigInteger('order_start_block_id')->default(0)->nullable();
             $table->bigInteger('total_estimated_weight')->nullable()->default(0);
             $table->bigInteger('item_qty')->nullable()->default(0);
             $table->text('parcel_order_note')->nullable();

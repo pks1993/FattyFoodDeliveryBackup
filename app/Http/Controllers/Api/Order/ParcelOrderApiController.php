@@ -8,6 +8,8 @@ use App\Models\Order\CustomerOrder;
 use App\Models\Order\ParcelType;
 use App\Models\Order\ParcelExtraCover;
 use App\Models\Order\MultiOrderLimit;
+use App\Models\Order\OrderStartBlock;
+use App\Models\Order\OrderRouteBlock;
 use App\Models\Order\ParcelImage;
 use App\Models\City\ParcelCity;
 use App\Models\City\ParcelCityHistory;
@@ -157,6 +159,14 @@ class ParcelOrderApiController extends Controller
             $rider_delivery_fee=0;
         }
 
+        //order_start_block_id
+        $check_start_block=OrderRouteBlock::where('start_block_id',$from_parcel_city_id)->where('end_block_id',$to_parcel_city_id)->first();
+        if($check_start_block){
+            $order_start_block_id=$check_start_block->order_start_block_id;
+        }else{
+            $order_start_block_id=0;
+        }
+
         $date_start=date('Y-m-d 00:00:00');
         $date_end=date('Y-m-d 23:59:59');
 
@@ -214,19 +224,20 @@ class ParcelOrderApiController extends Controller
             "to_parcel_city_id"=>$to_parcel_city_id,
             "is_admin_force_order"=>$is_admin_force_order,
             "is_multi_order"=>0,
+            "order_start_block_id"=>$order_start_block_id,
         ]);
 
 
-        // //start customer order
+        //start customer order
         $check=OrderCustomer::where('customer_id',$customer_id)->whereDate('created_at',date('Y-m-d'))->first();
         if(empty($check)){
             OrderCustomer::create([
                 "customer_id"=>$customer_id,
             ]);
         }
-        // //close customer order
+        //close customer order
 
-        // //customer
+        //customer
         if($customers->fcm_token){
             $cus_client = new Client();
             $cus_token=$customers->fcm_token;
@@ -263,17 +274,18 @@ class ParcelOrderApiController extends Controller
         //$check_empty=CustomerOrder::query()->whereBetween('created_at',[$date_start,$date_end])->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->get();distinct
         // $check_empty=CustomerOrder::query()->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->orderby('created_at','desc')->first();
         $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
-        $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->distinct('rider_id')->get();
+        // $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->distinct('rider_id')->get();
+        $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id',$parcel_order->order_start_block_id)->distinct('rider_id')->get();
         $order_time_list=[];
         $rider_id=[];
         foreach($order_check as $check){
-            $order_history=CustomerOrderHistory::where('order_id',$check->order_id)->whereIn('order_status_id',[4,12])->first();
-            if($order_history){
-                $order_accept_time=$order_history->created_at->diffInMinutes(null, true, true, 2);
-            }else{
-                $order_accept_time=$check['updated_at']->diffInMinutes(null, true, true, 2);
-            }
-            if($order_accept_time <= $multi_order->multi_order_time){
+            // $order_history=CustomerOrderHistory::where('order_id',$check->order_id)->whereIn('order_status_id',[4,12])->first();
+            // if($order_history){
+            //     $order_accept_time=$order_history->created_at->diffInMinutes(null, true, true, 2);
+            // }else{
+            // }
+            $order_accept_time=$check['updated_at']->diffInMinutes(null, true, true, 2);
+            if($order_accept_time <= $multi_order->parcel_multi_order_time){
                 $check_riders_multi_limit=Rider::where('rider_id',$check->rider_id)->where('multi_order_count','<',$multi_order->multi_order_limit)->where('multi_cancel_count','<',$multi_order->cancel_count_limit)->first();
                 if($check_riders_multi_limit){
                     $order_time_list[]=$order_accept_time;
@@ -289,6 +301,9 @@ class ParcelOrderApiController extends Controller
             NotiOrder::create([
                 "rider_id"=>$min_rider,
                 "order_id"=>$parcel_order->order_id,
+            ]);
+            CustomerOrder::where('order_id',$parcel_order->order_id)->update([
+                "is_multi_order"=>1,
             ]);
             $rider_fcm_token=Rider::where('rider_id',$min_rider)->pluck('rider_fcm_token');
             if($rider_fcm_token){

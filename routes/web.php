@@ -551,8 +551,8 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     //order_block route
     Route::get('order_block_route','Admin\Parcel\ParcelBlockController@order_block_route_list');
     Route::post('order_block_route/store','Admin\Parcel\ParcelBlockController@order_block_route_store')->name('order_block_route.store');;
-    Route::post('order_block_route/update/{order_block_id}','Admin\Parcel\ParcelBlockController@order_block_route_update')->name('order_block_route.update');
-    Route::delete('order_block_route/delete/{order_block_id}','Admin\Parcel\ParcelBlockController@order_block_route_destroy')->name('order_block_route.destroy');
+    Route::post('order_block_route/update/{order_route_block_id}','Admin\Parcel\ParcelBlockController@order_block_route_update')->name('order_block_route.update');
+    Route::delete('order_block_route/delete/{order_route_block_id}','Admin\Parcel\ParcelBlockController@order_block_route_destroy')->name('order_block_route.destroy');
     
     
     //order_block
