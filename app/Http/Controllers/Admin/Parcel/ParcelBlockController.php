@@ -171,7 +171,7 @@ class ParcelBlockController extends Controller
     {
         $start_block=ParcelBlockList::where('parcel_block_id',$request['start_block_id'])->first();
         $end_block=ParcelBlockList::where('parcel_block_id',$request['end_block_id'])->first();
-        OrderRouteBlock::where('order_start_block_id',$id)->update([
+        OrderRouteBlock::where('order_route_block_id',$id)->update([
             "order_start_block_id"=>$request['order_start_block_id'],
             "start_block_id"=>$request['start_block_id'],
             "start_block_latitude"=>$start_block->latitude,
