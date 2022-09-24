@@ -36,7 +36,7 @@ class ParcelBlockController extends Controller
     {
         $group_block=OrderStartBlock::all();
         $parcel_block=ParcelBlockList::where('state_id','!=',null)->orderBy('parcel_block_id','desc')->get();
-        $order_block=OrderRouteBlock::orderBy('order_start_block_id')->paginate(30);
+        $order_block=OrderRouteBlock::orderBy('order_route_block_id','desc')->paginate(30);
         return view('admin.order_block.route_index',compact('order_block','parcel_block','group_block'));
     }
     
