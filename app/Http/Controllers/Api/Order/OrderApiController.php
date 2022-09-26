@@ -1672,6 +1672,7 @@ class OrderApiController extends Controller
                             CustomerOrder::where('order_id',$customer_orders->order_id)->update([
                                 "is_multi_order"=>1,
                             ]);
+                            Rider::find($min_rider)->update(['multi_order_count'=>DB::raw('multi_order_count+1')]);
                         }
                         $rider_fcm_token=Rider::where('rider_id',$min_rider)->pluck('rider_fcm_token');
                         if($rider_fcm_token){

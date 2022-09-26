@@ -270,20 +270,11 @@ class ParcelOrderApiController extends Controller
             } catch (ClientException $e) {
             }
         }
-        // $parcel_order=CustomerOrder::where('order_id',6)->first();
-        //$check_empty=CustomerOrder::query()->whereBetween('created_at',[$date_start,$date_end])->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->get();distinct
-        // $check_empty=CustomerOrder::query()->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->orderby('created_at','desc')->first();
         $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
-        // $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->distinct('rider_id')->get();
         $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id','!=',0)->where('order_start_block_id',$parcel_order->order_start_block_id)->distinct('rider_id')->get();
         $order_time_list=[];
         $rider_id=[];
         foreach($order_check as $check){
-            // $order_history=CustomerOrderHistory::where('order_id',$check->order_id)->whereIn('order_status_id',[4,12])->first();
-            // if($order_history){
-            //     $order_accept_time=$order_history->created_at->diffInMinutes(null, true, true, 2);
-            // }else{
-            // }
             $order_accept_time=$check['updated_at']->diffInMinutes(null, true, true, 2);
             if($order_accept_time <= $multi_order->parcel_multi_order_time){
                 $check_riders_multi_limit=Rider::where('rider_id',$check->rider_id)->where('multi_order_count','<',$multi_order->multi_order_limit)->where('multi_cancel_count','<',$multi_order->cancel_count_limit)->first();
@@ -305,6 +296,7 @@ class ParcelOrderApiController extends Controller
             CustomerOrder::where('order_id',$parcel_order->order_id)->update([
                 "is_multi_order"=>1,
             ]);
+            Rider::find($min_rider)->update(['multi_order_count'=>DB::raw('multi_order_count+1')]);
             $rider_fcm_token=Rider::where('rider_id',$min_rider)->pluck('rider_fcm_token');
             if($rider_fcm_token){
                 $rider_client = new Client();

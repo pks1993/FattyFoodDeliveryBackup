@@ -1290,9 +1290,9 @@ class RiderApicontroller extends Controller
                 $orderType=(string)$order->order_type;
 
                 if($order_status_id=="4"){
-                    if($order->is_multi_order==1){
-                        $rider->multi_order_count=$rider->multi_order_count+1;
-                    }
+                    // if($order->is_multi_order==1){
+                    //     $rider->multi_order_count=$rider->multi_order_count+1;
+                    // }
                     $rider->is_order=1;
                     $rider->update();
 
@@ -1661,9 +1661,9 @@ class RiderApicontroller extends Controller
                     ]);
 
                 }elseif($order_status_id=="12"){
-                    if($order->is_multi_order==1){
-                        $rider->multi_order_count=$rider->multi_order_count + 1;
-                    }
+                    // if($order->is_multi_order==1){
+                    //     $rider->multi_order_count=$rider->multi_order_count + 1;
+                    // }
                     $rider->is_order=1;
                     $rider->update();
                     NotiOrder::where('order_id',$order_id)->delete();
