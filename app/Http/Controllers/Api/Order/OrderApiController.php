@@ -1644,7 +1644,7 @@ class OrderApiController extends Controller
                     }
 
                     $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
-                    $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id',$customer_orders->order_start_block_id)->distinct('rider_id')->get();
+                    $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id','!=',0)->where('order_start_block_id',$customer_orders->order_start_block_id)->distinct('rider_id')->get();
                     $order_time_list=[];
                     $rider_id=[];
                     $define_time=$multi_order->food_multi_order_time + $customer_orders->restaurant->average_time;
