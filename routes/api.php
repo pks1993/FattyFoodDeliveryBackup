@@ -223,7 +223,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/location/update','Api\Rider
 Route::post('v1/fatty/202221/lashio/main/admin/rider/location','Api\Rider\RiderApiController@rider_location_get');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/status','Api\Rider\RiderApiController@order_status');
 
-// Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/status','Api\Rider\RiderApiController@order_status');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/multi_order/cancel','Api\Rider\RiderApiController@multi_order_cancel');
 
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history','Api\Rider\RiderApiController@order_food_history');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history/filter','Api\Rider\RiderApiController@order_food_history_filter');

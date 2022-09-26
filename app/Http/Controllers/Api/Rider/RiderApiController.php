@@ -1005,6 +1005,217 @@ class RiderApicontroller extends Controller
             return response()->json(['success'=>false,'message'=>'rider id not found!']);
         }
     }
+    
+    
+    public function multi_order_cancel(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $rider_id=$request['rider_id'];
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
+
+        $orders=CustomerOrder::where('order_id',$order_id)->where('is_multi_order',1)->first();
+        if($orders){
+            CustomerOrder::find($order_id)->update(['is_multi_order_cancel'=>1,'is_multi_order'=>0]);
+            Rider::find($rider_id)->update(['multi_cancel_count'=>DB::raw('multi_cancel_count+1'),'multi_order_count'=>DB::raw("IF(multi_order_count = 0,IF multi_order_count=?)")]);
+            NotiOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->delete();
+
+            if($orders->order_type=="parcel"){
+                $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                ,DB::raw("6371 * acos(cos(radians(" . $orders->from_pickup_latitude . "))
+                * cos(radians(rider_latitude))
+                * cos(radians(rider_longitude) - radians(" . $orders->from_pickup_longitude . "))
+                + sin(radians(" .$orders->from_pickup_latitude. "))
+                * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                ->where('active_inactive_status','1')
+                ->where('is_ban','0')
+                ->where('rider_fcm_token','!=','null')
+                ->where('rider_id','!=',$rider_id)
+                ->get();
+                $rider_fcm_token=[];
+                foreach($riders as $rid){
+                    if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                        $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                        if(empty($check_noti_order)){
+                            NotiOrder::create([
+                                "rider_id"=>$rid->rider_id,
+                                "order_id"=>$order_id,
+                            ]);
+                        }
+                        $rider_fcm_token[] =$rid->rider_fcm_token;
+                    }
+                    if(empty($rider_fcm_token)){
+                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
+                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                            if(empty($check_noti_order)){
+                                NotiOrder::create([
+                                    "rider_id"=>$rid->rider_id,
+                                    "order_id"=>$order_id,
+                                ]);
+                            }
+                            $rider_fcm_token[]=$rid->rider_fcm_token;
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                    }
+                }
+    
+    
+                if($rider_fcm_token){
+                    $rider_client = new Client();
+                    $rider_token=$rider_fcm_token;
+                    $orderId=(string)$order_id;
+                    $orderstatusId=(string)$orders->order_status_id;
+                    $orderType=(string)$orders->order_type;
+                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    if($rider_token){
+                        try{
+                            $rider_client->post($url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Incomed",
+                                        "body_mm"=> "One new order is incomed! Please check it!",
+                                        "title_en"=> "Order Incomed",
+                                        "body_en"=> "One new order is incomed! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "有新订单!请查看！"
+                                    ],
+                                ],
+                            ]);
+                        }catch(ClientException $e){
+                        }
+                    }
+                }
+            }else{
+                //Rider
+                $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                ,DB::raw("6371 * acos(cos(radians(" . $orders->restaurant_address_latitude . "))
+                * cos(radians(rider_latitude))
+                * cos(radians(rider_longitude) - radians(" . $orders->restaurant_address_longitude . "))
+                + sin(radians(" .$orders->restaurant_address_latitude. "))
+                * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                ->where('active_inactive_status','1')
+                ->where('is_ban','0')
+                ->where('rider_fcm_token','!=',null)
+                ->where('rider_id','!=',$rider_id)
+                ->get();
+                $rider_fcm_token=[];
+                foreach($riders as $rid){
+                    if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                        $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                        if(empty($check_noti_order)){
+                            NotiOrder::create([
+                                "rider_id"=>$rid->rider_id,
+                                "order_id"=>$order_id,
+                            ]);
+                        }
+                        $rider_fcm_token[] =$rid->rider_fcm_token;
+                    }
+                    if(empty($rider_fcm_token)){
+                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
+                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                            if(empty($check_noti_order)){
+                                NotiOrder::create([
+                                    "rider_id"=>$rid->rider_id,
+                                    "order_id"=>$order_id,
+                                ]);
+                            }
+                            $rider_fcm_token[]=$rid->rider_fcm_token;
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                    }
+                }
+                if($rider_fcm_token){
+                    $rider_client = new Client();
+                    $rider_token=$rider_fcm_token;
+                    $orderId=(string)$order_id;
+                    $orderstatusId=(string)$orders->order_status_id;
+                    $orderType=(string)$orders->order_type;
+                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    if($rider_token){
+                        try{
+                            $rider_client->post($url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Incomed",
+                                        "body_mm"=> "One new order is incomed! Please check it!",
+                                        "title_en"=> "Order Incomed",
+                                        "body_en"=> "One new order is incomed! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "有新订单!请查看！"
+                                    ],
+                                ],
+                            ]);
+                        }catch(ClientException $e){
+                        }
+                    }
+                }
+            }
+        
+            return response()->json(['success'=>true,'message'=>"rider multi cancel data",'data'=>$orders]);
+        }else{
+            return response()->json(['success'=>true,'message'=>"Error this orders is not multi order"]);
+        }
+
+
+    }
+
+    
 
     public function order_status(Request $request)
     {

@@ -1663,13 +1663,16 @@ class OrderApiController extends Controller
                         $min=min($order_time_list);
                         $key=array_keys($order_time_list,$min);
                         $min_rider=$rider_id[$key[0]];
-                        NotiOrder::create([
-                            "rider_id"=>$min_rider,
-                            "order_id"=>$customer_orders->order_id,
-                        ]);
-                        CustomerOrder::where('order_id',$customer_orders->order_id)->update([
-                            "is_multi_order"=>1,
-                        ]);
+
+                        if($min_rider){
+                            NotiOrder::create([
+                                "rider_id"=>$min_rider,
+                                "order_id"=>$customer_orders->order_id,
+                            ]);
+                            CustomerOrder::where('order_id',$customer_orders->order_id)->update([
+                                "is_multi_order"=>1,
+                            ]);
+                        }
                         $rider_fcm_token=Rider::where('rider_id',$min_rider)->pluck('rider_fcm_token');
                         if($rider_fcm_token){
                             $rider_client = new Client();
@@ -1796,7 +1799,7 @@ class OrderApiController extends Controller
                     }
 
                     $customer_orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1]]);
+                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1,'min'=>$min_rider]]);
 
                 }
                 elseif($request['order_status_id']=="2"){
