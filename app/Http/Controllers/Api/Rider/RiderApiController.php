@@ -1017,7 +1017,7 @@ class RiderApicontroller extends Controller
         $orders=CustomerOrder::where('order_id',$order_id)->where('is_multi_order',1)->first();
         if($orders){
             CustomerOrder::find($order_id)->update(['is_multi_order_cancel'=>1,'is_multi_order'=>0]);
-            Rider::find($rider_id)->update(['multi_cancel_count'=>DB::raw('multi_cancel_count+1'),'multi_order_count'=>DB::raw("IF(multi_order_count = 0,IF multi_order_count=?)")]);
+            Rider::find($rider_id)->update(['multi_cancel_count'=>DB::raw('multi_cancel_count+1'),'multi_order_count'=>DB::raw('multi_order_count-1')]);
             NotiOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->delete();
 
             if($orders->order_type=="parcel"){
