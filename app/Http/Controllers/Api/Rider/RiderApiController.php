@@ -1207,7 +1207,7 @@ class RiderApicontroller extends Controller
                 }
             }
         
-            return response()->json(['success'=>true,'message'=>"rider multi cancel data",'data'=>$orders]);
+            return response()->json(['success'=>true,'message'=>"rider multi cancel data"]);
         }else{
             return response()->json(['success'=>true,'message'=>"Error this orders is not multi order"]);
         }
