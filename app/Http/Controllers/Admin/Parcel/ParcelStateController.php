@@ -400,7 +400,7 @@ class ParcelStateController extends Controller
     
         if($rider_id==0){
             $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
-            $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id',$parcel_orders->order_start_block_id)->distinct('rider_id')->get();
+            $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id','!=',0)->where('order_start_block_id',$parcel_orders->order_start_block_id)->distinct('rider_id')->get();
             $order_time_list=[];
             $rider_id=[];
             foreach($order_check as $check){
@@ -602,7 +602,7 @@ class ParcelStateController extends Controller
 
             if($rider_id=="0"){
                 $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
-                $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id',$parcel_orders->order_start_block_id)->distinct('rider_id')->get();
+                $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id','!=',0)->where('order_start_block_id',$parcel_orders->order_start_block_id)->distinct('rider_id')->get();
                 $order_time_list=[];
                 $rider_id=[];
                 foreach($order_check as $check){

@@ -275,7 +275,7 @@ class ParcelOrderApiController extends Controller
         // $check_empty=CustomerOrder::query()->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->orderby('created_at','desc')->first();
         $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
         // $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->whereIn('order_status_id',[4,5,12])->whereNotNull('rider_id')->where('from_parcel_city_id',$from_parcel_city_id)->distinct('rider_id')->get();
-        $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id',$parcel_order->order_start_block_id)->distinct('rider_id')->get();
+        $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id','!=',0)->where('order_start_block_id',$parcel_order->order_start_block_id)->distinct('rider_id')->get();
         $order_time_list=[];
         $rider_id=[];
         foreach($order_check as $check){
