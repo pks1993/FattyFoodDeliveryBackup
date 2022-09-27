@@ -561,9 +561,9 @@ class RiderApicontroller extends Controller
                 }
                 if($check_order){
                     if($noti_rider){
-                        $over_orders=$rider_orders;
-                    }else{
                         $over_orders=$noti_rider->merge($rider_orders);
+                    }else{
+                        $over_orders=$rider_orders;
                     }
                     // $order =  array_reverse(array_sort($noti_rider, function ($value) {
                     //     return $value['created_at'];
