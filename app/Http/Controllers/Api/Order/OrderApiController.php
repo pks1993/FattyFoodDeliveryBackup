@@ -1649,12 +1649,16 @@ class OrderApiController extends Controller
                     $rider_id=[];
                     $define_time=$multi_order->food_multi_order_time + $customer_orders->restaurant->average_time;
                     foreach($order_check as $check){
-                        $order_accept_time=$check['updated_at']->diffInMinutes(null, true, true, 2);
-                        if($order_accept_time <= $define_time){
-                            $check_riders_multi_limit=Rider::where('rider_id',$check->rider_id)->where('multi_order_count','<',$multi_order->multi_order_limit)->where('multi_cancel_count','<',$multi_order->cancel_count_limit)->first();
-                            if($check_riders_multi_limit){
-                                $order_time_list[]=$order_accept_time;
-                                $rider_id[]=$check_riders_multi_limit->rider_id;
+                        $noti_multi_count=NotiOrder::query()->whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$check->rider_id)->where('is_multi_order',1)->count();
+                        // $count_limit=($multi_order->multi_order_limit) - ($noti_multi_count);
+                        if($noti_multi_count == 0){
+                            $order_accept_time=$check['updated_at']->diffInMinutes(null, true, true, 2);
+                            if($order_accept_time <= $define_time){
+                                $check_riders_multi_limit=Rider::where('rider_id',$check->rider_id)->where('multi_order_count','<',$multi_order->multi_order_limit)->where('multi_cancel_count','<',$multi_order->cancel_count_limit)->first();
+                                if($check_riders_multi_limit){
+                                    $order_time_list[]=$order_accept_time;
+                                    $rider_id[]=$check_riders_multi_limit->rider_id;
+                                }
                             }
                         }
                     }
@@ -1668,6 +1672,7 @@ class OrderApiController extends Controller
                             NotiOrder::create([
                                 "rider_id"=>$min_rider,
                                 "order_id"=>$customer_orders->order_id,
+                                "is_multi_order"=>1,
                             ]);
                             CustomerOrder::where('order_id',$customer_orders->order_id)->update([
                                 "is_multi_order"=>1,

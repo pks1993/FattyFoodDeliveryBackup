@@ -398,6 +398,7 @@ class RiderApicontroller extends Controller
                 * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                 ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
+                ->orderBy('created_at','asc')
                 ->get();
 
                 $food_val=[];
@@ -559,10 +560,11 @@ class RiderApicontroller extends Controller
                     $noti_rider=[];
                 }
                 if($check_order){
-                    $order =  array_reverse(array_sort($noti_rider, function ($value) {
-                        return $value['created_at'];
-                    }));
-                    $over_orders=$rider_orders->merge($order);
+                    $over_orders=$noti_rider->merge($rider_orders);
+                    // $order =  array_reverse(array_sort($noti_rider, function ($value) {
+                    //     return $value['created_at'];
+                    // }));
+                    // $over_orders=$rider_orders->merge($order);
                     // $orders_array=$over_orders->toArray();
                     // $orders=array_slice($orders_array, 0, $rider_check->max_order);
                 }else{

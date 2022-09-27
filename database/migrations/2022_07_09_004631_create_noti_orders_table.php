@@ -17,6 +17,7 @@ class CreateNotiOrdersTable extends Migration
             $table->id('noti_order_id');
             $table->unsignedBigInteger('rider_id')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();
+            $table->tinyInteger('is_multi_order')->nullable();
             $table->timestamps();
         });
     }

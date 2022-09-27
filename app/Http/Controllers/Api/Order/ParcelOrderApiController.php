@@ -292,6 +292,7 @@ class ParcelOrderApiController extends Controller
             NotiOrder::create([
                 "rider_id"=>$min_rider,
                 "order_id"=>$parcel_order->order_id,
+                "is_multi_order"=>1,
             ]);
             CustomerOrder::where('order_id',$parcel_order->order_id)->update([
                 "is_multi_order"=>1,
