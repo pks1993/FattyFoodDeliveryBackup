@@ -1555,6 +1555,7 @@ class RiderApicontroller extends Controller
                     if($check_order){
                         $rider->is_order=1;
                         $rider->exist_order=($rider->exist_order)-1;
+                        $rider->multi_order_count=($rider->multi_order_count)-1;
                         $rider->update();
                     }else{
                         $rider->is_order=0;
@@ -1922,10 +1923,12 @@ class RiderApicontroller extends Controller
                     if($check_order){
                         $rider->is_order=1;
                         $rider->exist_order=($rider->exist_order)-1;
+                        $rider->multi_order_count=($rider->multi_order_count)-1;
                         $rider->update();
                     }else{
                         $rider->is_order=0;
                         $rider->exist_order=($rider->exist_order)-1;
+                        $rider->multi_order_count=($rider->multi_order_count)-1;
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
