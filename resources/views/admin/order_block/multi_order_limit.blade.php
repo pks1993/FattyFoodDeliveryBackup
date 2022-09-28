@@ -108,7 +108,7 @@
                                             <div class="modal-body">
                                                 <div class="form-group">
                                                     <label for="multi_order_limit" class="col-form-label">Limit Order:</label>
-                                                    <input type="number" class="form-control" name="multi_order_limit" value="{{ $multi_order->multi_order_limit }}">
+                                                    <input type="number" class="form-control" name="multi_order_limit" value="{{ $multi_order->multi_order_limit }}" disabled>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="food_multi_order_time" class="col-form-label">Food Limit Time:</label>

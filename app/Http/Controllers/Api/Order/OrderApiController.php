@@ -1045,8 +1045,12 @@ class OrderApiController extends Controller
                     return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
                 }
             }elseif($customer_orders->order_type=="parcel"){
+                if($customer_orders->is_multi_order==1){
+                    $customer_orders->is_multi_order=0;
+                }
                 $customer_orders->order_status_id=16;
                 $customer_orders->update();
+
                 $images=ParcelImage::where('order_id',$order_id)->first();
                 if($images){
                     $par_image=ParcelImage::where('order_id',$order_id)->get();
@@ -1060,11 +1064,12 @@ class OrderApiController extends Controller
                     $rider_check=Rider::where('rider_id',$value->rider_id)->first();
                     if($rider_check->exist_order != 0){
                         $rider_check->exist_order=$rider_check->exist_order-1;
+                        if($value->is_multi_order==1){
+                            $rider_check->multi_order_count=$rider_check->multi_order_count - 1 ;
+                        }
                         $rider_check->update();
                     }
                 }
-                // return response()->json($rider);
-
                 NotiOrder::where('order_id',$customer_orders->order_id)->delete();
 
                 return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
