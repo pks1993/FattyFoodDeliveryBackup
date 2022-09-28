@@ -214,7 +214,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item has-treeview">
+            {{-- <li class="nav-item has-treeview">
                 <a href="{{url('fatty/main/admin/multi_order')}}" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
@@ -254,7 +254,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <div class="row">

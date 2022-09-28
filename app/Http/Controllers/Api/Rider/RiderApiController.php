@@ -1555,15 +1555,15 @@ class RiderApicontroller extends Controller
                     if($check_order){
                         $rider->is_order=1;
                         $rider->exist_order=($rider->exist_order)-1;
-                        if($check_order->is_multi_order==1){
-                            $rider->multi_order_count=($rider->multi_order_count)-1;
-                        }
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }else{
                         $rider->is_order=0;
-                        if($check_order->is_multi_order==1){
-                            $rider->multi_order_count=($rider->multi_order_count)-1;
-                        }
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
@@ -1927,16 +1927,16 @@ class RiderApicontroller extends Controller
                     if($check_order){
                         $rider->is_order=1;
                         $rider->exist_order=($rider->exist_order)-1;
-                        if($check_order->is_multi_order==1){
-                            $rider->multi_order_count=($rider->multi_order_count)-1;
-                        }
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }else{
                         $rider->is_order=0;
                         $rider->exist_order=($rider->exist_order)-1;
-                        if($check_order->is_multi_order==1){
-                            $rider->multi_order_count=($rider->multi_order_count)-1;
-                        }
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
