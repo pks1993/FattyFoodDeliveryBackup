@@ -96,7 +96,6 @@ class BenefitController extends Controller
             "end_time_two"=>$end_time_two,
             "peak_time_percentage"=>$request['peak_time_percentage'],
             "peak_time_amount"=>$request['peak_time_amount'],
-            "peak_time_type"=>$request['peak_time_type'],
             "peak_time_start_date"=>$peak_time_start_date,
             "peak_time_end_date"=>$peak_time_end_date,
         ]);
@@ -156,7 +155,6 @@ class BenefitController extends Controller
             "end_time_two"=>$end_time_two,
             "peak_time_percentage"=>$request['peak_time_percentage'],
             "peak_time_amount"=>$request['peak_time_amount'],
-            "peak_time_type"=>$request['peak_time_type'],
             "peak_time_start_date"=>$peak_time_start_date,
             "peak_time_end_date"=>$peak_time_end_date,
         ]);
