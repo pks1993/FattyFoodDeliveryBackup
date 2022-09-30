@@ -547,6 +547,18 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('multi_order','Admin\Parcel\ParcelBlockController@multi_order_list');
     Route::post('multi_order/store','Admin\Parcel\ParcelBlockController@multi_order_store')->name('multi_order.store');;
     Route::post('multi_order/update/{multi_order_limit_id}','Admin\Parcel\ParcelBlockController@multi_order_update')->name('multi_order.update');
+    
+    //Benefit
+    Route::get('rider_benefit','Admin\Order\BenefitController@index');
+    Route::post('rider_benefit/store','Admin\Order\BenefitController@rider_benefit_store')->name('rider_benefit.store');;
+    Route::post('rider_benefit/update/{rider_benefit_id}','Admin\Order\BenefitController@rider_benefit_update')->name('rider_benefit.update');
+    Route::delete('rider_benefit/delete/{rider_benefit_id}','Admin\Order\BenefitController@rider_benefit_destroy')->name('rider_benefit.destroy');
+
+    //benefit peak time
+    Route::get('benefit_peak_time','Admin\Order\BenefitController@peak_index');
+    Route::post('benefit_peak_time/store','Admin\Order\BenefitController@benefit_peak_time_store')->name('benefit_peak_time.store');;
+    Route::post('benefit_peak_time/update/{benefit_peak_time_id}','Admin\Order\BenefitController@benefit_peak_time_update')->name('benefit_peak_time.update');
+    Route::delete('benefit_peak_time/delete/{benefit_peak_time_id}','Admin\Order\BenefitController@benefit_peak_time_destroy')->name('benefit_peak_time.destroy');
 
     //order_block route
     Route::get('order_block_route','Admin\Parcel\ParcelBlockController@order_block_route_list');
