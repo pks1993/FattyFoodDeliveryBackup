@@ -120,7 +120,19 @@ class RiderApicontroller extends Controller
             $value->total_count=$start_count."-".$end_count;
             $value->food_order=$total_food_order;
             $value->parcel_order=$total_parcel_order;
-            $value->peak_time=$peak_parcel_order+$peak_food_order;
+            $peak_food_order=1;
+            $peak_parcel_order=1;
+            if($peak_parcel_order+$peak_food_order!=0){
+                if($peak_parcel_order==0 && $peak_food_order != 0){
+                    $value->peak_time=$peak_food_order."F";
+                }elseif($peak_parcel_order!=0 && $peak_food_order == 0){
+                    $value->peak_time=$peak_parcel_order."P";
+                }else{
+                    $value->peak_time=$peak_parcel_order."P + ".$peak_food_order."F";
+                }
+            }else{
+                $value->peak_time=null;
+            }
 
             $total_food_amount=$food_orders_delivery_fee+($total_food_order*$value->food_benefit)+$peak_food_amount;
             if($value->parcel_benefit==0){
@@ -2684,7 +2696,7 @@ class RiderApicontroller extends Controller
 
         //OrderShow
         $total_amount=(int) CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->sum('rider_delivery_fee');
-        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->paginate(20);
+        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','created_at')->paginate(20);
         $order_list=[];
         $data=[];
         foreach($orders as $value){

@@ -481,6 +481,35 @@
                 <a href="#" class="nav-link">
                     <div class="row">
                         <div style="width: 15%;">
+                            <i class="fas fa-list" aria-hidden="true"></i>
+                        </div>
+                        <div style="width: 50%;">
+                            <p>Benefit</p>
+                        </div>
+                        <div style="width: 35%;text-align: right;">
+                            <i class="right fas fa-angle-left"></i>
+                        </div>
+                    </div>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/rider_benefit')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Benefit List</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('fatty/main/admin/benefit_peak_time')}}" class="nav-link">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            <p>Peak Time</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                    <div class="row">
+                        <div style="width: 15%;">
                             <i class="fa fa-bars" aria-hidden="true"></i>
                         </div>
                         <div style="width: 50%;">
