@@ -2703,7 +2703,7 @@ class RiderApicontroller extends Controller
         $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
 
         //OrderShow
-        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','orer_type')->paginate(20);
+        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(20);
         $order_list=[];
         $data=[];
         $percentage=0;
