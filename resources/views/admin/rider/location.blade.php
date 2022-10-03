@@ -66,7 +66,6 @@ body {
     <script>
         let map;
         let id=document.getElementById('test').value;
-        console.log(id);
 
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {

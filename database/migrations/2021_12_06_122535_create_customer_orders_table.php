@@ -57,6 +57,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->unsignedBigInteger('parcel_type_id')->nullable();
             $table->unsignedBigInteger('from_parcel_city_id')->nullable();
             $table->unsignedBigInteger('to_parcel_city_id')->nullable();
+            $table->unsignedBigInteger('order_start_block_id')->default(0)->nullable();
             $table->bigInteger('total_estimated_weight')->nullable()->default(0);
             $table->bigInteger('item_qty')->nullable()->default(0);
             $table->text('parcel_order_note')->nullable();
@@ -69,12 +70,15 @@ class CreateCustomerOrdersTable extends Migration
             $table->string('order_time')->nullable();
             $table->unsignedBigInteger('order_status_id')->nullable();
             $table->longText('restaurant_remark')->nullable();
+            $table->longText('each_order_restaurant_remark')->nullable();
             $table->double('rider_restaurant_distance',10,2)->default(0.00);
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
             $table->tinyInteger('is_review_status')->nullable()->default(0);
             $table->tinyInteger('is_force_assign')->nullable()->default(0);
             $table->tinyInteger('is_admin_completed')->nullable()->default(0);
+            $table->tinyInteger('is_multi_order')->nullable()->default(0);
+            $table->tinyInteger('is_multi_order_cancel')->nullable()->default(0);
             $table->timestamps();
         });
     }

@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
@@ -188,6 +189,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('all_riders_location/hasOrder','Admin\Rider\RiderController@has_order');
     Route::get('all_riders_location/hasNotOrder','Admin\Rider\RiderController@has_not_order');
     Route::get('riders/detail/{rider_id}','Admin\Rider\RiderController@rider_map_detail');
+    Route::get('riders/detail/search/{rider_id}','Admin\Rider\RiderController@rider_map_detail_search');
     Route::get('assign/order/list/{rider_id}','Admin\Rider\RiderController@assign_order_list');
     Route::get('orders/datatable/assign_order_list_ajax/{rider_id}','Admin\Rider\RiderController@assign_order_list_ajax');
     Route::get('orders/assign/{order_id}/{rider_id}','Admin\Rider\RiderController@assign_order_noti');
@@ -540,6 +542,38 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::post('store/parcel_states','Admin\Parcel\ParcelStateController@store')->name('parcel_state.store');;
     Route::post('parcel_states/update/{parcel_state_id}','Admin\Parcel\ParcelStateController@update')->name('parcel_state.update');
     Route::delete('parcel_states/delete/{parcel_states_id}','Admin\Parcel\ParcelStateController@destroy')->name('parcel_state.destroy');
+
+    //multi order limit
+    Route::get('multi_order','Admin\Parcel\ParcelBlockController@multi_order_list');
+    Route::post('multi_order/store','Admin\Parcel\ParcelBlockController@multi_order_store')->name('multi_order.store');;
+    Route::post('multi_order/update/{multi_order_limit_id}','Admin\Parcel\ParcelBlockController@multi_order_update')->name('multi_order.update');
+    
+    //Benefit
+    Route::get('rider_benefit','Admin\Order\BenefitController@index');
+    Route::post('rider_benefit/store','Admin\Order\BenefitController@rider_benefit_store')->name('rider_benefit.store');;
+    Route::post('rider_benefit/update/{rider_benefit_id}','Admin\Order\BenefitController@rider_benefit_update')->name('rider_benefit.update');
+    Route::delete('rider_benefit/delete/{rider_benefit_id}','Admin\Order\BenefitController@rider_benefit_destroy')->name('rider_benefit.destroy');
+
+    //benefit peak time
+    Route::get('benefit_peak_time','Admin\Order\BenefitController@peak_index');
+    Route::post('benefit_peak_time/store','Admin\Order\BenefitController@benefit_peak_time_store')->name('benefit_peak_time.store');;
+    Route::post('benefit_peak_time/update/{benefit_peak_time_id}','Admin\Order\BenefitController@benefit_peak_time_update')->name('benefit_peak_time.update');
+    Route::delete('benefit_peak_time/delete/{benefit_peak_time_id}','Admin\Order\BenefitController@benefit_peak_time_destroy')->name('benefit_peak_time.destroy');
+
+    //order_block route
+    Route::get('order_block_route','Admin\Parcel\ParcelBlockController@order_block_route_list');
+    Route::post('order_block_route/store','Admin\Parcel\ParcelBlockController@order_block_route_store')->name('order_block_route.store');;
+    Route::post('order_block_route/update/{order_route_block_id}','Admin\Parcel\ParcelBlockController@order_block_route_update')->name('order_block_route.update');
+    Route::delete('order_block_route/delete/{order_route_block_id}','Admin\Parcel\ParcelBlockController@order_block_route_destroy')->name('order_block_route.destroy');
+    
+    
+    //order_block
+    Route::get('order_block','Admin\Parcel\ParcelBlockController@order_block_list');
+    Route::post('order_block/store','Admin\Parcel\ParcelBlockController@order_block_store')->name('order_block.store');;
+    Route::post('order_block/update/{order_block_id}','Admin\Parcel\ParcelBlockController@order_block_update')->name('order_block.update');
+    Route::delete('order_block/delete/{order_block_id}','Admin\Parcel\ParcelBlockController@order_block_destroy')->name('order_block.destroy');
+   
+
 
     //parcel_block
     Route::get('parcel_block','Admin\Parcel\ParcelBlockController@index');

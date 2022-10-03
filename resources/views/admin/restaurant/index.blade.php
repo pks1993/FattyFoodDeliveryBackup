@@ -109,6 +109,8 @@
                                             <th>LoginPhone</th>
                                             <th>LoginPassword</th>
                                             <th>Percentage</th>
+                                            <th>DefineAmount</th>
+                                            <th>DeliveryFee</th>
                                             <th>Foods</th>
                                             <th>Menus</th>
                                             <th>PreparationTime</th>
@@ -186,6 +188,8 @@
                     {data: 'restaurant_user_phone', name:'restaurant_user_phone',className: "text-center"},
                     {data: 'restaurant_user_password', name:'restaurant_user_password',className: "text-center"},
                     {data: 'percentage', name: 'percentage',className:'text-center', orderable: false, searchable: false},
+                    {data: 'define_amount', name: 'define_amount',className:'text-center', orderable: false, searchable: false},
+                    {data: 'restaurant_delivery_fee', name: 'restaurant_delivery_fee',className:'text-center', orderable: false, searchable: false},
                     {data: 'restaurant_food', name:'restaurant_food',orderable: false,searchable:false,className: "text-center"},
                     {data: 'restaurant_menu', name:'restaurant_menu',orderable: false,searchable:false,className: "text-center"},
                     {data: 'preparation_time', name: 'preparation_time', orderable: false, searchable: false},

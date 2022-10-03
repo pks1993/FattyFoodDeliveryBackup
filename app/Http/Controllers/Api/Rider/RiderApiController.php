@@ -19,10 +19,140 @@ use App\Models\City\ParcelCity;
 use App\Models\City\ParcelBlockList;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use App\Models\Order\BenefitPeakTime;
+use App\Models\Order\RiderBenefit;
 
 
 class RiderApicontroller extends Controller
 {
+    public function rider_benefit(Request $request)
+    {
+        $date=date('Y-m-d 00:00:00');
+        $benefit_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
+        $date=date('Y-m-d 23:59:59');
+        $benefit_end_date=Carbon::parse($date)->endOfMonth()->format('Y-m-d 23:59:59');
+        
+        $peak_time=BenefitPeakTime::orderBy('created_at')->first();
+        $start_time=Carbon::now()->format('Y-m-d');
+        $start_time_one=$start_time." ".$peak_time->start_time_one;
+        $end_time_one=$start_time." ".$peak_time->end_time_one;
+        $start_time_two=$start_time." ".$peak_time->start_time_two;
+        $end_time_two=$start_time." ".$peak_time->end_time_two;
+        $peak_time_amount=$peak_time->peak_time_amount;
+        $peak_time_percentage=$peak_time->peak_time_percentage;
+
+        $rider_id=$request['rider_id'];
+        $total_food_amount=0;
+        $total_parcel_amount=0;
+        $total_food_order=0;
+        $peak_food_order=0;
+        $total_parcel_order=0;
+        $total_amount=0;
+        $total_order=0;
+        $peak_food_order_one=0;
+        $peak_food_order_two=0;
+        $peak_parcel_order_one=0;
+        $peak_parcel_order_two=0;
+        $peak_food_order_amount_one=0;
+        $peak_food_order_amount_two=0;
+        $peak_parcel_order_amount_one=0;
+        $peak_parcel_order_amount_two=0;
+        $peak_food_amount=0;
+        $peak_parcel_amount=0;
+        $peak_food_order_id_one=[];
+        $peak_food_order_id_two=[];
+        $peak_parcel_order_id_one=[];
+        $peak_parcel_order_id_two=[];
+        $total_order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereIn('order_status_id',['7','8','15'])->count();
+        // $check=RiderBenefit::where('start_benefit_count','<=',$total_order)->where('end_benefit_count','>=',$total_order)->first();
+        // if($check){
+        //     $benefit_food_amount=$check->benefit_amount;
+        //     $benefit_parcel_percentage=$check->benefit_percentage;
+        // }else{
+        //     $benefit_food_amount=0;
+        //     $benefit_parcel_percentage=0;
+        // }
+
+        $peak_food_order_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
+        $peak_food_order_id_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->pluck('order_id');
+        $peak_food_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
+        $peak_food_order_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
+        $peak_food_order_id_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->pluck('order_id');
+        $peak_food_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
+        $peak_food_order=$peak_food_order_one+$peak_food_order_two;
+        $peak_food_amount=(($peak_food_order_amount_one)+($peak_food_order_one*$peak_time_amount))+(($peak_food_order_amount_two)+($peak_food_order_two*$peak_time_amount));
+
+        $total_food_order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_food_order_id_one)->whereNotIn('order_id',$peak_food_order_id_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
+        $food_orders_delivery_fee=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_food_order_id_one)->whereNotIn('order_id',$peak_food_order_id_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
+        // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_food_amount)+$peak_food_amount;
+
+        $peak_parcel_order_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->count();
+        $peak_parcel_order_id_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->pluck('order_id');
+        $peak_parcel_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+        $peak_parcel_order_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->count();
+        $peak_parcel_order_id_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->pluck('order_id');
+        $peak_parcel_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+        $peak_parcel_order=$peak_parcel_order_one+$peak_parcel_order_two;
+        if($peak_time_percentage==0){
+            $peak_parcel_order_amount_three=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+            $peak_parcel_order_amount_four=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+            $peak_parcel_amount=($peak_parcel_order_amount_three+$peak_parcel_order_amount_four);
+        }else{
+            $peak_parcel_amount=($peak_parcel_order_amount_one+$peak_parcel_order_amount_two)*$peak_time_percentage/100;
+        }
+
+        $total_parcel_order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_parcel_order_id_one)->whereNotIn('order_id',$peak_parcel_order_id_two)->where('order_status_id',15)->where('order_type','parcel')->count();
+        $order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+
+        // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_food_amount)+$peak_food_amount;
+        // if($benefit_parcel_percentage==0){
+        //     $parcelamount=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+        //     $total_parcel_amount=$parcelamount+$peak_parcel_amount;
+        // }else{
+        //     $total_parcel_amount=($order*$benefit_parcel_percentage/100)+$peak_parcel_amount;
+        // }
+        // $total_amount=$total_parcel_amount+$total_food_amount;
+        $data=[];
+        $rider_benefit=RiderBenefit::select('rider_benefit_id','start_benefit_count','end_benefit_count','benefit_percentage as parcel_benefit','benefit_amount as food_benefit')->whereBetween('benefit_start_date',[$benefit_start_date, $benefit_end_date])->get();
+        foreach($rider_benefit as $value){
+            $start_count=(string)$value->start_benefit_count;
+            $end_count=(string)$value->end_benefit_count;
+            $value->total_count=$start_count."-".$end_count;
+            $value->food_order=$total_food_order;
+            $value->parcel_order=$total_parcel_order;
+            if($peak_parcel_order+$peak_food_order!=0){
+                if($peak_parcel_order==0 && $peak_food_order != 0){
+                    $value->peak_time=$peak_food_order."F";
+                }elseif($peak_parcel_order!=0 && $peak_food_order == 0){
+                    $value->peak_time=$peak_parcel_order."P";
+                }else{
+                    $value->peak_time=$peak_parcel_order."P + ".$peak_food_order."F";
+                }
+            }else{
+                $value->peak_time="0";
+            }
+
+            $total_food_amount=$food_orders_delivery_fee+($total_food_order*$value->food_benefit)+$peak_food_amount;
+            if($value->parcel_benefit==0){
+                $parcelamount=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+                $total_parcel_amount=$parcelamount+$peak_parcel_amount;
+            }else{
+                $total_parcel_amount=($order*$value->parcel_benefit/100)+$peak_parcel_amount;
+            }
+            $value->reward=$total_parcel_amount+$total_food_amount;
+
+            if($start_count <= $total_order && $end_count >= $total_order ){
+                $value->is_target=1;
+                $total_amount=$total_parcel_amount+$total_food_amount;;
+            }else{
+                $value->is_target=0;
+            }
+            array_push($data,$value);
+        }
+        return response()->json(['par_amount'=>$total_parcel_amount,'success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
+        // return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_food_order'=>$total_food_order,'peak_food_order'=>$peak_food_order,'total_parcel_order'=>$total_parcel_order,'peak_parcel_order'=>$peak_parcel_order,'check'=>$check]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -382,7 +512,7 @@ class RiderApicontroller extends Controller
             $rider_longitude=$rider_check->rider_longitude;
 
             if($check_order){
-                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
+                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign","is_multi_order", "created_at", "updated_at"
                 ,DB::raw("6371 * acos(cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
@@ -398,6 +528,7 @@ class RiderApicontroller extends Controller
                 * sin(radians(customer_orders.to_drop_latitude))) AS rider_todrop_distance"))
                 ->whereIn("order_status_id",["3","4","5","6","10","12","13","14","17"])
                 ->where("rider_id",$rider_id)
+                ->orderBy('created_at','asc')
                 ->get();
 
                 $food_val=[];
@@ -471,7 +602,7 @@ class RiderApicontroller extends Controller
 
                 $noti_order=Notiorder::where('rider_id',$rider_id)->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id')->toArray();
                 if($noti_order){
-                    $noti_rider=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign", "created_at", "updated_at"
+                    $noti_rider=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign","is_multi_order","created_at", "updated_at"
                     ,DB::raw("6371 * acos(cos(radians(customer_orders.customer_address_latitude))
                     * cos(radians(customer_orders.restaurant_address_latitude))
                     * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
@@ -559,10 +690,15 @@ class RiderApicontroller extends Controller
                     $noti_rider=[];
                 }
                 if($check_order){
-                    $order =  array_reverse(array_sort($noti_rider, function ($value) {
-                        return $value['created_at'];
-                    }));
-                    $over_orders=$rider_orders->merge($order);
+                    if($noti_rider){
+                        $over_orders=$noti_rider->merge($rider_orders);
+                    }else{
+                        $over_orders=$rider_orders;
+                    }
+                    // $order =  array_reverse(array_sort($noti_rider, function ($value) {
+                    //     return $value['created_at'];
+                    // }));
+                    // $over_orders=$rider_orders->merge($order);
                     // $orders_array=$over_orders->toArray();
                     // $orders=array_slice($orders_array, 0, $rider_check->max_order);
                 }else{
@@ -1005,6 +1141,217 @@ class RiderApicontroller extends Controller
             return response()->json(['success'=>false,'message'=>'rider id not found!']);
         }
     }
+    
+    
+    public function multi_order_cancel(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $rider_id=$request['rider_id'];
+        $date_start=date('Y-m-d 00:00:00');
+        $date_end=date('Y-m-d 23:59:59');
+
+        $orders=CustomerOrder::where('order_id',$order_id)->where('is_multi_order',1)->first();
+        if($orders){
+            CustomerOrder::find($order_id)->update(['is_multi_order_cancel'=>1,'is_multi_order'=>0]);
+            Rider::find($rider_id)->update(['multi_cancel_count'=>DB::raw('multi_cancel_count+1'),'multi_order_count'=>DB::raw('multi_order_count-1')]);
+            NotiOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->delete();
+
+            if($orders->order_type=="parcel"){
+                $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                ,DB::raw("6371 * acos(cos(radians(" . $orders->from_pickup_latitude . "))
+                * cos(radians(rider_latitude))
+                * cos(radians(rider_longitude) - radians(" . $orders->from_pickup_longitude . "))
+                + sin(radians(" .$orders->from_pickup_latitude. "))
+                * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                ->where('active_inactive_status','1')
+                ->where('is_ban','0')
+                ->where('rider_fcm_token','!=','null')
+                ->where('rider_id','!=',$rider_id)
+                ->get();
+                $rider_fcm_token=[];
+                foreach($riders as $rid){
+                    if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                        $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                        if(empty($check_noti_order)){
+                            NotiOrder::create([
+                                "rider_id"=>$rid->rider_id,
+                                "order_id"=>$order_id,
+                            ]);
+                        }
+                        $rider_fcm_token[] =$rid->rider_fcm_token;
+                    }
+                    if(empty($rider_fcm_token)){
+                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
+                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                            if(empty($check_noti_order)){
+                                NotiOrder::create([
+                                    "rider_id"=>$rid->rider_id,
+                                    "order_id"=>$order_id,
+                                ]);
+                            }
+                            $rider_fcm_token[]=$rid->rider_fcm_token;
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                    }
+                }
+    
+    
+                if($rider_fcm_token){
+                    $rider_client = new Client();
+                    $rider_token=$rider_fcm_token;
+                    $orderId=(string)$order_id;
+                    $orderstatusId=(string)$orders->order_status_id;
+                    $orderType=(string)$orders->order_type;
+                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    if($rider_token){
+                        try{
+                            $rider_client->post($url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Incomed",
+                                        "body_mm"=> "One new order is incomed! Please check it!",
+                                        "title_en"=> "Order Incomed",
+                                        "body_en"=> "One new order is incomed! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "有新订单!请查看！"
+                                    ],
+                                ],
+                            ]);
+                        }catch(ClientException $e){
+                        }
+                    }
+                }
+            }else{
+                //Rider
+                $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                ,DB::raw("6371 * acos(cos(radians(" . $orders->restaurant_address_latitude . "))
+                * cos(radians(rider_latitude))
+                * cos(radians(rider_longitude) - radians(" . $orders->restaurant_address_longitude . "))
+                + sin(radians(" .$orders->restaurant_address_latitude. "))
+                * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                ->where('active_inactive_status','1')
+                ->where('is_ban','0')
+                ->where('rider_fcm_token','!=',null)
+                ->where('rider_id','!=',$rider_id)
+                ->get();
+                $rider_fcm_token=[];
+                foreach($riders as $rid){
+                    if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                        $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                        if(empty($check_noti_order)){
+                            NotiOrder::create([
+                                "rider_id"=>$rid->rider_id,
+                                "order_id"=>$order_id,
+                            ]);
+                        }
+                        $rider_fcm_token[] =$rid->rider_fcm_token;
+                    }
+                    if(empty($rider_fcm_token)){
+                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
+                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                            if(empty($check_noti_order)){
+                                NotiOrder::create([
+                                    "rider_id"=>$rid->rider_id,
+                                    "order_id"=>$order_id,
+                                ]);
+                            }
+                            $rider_fcm_token[]=$rid->rider_fcm_token;
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                                $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                if(empty($check_noti_order)){
+                                    NotiOrder::create([
+                                        "rider_id"=>$rid->rider_id,
+                                        "order_id"=>$order_id,
+                                    ]);
+                                }
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                        }
+                    }
+                }
+                if($rider_fcm_token){
+                    $rider_client = new Client();
+                    $rider_token=$rider_fcm_token;
+                    $orderId=(string)$order_id;
+                    $orderstatusId=(string)$orders->order_status_id;
+                    $orderType=(string)$orders->order_type;
+                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    if($rider_token){
+                        try{
+                            $rider_client->post($url,[
+                                'json' => [
+                                    "to"=>$rider_token,
+                                    "data"=> [
+                                        "type"=> "new_order",
+                                        "order_id"=>$orderId,
+                                        "order_status_id"=>$orderstatusId,
+                                        "order_type"=>$orderType,
+                                        "title_mm"=> "Order Incomed",
+                                        "body_mm"=> "One new order is incomed! Please check it!",
+                                        "title_en"=> "Order Incomed",
+                                        "body_en"=> "One new order is incomed! Please check it!",
+                                        "title_ch"=> "订单通知",
+                                        "body_ch"=> "有新订单!请查看！"
+                                    ],
+                                ],
+                            ]);
+                        }catch(ClientException $e){
+                        }
+                    }
+                }
+            }
+        
+            return response()->json(['success'=>true,'message'=>"rider multi cancel data"]);
+        }else{
+            return response()->json(['success'=>true,'message'=>"Error this orders is not multi order"]);
+        }
+
+
+    }
+
+    
 
     public function order_status(Request $request)
     {
@@ -1019,8 +1366,26 @@ class RiderApicontroller extends Controller
 
         if(!empty($order) && !empty($rider)){
             if(($order->rider_id == null && ($order->order_status_id==3 || $order->order_status_id==5 || $order->order_status_id==11)) || $order->rider_id==$rider_id){
-                $check_order=CustomerOrder::where('order_id',$order_id)->first();
-                if($check_order->rider_id==null || $check_order->rider_id==$rider_id){
+                // $check_order=CustomerOrder::where('order_id',$order_id)->first();
+                // if($check_order->rider_id==null || $check_order->rider_id==$rider_id){
+                //     $order->rider_id=$rider->rider_id;
+                //     $order->rider_address_latitude=$rider->rider_latitude;
+                //     $order->rider_address_longitude=$rider->rider_longitude;
+                //     $order->order_status_id=$order_status_id;
+                //     $order->update();
+                // }else{
+                //     return response()->json(['success'=>false,'message'=>'this order get other rider']);
+                // }
+
+                $check_order_first=CustomerOrder::where('order_id',$order_id)->whereNull('rider_id')->first();
+                $check_order_two=CustomerOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->first();
+                if($check_order_first){
+                    $order->rider_id=$rider->rider_id;
+                    $order->rider_address_latitude=$rider->rider_latitude;
+                    $order->rider_address_longitude=$rider->rider_longitude;
+                    $order->order_status_id=$order_status_id;
+                    $order->update();
+                }elseif($check_order_two){
                     $order->rider_id=$rider->rider_id;
                     $order->rider_address_latitude=$rider->rider_latitude;
                     $order->rider_address_longitude=$rider->rider_longitude;
@@ -1029,25 +1394,26 @@ class RiderApicontroller extends Controller
                 }else{
                     return response()->json(['success'=>false,'message'=>'this order get other rider']);
                 }
+
                 // $check_order_first=CustomerOrder::where('order_id',$order_id)->whereNull('rider_id')->first();
                 // if($check_order_first){
                 //     $check_order_first->rider_id=$rider_id;
                 //     $check_order_first->rider_address_latitude=$rider->rider_latitude;
                 //     $check_order_first->rider_address_longitude=$rider->rider_longitude;
+                //     $check_order_first->order_status_id=$order_status_id;
                 //     $check_order_first->update();
                 // }else{
-                //     return response()->json(['success'=>false,'message'=>'this order get other rider']);
+                //     $check_order_two=CustomerOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->first();
+                //     if($check_order_two){
+                //         $check_order_two->rider_address_latitude=$rider->rider_latitude;
+                //         $check_order_two->rider_address_longitude=$rider->rider_longitude;
+                //         $check_order_two->order_status_id=$order_status_id;
+                //         $check_order_two->update();
+                //     }else{
+                //         return response()->json(['success'=>false,'message'=>'this order get other rider']);
+                //     }
                 // }
 
-                // $check_order_two=CustomerOrder::where('order_id',$order_id)->where('rider_id',$rider_id)->first();
-                // if($check_order_two){
-                //     $check_order_two->rider_address_latitude=$rider->rider_latitude;
-                //     $check_order_two->rider_address_longitude=$rider->rider_longitude;
-                //     $check_order_two->order_status_id=$order_status_id;
-                //     $check_order_two->update();
-                // }else{
-                //     return response()->json(['success'=>false,'message'=>'this order get other rider']);
-                // }
 
 
                 CustomerOrderHistory::create([
@@ -1060,8 +1426,12 @@ class RiderApicontroller extends Controller
                 $orderType=(string)$order->order_type;
 
                 if($order_status_id=="4"){
+                    // if($order->is_multi_order==1){
+                    //     $rider->multi_order_count=$rider->multi_order_count+1;
+                    // }
                     $rider->is_order=1;
                     $rider->update();
+
                     NotiOrder::where('order_id',$order_id)->delete();
                     //for rider
                     $rider_client = new Client();
@@ -1315,10 +1685,15 @@ class RiderApicontroller extends Controller
                     if($check_order){
                         $rider->is_order=1;
                         $rider->exist_order=($rider->exist_order)-1;
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }else{
                         $rider->is_order=0;
-                        $rider->exist_order=($rider->exist_order)-1;
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
@@ -1427,6 +1802,9 @@ class RiderApicontroller extends Controller
                     ]);
 
                 }elseif($order_status_id=="12"){
+                    // if($order->is_multi_order==1){
+                    //     $rider->multi_order_count=$rider->multi_order_count + 1;
+                    // }
                     $rider->is_order=1;
                     $rider->update();
                     NotiOrder::where('order_id',$order_id)->delete();
@@ -1679,10 +2057,16 @@ class RiderApicontroller extends Controller
                     if($check_order){
                         $rider->is_order=1;
                         $rider->exist_order=($rider->exist_order)-1;
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }else{
                         $rider->is_order=0;
                         $rider->exist_order=($rider->exist_order)-1;
+                        // if($check_order->is_multi_order==1){
+                        //     $rider->multi_order_count=($rider->multi_order_count)-1;
+                        // }
                         $rider->update();
                     }
                     NotiOrder::where('order_id',$order_id)->delete();
@@ -2172,9 +2556,49 @@ class RiderApicontroller extends Controller
         $to_date_one=$request['to_date'];
         $from_date=date('Y-m-d 00:00:00', strtotime($from_date_one));
         $to_date=date('Y-m-d 23:59:59', strtotime($to_date_one));
+        $payment_type=$request['payment_type'];
+        $customer_type=$request['customer_type'];
+        $total_amount=0;
 
         if(!empty($order_type)){
-            $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
+	        if($payment_type == 0){
+                if($customer_type ==0){
+                    if($from_date_one){
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
+                        $total_amount=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');
+                    }else{
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
+                        $total_amount=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');
+                    }
+                }else{
+                    if($from_date_one){
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
+                        $total_amount=CustomerOrder::with(['order_status','customer','rider','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');
+                    }else{
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
+                        $total_amount=CustomerOrder::with(['order_status','customer','rider','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');
+                    }
+                }
+            }else{
+                if($customer_type == 0){
+                    if($from_date_one){
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);    
+                        $total_amount=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');    
+                    }else{
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);    
+                        $total_amount=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');    
+                    }
+                }else{
+                    if($from_date_one){
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->has('customer')->paginate(20);
+                        $total_amount=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->has('customer')->sum('bill_total_price');
+                    }else{
+                        $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
+                        $total_amount=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->whereHas('customer', function ($q) use ($customer_type) {$q->where('customer_type_id',$customer_type);})->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('rider_id',$rider_id)->where('order_type',$order_type)->where('payment_method_id',$payment_type)->whereIn('order_status_id',['7','8','9','15','16'])->sum('bill_total_price');
+                    }
+                }
+            }
+           // $orders=CustomerOrder::with(['order_status','rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','customer_address_phone','restaurant_address_latitude','restaurant_address_longitude','rider_address_latitude','rider_address_longitude','order_type','from_sender_name','from_sender_phone','from_pickup_address','from_pickup_latitude','from_pickup_longitude','to_recipent_name','to_recipent_phone','to_drop_address','to_drop_latitude','to_drop_longitude','parcel_type_id','total_estimated_weight','item_qty','parcel_order_note',"to_drop_note","from_parcel_city_id","to_parcel_city_id","from_pickup_note","rider_parcel_block_note","rider_parcel_address",'parcel_extra_cover_id','payment_method_id','order_status_id','order_time','city_id','state_id','is_review_status',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id',$rider_id)->where('order_type',$order_type)->whereIn('order_status_id',['7','8','9','15','16'])->paginate(20);
             $food_val=[];
                 foreach($orders as $value1){
                     $distance1=$value1->distance;
@@ -2232,7 +2656,7 @@ class RiderApicontroller extends Controller
                 }else{
                     $orders_history_list=[];
                 }
-            return response()->json(['success'=>true,'message'=>'this is rider orders history','data_count'=>$orders->count(),'data'=>$orders_history_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]);
+            return response()->json(['success'=>true,'message'=>'this is rider orders history','total_amount'=>$total_amount,'data_count'=>$orders->count(),'data'=>$orders_history_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]);
         }else{
             return response()->json(['success'=>false,'message'=>'Error! order_type is empty']);
         }
@@ -2257,19 +2681,80 @@ class RiderApicontroller extends Controller
         $next_date=$request['end_date'];
         $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+        $total_amount=0;
 
+        $peak_time=BenefitPeakTime::orderBy('created_at')->first();
+        $start_time=Carbon::now()->format('Y-m-d');
+        $start_time_one=$start_time." ".$peak_time->start_time_one;
+        $end_time_one=$start_time." ".$peak_time->end_time_one;
+        $start_time_two=$start_time." ".$peak_time->start_time_two;
+        $end_time_two=$start_time." ".$peak_time->end_time_two;
+        $peak_time_amount=$peak_time->peak_time_amount;
+        $peak_time_percentage=$peak_time->peak_time_percentage;
+        
+
+        $date=date('Y-m-d 00:00:00');
+        $benefit_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
+        $date1=date('Y-m-d 23:59:59');
+        $benefit_end_date=Carbon::parse($date1)->endOfMonth()->format('Y-m-d 23:59:59');
+        
         $today_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get();
         $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeLocalString())->get();
         $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
 
         //OrderShow
-        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee')->paginate(20);
+        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(20);
         $order_list=[];
+        $data=[];
+        $percentage=0;
+        $benefit_amount=0;
+        $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','created_at','order_type')->count();
+        $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$benefit_start_date, $benefit_end_date])->get();
+        foreach($rider_benefit as $item){
+            if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
+                $percentage=$item->benefit_percentage;
+                $benefit_amount=$item->benefit_amoun;
+            }
+        }
+        $foodamount=(int) CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8'])->where('order_type','food')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->sum('rider_delivery_fee');
+        $parcel_amount=(int) CustomerOrder::where('rider_id',$rider_id)->where('order_status_id',15)->where('order_type','parcel')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->sum('bill_total_price');
+        if($percentage==0){
+            $total_amount=(int)CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->sum('rider_delivery_fee');
+        }else{
+            $total_amount=($foodamount+$benefit_amount)+($parcel_amount*$percentage/100);
+        }
+        
         foreach($orders as $value){
+            // $peak_parcel_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+            // $peak_parcel_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');        
+            if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
+                if($value->order_type=="parcel"){
+                    $value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
+                }else{
+                    $value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
+                }
+            }else{
+                if($value->order_type=="parcel"){
+                    if($percentage==0){
+                        $value->rider_delivery_fee=$value->rider_delivery_fee;
+                    }else{
+                        $value->rider_delivery_fee=$value->bill_total_price*($percentage/100);
+                    }
+                }else{
+                    $value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
+                }
+            }
+            
             $order_list[]=$value;
+            if($value->created_at >= $benefit_start_date || $value->created_at <= $benefit_end_date){
+                $value->is_estimated=1;
+            }else{
+                $value->is_estimated=0;
+            }
+            array_push($data,$value);
         }
 
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
     }
     public function rider_getBilling(Request $request)
     {

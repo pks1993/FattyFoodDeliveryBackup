@@ -83,7 +83,7 @@
                                         <th>DeliFeeRider</th>
                                         <th>DeliFeeCustomer</th>
                                         <th>TotalPrice</th>
-                                        <th>PaymentMethod</th>
+                                        <th>PaymentType</th>
                                         <th>Detail</th>
                                         <th>Pending</th>
                                         <th>Complete</th>
@@ -91,7 +91,7 @@
                                 </thead>
                                 <tbody>
                                 @foreach ($orders as $item)
-                                    <tr>
+                                    <tr style="text-align: center;">
                                         <td>{{ $loop->iteration }}</td>
                                         <td>
                                             @if($item->order_status_id=='1')
@@ -175,11 +175,11 @@
                                         <td>{{ $item->bill_total_price }}</td>
                                         <td class="text-left">
                                             @if($item->payment_method_id==1)
-                                                <span class="btn btn-sm btn-primary">{{ "Cash_On_Delivery" }}</span>
+                                                <span class="btn btn-sm btn-primary" style="width: 100%;">{{ "Cash_On_Delivery" }}</span>
                                             @elseif($item->payment_method_id==2)
-                                                <span class="btn btn-sm btn-success">{{ "Kpay" }}</span>
+                                                <span class="btn btn-sm btn-success" style="width: 100%;">{{ "Kpay" }}</span>
                                             @else
-                                                <span class="btn btn-sm btn-secondary">{{ "Empty" }}</span>
+                                                <span class="btn btn-sm btn-secondary" style="width: 100%;">{{ "Empty" }}</span>
                                             @endif
                                         </td>
                                         <td>

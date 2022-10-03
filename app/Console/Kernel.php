@@ -681,9 +681,9 @@ class Kernel extends ConsoleKernel
 
         $date_start=date('Y-m-d 00:00:00');
         $date_end=date('Y-m-d 23:59:59');
-        $customer_check=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->orderBy('order_id','desc')->first();
+        $customer_check=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->where('is_multi_order',0)->orderBy('order_id','desc')->first();
         if($customer_check){
-            $data = CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->orderBy('order_id','desc')->get();
+            $data = CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->whereNull('rider_id')->whereNotIn('order_status_id',['1','2','7','8','9','15','16','18','20'])->where('is_multi_order',0)->orderBy('order_id','desc')->get();
             foreach ($data as $value) {
                 $restaurant_address_latitude=$value['restaurant_address_latitude'];
                 $restaurant_address_longitude=$value['restaurant_address_longitude'];
