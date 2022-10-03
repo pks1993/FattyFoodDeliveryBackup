@@ -129,7 +129,7 @@ class RiderApicontroller extends Controller
                     $value->peak_time=$peak_parcel_order."P + ".$peak_food_order."F";
                 }
             }else{
-                $value->peak_time=null;
+                $value->peak_time=0;
             }
 
             $total_food_amount=$food_orders_delivery_fee+($total_food_order*$value->food_benefit)+$peak_food_amount;
