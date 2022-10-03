@@ -120,8 +120,6 @@ class RiderApicontroller extends Controller
             $value->total_count=$start_count."-".$end_count;
             $value->food_order=$total_food_order;
             $value->parcel_order=$total_parcel_order;
-            $peak_food_order=1;
-            $peak_parcel_order=1;
             if($peak_parcel_order+$peak_food_order!=0){
                 if($peak_parcel_order==0 && $peak_food_order != 0){
                     $value->peak_time=$peak_food_order."F";
