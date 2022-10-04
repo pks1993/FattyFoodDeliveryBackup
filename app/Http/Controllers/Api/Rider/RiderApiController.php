@@ -2711,6 +2711,7 @@ class RiderApicontroller extends Controller
         $peak_parcel_amount=0;
         $total_food_amount=0;
         $total_parcel_amount=0;
+        $total_amount=0;
         $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','created_at','order_type')->count();
         $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$benefit_start_date, $benefit_end_date])->get();
         foreach($rider_benefit as $item){
@@ -2763,26 +2764,27 @@ class RiderApicontroller extends Controller
         }
 
         $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_amount)+$peak_food_amount;
-        $total_amount=$total_parcel_amount+$total_food_amount;
+        // $total_amount=$total_parcel_amount+$total_food_amount;
         
         foreach($orders as $value){
-            // $peak_parcel_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
-            // $peak_parcel_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');        
             if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 if($value->order_type=="parcel"){
                     $value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
+                    $total_amount +=$value->bill_total_price*($peak_time_percentage/100);
                 }else{
                     $value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
+                    $total_amount +=$value->rider_delivery_fee+$peak_time_amount;
                 }
             }else{
                 if($value->order_type=="parcel"){
                     if($percentage==0){
                         $value->rider_delivery_fee=$value->rider_delivery_fee;
+                        $total_amount +=$value->rider_delivery_fee;
                     }else{
-                        $value->rider_delivery_fee=$value->bill_total_price*($percentage/100);
+                        $total_amount +=$value->bill_total_price*($percentage/100);
                     }
                 }else{
-                    $value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
+                    $total_amount +=$value->rider_delivery_fee+$benefit_amount;
                 }
             }
             
