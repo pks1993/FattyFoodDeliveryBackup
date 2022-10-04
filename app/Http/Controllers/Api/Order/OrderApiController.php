@@ -1497,7 +1497,8 @@ class OrderApiController extends Controller
                 if($cancel_data){
                     foreach($cancel_data as $value){
                         OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
-                        $price +=$value['food_qty']*$value['food_price'];
+                        // $price +=$value['food_qty']*$value['food_price'];
+                        $price +=$value['food_price'];
                     }
                     CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
                 }
