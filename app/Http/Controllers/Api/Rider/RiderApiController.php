@@ -2764,33 +2764,28 @@ class RiderApicontroller extends Controller
         }
 
         $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_amount)+$peak_food_amount;
-        // $total_amount=$total_parcel_amount+$total_food_amount;
+        $total_amount=$total_parcel_amount+$total_food_amount;
         
         foreach($orders as $value){
             if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 if($value->order_type=="parcel"){
                     $value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
-                    $total_deli_price=$value->bill_total_price*($peak_time_percentage/100);
                 }else{
                     $value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
-                    $total_deli_price=$value->rider_delivery_fee+$peak_time_amount;
                 }
             }else{
                 if($value->order_type=="parcel"){
                     if($percentage==0){
                         $value->rider_delivery_fee=$value->rider_delivery_fee;
-                        $total_deli_price=$value->rider_delivery_fee;
+
                     }else{
                         $value->rider_delivery_fee =$value->bill_total_price*($percentage/100);
-                        $total_deli_price=$value->bill_total_price*($percentage/100);
+
                     }
                 }else{
                     $value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
-                    $total_deli_price=$value->rider_delivery_fee+$benefit_amount;
                 }
             }
-
-            $total_amount += $total_deli_price;
             
             $order_list[]=$value;
             if($value->created_at >= $benefit_start_date || $value->created_at <= $benefit_end_date){
@@ -2800,8 +2795,8 @@ class RiderApicontroller extends Controller
             }
             array_push($data,$value);
         }
-
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
+        
+        return response()->json(['parcel'=>$total_parcel_amount,'food'=>$total_food_amount,'success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
     }
     public function rider_getBilling(Request $request)
     {
