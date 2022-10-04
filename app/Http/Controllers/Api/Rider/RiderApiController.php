@@ -2762,6 +2762,7 @@ class RiderApicontroller extends Controller
             $total_parcel_amount=$total_parcelamount+$peak_parcel_amount;
         }else{
             $total_parcel_amount=($order*$percentage/100)+$peak_parcel_amount;
+            $test=$order*$percentage/100;
         }
         $benefit1=($total_food_order*$benefit_amount);
         $benefit=$food_orders_delivery_fee;
@@ -2798,7 +2799,7 @@ class RiderApicontroller extends Controller
             array_push($data,$value);
         }
         
-        return response()->json(['total_parcelamount'=>$total_parcelamount,'peak_parcel_amount'=>$peak_parcel_amount,'total_parcel_amount'=>$total_parcel_amount,'success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
+        return response()->json(['test'=>$test,'total_parcelamount'=>$total_parcelamount,'peak_parcel_amount'=>$peak_parcel_amount,'total_parcel_amount'=>$total_parcel_amount,'success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
     }
     public function rider_getBilling(Request $request)
     {
