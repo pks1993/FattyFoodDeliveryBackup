@@ -2781,9 +2781,11 @@ class RiderApicontroller extends Controller
                         $value->rider_delivery_fee=$value->rider_delivery_fee;
                         $total_amount +=$value->rider_delivery_fee;
                     }else{
+                        $value->rider_delivery_fee =$value->bill_total_price*($percentage/100);
                         $total_amount +=$value->bill_total_price*($percentage/100);
                     }
                 }else{
+                    $value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
                     $total_amount +=$value->rider_delivery_fee+$benefit_amount;
                 }
             }
