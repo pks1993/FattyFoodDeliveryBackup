@@ -2711,6 +2711,7 @@ class RiderApicontroller extends Controller
         $peak_parcel_amount=0;
         $total_food_amount=0;
         $total_parcel_amount=0;
+        $total_parcelamount=0;
         $total_amount=0;
         $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','created_at','order_type')->count();
         $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$benefit_start_date, $benefit_end_date])->get();
