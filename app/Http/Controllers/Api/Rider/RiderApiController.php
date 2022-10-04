@@ -2770,25 +2770,27 @@ class RiderApicontroller extends Controller
             if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 if($value->order_type=="parcel"){
                     $value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
-                    $total_amount +=$value->bill_total_price*($peak_time_percentage/100);
+                    $total_deli_price=$value->bill_total_price*($peak_time_percentage/100);
                 }else{
                     $value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
-                    $total_amount +=$value->rider_delivery_fee+$peak_time_amount;
+                    $total_deli_price=$value->rider_delivery_fee+$peak_time_amount;
                 }
             }else{
                 if($value->order_type=="parcel"){
                     if($percentage==0){
                         $value->rider_delivery_fee=$value->rider_delivery_fee;
-                        $total_amount +=$value->rider_delivery_fee;
+                        $total_deli_price=$value->rider_delivery_fee;
                     }else{
                         $value->rider_delivery_fee =$value->bill_total_price*($percentage/100);
-                        $total_amount +=$value->bill_total_price*($percentage/100);
+                        $total_deli_price=$value->bill_total_price*($percentage/100);
                     }
                 }else{
                     $value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
-                    $total_amount +=$value->rider_delivery_fee+$benefit_amount;
+                    $total_deli_price=$value->rider_delivery_fee+$benefit_amount;
                 }
             }
+
+            $total_amount += $total_deli_price;
             
             $order_list[]=$value;
             if($value->created_at >= $benefit_start_date || $value->created_at <= $benefit_end_date){
