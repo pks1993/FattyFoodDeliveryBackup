@@ -2756,7 +2756,7 @@ class RiderApicontroller extends Controller
             $peak_parcel_amount=($peak_parcel_order_amount_one+$peak_parcel_order_amount_two)*$peak_time_percentage/100;
         }
 
-        $order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+        $order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_parcel_order_id_one)->whereNotIn('order_id',$peak_parcel_order_id_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
         if($percentage==0){
             $total_parcelamount=(int)CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['15'])->where('order_type','parcel')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->sum('rider_delivery_fee');
             $total_parcel_amount=$total_parcelamount+$peak_parcel_amount;
