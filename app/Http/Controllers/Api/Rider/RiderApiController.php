@@ -2791,7 +2791,7 @@ class RiderApicontroller extends Controller
 
             $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
             $start_time_one=$start_time." ".$peak_time->start_time_one;
-            $start_time_one=Carbon::parse($start_time_one)->format('Y-m-d H:i:s');
+            // $start_time_one=Carbon::parse($start_time_one)->format('Y-m-d H:i:s');
             $end_time_one=$start_time." ".$peak_time->end_time_one;
             $start_time_two=$start_time." ".$peak_time->start_time_two;
             $end_time_two=$start_time." ".$peak_time->end_time_two;
@@ -2800,16 +2800,13 @@ class RiderApicontroller extends Controller
             $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30); //set time to 10:00
             $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30); //set time to 10:00
             $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30); //set time to 10:00
-            $start_time_one = Carbon::parse($start_time_one)->format('g:i A'); //set time to 10:00
-            $end_time_one = Carbon::parse($end_time_one)->format('g:i A'); //set time to 10:00
-            $start_time_two = Carbon::parse($start_time_two)->format('g:i A'); //set time to 10:00
-            $end_time_two = Carbon::parse($end_time_two)->format('g:i A'); //set time to 10:00
             $value->start_time_one=$start_time_one;
             $value->end_time_one=$end_time_one;
             $value->start_time_two=$start_time_two;
             $value->end_time_two=$end_time_two;
             
-            if((Carbon::parse($value->created_at)->format('g:i A') >= $start_time_one && Carbon::parse($value->created_at)->format('g:i A') <= $end_time_one) || (Carbon::parse($value->created_at)->format('g:i A') >= $start_time_two && Carbon::parse($value->created_at)->format('g:i A') <= $end_time_two)){
+            // if((Carbon::parse($value->created_at)->format('g:i A') >= $start_time_one && Carbon::parse($value->created_at)->format('g:i A') <= $end_time_one) || (Carbon::parse($value->created_at)->format('g:i A') >= $start_time_two && Carbon::parse($value->created_at)->format('g:i A') <= $end_time_two)){
+            if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 $value->check="yes";
                 if($value->order_type=="parcel"){
                     $deli=$value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
