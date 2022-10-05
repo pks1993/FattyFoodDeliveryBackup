@@ -21,6 +21,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use App\Models\Order\BenefitPeakTime;
 use App\Models\Order\RiderBenefit;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+
 
 
 class RiderApicontroller extends Controller
@@ -2692,87 +2694,68 @@ class RiderApicontroller extends Controller
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
         $total_amount=0;
 
-        // $peak_time=BenefitPeakTime::orderBy('created_at')->first();
-        // $start_time=Carbon::now()->format('Y-m-d');
-        // $start_time_one=$start_time." ".$peak_time->start_time_one;
-        // $end_time_one=$start_time." ".$peak_time->end_time_one;
-        // $start_time_two=$start_time." ".$peak_time->start_time_two;
-        // $end_time_two=$start_time." ".$peak_time->end_time_two;
-        // $peak_time_amount=$peak_time->peak_time_amount;
-        // $peak_time_percentage=$peak_time->peak_time_percentage;
-        
-
-        // $date=date('Y-m-d 00:00:00');
-        // $benefit_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
-        // $date1=date('Y-m-d 23:59:59');
-        // $benefit_end_date=Carbon::parse($date1)->endOfMonth()->format('Y-m-d 23:59:59');
-        
         $today_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get();
         $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeLocalString())->get();
         $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
 
-        //OrderShow
-        // $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(20);
-        // $order_list=[];
-        // $data=[];
-        // $percentage=0;
-        // $benefit_amount=0;
-        // $total_amount=0;
-        // $peak_parcel_amount=0;
-        // $total_food_amount=0;
-        // $total_parcel_amount=0;
-        // $total_parcelamount=0;
-        // $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','created_at','order_type')->count();
-        // $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$benefit_start_date, $benefit_end_date])->get();
-        // foreach($rider_benefit as $item){
-        //     if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
-        //         $percentage=$item->benefit_percentage;
-        //         $benefit_amount=$item->benefit_amount;
-        //     }
-        // }
-        
-        // $peak_food_order_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
-        // $peak_food_order_id_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->pluck('order_id');
-        // $peak_food_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
-        // $peak_food_order_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
-        // $peak_food_order_id_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->pluck('order_id');
-        // $peak_food_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
-        // $peak_food_amount=(($peak_food_order_amount_one)+($peak_food_order_one*$peak_time_amount))+(($peak_food_order_amount_two)+($peak_food_order_two*$peak_time_amount));
-
-        // $total_food_order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_food_order_id_one)->whereNotIn('order_id',$peak_food_order_id_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
-        // $food_orders_delivery_fee=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_food_order_id_one)->whereNotIn('order_id',$peak_food_order_id_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
-        // // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_food_amount)+$peak_food_amount;
-
-        // // $peak_parcel_order_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->count();
-        // $peak_parcel_order_id_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->pluck('order_id');
-        // $peak_parcel_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
-        // // $peak_parcel_order_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->count();
-        // $peak_parcel_order_id_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->pluck('order_id');
-        // $peak_parcel_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
-        // // $peak_parcel_order=$peak_parcel_order_one+$peak_parcel_order_two;
-        // if($peak_time_percentage==0){
-        //     $peak_parcel_order_amount_three=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
-        //     $peak_parcel_order_amount_four=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
-        //     $peak_parcel_amount=($peak_parcel_order_amount_three+$peak_parcel_order_amount_four);
-        // }else{
-        //     $peak_parcel_amount=($peak_parcel_order_amount_one+$peak_parcel_order_amount_two)*$peak_time_percentage/100;
-        // }
-
-        // $order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_parcel_order_id_one)->whereNotIn('order_id',$peak_parcel_order_id_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
-        // if($percentage==0){
-        //     $total_parcelamount=(int)CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['15'])->where('order_type','parcel')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->sum('rider_delivery_fee');
-        //     $total_parcel_amount=$total_parcelamount+$peak_parcel_amount;
-        // }else{
-        //     $total_parcel_amount=($order*$percentage/100)+$peak_parcel_amount;
-        // }
-        // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_amount)+$peak_food_amount;
-        // $total_amount=$total_parcel_amount+$total_food_amount;
-        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(30);
+        $orders_all=CustomerOrder::orderBy('created_at','desc')->where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->get();
         $order_list=[];
         $data=[];
         $percentage=0;
         $benefit_amount=0;
         $total_amount=0;
+        foreach($orders_all as $value1){
+            $filter_start_date=Carbon::parse($value1->created_at)->startOfMonth()->format('Y-m-d 00:00:00');
+            $filter_end_date=Carbon::parse($value1->created_at)->endOfMonth()->format('Y-m-d 23:59:59');
+            $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->count();
+            $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$filter_start_date, $filter_end_date])->get();
+            foreach($rider_benefit as $item){
+                if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
+                    $percentage=$item->benefit_percentage;
+                    $benefit_amount=$item->benefit_amount;
+                }
+            }
+            $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','>=',$filter_end_date)->first();
+            if($peak_time==null){
+                $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+            }
+            $peak_time_amount=$peak_time->peak_time_amount;
+            $peak_time_percentage=$peak_time->peak_time_percentage;
+
+            $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+            $start_time_one=$start_time." ".$peak_time->start_time_one;
+            $end_time_one=$start_time." ".$peak_time->end_time_one;
+            $start_time_two=$start_time." ".$peak_time->start_time_two;
+            $end_time_two=$start_time." ".$peak_time->end_time_two;
+
+            $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
+            $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
+            $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
+            $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
+            
+            if(($value1->created_at >= $start_time_one && $value1->created_at <= $end_time_one) || ($value1->created_at >= $start_time_two && $value1->created_at <= $end_time_two)){
+                $value1->check="yes";
+                if($value1->order_type=="parcel"){
+                    $deli=$value1->rider_delivery_fee=$value1->bill_total_price*($peak_time_percentage/100);
+                }else{
+                    $deli=$value1->rider_delivery_fee=$value1->rider_delivery_fee+$peak_time_amount;
+                }
+            }else{
+                $value1->check="no";
+                if($value1->order_type=="parcel"){
+                    if($percentage==0){
+                        $deli=$value1->rider_delivery_fee=$value1->rider_delivery_fee;
+                    }else{
+                        $deli=$value1->rider_delivery_fee =$value1->bill_total_price*($percentage/100);
+                    }
+                }else{
+                    $deli=$value1->rider_delivery_fee=$value1->rider_delivery_fee+$benefit_amount;
+                }
+            }
+            $total_amount += $deli;
+        }
+
+        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(30);
         foreach($orders as $value){
             $date=date('Y-m-d 00:00:00');
             $current_month_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
@@ -2833,7 +2816,7 @@ class RiderApicontroller extends Controller
                     $deli=$value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
                 }
             }
-            $total_amount += $deli;
+            // $total_amount += $deli;
             
             $order_list[]=$value;
             if($value->created_at >= $current_month_start_date || $value->created_at <= $current_month_end_date){
@@ -2843,9 +2826,241 @@ class RiderApicontroller extends Controller
             }
             array_push($data,$value);
         }
+
+        // $total=count($orders);
+        // $per_page =20;
+        // $current_page = $request->input("page") ?? 1;
+        // $starting_point = ($current_page * $per_page) - $per_page;
+        // $array = $orders->toArray();
+        // $array = array_slice($array, $starting_point, $per_page, true);
+
+        // $orders = new Paginator($array, $total, $per_page, $current_page, [
+        //     'path' => $request->url(),
+        //     'query' => $request->query(),
+        // ]);
+        // $order_list=$orders;
         
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
     }
+    // public function rider_getBilling_list(Request $request)
+    // {
+    //     $rider_id=$request['rider_id'];
+    //     $current_date=$request['start_date'];
+    //     $next_date=$request['end_date'];
+    //     $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
+    //     $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
+    //     $total_amount=0;
+
+    //     // $peak_time=BenefitPeakTime::orderBy('created_at')->first();
+    //     // $start_time=Carbon::now()->format('Y-m-d');
+    //     // $start_time_one=$start_time." ".$peak_time->start_time_one;
+    //     // $end_time_one=$start_time." ".$peak_time->end_time_one;
+    //     // $start_time_two=$start_time." ".$peak_time->start_time_two;
+    //     // $end_time_two=$start_time." ".$peak_time->end_time_two;
+    //     // $peak_time_amount=$peak_time->peak_time_amount;
+    //     // $peak_time_percentage=$peak_time->peak_time_percentage;
+        
+
+    //     // $date=date('Y-m-d 00:00:00');
+    //     // $benefit_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
+    //     // $date1=date('Y-m-d 23:59:59');
+    //     // $benefit_end_date=Carbon::parse($date1)->endOfMonth()->format('Y-m-d 23:59:59');
+        
+    //     $today_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get();
+    //     $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeLocalString())->get();
+    //     $this_month_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeLocalString())->get();
+
+    //     //OrderShow
+    //     // $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(20);
+    //     // $order_list=[];
+    //     // $data=[];
+    //     // $percentage=0;
+    //     // $benefit_amount=0;
+    //     // $total_amount=0;
+    //     // $peak_parcel_amount=0;
+    //     // $total_food_amount=0;
+    //     // $total_parcel_amount=0;
+    //     // $total_parcelamount=0;
+    //     // $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','created_at','order_type')->count();
+    //     // $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$benefit_start_date, $benefit_end_date])->get();
+    //     // foreach($rider_benefit as $item){
+    //     //     if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
+    //     //         $percentage=$item->benefit_percentage;
+    //     //         $benefit_amount=$item->benefit_amount;
+    //     //     }
+    //     // }
+        
+    //     // $peak_food_order_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
+    //     // $peak_food_order_id_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->pluck('order_id');
+    //     // $peak_food_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
+    //     // $peak_food_order_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
+    //     // $peak_food_order_id_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->pluck('order_id');
+    //     // $peak_food_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
+    //     // $peak_food_amount=(($peak_food_order_amount_one)+($peak_food_order_one*$peak_time_amount))+(($peak_food_order_amount_two)+($peak_food_order_two*$peak_time_amount));
+
+    //     // $total_food_order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_food_order_id_one)->whereNotIn('order_id',$peak_food_order_id_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->count();
+    //     // $food_orders_delivery_fee=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_food_order_id_one)->whereNotIn('order_id',$peak_food_order_id_two)->whereIn('order_status_id',['7','8'])->where('order_type','food')->sum('rider_delivery_fee');
+    //     // // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_food_amount)+$peak_food_amount;
+
+    //     // // $peak_parcel_order_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->count();
+    //     // $peak_parcel_order_id_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->pluck('order_id');
+    //     // $peak_parcel_order_amount_one=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+    //     // // $peak_parcel_order_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->count();
+    //     // $peak_parcel_order_id_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->pluck('order_id');
+    //     // $peak_parcel_order_amount_two=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+    //     // // $peak_parcel_order=$peak_parcel_order_one+$peak_parcel_order_two;
+    //     // if($peak_time_percentage==0){
+    //     //     $peak_parcel_order_amount_three=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_one)->whereTime('created_at','<',$end_time_one)->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+    //     //     $peak_parcel_order_amount_four=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereTime('created_at','>',$start_time_two)->whereTime('created_at','<',$end_time_two)->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+    //     //     $peak_parcel_amount=($peak_parcel_order_amount_three+$peak_parcel_order_amount_four);
+    //     // }else{
+    //     //     $peak_parcel_amount=($peak_parcel_order_amount_one+$peak_parcel_order_amount_two)*$peak_time_percentage/100;
+    //     // }
+
+    //     // $order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_parcel_order_id_one)->whereNotIn('order_id',$peak_parcel_order_id_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+    //     // if($percentage==0){
+    //     //     $total_parcelamount=(int)CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['15'])->where('order_type','parcel')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->sum('rider_delivery_fee');
+    //     //     $total_parcel_amount=$total_parcelamount+$peak_parcel_amount;
+    //     // }else{
+    //     //     $total_parcel_amount=($order*$percentage/100)+$peak_parcel_amount;
+    //     // }
+    //     // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_amount)+$peak_food_amount;
+    //     // $total_amount=$total_parcel_amount+$total_food_amount;
+    //     $orders1=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->get();
+    //     $order_list=[];
+    //     $data=[];
+    //     $percentage=0;
+    //     $benefit_amount=0;
+    //     $total_amount=0;
+    //     foreach($orders1 as $value){
+    //         $filter_start_date=Carbon::parse($value->created_at)->startOfMonth()->format('Y-m-d 00:00:00');
+    //         $filter_end_date=Carbon::parse($value->created_at)->endOfMonth()->format('Y-m-d 23:59:59');
+    //         $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->count();
+    //         $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$filter_start_date, $filter_end_date])->get();
+    //         foreach($rider_benefit as $item){
+    //             if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
+    //                 $percentage=$item->benefit_percentage;
+    //                 $benefit_amount=$item->benefit_amount;
+    //             }
+    //         }
+    //         $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','>=',$filter_end_date)->first();
+    //         if($peak_time==null){
+    //             $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+    //         }
+    //         $peak_time_amount=$peak_time->peak_time_amount;
+    //         $peak_time_percentage=$peak_time->peak_time_percentage;
+
+    //         $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
+    //         $start_time_one=$start_time." ".$peak_time->start_time_one;
+    //         $end_time_one=$start_time." ".$peak_time->end_time_one;
+    //         $start_time_two=$start_time." ".$peak_time->start_time_two;
+    //         $end_time_two=$start_time." ".$peak_time->end_time_two;
+
+    //         $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
+    //         $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
+    //         $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
+    //         $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
+            
+    //         if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
+    //             $value->check="yes";
+    //             if($value->order_type=="parcel"){
+    //                 $deli=$value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
+    //             }else{
+    //                 $deli=$value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
+    //             }
+    //         }else{
+    //             $value->check="no";
+    //             if($value->order_type=="parcel"){
+    //                 if($percentage==0){
+    //                     $deli=$value->rider_delivery_fee=$value->rider_delivery_fee;
+    //                 }else{
+    //                     $deli=$value->rider_delivery_fee =$value->bill_total_price*($percentage/100);
+    //                 }
+    //             }else{
+    //                 $deli=$value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
+    //             }
+    //         }
+    //         $total_amount += $deli;
+    //     }
+
+    //     $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(30);
+    //     $order_list=[];
+    //     $data=[];
+    //     $percentage=0;
+    //     $benefit_amount=0;
+    //     foreach($orders as $value){
+    //         $date=date('Y-m-d 00:00:00');
+    //         $current_month_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
+    //         $date1=date('Y-m-d 23:59:59');
+    //         $current_month_end_date=Carbon::parse($date1)->endOfMonth()->format('Y-m-d 23:59:59');
+
+    //         $filter_start_date=Carbon::parse($value->created_at)->startOfMonth()->format('Y-m-d 00:00:00');
+    //         $filter_end_date=Carbon::parse($value->created_at)->endOfMonth()->format('Y-m-d 23:59:59');
+
+    //         $count=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->count();
+    //         $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$filter_start_date, $filter_end_date])->get();
+    //         foreach($rider_benefit as $item){
+    //             if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
+    //                 $percentage=$item->benefit_percentage;
+    //                 $benefit_amount=$item->benefit_amount;
+    //             }
+    //         }
+
+    //         // $peak_time=BenefitPeakTime::whereBetween('created_at',[$filter_start_date,$filter_end_date])->first();
+    //         $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','>=',$filter_end_date)->first();
+    //         if($peak_time==null){
+    //             $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+    //         }
+    //         $peak_time_amount=$peak_time->peak_time_amount;
+    //         $peak_time_percentage=$peak_time->peak_time_percentage;
+
+    //         $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
+    //         $start_time_one=$start_time." ".$peak_time->start_time_one;
+    //         $end_time_one=$start_time." ".$peak_time->end_time_one;
+    //         $start_time_two=$start_time." ".$peak_time->start_time_two;
+    //         $end_time_two=$start_time." ".$peak_time->end_time_two;
+
+    //         $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
+    //         $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
+    //         $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
+    //         $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
+    //         $value->start_time_one=$start_time_one;
+    //         $value->end_time_one=$end_time_one;
+    //         $value->start_time_two=$start_time_two;
+    //         $value->end_time_two=$end_time_two;
+            
+    //         if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
+    //             $value->check="yes";
+    //             if($value->order_type=="parcel"){
+    //                 $deli=$value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
+    //             }else{
+    //                 $deli=$value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
+    //             }
+    //         }else{
+    //             $value->check="no";
+    //             if($value->order_type=="parcel"){
+    //                 if($percentage==0){
+    //                     $deli=$value->rider_delivery_fee=$value->rider_delivery_fee;
+    //                 }else{
+    //                     $deli=$value->rider_delivery_fee =$value->bill_total_price*($percentage/100);
+    //                 }
+    //             }else{
+    //                 $deli=$value->rider_delivery_fee=$value->rider_delivery_fee+$benefit_amount;
+    //             }
+    //         }
+    //         // $total_amount += $deli;
+            
+    //         $order_list[]=$value;
+    //         if($value->created_at >= $current_month_start_date || $value->created_at <= $current_month_end_date){
+    //             $value->is_estimated=1;
+    //         }else{
+    //             $value->is_estimated=0;
+    //         }
+    //         array_push($data,$value);
+    //     }
+        
+    //     return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
+    // }
     public function rider_getBilling(Request $request)
     {
         $rider_id=$request['rider_id'];
