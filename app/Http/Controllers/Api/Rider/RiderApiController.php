@@ -32,7 +32,11 @@ class RiderApicontroller extends Controller
         $date=date('Y-m-d 23:59:59');
         $benefit_end_date=Carbon::parse($date)->endOfMonth()->format('Y-m-d 23:59:59');
         
-        $peak_time=BenefitPeakTime::orderBy('created_at')->first();
+        // $peak_time=BenefitPeakTime::orderBy('created_at')->first();
+        $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$benefit_start_date)->whereDate('peak_time_start_date','>=',$benefit_end_date)->first();
+        if($peak_time==null){
+            $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+        }
         $start_time=Carbon::now()->format('Y-m-d');
         $start_time_one=$start_time." ".$peak_time->start_time_one;
         $end_time_one=$start_time." ".$peak_time->end_time_one;
@@ -40,6 +44,11 @@ class RiderApicontroller extends Controller
         $end_time_two=$start_time." ".$peak_time->end_time_two;
         $peak_time_amount=$peak_time->peak_time_amount;
         $peak_time_percentage=$peak_time->peak_time_percentage;
+
+        $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
+        $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
+        $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
+        $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
 
         $rider_id=$request['rider_id'];
         $total_food_amount=0;
@@ -149,7 +158,7 @@ class RiderApicontroller extends Controller
             }
             array_push($data,$value);
         }
-        return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
+        return response()->json(['start_time_one'=>$start_time_one,'success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
         // return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_food_order'=>$total_food_order,'peak_food_order'=>$peak_food_order,'total_parcel_order'=>$total_parcel_order,'peak_parcel_order'=>$peak_parcel_order,'check'=>$check]);
     }
 
@@ -2782,7 +2791,8 @@ class RiderApicontroller extends Controller
                 }
             }
 
-            $peak_time=BenefitPeakTime::whereBetween('created_at',[$filter_start_date,$filter_end_date])->first();
+            // $peak_time=BenefitPeakTime::whereBetween('created_at',[$filter_start_date,$filter_end_date])->first();
+            $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','>=',$filter_end_date)->first();
             if($peak_time==null){
                 $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
             }
@@ -2791,21 +2801,19 @@ class RiderApicontroller extends Controller
 
             $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
             $start_time_one=$start_time." ".$peak_time->start_time_one;
-            // $start_time_one=Carbon::parse($start_time_one)->format('Y-m-d H:i:s');
             $end_time_one=$start_time." ".$peak_time->end_time_one;
             $start_time_two=$start_time." ".$peak_time->start_time_two;
             $end_time_two=$start_time." ".$peak_time->end_time_two;
 
-            $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30); //set time to 10:00
-            $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30); //set time to 10:00
-            $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30); //set time to 10:00
-            $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30); //set time to 10:00
+            $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
+            $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
+            $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
+            $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
             $value->start_time_one=$start_time_one;
             $value->end_time_one=$end_time_one;
             $value->start_time_two=$start_time_two;
             $value->end_time_two=$end_time_two;
             
-            // if((Carbon::parse($value->created_at)->format('g:i A') >= $start_time_one && Carbon::parse($value->created_at)->format('g:i A') <= $end_time_one) || (Carbon::parse($value->created_at)->format('g:i A') >= $start_time_two && Carbon::parse($value->created_at)->format('g:i A') <= $end_time_two)){
             if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 $value->check="yes";
                 if($value->order_type=="parcel"){
