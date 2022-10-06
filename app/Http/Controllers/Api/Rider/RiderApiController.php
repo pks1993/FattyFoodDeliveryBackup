@@ -47,7 +47,7 @@ class RiderApicontroller extends Controller
         // $peak_time_amount=$peak_time->peak_time_amount;
         // $peak_time_percentage=$peak_time->peak_time_percentage;
 
-        $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$benefit_start_date)->whereDate('peak_time_start_date','<=',$benefit_end_date)->first();
+        $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$benefit_start_date)->whereDate('peak_time_end_date','<=',$benefit_end_date)->first();
         if($peak_time==null){
             // $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
             $peak_time_amount=0;
@@ -2744,7 +2744,7 @@ class RiderApicontroller extends Controller
                     $benefit_amount=$item->benefit_amount;
                 }
             }
-            $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','<=',$filter_end_date)->first();
+            $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_end_date','<=',$filter_end_date)->first();
             // if($peak_time==null){
             //     $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
             // }
@@ -2837,7 +2837,7 @@ class RiderApicontroller extends Controller
             }
 
             // $peak_time=BenefitPeakTime::whereBetween('created_at',[$filter_start_date,$filter_end_date])->first();
-            $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','<=',$filter_end_date)->first();
+            $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_end_date','<=',$filter_end_date)->first();
             if($peak_time==null){
                 // $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
                 $peak_time_amount=0;
