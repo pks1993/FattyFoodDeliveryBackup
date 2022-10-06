@@ -68,8 +68,8 @@ return [
     |
     */
 
-    // 'timezone' => 'Asia/Yangon',
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'timezone' => 'Asia/Yangon',
+    // 'timezone' => env('APP_TIMEZONE', 'UTC'),
 
 
     /*
