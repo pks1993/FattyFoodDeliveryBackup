@@ -624,6 +624,21 @@ class OrderApiController extends Controller
                         return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
                     }
                     $item->order_status->order_status_name=$status_name;
+
+                    if($item->from_parcel_city_id==0){
+                        $item->from_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$item->from_parcel_city_id)->first();
+                        $block_data=ParcelBlockList::where('parcel_block_id',$item->from_parcel_city_id)->first();
+                        $item->from_parcel_city_name=$block_data->block_name;
+                    }
+                    if($item->to_parcel_city_id==0){
+                        $item->to_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$item->to_parcel_city_id)->first();
+                        $block_data=ParcelBlockList::where('parcel_block_id',$item->to_parcel_city_id)->first();
+                        $item->to_parcel_city_name=$block_data->block_name;
+                    }
                     array_push($active_data,$item);
                 }
                 $past_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
@@ -673,6 +688,20 @@ class OrderApiController extends Controller
                         return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
                     }
                     $item1->order_status->order_status_name=$status_name;
+                    if($item1->from_parcel_city_id==0){
+                        $item1->from_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$item1->from_parcel_city_id)->first();
+                        $block_data=ParcelBlockList::where('parcel_block_id',$item1->from_parcel_city_id)->first();
+                        $item1->from_parcel_city_name=$block_data->block_name;
+                    }
+                    if($item1->to_parcel_city_id==0){
+                        $item1->to_parcel_city_name=null;
+                    }else{
+                        // $city_data=ParcelCity::where('parcel_city_id',$item1->to_parcel_city_id)->first();
+                        $block_data=ParcelBlockList::where('parcel_block_id',$item1->to_parcel_city_id)->first();
+                        $item1->to_parcel_city_name=$block_data->block_name;
+                    }
                     array_push($past_data,$item1);
                 }
                 $data=$active_order1->merge($past_order1);
