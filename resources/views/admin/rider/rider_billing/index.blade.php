@@ -52,10 +52,10 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-3 mt-1">
-                                <input type="text" id="min" name="min" placeholder="Start Date">
+                                <input type="text" id="min" name="min" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('d-M-Y') }}">
                             </div>
                             <div class="col-md-3 mt-1">
-                                <input type="text" id="max" name="max" placeholder="End Date">
+                                <input type="text" id="max" name="max" value="{{ \Carbon\Carbon::now()->endOfMonth()->format('d-M-Y') }}">
                             </div>
                             <div class="col-md-3 mt-1">
                                 <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">
@@ -83,8 +83,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cus_order_list as $value)
-                                    <tr>
+                                    @foreach ($order_rider as $value)
+                                    <tr class="text-center">
                                         <td></td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
@@ -93,7 +93,8 @@
                                         <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
-                                        <td class="text-center">
+                                        <td class="btn-group">
+                                            {{-- <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-info mr-1" style="width: 80px;">Detali</a> --}}
                                             <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
                                         </td>
                                     </tr>
