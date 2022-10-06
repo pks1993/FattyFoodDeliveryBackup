@@ -2943,11 +2943,15 @@ class RiderApicontroller extends Controller
             // $peak_time_amount=$peak_time->peak_time_amount;
             // $peak_time_percentage=$peak_time->peak_time_percentage;
 
-            $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
-            $start_time_one=$start_time." ".$peak_time->start_time_one;
-            $end_time_one=$start_time." ".$peak_time->end_time_one;
-            $start_time_two=$start_time." ".$peak_time->start_time_two;
-            $end_time_two=$start_time." ".$peak_time->end_time_two;
+            // $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+            // $start_time_one=$start_time." ".$peak_time->start_time_one;
+            // $end_time_one=$start_time." ".$peak_time->end_time_one;
+            // $start_time_two=$start_time." ".$peak_time->start_time_two;
+            // $end_time_two=$start_time." ".$peak_time->end_time_two;
+            $start_time_one = Carbon::create($start_time_one);
+        $end_time_one = Carbon::create($end_time_one);
+        $start_time_two = Carbon::create($start_time_two);
+        $end_time_two = Carbon::create($end_time_two);
 
             // $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
             // $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
