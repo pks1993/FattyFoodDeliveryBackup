@@ -19,6 +19,8 @@ use App\Models\Order\OrderAssign;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use App\Models\Rider\RiderLevel;
+use App\Models\Order\BenefitPeakTime;
+use App\Models\Order\RiderBenefit;
 
 class RiderController extends Controller
 {
@@ -90,43 +92,157 @@ class RiderController extends Controller
         return view('admin.rider.today_rider_billing.rider_history_detail',compact('rider_payment'));
     }
 
+    public function rider_billing_detail(Request $request)
+    {
+        return view('admin.rider.rider_billing.rider_history_detail');
+    }
+
     public function rider_billing_list(Request $request)
     {
         $start_date=$request['min'];
         $end_date=$request['max'];
-        // if(empty($start_date) && empty($end_date)){
-        //     $start_date=Carbon::now()->subDays(10);
-        //     $end_date=Carbon::now();
-        // }
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
         $first_date=Carbon::parse($from_date);
         $days = $first_date->diffInDays($to_date);
-        // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
 
-        $cus_order_list=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(rider_delivery_fee) as rider_delivery_fee"))->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
-        $data=[];
-        foreach($cus_order_list as $value){
-            $payment=RiderPayment::where('rider_id',$value->rider_id)->orderBy('created_at')->first();
+        $date=date('Y-m-d 00:00:00');
+        $current_month_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
+        $date1=date('Y-m-d 23:59:59');
+        $current_month_end_date=Carbon::parse($date1)->endOfMonth()->format('Y-m-d 23:59:59');
+
+        $order_rider=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+            $item1=[];
+        foreach($order_rider as $rider_data){
+            $payment=RiderPayment::where('rider_id',$rider_data->rider_id)->orderBy('created_at')->first();
             if($payment){
                 $last_date=date('d/M/Y', strtotime($payment->last_offered_date));
             }else{
                 $last_date= "Empty Date";
             }
-            $value->last_offered_date=$last_date;
-            $value->duration=$days;
-            $value->total_amount=(int)$value->rider_delivery_fee;
-            array_push($data,$value);
-        }
+            $rider_data->last_offered_date=$last_date;
+            $rider_data->duration=$days;
+            // $cus_order_list=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
+            //     $payment->whereDate('last_offered_date','>=',$from_date);})->where('rider_id',$rider_data->rider_id)->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+            //     $rider_data->data=$cus_order_list;
 
-        // $cus_order_offered=RiderPayment::where('status','0')->get();
-        // $cus_order_done=RiderPayment::where('status','1')->get();
+            $orders_all=CustomerOrder::orderBy('created_at','desc')->where('rider_id',$rider_data->rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->get();
+            $order_list=[];
+            $data=[];
+            $percentage=0;
+            $benefit_amount=0;
+            $total_amount=0;
+            $peak_time_amount=0;
+            $peak_time_percentage=0;
+            foreach($orders_all as $value1){
+                $filter_start_date=Carbon::parse($value1->created_at)->startOfMonth()->format('Y-m-d 00:00:00');
+                $filter_end_date=Carbon::parse($value1->created_at)->endOfMonth()->format('Y-m-d 23:59:59');
+                $count=CustomerOrder::where('rider_id',$rider_data->rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->count();
+                $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$filter_start_date, $filter_end_date])->get();
+                foreach($rider_benefit as $item){
+                    if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
+                        $percentage=$item->benefit_percentage;
+                        $benefit_amount=$item->benefit_amount;
+                    }
+                }
+                $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_end_date','<=',$filter_end_date)->first();
+                if($peak_time==null){
+                    // $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+                    $peak_time_amount=0;
+                    $peak_time_percentage=0;
+                    $peak_time_start_time_one="12:00:00";
+                    $peak_time_end_time_one="14:00:00";
+                    $peak_time_start_time_two="17:00:00";
+                    $peak_time_end_time_two="18:00:00";
+
+                    $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+                    $start_time_one=$start_time." ".$peak_time_start_time_one;
+                    $end_time_one=$start_time." ".$peak_time_end_time_one;
+                    $start_time_two=$start_time." ".$peak_time_start_time_two;
+                    $end_time_two=$start_time." ".$peak_time_end_time_two;
+                }else{
+                    $peak_time_amount=$peak_time->peak_time_amount;
+                    $peak_time_percentage=$peak_time->peak_time_percentage;
+
+                    $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+                    $start_time_one=$start_time." ".$peak_time->start_time_one;
+                    $end_time_one=$start_time." ".$peak_time->end_time_one;
+                    $start_time_two=$start_time." ".$peak_time->start_time_two;
+                    $end_time_two=$start_time." ".$peak_time->end_time_two;
+                }
+                $start_time_one = Carbon::create($start_time_one);
+                $end_time_one = Carbon::create($end_time_one);
+                $start_time_two = Carbon::create($start_time_two);
+                $end_time_two = Carbon::create($end_time_two);
+
+
+                if(($value1->rider_accept_time >= $start_time_one && $value1->rider_accept_time <= $end_time_one) || ($value1->rider_accept_time >= $start_time_two && $value1->rider_accept_time <= $end_time_two)){
+                    if($value1->order_type=="parcel"){
+                        if($peak_time_percentage==0){
+                            $deli=$value1->rider_delivery_fee;
+                        }else{    
+                            $deli=$value1->bill_total_price*($peak_time_percentage/100);
+                        }
+                    }else{
+                        $deli=$value1->rider_delivery_fee+$peak_time_amount;
+                    }
+                }else{
+                    if($value1->order_type=="parcel"){
+                        if($percentage==0){
+                            $deli=$value1->rider_delivery_fee;
+                        }else{
+                            $deli =$value1->bill_total_price*($percentage/100);
+                        }
+                    }else{
+                        $deli=$value1->rider_delivery_fee+$benefit_amount;
+                    }
+                }
+                $total_amount += $deli;
+            }
+            $rider_data->total_amount=$total_amount;
+
+            array_push($item1,$rider_data);
+        }
+        
+        return response()->json($order_rider);
 
         return view('admin.rider.rider_billing.index',compact('cus_order_list','from_date','to_date'));
 
     }
+
+    // public function rider_billing_list(Request $request)
+    // {
+    //     $start_date=$request['min'];
+    //     $end_date=$request['max'];
+    //     $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
+    //     $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
+
+    //     $first_date=Carbon::parse($from_date);
+    //     $days = $first_date->diffInDays($to_date);
+    //     // $days = $first_date->diffAsCarbonInterval($to_date)->format('%m months and %d days');
+
+    //     $cus_order_list=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
+    //         $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id',DB::raw("SUM(rider_delivery_fee) as rider_delivery_fee"))->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+    //     $data=[];
+    //     foreach($cus_order_list as $value){
+    //         $payment=RiderPayment::where('rider_id',$value->rider_id)->orderBy('created_at')->first();
+    //         if($payment){
+    //             $last_date=date('d/M/Y', strtotime($payment->last_offered_date));
+    //         }else{
+    //             $last_date= "Empty Date";
+    //         }
+    //         $value->last_offered_date=$last_date;
+    //         $value->duration=$days;
+    //         $value->total_amount=(int)$value->rider_delivery_fee;
+    //         array_push($data,$value);
+    //     }
+
+    //     return response()->json(['cus_list'=>$cus_order_list]);
+    //     return view('admin.rider.rider_billing.index',compact('cus_order_list','from_date','to_date'));
+
+    // }
 
     public function rider_billing_offered(Request $request)
     {
