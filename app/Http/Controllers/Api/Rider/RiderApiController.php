@@ -2704,6 +2704,9 @@ class RiderApicontroller extends Controller
         $percentage=0;
         $benefit_amount=0;
         $total_amount=0;
+        $peak_time_amount=0;
+
+        $peak_time_percentage=0;
         foreach($orders_all as $value1){
             $filter_start_date=Carbon::parse($value1->created_at)->startOfMonth()->format('Y-m-d 00:00:00');
             $filter_end_date=Carbon::parse($value1->created_at)->endOfMonth()->format('Y-m-d 23:59:59');
@@ -2716,17 +2719,41 @@ class RiderApicontroller extends Controller
                 }
             }
             $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','>=',$filter_end_date)->first();
+            // if($peak_time==null){
+            //     $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+            // }
             if($peak_time==null){
-                $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
-            }
-            $peak_time_amount=$peak_time->peak_time_amount;
-            $peak_time_percentage=$peak_time->peak_time_percentage;
+                // $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+                $peak_time_amount=0;
+                $peak_time_percentage=0;
+                $peak_time_start_time_one="12:00:00";
+                $peak_time_end_time_one="14:00:00";
+                $peak_time_start_time_two="17:00:00";
+                $peak_time_end_time_two="18:00:00";
+    
+                $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+                $start_time_one=$start_time." ".$peak_time_start_time_one;
+                $end_time_one=$start_time." ".$peak_time_end_time_one;
+                $start_time_two=$start_time." ".$peak_time_start_time_two;
+                $end_time_two=$start_time." ".$peak_time_end_time_two;
+            }else{
+                $peak_time_amount=$peak_time->peak_time_amount;
+                $peak_time_percentage=$peak_time->peak_time_percentage;
 
-            $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
-            $start_time_one=$start_time." ".$peak_time->start_time_one;
-            $end_time_one=$start_time." ".$peak_time->end_time_one;
-            $start_time_two=$start_time." ".$peak_time->start_time_two;
-            $end_time_two=$start_time." ".$peak_time->end_time_two;
+                $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+                $start_time_one=$start_time." ".$peak_time->start_time_one;
+                $end_time_one=$start_time." ".$peak_time->end_time_one;
+                $start_time_two=$start_time." ".$peak_time->start_time_two;
+                $end_time_two=$start_time." ".$peak_time->end_time_two;
+            }
+            // $peak_time_amount=$peak_time->peak_time_amount;
+            // $peak_time_percentage=$peak_time->peak_time_percentage;
+
+            // $start_time=Carbon::parse($value1->created_at)->format('Y-m-d');
+            // $start_time_one=$start_time." ".$peak_time->start_time_one;
+            // $end_time_one=$start_time." ".$peak_time->end_time_one;
+            // $start_time_two=$start_time." ".$peak_time->start_time_two;
+            // $end_time_two=$start_time." ".$peak_time->end_time_two;
 
             $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
             $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
@@ -2736,7 +2763,11 @@ class RiderApicontroller extends Controller
             if(($value1->created_at >= $start_time_one && $value1->created_at <= $end_time_one) || ($value1->created_at >= $start_time_two && $value1->created_at <= $end_time_two)){
                 $value1->check="yes";
                 if($value1->order_type=="parcel"){
-                    $deli=$value1->rider_delivery_fee=$value1->bill_total_price*($peak_time_percentage/100);
+                    if($peak_time_percentage==0){
+                        $deli=$value1->rider_delivery_fee=$value1->rider_delivery_fee;
+                    }else{    
+                        $deli=$value1->rider_delivery_fee=$value1->bill_total_price*($peak_time_percentage/100);
+                    }
                 }else{
                     $deli=$value1->rider_delivery_fee=$value1->rider_delivery_fee+$peak_time_amount;
                 }
@@ -2755,7 +2786,7 @@ class RiderApicontroller extends Controller
             $total_amount += $deli;
         }
 
-        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->paginate(30);
+        $orders=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'rider_delivery_fee','bill_total_price','created_at','order_type')->orderBy('created_at','desc')->paginate(30);
         foreach($orders as $value){
             $date=date('Y-m-d 00:00:00');
             $current_month_start_date=Carbon::parse($date)->startOfMonth()->format('Y-m-d 00:00:00');
@@ -2777,16 +2808,29 @@ class RiderApicontroller extends Controller
             // $peak_time=BenefitPeakTime::whereBetween('created_at',[$filter_start_date,$filter_end_date])->first();
             $peak_time=BenefitPeakTime::whereDate('peak_time_start_date','>=',$filter_start_date)->whereDate('peak_time_start_date','>=',$filter_end_date)->first();
             if($peak_time==null){
-                $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
-            }
-            $peak_time_amount=$peak_time->peak_time_amount;
-            $peak_time_percentage=$peak_time->peak_time_percentage;
+                // $peak_time=BenefitPeakTime::orderBy('created_at','desc')->first();
+                $peak_time_amount=0;
+                $peak_time_percentage=0;
+                $peak_time_start_time_one="12:00:00";
+                $peak_time_end_time_one="14:00:00";
+                $peak_time_start_time_two="17:00:00";
+                $peak_time_end_time_two="18:00:00";
+    
+                $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
+                $start_time_one=$start_time." ".$peak_time_start_time_one;
+                $end_time_one=$start_time." ".$peak_time_end_time_one;
+                $start_time_two=$start_time." ".$peak_time_start_time_two;
+                $end_time_two=$start_time." ".$peak_time_end_time_two;
+            }else{
+                $peak_time_amount=$peak_time->peak_time_amount;
+                $peak_time_percentage=$peak_time->peak_time_percentage;
 
-            $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
-            $start_time_one=$start_time." ".$peak_time->start_time_one;
-            $end_time_one=$start_time." ".$peak_time->end_time_one;
-            $start_time_two=$start_time." ".$peak_time->start_time_two;
-            $end_time_two=$start_time." ".$peak_time->end_time_two;
+                $start_time=Carbon::parse($value->created_at)->format('Y-m-d');
+                $start_time_one=$start_time." ".$peak_time->start_time_one;
+                $end_time_one=$start_time." ".$peak_time->end_time_one;
+                $start_time_two=$start_time." ".$peak_time->start_time_two;
+                $end_time_two=$start_time." ".$peak_time->end_time_two;
+            }
 
             $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
             $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
@@ -2800,7 +2844,12 @@ class RiderApicontroller extends Controller
             if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 $value->check="yes";
                 if($value->order_type=="parcel"){
-                    $deli=$value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
+                    if($peak_time_percentage==0){
+                        $deli=$value1->rider_delivery_fee=$value1->rider_delivery_fee;
+                    }else{    
+                        $deli=$value1->rider_delivery_fee=$value1->bill_total_price*($peak_time_percentage/100);
+                    }
+                    // $deli=$value->rider_delivery_fee=$value->bill_total_price*($peak_time_percentage/100);
                 }else{
                     $deli=$value->rider_delivery_fee=$value->rider_delivery_fee+$peak_time_amount;
                 }
@@ -2819,7 +2868,7 @@ class RiderApicontroller extends Controller
             // $total_amount += $deli;
             
             $order_list[]=$value;
-            if($value->created_at >= $current_month_start_date || $value->created_at <= $current_month_end_date){
+            if($value->created_at >= $current_month_start_date && $value->created_at <= $current_month_end_date){
                 $value->is_estimated=1;
             }else{
                 $value->is_estimated=0;
