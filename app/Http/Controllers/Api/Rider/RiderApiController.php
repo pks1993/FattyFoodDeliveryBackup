@@ -73,10 +73,14 @@ class RiderApicontroller extends Controller
             $end_time_two=$start_time." ".$peak_time->end_time_two;
         }
 
-        $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
-        $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
-        $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
-        $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
+        $start_time_one = Carbon::create($start_time_one);
+        $end_time_one = Carbon::create($end_time_one);
+        $start_time_two = Carbon::create($start_time_two);
+        $end_time_two = Carbon::create($end_time_two);
+        // $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
+        // $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
+        // $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
+        // $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
 
         $rider_id=$request['rider_id'];
         $total_food_amount=0;
