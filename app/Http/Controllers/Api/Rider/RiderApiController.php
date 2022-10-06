@@ -2781,10 +2781,10 @@ class RiderApicontroller extends Controller
             // $start_time_two=$start_time." ".$peak_time->start_time_two;
             // $end_time_two=$start_time." ".$peak_time->end_time_two;
 
-            $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
-            $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
-            $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
-            $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
+            $start_time_one = Carbon::create($start_time_one);
+            $end_time_one = Carbon::create($end_time_one);
+            $start_time_two = Carbon::create($start_time_two);
+            $end_time_two = Carbon::create($end_time_two);
             
             // $rider_accept_history=CustomerOrderHistory::where('order_id',$value1->order_id)->whereIn('order_status_id',[4,12])->first();
             // if($rider_accept_history==null){
@@ -2863,10 +2863,10 @@ class RiderApicontroller extends Controller
                 $end_time_two=$start_time." ".$peak_time->end_time_two;
             }
 
-            $start_time_one = Carbon::create($start_time_one)->addHour(6)->addMinutes(30);
-            $end_time_one = Carbon::create($end_time_one)->addHour(6)->addMinutes(30);
-            $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
-            $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
+            $start_time_one = Carbon::create($start_time_one);
+            $end_time_one = Carbon::create($end_time_one);
+            $start_time_two = Carbon::create($start_time_two);
+            $end_time_two = Carbon::create($end_time_two);
             $value->start_time_one=$start_time_one;
             $value->end_time_one=$end_time_one;
             $value->start_time_two=$start_time_two;
