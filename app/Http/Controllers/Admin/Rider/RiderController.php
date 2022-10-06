@@ -139,7 +139,7 @@ class RiderController extends Controller
             foreach($orders_all as $value1){
                 $filter_start_date=Carbon::parse($value1->created_at)->startOfMonth()->format('Y-m-d 00:00:00');
                 $filter_end_date=Carbon::parse($value1->created_at)->endOfMonth()->format('Y-m-d 23:59:59');
-                $count=CustomerOrder::where('rider_id',$rider_data->rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->count();
+                $count=CustomerOrder::where('rider_id',$rider_data->rider_id)->whereIn('order_status_id',['7','8','15'])->whereDate('created_at','>=',$from_date)->whereDate('created_at','<=',$to_date)->count();
                 $rider_benefit=RiderBenefit::whereBetween('benefit_start_date',[$filter_start_date, $filter_end_date])->get();
                 foreach($rider_benefit as $item){
                     if($count > $item->start_benefit_count && $count <= $item->end_benefit_count){
