@@ -2786,12 +2786,12 @@ class RiderApicontroller extends Controller
             $start_time_two = Carbon::create($start_time_two)->addHour(6)->addMinutes(30);
             $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
             
-            $rider_accept_history=CustomerOrderHistory::where('order_id',$value1->order_id)->whereIn('order_status_id',[4,12])->first();
-            if($rider_accept_history==null){
-                $rider_accept_history=CustomerOrderHistory::where('order_id',$value1->order_id)->whereIn('order_status_id',[6,14])->first();
-            }
+            // $rider_accept_history=CustomerOrderHistory::where('order_id',$value1->order_id)->whereIn('order_status_id',[4,12])->first();
+            // if($rider_accept_history==null){
+            //     $rider_accept_history=CustomerOrderHistory::where('order_id',$value1->order_id)->whereIn('order_status_id',[6,14])->first();
+            // }
 
-            if(($rider_accept_history->created_at >= $start_time_one && $rider_accept_history->created_at <= $end_time_one) || ($rider_accept_history->created_at >= $start_time_two && $rider_accept_history->created_at <= $end_time_two)){
+            if(($value1->created_at >= $start_time_one && $value1->created_at <= $end_time_one) || ($value1->created_at >= $start_time_two && $value1->created_at <= $end_time_two)){
                 $value1->check="yes";
                 if($value1->order_type=="parcel"){
                     if($peak_time_percentage==0){
@@ -2872,14 +2872,14 @@ class RiderApicontroller extends Controller
             $value->start_time_two=$start_time_two;
             $value->end_time_two=$end_time_two;
 
-            $rider_accept_history=CustomerOrderHistory::where('order_id',$value->order_id)->whereIn('order_status_id',[4,12])->first();
-            if($rider_accept_history==null){
-                $rider_accept_history=CustomerOrderHistory::where('order_id',$value->order_id)->whereIn('order_status_id',[6,14])->first();
-            }
+            // $rider_accept_history=CustomerOrderHistory::where('order_id',$value->order_id)->whereIn('order_status_id',[4,12])->first();
+            // if($rider_accept_history==null){
+            //     $rider_accept_history=CustomerOrderHistory::where('order_id',$value->order_id)->whereIn('order_status_id',[6,14])->first();
+            // }
 
-            $value->order_time=Carbon::parse($rider_accept_history->created_at)->format('g:i A');
+            // $value->order_time=Carbon::parse($rider_accept_history->created_at)->format('g:i A');
 
-            if(($rider_accept_history->created_at >= $start_time_one && $rider_accept_history->created_at <= $end_time_one) || ($rider_accept_history->created_at >= $start_time_two && $rider_accept_history->created_at <= $end_time_two)){
+            if(($value->created_at >= $start_time_one && $value->created_at <= $end_time_one) || ($value->created_at >= $start_time_two && $value->created_at <= $end_time_two)){
                 $value->check="yes";
                 if($value->order_type=="parcel"){
                     if($peak_time_percentage==0){
