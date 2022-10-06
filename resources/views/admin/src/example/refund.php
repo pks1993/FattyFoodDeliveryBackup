@@ -37,11 +37,11 @@ try {
         ->refundReason($refundReason)
         ->build();
 
+
         $client = new PaymentClient($exampleConfig);
 
         $res = $client->refund($refundRequest);
         $response=$res->Response;
-
 
         if($response->result=="SUCCESS" && $response->code=="0"){
             $order_id=$customer_orders->order_id;
@@ -133,7 +133,7 @@ try {
             echo $result;
         }
         $conn->close();
-        // var_dump($e);
+        var_dump($e);
     }
 
 ?>

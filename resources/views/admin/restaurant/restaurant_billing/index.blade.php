@@ -49,16 +49,25 @@
                     <form action="{{ route('fatty.admin.restaurants_billing.list') }}" method="get">
                         @csrf
                         <div class="row">
-                            <div class="col-md-3 mt-1">
-                                <input type="text" id="min" name="min" placeholder="Start Date">
+                            <div class="col-md-2 mt-1">
+                                <input type="text" style="width: 100%" id="min" name="min" placeholder="Start Date">
                             </div>
-                            <div class="col-md-3 mt-1">
-                                <input type="text" id="max" name="max" placeholder="End Date">
+                            <div class="col-md-2 mt-1">
+                                <input type="text" id="max" style="width: 100%" name="max" placeholder="End Date">
                             </div>
-                            <div class="col-md-3 mt-1">
+                            <div class="col-md-1 mt-1">
                                 <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">
-                                    <i class="fa fa-search"></i> {{ __('filter') }}
+                                    <i class="fa fa-search"></i>
                                 </button>
+                            </div>
+                            <div class="col-md-2 mt-1">
+                                <a href="{{ url("fatty/main/admin/restaurants_billing/list?min=$startday&max=$tenday") }}" class="btn btn-sm btn-info">{{ "This Month 1-10 Days" }}</a>
+                            </div>
+                            <div class="col-md-2 mt-1">
+                                <a href="{{ url("fatty/main/admin/restaurants_billing/list?min=$elevenday&max=$twentyday") }}" class="btn btn-sm btn-info">{{ "This Month 11-20 Days" }}</a>
+                            </div>
+                            <div class="col-md-3 mt-1">
+                                <a href="{{ url("fatty/main/admin/restaurants_billing/list?min=$twentyoneday&max=$lastday") }}" class="btn btn-sm btn-info">{{ "This Month 21-30/31 Days" }}</a>
                             </div>
                         </div>
                     </form>

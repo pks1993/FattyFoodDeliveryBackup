@@ -15,9 +15,11 @@ class RefundRequest extends PaymentRequest
 
     const JSON_KEY_REFUND_REQUEST_NO = "refund_request_no";
 
+
     protected $refundReason;
 
     protected $refundRequestNo;
+
 
     public static function builder()
     {
@@ -30,6 +32,7 @@ class RefundRequest extends PaymentRequest
 
         PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_REASON, $this->refundReason);
         PaymentUtils::pushIfNotEmpty($bizContent, self::JSON_KEY_REFUND_REQUEST_NO, $this->refundRequestNo);
+
         return $bizContent;
     }
 

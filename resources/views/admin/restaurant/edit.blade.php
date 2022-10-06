@@ -222,6 +222,28 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label for="define_amount" class="col-md-12 col-form-label">{{ __('Define Amount') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="number" step="0.01" value="{{ $restaurants->define_amount }}" id="define_amount" class="form-control @error('define_amount') is-invalid @enderror" name="define_amount" autocomplete="define_amount">{{ old('define_amount') }}
+                                        @error('define_amount')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="restaurant_delivery_fee" class="col-md-12 col-form-label">{{ __('Delivery Fee') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <div class="col-md-12">
+                                        <input type="number" value="{{ $restaurants->restaurant_delivery_fee }}" id="restaurant_delivery_fee" class="form-control @error('restaurant_delivery_fee') is-invalid @enderror" name="restaurant_delivery_fee" autocomplete="restaurant_delivery_fee">{{ old('restaurant_delivery_fee') }}
+                                        @error('restaurant_delivery_fee')
+                                            <span class="invalid-feedback" role="alert">
+                                              <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
 
                                 <div class="form-group row">
                                     <label for="restaurant_image" class="col-md-12 col-form-label">{{ __('Restaurant Image') }} </label>

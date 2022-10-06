@@ -274,7 +274,7 @@ class CustomerApiController extends Controller
                     $customer->otp = $otp;
                     $customer->update();
                     $client = new Client();
-                    $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+                    $token = 'Y50b3Lt_43AdbA2MDFd3JZaMLV6w9LHnNZpz-ZLfCGXoAyixaMEsn3FpzxNink6J';
                     $url = "https://smspoh.com/api/v2/send";
                     $response = $client->post($url,[
                         'headers' => ['Content-type' => 'application/json',
@@ -305,7 +305,7 @@ class CustomerApiController extends Controller
             ]);
 
             $client = new Client();
-            $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+            $token = 'Y50b3Lt_43AdbA2MDFd3JZaMLV6w9LHnNZpz-ZLfCGXoAyixaMEsn3FpzxNink6J';
             $url = "https://smspoh.com/api/v2/send";
             $response = $client->post($url,[
                 'headers' => ['Content-type' => 'application/json',
@@ -339,7 +339,7 @@ class CustomerApiController extends Controller
                 $customer->update();
 
                 $client = new Client();
-                $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+                $token = 'Y50b3Lt_43AdbA2MDFd3JZaMLV6w9LHnNZpz-ZLfCGXoAyixaMEsn3FpzxNink6J';
                 $url = "https://smspoh.com/api/v2/send";
 
                 $response = $client->post($url,[
@@ -366,7 +366,7 @@ class CustomerApiController extends Controller
                     ]);
 
                     $client = new Client();
-                    $token = 'DPEL6xrzM-qqBqeVqmrOGP6jedLVpD5Z2r0D3Cun6IOCg3aFZVBqAYYJh4WA-CaF';
+                    $token = 'Y50b3Lt_43AdbA2MDFd3JZaMLV6w9LHnNZpz-ZLfCGXoAyixaMEsn3FpzxNink6J';
                     $url = "https://smspoh.com/api/v2/send";
                     $response = $client->post($url,[
                         'headers' => ['Content-type' => 'application/json',

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Nova - Bootstrap 5 Template</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- ========================= CSS here ========================= -->
+    <link rel="stylesheet" href="assets/css/bootstrap-5.0.0-beta1.min.css" />
+    <link rel="stylesheet" href="assets/css/LineIcons.2.0.css"/>
+    <link rel="stylesheet" href="assets/css/tiny-slider.css"/>
+    <link rel="stylesheet" href="assets/css/animate.css"/>
+    <link rel="stylesheet" href="assets/css/lindy-uikit.css"/>
+    <style>
+      @media only screen and (max-width: 991px) {
+        #content-desktop {display: none;}
+        .navbar-area {height: 75px !important;}
+        #what_is_fatty_header{
+          margin-top: 50px !important;
+          text-align: center;
+        }
+        #about_img, #apple_img, #play_store_img{
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        #home_desktop{display: none !important;}
+        #home_mobile{display: block !important;}
+        #home_mobile1{display: block !important;}
+        .promotion-style-5 {padding-top: 0px !important;}
+        #promotion2{margin-top: 15px;}
+        #promotion3{margin-top: 15px;}
+        .ourservice-style-5 .single-ourservice {
+          padding: 0px !important;
+        }
+        .ourservice-style-5{padding:0px;}
+        #service_header_mobile{margin: 0px !important;}
+        #news_header_mobile{margin: 0px !important;}
+        #send_file_parcel{margin-bottom: 0px !important;}
+      }
+    </style>
+    
+  </head>
+  <body>
+    <!--[if lte IE 9]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+        your experience and security.
+      </p>
+    <![endif]-->
+
+    <!-- ========================= preloader start ========================= -->
+    <div class="preloader">
+      <div class="loader">
+        <div class="spinner">
+          <div class="spinner-container">
+            <div class="spinner-rotator">
+              <div class="spinner-left">
+                <div class="spinner-circle"></div>
+              </div>
+              <div class="spinner-right">
+                <div class="spinner-circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ========================= preloader end ========================= -->
+
+    <!-- ========================= hero-section-wrapper-5 start ========================= -->
+    <section id="home" class="hero-section-wrapper-5">
+
+      <!-- ========================= header-6 start ========================= -->
+      <header class="header header-6">
+        <div class="navbar-area" style="height: 135px;">
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-lg-12">
+                <div class="col-12" style="text-align: right;" id="content-desktop">
+                  <a href="">
+                    <img src="assets/img/united-kingdom.png" alt="Logo" style="width: 30px;height:38px;padding-bottom: 8px;" />
+                  </a>
+                  <span style="color: #FF6501;padding-left: 10px;padding-right: 10px;font-size: 30px;">|</span>
+                  <a href="">
+                    <img src="assets/img/china.png" alt="Logo" style="width: 30px;height:38px;padding-bottom: 8px;" />
+                  </a>
+                  <span style="color: #FF6501;padding-left: 10px;padding-right: 10px;font-size: 30px;">|</span>
+                  <a href="" style="margin-right: 48px;" >
+                    <img src="assets/img/myanmar.png" alt="Logo" style="width: 30px;height:38px;padding-bottom: 8px;" />
+                  </a>
+                </div>
+                <nav class="navbar navbar-expand-lg">
+                  <a class="navbar-brand" href="index.html">
+                    <img src="assets/img/Logo.png" alt="Logo" style="width: 40px;height:40px;" />
+                    <span class="mb-0 pt-2 fw-bold logo-bran" style="color: #FF6501;font-size: 18px;">FATTY FOOD DELIVERY</span>
+                  </a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent6" aria-controls="navbarSupportedContent6" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="toggler-icon"></span>
+                    <span class="toggler-icon"></span>
+                    <span class="toggler-icon"></span>
+                  </button>
+  
+                  <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent6">
+                    <ul id="nav6" class="navbar-nav ms-auto" style="margin-right: 45px !important;">
+                      <li class="nav-item">
+                        <a class="page-scroll active" href="#home">Home</a>
+                        <span style="display:inline-block;border-bottom:1px solid black;padding-bottom:2px;"></span>
+                      </li>
+                      <li class="nav-item">
+                        <!-- <a class="page-scroll" href="#feature">What is FATTY</a> -->
+                        <a class="page-scroll" href="#what_is_fatty">What is FATTY</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="page-scroll" href="#promotion">Promotion</a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a class="page-scroll" href="#ourservice">Services</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="page-scroll" href="#ournews">News</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="btn btn-sm" style="margin-left: 20px;background-color: #FF6501;color: white;" href="#contact">CONTACT US</a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <!-- <div class="header-action d-flex">
+                    <a href="#0"> <i class="lni lni-cart"></i> </a>
+                    <a href="#0"> <i class="lni lni-alarm"></i> </a>
+                  </div> -->
+                  <!-- navbar collapse -->
+                </nav>
+                <!-- navbar -->
+              </div>
+            </div>
+            <!-- row -->
+          </div>
+          <!-- container -->
+        </div>
+        <!-- navbar area -->
+      </header>
+      <!-- ========================= header-6 end ========================= -->
+
+      <!-- ========================= hero-5 start ========================= -->
+      <div id="home_desktop" class="hero-section hero-style-5 img-bg" style="background-image: url('assets/img/Slider.png');display: block;">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="hero-content-wrapper">
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".2s" style="color: #000000;font-size: 28px;">Enjoy The Premier Service!</p>
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".2s" style="color: #FF6501;font-weight: 550;font-size: 28px;">Food & Parcel Delivery</p>
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".4s" style="color: #000000;margin-top: 50px;">
+                  Fatty gives the Food & Parcel delivery service in Premier, Faster and Reliable way in LASHIO city, Shan state, Myanmar. Much more delicious foods are now available on Fatty App!
+                </p>
+                <a href="#0" class="radius-50 wow fadeInUp" data-wow-delay=".6s">
+                  <img id="apple_img" src="assets/img/Apple.png" alt="Logo" style="width: 215px;height:79px;"/>
+                </a>
+                <a href="#0" class="radius-50 wow fadeInUp" data-wow-delay=".6s">
+                  <img id="play_store_img" src="assets/img/Play Store.png" alt="Logo" style="width: 215px;height:79px;"/>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ========================= hero-5 end ========================= -->
+
+      <!-- ========================= hero-5 start ========================= -->
+      <div id="home_mobile" class="hero-section hero-style-5 img-bg" style="display: none;height: 384px;background-position: center;background: url('assets/img/Slider1.png') no-repeat center center;-moz-background-size: cover;-o-background-size: cover;background-size: cover;">
+      </div>
+      <div id="home_mobile1" class="hero-section hero-style-5 img-bg" style="display: none;">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="hero-content-wrapper" style="padding: 0px 0px !important">
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".2s" style="color: #000000;font-size: 25px;">Enjoy The Premier Service!</p>
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".2s" style="color: #FF6501;font-weight: 550;font-size: 23px;">Food & Parcel Delivery</p>
+                <p class="mb-30 wow fadeInUp" data-wow-delay=".4s" style="color: #000000;margin-top: 50px;text-align: justify;text-justify: inter-word;">
+                  Fatty gives the Food & Parcel delivery service in Premier, Faster and Reliable way in LASHIO city, Shan state, Myanmar. Much more delicious foods are now available on Fatty App!
+                </p>
+                <div class="row">
+                  <div class="col-6">
+                    <a href="#0" class="radius-50 wow fadeInUp" data-wow-delay=".6s">
+                      <img id="apple_img" src="assets/img/Apple.png" alt="Logo" style="width: 215px;height:79px;"/>
+                    </a>
+                  </div>
+                  <div class="col-6">
+                    <a href="#0" class="radius-50 wow fadeInUp" data-wow-delay=".6s">
+                      <img id="play_store_img" src="assets/img/Play Store.png" alt="Logo" style="width: 215px;height:79px;"/>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ========================= hero-5 end ========================= -->
+    </section>
+    <!-- ========================= hero-section-wrapper-6 end ========================= -->
+
+    <!-- ========================= what is fatty style-4 start ========================= -->
+    <section id="what_is_fatty" class="about-section what_is_fatty-4">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-xl-6 col-lg-6">
+            <div class="about-image text-lg-right wow fadeInUp" data-wow-delay=".5s">
+              <img id="about_img" src="assets/img/About Us.png" style="width:100%;height: 100%;" alt="">
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6">
+            <div class="about-content-wrapper">
+              <div class="section-title">
+                <div class="mb-25" id="what_is_fatty_header">
+                  <h6 class="wow fadeInUp" data-wow-delay=".2s" style="color: #FF6501;">Wha<span style="color: #FF6501;text-decoration: 3px solid;text-decoration-line: underline;text-underline-offset:10px;">t is F</span>ATTY </h6>
+                </div>
+                <p class="wow fadeInUp" data-wow-delay=".3s" style="color: black;text-align: justify;text-justify: inter-word;">
+                  Enjoy The Premier Service! Food & Parcel Delivery. Fatty gives the Food & Parcel delivery service in Premier & Faster & Reliable way in LASHIO city, Shan state, Myanmar. Much more delicious foods are now available on Fatty App! Such as Breakfast (Noodle, Dumpling, Tea etc.), Lunch (Fried Rice, Hamburger, Snack etc.) Dinner, Drinks, BBQ.
+                </p><br>
+                <p class="wow fadeInUp" data-wow-delay=".3s" style="color: black;text-align: justify;text-justify: inter-word;">
+                  Faster & Reliable parcel delivery service is on Fatty App! Send File, parcel, Pickup Parcel from car station, Send parcel someone in somewhere else, Much more premier service is now on Fatty App!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ========================= what is fatty style-4 end ========================= -->
+
+    <!-- ========================= promotion style-5 start ========================= -->
+    <section id="promotion" class="promotion-section promotion-style-5">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-8">
+            <div class="section-title text-center mb-40">
+              <div class="mb-25" id="what_is_fatty_header">
+                <h6 class="mb-15 wow fadeInUp" data-wow-delay=".2s" style="color: #FF6501;">Pr<span style="color: #FF6501;text-decoration: 3px solid;text-decoration-line: underline;text-underline-offset:10px;">omot</span>ion </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-6">
+            <div style="height: 432px;background-position: center;background: url('assets/img/promotion3.png') no-repeat center center;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>
+          </div>
+          <div class="col-lg-4 col-md-6" id="promotion2">
+            <div style="height: 432px;background-position: center;background: url('assets/img/promotion2.png') no-repeat center center;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>
+          </div>
+          <div class="col-lg-4 col-md-6" id="promotion3">
+            <div style="height: 432px;background-position: center;background: url('assets/img/promotion1.png') no-repeat center center;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ========================= promotion style-5 end ========================= -->
+
+    <!-- ========================= ourservice style-5 start ========================= -->
+    <section id="ourservice" class="ourservice-section ourservice-style-5">
+      <div class="container">
+        <div class="row justify-content-center mb-30">
+          <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-8">
+            <div class="section-title text-center mb-40">
+              <div class="mb-25" id="what_is_fatty_header">
+                <h6 id="service_header_mobile" class="mb-15 wow fadeInUp" data-wow-delay=".2s" style="color: #FF6501;">Ou<span style="color: #FF6501;text-decoration: 3px solid;text-decoration-line: underline;text-underline-offset:10px;">r Serv</span>ices </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ourservice wow fadeInUp" data-wow-delay=".2s">
+              <div class="icon">
+                <img src="assets/img/FreeDelivery.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Free Delivery</h6>
+                <p style="color: #000000">Faster & Reliable parcel delivery service is on Fatty App! Send parcel someone in somewhere else</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ourservice wow fadeInUp" data-wow-delay=".4s">
+              <div class="icon">
+                <img src="assets/img/PickupParcel.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Pickup Parcel</h6>
+                <p style="color: #000000">Parcel has arrived in your location and is out for delivery or arrived at the local facility</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ourservice wow fadeInUp" data-wow-delay=".6s" style="padding-left: 0px !important;padding-right: 0px !important;">
+              <div class="icon">
+                <img src="assets/img/SendParcel.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Send Parcel</h6>
+                <p style="color: #000000">Parcel shipping refers to shipping lighter, smaller boxed items. Typically,parcel means packages can be moved without assistance.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ourservice wow fadeInUp" data-wow-delay=".2s">
+              <div class="icon">
+                <img src="assets/img/Faster.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Faster</h6>
+                <p style="color: #000000">Optimize delivery routes. If you want to reach top delivery speeds, the first thing you must do is optimize your routing.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ourservice wow fadeInUp" data-wow-delay=".4s">
+              <div class="icon">
+                <img src="assets/img/Reliable.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Reliable</h6>
+                <p style="color: #000000">The degree to which a seller delivers a product according to the schedule promised at the time of sale.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div id="send_file_parcel" class="single-ourservice wow fadeInUp" data-wow-delay=".6s">
+              <div class="icon">
+                <img src="assets/img/SendFileParcel.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Send File, Parcel</h6>
+                <p style="color: #000000">Send File, parcel, Pickup Parcel from car station, Send parcel someone in somewhere else</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <!-- ========================= ourservice style-5 end ========================= -->
+    <!-- ========================= ournews style-5 start ========================= -->
+    <section id="ournews" class="ournews-section ournews-style-5">
+      <div class="container">
+        <div class="row justify-content-center mb-30">
+          <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-8">
+            <div class="section-title text-center mb-40">
+              <div class="mb-25" id="what_is_fatty_header">
+                <h6 id="news_header_mobile" class="mb-15 wow fadeInUp" data-wow-delay=".2s" style="color: #FF6501;">Ou<span style="color: #FF6501;text-decoration: 3px solid;text-decoration-line: underline;text-underline-offset:10px;">r Ne</span>ws </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ournews wow fadeInUp" data-wow-delay=".2s">
+              <div class="icon">
+                <img src="assets/img/FreeDelivery.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Free Delivery</h6>
+                <p style="color: #000000">Faster & Reliable parcel delivery service is on Fatty App! Send parcel someone in somewhere else</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ournews wow fadeInUp" data-wow-delay=".4s">
+              <div class="icon">
+                <img src="assets/img/PickupParcel.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Pickup Parcel</h6>
+                <p style="color: #000000">Parcel has arrived in your location and is out for delivery or arrived at the local facility</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ournews wow fadeInUp" data-wow-delay=".6s" style="padding-left: 0px !important;padding-right: 0px !important;">
+              <div class="icon">
+                <img src="assets/img/SendParcel.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Send Parcel</h6>
+                <p style="color: #000000">Parcel shipping refers to shipping lighter, smaller boxed items. Typically,parcel means packages can be moved without assistance.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ournews wow fadeInUp" data-wow-delay=".2s">
+              <div class="icon">
+                <img src="assets/img/Faster.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Faster</h6>
+                <p style="color: #000000">Optimize delivery routes. If you want to reach top delivery speeds, the first thing you must do is optimize your routing.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ournews wow fadeInUp" data-wow-delay=".4s">
+              <div class="icon">
+                <img src="assets/img/Reliable.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Reliable</h6>
+                <p style="color: #000000">The degree to which a seller delivers a product according to the schedule promised at the time of sale.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="single-ournews wow fadeInUp" data-wow-delay=".6s">
+              <div class="icon">
+                <img src="assets/img/SendFileParcel.png" style="width: 150px;height: 150px;" alt="">
+              </div>
+              <div class="content" style="margin-top: 40px;">
+                <h6 style="margin-bottom: 10px;color:#000000">Send File, Parcel</h6>
+                <p style="color: #000000">Send File, parcel, Pickup Parcel from car station, Send parcel someone in somewhere else</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <!-- ========================= ournews style-5 end ========================= -->
+
+    <!-- ========================= contact-style-3 start ========================= -->
+    <section id="contact" class="contact-section contact-style-3">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-10">
+            <div class="section-title text-center mb-50">
+              <h3 class="mb-15">Get in touch</h3>
+              <p>Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed!</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="contact-form-wrapper">
+              <form action="assets/php/contact.php" method="POST">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="single-input">
+                      <input type="text" id="name" name="name" class="form-input" placeholder="Name">
+                      <i class="lni lni-user"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="single-input">
+                      <input type="email" id="email" name="email" class="form-input" placeholder="Email">
+                      <i class="lni lni-envelope"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="single-input">
+                      <input type="text" id="number" name="number" class="form-input" placeholder="Number">
+                      <i class="lni lni-phone"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="single-input">
+                      <input type="text" id="subject" name="subject" class="form-input" placeholder="Subject">
+                      <i class="lni lni-text-format"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="single-input">
+                      <textarea name="message" id="message" class="form-input" placeholder="Message" rows="6"></textarea>
+                      <i class="lni lni-comments-alt"></i>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-button">
+                      <button type="submit" class="button"> <i class="lni lni-telegram-original"></i> Submit</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+
+          <div class="col-lg-4">
+            <div class="left-wrapper">
+              <div class="row">
+                <div class="col-lg-12 col-md-6">
+                  <div class="single-item">
+                    <div class="icon">
+                      <i class="lni lni-phone"></i>
+                    </div>
+                    <div class="text">
+                      <p>0045939863784</p>
+                      <p>+004389478327</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12 col-md-6">
+                  <div class="single-item">
+                    <div class="icon">
+                      <i class="lni lni-envelope"></i>
+                    </div>
+                    <div class="text">
+                      <p>yourmail@gmail.com</p>
+                      <p>admin@yourwebsite.com</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12 col-md-6">
+                  <div class="single-item">
+                    <div class="icon">
+                      <i class="lni lni-map-marker"></i>
+                    </div>
+                    <div class="text">
+                      <p>John's House, 13/5 Road, Sidny United State Of America</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ========================= contact-style-3 end ========================= -->
+
+    <!-- ========================= clients-logo start ========================= -->
+    <section class="clients-logo-section pt-100 pb-100">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="client-logo wow fadeInUp" data-wow-delay=".2s">
+              <img src="assets/img/clients/brands.svg" alt="" class="w-100">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ========================= clients-logo end ========================= -->
+
+    <!-- ========================= footer style-4 start ========================= -->
+    <footer class="footer footer-style-4">
+      <div class="container">
+        <div class="widget-wrapper">
+          <div class="row">
+            <div class="col-xl-3 col-lg-4 col-md-6">
+              <div class="footer-widget wow fadeInUp" data-wow-delay=".2s">
+                <div class="logo">
+                  <a href="#0"> <img src="assets/img/logo/logo.svg" alt=""> </a>
+                </div>
+                <p class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisis nulla placerat amet amet congue.</p>
+                <ul class="socials">
+                  <li> <a href="#0"> <i class="lni lni-facebook-filled"></i> </a> </li>
+                  <li> <a href="#0"> <i class="lni lni-twitter-filled"></i> </a> </li>
+                  <li> <a href="#0"> <i class="lni lni-instagram-filled"></i> </a> </li>
+                  <li> <a href="#0"> <i class="lni lni-linkedin-original"></i> </a> </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-2 offset-xl-1 col-lg-2 col-md-6 col-sm-6">
+              <div class="footer-widget wow fadeInUp" data-wow-delay=".3s">
+                <h6>Quick Link</h6>
+                <ul class="links">
+                  <li> <a href="#0">Home</a> </li>
+                  <li> <a href="#0">About</a> </li>
+                  <li> <a href="#0">Service</a> </li>
+                  <li> <a href="#0">Testimonial</a> </li>
+                  <li> <a href="#0">Contact</a> </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+              <div class="footer-widget wow fadeInUp" data-wow-delay=".4s">
+                <h6>Services</h6>
+                <ul class="links">
+                  <li> <a href="#0">Web Design</a> </li>
+                  <li> <a href="#0">Web Development</a> </li>
+                  <li> <a href="#0">Seo Optimization</a> </li>
+                  <li> <a href="#0">Blog Writing</a> </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-6">
+              <div class="footer-widget wow fadeInUp" data-wow-delay=".5s">
+                <h6>Download App</h6>
+                <ul class="download-app">
+                  <li>
+                    <a href="#0">
+                      <span class="icon"><i class="lni lni-apple"></i></span>
+                      <span class="text">Download on the <b>App Store</b> </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#0">
+                      <span class="icon"><i class="lni lni-play-store"></i></span>
+                      <span class="text">GET IT ON <b>Play Store</b> </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright-wrapper wow fadeInUp" data-wow-delay=".2s">
+          <p>Design and Developed by <a href="https://uideck.com" rel="nofollow" target="_blank">UIdeck</a> Built-with <a href="https://uideck.com" rel="nofollow" target="_blank">Lindy UI Kit</a></p>
+        </div>
+      </div>
+    </footer>
+    <!-- ========================= footer style-4 end ========================= -->
+
+    <!-- ========================= scroll-top start ========================= -->
+    <a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i> </a>
+    <!-- ========================= scroll-top end ========================= -->
+		
+
+    <!-- ========================= JS here ========================= -->
+    <script src="assets/js/bootstrap-5.0.0-beta1.min.js"></script>
+    <script src="assets/js/tiny-slider.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

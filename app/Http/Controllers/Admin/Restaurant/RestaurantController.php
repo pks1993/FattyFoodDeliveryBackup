@@ -188,13 +188,17 @@ class RestaurantController extends Controller
 
     public function restaurant_billing_list(Request $request)
     {
+        $startday = Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+        $tenday = Carbon::parse($startday)->addDays(9)->format('Y-m-d 23:59:59');
+
+        $elevenday = Carbon::parse($startday)->addDays(10)->format('Y-m-d 00:00:00');
+        $twentyday = Carbon::parse($startday)->addDays(19)->format('Y-m-d 23:59:59');
+
+        $twentyoneday = Carbon::parse($startday)->addDays(20)->format('Y-m-d 00:00:00');
+        $lastday = Carbon::parse($startday)->endOfMonth()->format('Y-m-d 23:59:59');
+
         $start_date=$request['min'];
         $end_date=$request['max'];
-        // if(empty($start_date) && empty($end_date)){
-        //     $start_date=Carbon::now()->subDays(10);
-        //     $end_date=Carbon::now();
-        // }
-        // $end_date="";
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
@@ -223,7 +227,7 @@ class RestaurantController extends Controller
         $cus_order_offered=RestaurantPayment::where('status','0')->get();
         $cus_order_done=RestaurantPayment::where('status','1')->get();
 
-        return view('admin.restaurant.restaurant_billing.index',compact('cus_order_list','cus_order_offered','cus_order_done','from_date','to_date'));
+        return view('admin.restaurant.restaurant_billing.index',compact('startday','tenday','elevenday','twentyday','twentyoneday','lastday','cus_order_list','cus_order_offered','cus_order_done','from_date','to_date'));
 
     }
 
@@ -779,6 +783,8 @@ class RestaurantController extends Controller
         $restaurants->average_time=$request['average_time'];
         $restaurants->rush_hour_time=$request['rush_hour_time'];
         $restaurants->percentage=$request['percentage'];
+        $restaurants->define_amount=$request['define_amount'];
+        $restaurants->restaurant_delivery_fee=$request['restaurant_delivery_fee'];
 
 
         if(!empty($request['restaurant_image'])){

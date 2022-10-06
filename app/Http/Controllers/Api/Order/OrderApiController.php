@@ -19,6 +19,9 @@ use App\Models\Order\PaymentMethodClose;
 use App\Models\Customer\Customer;
 use App\Models\Customer\OrderCustomer;
 use App\Models\Rider\Rider;
+use App\Models\Order\MultiOrderLimit;
+use App\Models\Order\OrderStartBlock;
+use App\Models\Order\OrderRouteBlock;
 use DB;
 use App\Models\Order\FoodOrderDeliFees;
 use Carbon\Carbon;
@@ -139,9 +142,19 @@ class OrderApiController extends Controller
         $customer_address_latitude=$request['customer_address_latitude'];
         $customer_address_longitude=$request['customer_address_longitude'];
         $restaurant_id=$request['restaurant_id'];
-
+        $item_total_price=$request['item_total_price'];
 
         $restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+
+        $restaurant_delivery_fee=$restaurant->restaurant_delivery_fee;
+        $define_amount=$restaurant->define_amount;
+        $system_deli=FoodOrderDeliFees::where('customer_delivery_fee',0)->orderBy('distance','desc')->first();
+        if($system_deli){
+            $system_deli_distance=$system_deli->distance;
+        }else {
+            $system_deli_distance=0;
+        }
+
 
         $theta = $customer_address_longitude - $restaurant->restaurant_longitude;
         $dist = sin(deg2rad($customer_address_latitude)) * sin(deg2rad($restaurant->restaurant_latitude)) +  cos(deg2rad($customer_address_latitude)) * cos(deg2rad($restaurant->restaurant_latitude)) * cos(deg2rad($theta));
@@ -266,7 +279,19 @@ class OrderApiController extends Controller
             $delivery_fee=0;
         }
 
-        return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee]]);
+        if($item_total_price){
+            if($restaurant->restaurant_delivery_fee != 0){
+                if($item_total_price < $restaurant->define_amount){
+                    $delivery_fee=$delivery_fee + $restaurant->restaurant_delivery_fee  ;
+                }else{
+                    $delivery_fee=$delivery_fee;
+                }
+            }else{
+                $delivery_fee=$delivery_fee;
+            }
+        }
+
+        return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee,'restaurant_delivery_fee'=>$restaurant_delivery_fee,'define_amount'=>$define_amount,'system_deli_distance'=>$system_deli_distance]]);
     }
     /**
      * Display a listing of the resource.
@@ -402,6 +427,13 @@ class OrderApiController extends Controller
         $date_end=date('Y-m-d 23:59:59', strtotime($request['date']));
         $language=$request->header('language');
 
+        $system_deli=FoodOrderDeliFees::where('customer_delivery_fee',0)->orderBy('distance','desc')->first();
+        if($system_deli){
+            $system_deli_distance=$system_deli->distance;
+        }else {
+            $system_deli_distance=0;
+        }
+
         // $array =CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->whereDate('created_at',$date)->whereIn('order_status_id',['1','3','4','5','6','10','19','7','2','8','9','18','20'])->orderBy('order_id','desc')->where('order_type','food')->get();
         // $total=count($array);
         // $per_page = 5;
@@ -465,6 +497,7 @@ class OrderApiController extends Controller
                     }else{
                         return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
                     }
+                    $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
                     array_push($active_data,$item1);
                 }
@@ -514,6 +547,7 @@ class OrderApiController extends Controller
                     }else{
                         return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
                     }
+                    $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
                     array_push($past_data,$item1);
                 }
@@ -1011,8 +1045,12 @@ class OrderApiController extends Controller
                     return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
                 }
             }elseif($customer_orders->order_type=="parcel"){
+                // if($customer_orders->is_multi_order==1){
+                //     $customer_orders->is_multi_order=0;
+                // }
                 $customer_orders->order_status_id=16;
                 $customer_orders->update();
+
                 $images=ParcelImage::where('order_id',$order_id)->first();
                 if($images){
                     $par_image=ParcelImage::where('order_id',$order_id)->get();
@@ -1026,11 +1064,12 @@ class OrderApiController extends Controller
                     $rider_check=Rider::where('rider_id',$value->rider_id)->first();
                     if($rider_check->exist_order != 0){
                         $rider_check->exist_order=$rider_check->exist_order-1;
+                        // if($value->is_multi_order==1){
+                        //     $rider_check->multi_order_count=$rider_check->multi_order_count - 1 ;
+                        // }
                         $rider_check->update();
                     }
                 }
-                // return response()->json($rider);
-
                 NotiOrder::where('order_id',$customer_orders->order_id)->delete();
 
                 return response()->json(['success'=>true,'message'=>"successfully cancel parcel order by customer",'data'=>$customer_orders]);
@@ -1347,6 +1386,206 @@ class OrderApiController extends Controller
 
     }
 
+    public function restaurant_each_order_cancel(Request $request)
+    {
+        $order_id=$request['order_id'];
+        $remark=$request['remark'];
+        $cancel_data=$request['cancel_data'];
+        $select_all=$request['select_all'];
+        $price=0;
+        $check_order=CustomerOrder::where('order_id',$order_id)->first();
+
+        if($check_order){
+            if($check_order->order_status_id==19 || $check_order->payment_method_id==2 ){
+                if($cancel_data){
+                    foreach($cancel_data as $value){
+                        OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
+                        // $price +=$value['food_qty']*$value['food_price'];
+                        $price +=$value['food_price'];
+                    }
+                    CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
+                }
+
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    try{
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_each_order_cancel",
+                                    "order_id"=>$order_id,
+                                    "order_status_id"=>0,
+                                    "order_type"=>$check_order->order_type,
+                                    "title_mm"=> "အားနာပါတယ်",
+                                    "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
+                                    "title_en"=> "Sorry !",
+                                    "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
+                                    "title_ch"=> "非常抱歉！",
+                                    "body_ch"=> "非常抱歉！商家取消了订单中的商品"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+                    }catch(ClientException $e){
+                    }
+                }
+                $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+                //if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
+                //	$item_total_price=($customer_orders->item_total_price)-($price);
+                //	$delivery_fee=$customer_orders->devlivery_fee;
+                //	$bill_total_price=$item_total_price+$delivery_fee;
+                //}else{
+                //	$item_price=($customer_orders->item_total_price)-($price);
+                //	if($item_price < $customer_orders->restaurant->define_amount){
+                    //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
+                    //	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
+                        //$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
+                    //}else{
+                    //	$delivery_fee=$customer_orders->delivery_fee;
+                    //	$item_total_price=$item_price;
+                    //	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                    //}
+                //}
+
+            $item_total_price=($customer_orders->item_total_price)-($price);
+            $delivery_fee=$customer_orders->devlivery_fee;
+            //$bill_total_price=$item_total_price+$delivery_fee;
+            $bill_total_price=($customer_orders->bill_total_price)-($price);
+
+            $customer_orders->delivery_fee=$delivery_fee;
+            $customer_orders->item_total_price=$item_total_price;
+            $customer_orders->bill_total_price=$bill_total_price;
+            $customer_orders->update();
+            $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+
+            if(!isset($_SESSION))
+            {
+                session_start();
+            }
+
+            $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+
+                $_SESSION['merchOrderId']=$customer_order->merch_order_id;
+                $_SESSION['customer_orders']=$customer_order;
+                $_SESSION['refundAmount']=$price;
+                NotiOrder::where('order_id',$order_id)->delete();
+
+                if($select_all==0){
+			if($check_food==0){
+				CustomerOrder::where('order_id',$order_id)->update([
+                        		'order_status_id'=>2,
+                    		]);
+			}
+                    return view('admin.src.example.each_refund');
+                }else{
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'order_status_id'=>2,
+                    ]);
+                    return view('admin.src.example.refund');
+                }
+
+            }else{
+                if($cancel_data){
+                    foreach($cancel_data as $value){
+                        OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
+                        // $price +=$value['food_qty']*$value['food_price'];
+                        $price +=$value['food_price'];
+                    }
+                    CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
+                }
+                //Customer
+                $cus_client = new Client();
+                $cus_token=$check_order->customer->fcm_token;
+                if($cus_token){
+                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                    try{
+                        $cus_client->post($cus_url,[
+                            'json' => [
+                                "to"=>$cus_token,
+                                "data"=> [
+                                    "type"=> "restaurant_each_order_cancel",
+                                    "order_id"=>$order_id,
+                                    "order_status_id"=>0,
+                                    "order_type"=>$check_order->order_type,
+                                    "title_mm"=> "အားနာပါတယ်",
+                                    "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
+                                    "title_en"=> "Sorry !",
+                                    "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
+                                    "title_ch"=> "非常抱歉！",
+                                    "body_ch"=> "非常抱歉！商家取消了订单中的商品"
+                                ],
+                                "mutable_content" => true ,
+                                "content_available" => true,
+                                "notification"=> [
+                                    "title"=>"this is a title",
+                                    "body"=>"this is a body",
+                                ],
+                            ],
+                        ]);
+
+                    }catch(ClientException $e){
+                    }
+                }
+
+                $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+
+                if($select_all==1){
+                    CustomerOrder::where('order_id',$order_id)->update([
+                        'order_status_id'=>2,
+                    ]);
+                }else{
+			if($check_food==0){
+				CustomerOrder::where('order_id',$order_id)->update([
+                        		'order_status_id'=>2,
+                    		]);
+			}
+			$customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+               // 	if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
+                      //  	$item_total_price=($customer_orders->item_total_price)-($price);
+                    //    	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                  //      	$delivery_fee=$customer_orders->delivery_fee;
+                //	}else{
+                        //	$item_price=($customer_orders->item_total_price)-($price);
+                        //	if($item_price < $customer_orders->restaurant->define_amount){
+                                //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
+                              //  	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
+                            //    	$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
+                        //	}else{
+                          //      	$delivery_fee=$customer_orders->delivery_fee;
+                            //    	$item_total_price=$item_price;
+                          //      	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                        //	}
+                	//}
+
+			$item_total_price=($customer_orders->item_total_price)-($price);
+                        $bill_total_price=($customer_orders->bill_total_price)-($price);
+                        $delivery_fee=$customer_orders->delivery_fee;
+
+                	$customer_orders->delivery_fee=$delivery_fee;
+                	$customer_orders->item_total_price=$item_total_price;
+                	$customer_orders->bill_total_price=$bill_total_price;
+                	$customer_orders->update();
+		}
+
+                $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+                NotiOrder::where('order_id',$order_id)->delete();
+                return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_order]]);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>'order id not found']);
+        }
+
+    }
+
     public function restaurant_status_v1(Request $request)
     {
         $order_id=$request['order_id'];
@@ -1411,154 +1650,192 @@ class OrderApiController extends Controller
                         }
                     }
 
-                        //Rider
-                        $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                        ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        * cos(radians(rider_latitude))
-                        * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        + sin(radians(" .$restaurant_address_latitude. "))
-                        * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                        ->where('active_inactive_status','1')
-                        ->where('is_ban','0')
-                        ->where('rider_fcm_token','!=',null)
-                        ->get();
-                        // if($riders->isNotEmpty())
-                        // {
-                        //     $rider_fcm_token=[];
-                        //     foreach($riders as $rid){
-                        //         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                        //             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$customer_orders->order_id)->first();
-                        //             if(empty($check_noti_order)){
-                        //                 NotiOrder::create([
-                        //                     "rider_id"=>$rid->rider_id,
-                        //                     "order_id"=>$customer_orders->order_id,
-                        //                 ]);
-                        //             }
-                        //             $rider_fcm_token[]=$rid->rider_fcm_token;
-                        //         }else{
-                        //             $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                        //             ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //             * cos(radians(rider_latitude))
-                        //             * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //             + sin(radians(" .$restaurant_address_latitude. "))
-                        //             * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                        //             ->having('distance','<=',3)
-                        //             ->groupBy("rider_id")
-                        //             ->where('active_inactive_status','1')
-                        //             ->where('is_ban','0')
-                        //             ->where('rider_fcm_token','!=',null)
-                        //             ->get();
-                        //             if($riders->isNotEmpty()){
-                        //                 $rider_fcm_token=[];
-                        //                 foreach($riders as $rid){
-                        //                     if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                        //                         $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$customer_orders->order_id)->first();
-                        //                         if(empty($check_noti_order)){
-                        //                             NotiOrder::create([
-                        //                                 "rider_id"=>$rid->rider_id,
-                        //                                 "order_id"=>$customer_orders->order_id,
-                        //                             ]);
-                        //                         }
-                        //                         $rider_fcm_token[]=$rid->rider_fcm_token;
-                        //                     }
-                        //                 }
-                        //             }else{
-                        //                 $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                        //                 ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //                 * cos(radians(rider_latitude))
-                        //                 * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //                 + sin(radians(" .$restaurant_address_latitude. "))
-                        //                 * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                        //                 ->having('distance','<=',5)
-                        //                 ->groupBy("rider_id")
-                        //                 ->where('active_inactive_status','1')
-                        //                 ->where('is_ban','0')
-                        //                 ->where('rider_fcm_token','!=',null)
-                        //                 ->get();
-                        //                 if($riders->isNotEmpty()){
-                        //                     $rider_fcm_token=[];
-                        //                     foreach($riders as $rid){
-                        //                         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                        //                             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$customer_orders->order_id)->first();
-                        //                             if(empty($check_noti_order)){
-                        //                                 NotiOrder::create([
-                        //                                     "rider_id"=>$rid->rider_id,
-                        //                                     "order_id"=>$customer_orders->order_id,
-                        //                                 ]);
-                        //                             }
-                        //                             $rider_fcm_token[]=$rid->rider_fcm_token;
-                        //                         }
-                        //                     }
-                        //                 }else{
-                        //                     $rider_fcm_token=[];
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        // }else{
-                        //     $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                        //     ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //     * cos(radians(rider_latitude))
-                        //     * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //     + sin(radians(" .$restaurant_address_latitude. "))
-                        //     * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                        //     ->having('distance','<=',3)
-                        //     ->groupBy("rider_id")
-                        //     ->where('active_inactive_status','1')
-                        //     ->where('is_ban','0')
-                        //     ->where('rider_fcm_token','!=',null)
-                        //     ->get();
-                        //     if($riders->isNotEmpty())
-                        //     {
-                        //         $rider_fcm_token=[];
-                        //         foreach($riders as $rid){
-                        //             if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                        //                 $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$customer_orders->order_id)->first();
-                        //                 if(empty($check_noti_order)){
-                        //                     NotiOrder::create([
-                        //                         "rider_id"=>$rid->rider_id,
-                        //                         "order_id"=>$customer_orders->order_id,
-                        //                     ]);
-                        //                 }
-                        //                 $rider_fcm_token[]=$rid->rider_fcm_token;
-                        //             }else{
-                        //                 $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
-                        //                 ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
-                        //                 * cos(radians(rider_latitude))
-                        //                 * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
-                        //                 + sin(radians(" .$restaurant_address_latitude. "))
-                        //                 * sin(radians(rider_latitude))) AS distance"),'max_distance')
-                        //                 ->having('distance','<=',5)
-                        //                 ->groupBy("rider_id")
-                        //                 ->where('active_inactive_status','1')
-                        //                 ->where('is_ban','0')
-                        //                 ->where('rider_fcm_token','!=',null)
-                        //                 ->get();
-                        //                 if($riders->isNotEmpty()){
-                        //                     $rider_fcm_token=[];
-                        //                     foreach($riders as $rid){
-                        //                         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance){
-                        //                             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$customer_orders->order_id)->first();
-                        //                             if(empty($check_noti_order)){
-                        //                                 NotiOrder::create([
-                        //                                     "rider_id"=>$rid->rider_id,
-                        //                                     "order_id"=>$customer_orders->order_id,
-                        //                                 ]);
-                        //                             }
-                        //                             $rider_fcm_token[]=$rid->rider_fcm_token;
-                        //                         }
-                        //                     }
-                        //                 }else{
-                        //                     $rider_fcm_token=[];
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        // }
+                    // $multi_order=MultiOrderLimit::orderBy('created_at','desc')->first();
+                    // $order_check=CustomerOrder::query()->whereBetween('updated_at',[$date_start,$date_end])->where('order_status_id',12)->whereNotNull('rider_id')->where('order_start_block_id','!=',0)->where('order_start_block_id',$customer_orders->order_start_block_id)->distinct('rider_id')->get();
+                    // $order_time_list=[];
+                    // $rider_id=[];
+                    // $define_time=$multi_order->food_multi_order_time + $customer_orders->restaurant->average_time;
+                    // foreach($order_check as $check){
+                    //     $noti_multi_count=NotiOrder::query()->whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$check->rider_id)->where('is_multi_order',1)->count();
+                    //     // $count_limit=($multi_order->multi_order_limit) - ($noti_multi_count);
+                    //     if($noti_multi_count == 0){
+                    //         $order_accept_time=$check['updated_at']->diffInMinutes(null, true, true, 2);
+                    //         if($order_accept_time <= $define_time){
+                    //             $check_riders_multi_limit=Rider::where('rider_id',$check->rider_id)->where('multi_order_count','<',$multi_order->multi_order_limit)->where('multi_cancel_count','<',$multi_order->cancel_count_limit)->first();
+                    //             if($check_riders_multi_limit){
+                    //                 $order_time_list[]=$order_accept_time;
+                    //                 $rider_id[]=$check_riders_multi_limit->rider_id;
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    
+                    // if($order_time_list && $rider_id){
+                    //     $min=min($order_time_list);
+                    //     $key=array_keys($order_time_list,$min);
+                    //     $min_rider=$rider_id[$key[0]];
 
-                        $rider_fcm_token=[];
-                        foreach($riders as $rid){
-                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                    //     if($min_rider){
+                    //         NotiOrder::create([
+                    //             "rider_id"=>$min_rider,
+                    //             "order_id"=>$customer_orders->order_id,
+                    //             "is_multi_order"=>1,
+                    //         ]);
+                    //         CustomerOrder::where('order_id',$customer_orders->order_id)->update([
+                    //             "is_multi_order"=>1,
+                    //         ]);
+                    //         Rider::find($min_rider)->update(['multi_order_count'=>DB::raw('multi_order_count+1')]);
+                    //     }
+                    //     $rider_fcm_token=Rider::where('rider_id',$min_rider)->pluck('rider_fcm_token');
+                    //     if($rider_fcm_token){
+                    //         $rider_client = new Client();
+                    //         $rider_token=$rider_fcm_token;
+                    //         $orderId=(string)$customer_orders->order_id;
+                    //         $orderstatusId=(string)$customer_orders->order_status_id;
+                    //         $orderType=(string)$customer_orders->order_type;
+                    //         $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    //         if($rider_token){
+                    //             try{
+                    //                 $rider_client->post($url,[
+                    //                     'json' => [
+                    //                         "to"=>$rider_token,
+                    //                         "data"=> [
+                    //                             "type"=> "new_order",
+                    //                             "order_id"=>$orderId,
+                    //                             "order_status_id"=>$orderstatusId,
+                    //                             "order_type"=>$orderType,
+                    //                             "title_mm"=> "Order Incomed",
+                    //                             "body_mm"=> "One new order is incomed! Please check it!",
+                    //                             "title_en"=> "Order Incomed",
+                    //                             "body_en"=> "One new order is incomed! Please check it!",
+                    //                             "title_ch"=> "订单通知",
+                    //                             "body_ch"=> "有新订单!请查看！"
+                    //                         ],
+                    //                     ],
+                    //                 ]);
+                    //             }catch(ClientException $e){
+                    //             }
+                    //         }
+                    //     }
+            
+                    // }else{
+                    //     //Rider
+                    //     $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                    //     ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                    //     * cos(radians(rider_latitude))
+                    //     * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                    //     + sin(radians(" .$restaurant_address_latitude. "))
+                    //     * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                    //     ->where('active_inactive_status','1')
+                    //     ->where('is_ban','0')
+                    //     ->where('rider_fcm_token','!=',null)
+                    //     ->get();
+                    //     $rider_fcm_token=[];
+                    //     foreach($riders as $rid){
+                    //         if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                    //             $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                    //             if(empty($check_noti_order)){
+                    //                 NotiOrder::create([
+                    //                     "rider_id"=>$rid->rider_id,
+                    //                     "order_id"=>$order_id,
+                    //                 ]);
+                    //             }
+                    //             $rider_fcm_token[] =$rid->rider_fcm_token;
+                    //         }
+                    //         if(empty($rider_fcm_token)){
+                    //             if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
+                    //                 $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                    //                 if(empty($check_noti_order)){
+                    //                     NotiOrder::create([
+                    //                         "rider_id"=>$rid->rider_id,
+                    //                         "order_id"=>$order_id,
+                    //                     ]);
+                    //                 }
+                    //                 $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //             }
+                    //             if(empty($rider_fcm_token)){
+                    //                 if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
+                    //                     $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                    //                     if(empty($check_noti_order)){
+                    //                         NotiOrder::create([
+                    //                             "rider_id"=>$rid->rider_id,
+                    //                             "order_id"=>$order_id,
+                    //                         ]);
+                    //                     }
+                    //                     $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //                 }
+                    //             }
+                    //             if(empty($rider_fcm_token)){
+                    //                 if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                    //                     $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                    //                     if(empty($check_noti_order)){
+                    //                         NotiOrder::create([
+                    //                             "rider_id"=>$rid->rider_id,
+                    //                             "order_id"=>$order_id,
+                    //                         ]);
+                    //                     }
+                    //                     $rider_fcm_token[]=$rid->rider_fcm_token;
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    //     if($rider_fcm_token){
+                    //         $rider_client = new Client();
+                    //         $rider_token=$rider_fcm_token;
+                    //         $orderId=(string)$customer_orders->order_id;
+                    //         $orderstatusId=(string)$customer_orders->order_status_id;
+                    //         $orderType=(string)$customer_orders->order_type;
+                    //         $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                    //         if($rider_token){
+                    //             try{
+                    //                 $rider_client->post($url,[
+                    //                     'json' => [
+                    //                         "to"=>$rider_token,
+                    //                         "data"=> [
+                    //                             "type"=> "new_order",
+                    //                             "order_id"=>$orderId,
+                    //                             "order_status_id"=>$orderstatusId,
+                    //                             "order_type"=>$orderType,
+                    //                             "title_mm"=> "Order Incomed",
+                    //                             "body_mm"=> "One new order is incomed! Please check it!",
+                    //                             "title_en"=> "Order Incomed",
+                    //                             "body_en"=> "One new order is incomed! Please check it!",
+                    //                             "title_ch"=> "订单通知",
+                    //                             "body_ch"=> "有新订单!请查看！"
+                    //                         ],
+                    //                     ],
+                    //                 ]);
+                    //             }catch(ClientException $e){
+                    //             }
+                    //         }
+                    //     }
+                    // }
+
+                    //Rider
+                    $riders=Rider::select("rider_id",'max_order','rider_fcm_token','exist_order'
+                    ,DB::raw("6371 * acos(cos(radians(" . $restaurant_address_latitude . "))
+                    * cos(radians(rider_latitude))
+                    * cos(radians(rider_longitude) - radians(" . $restaurant_address_longitude . "))
+                    + sin(radians(" .$restaurant_address_latitude. "))
+                    * sin(radians(rider_latitude))) AS distance"),'max_distance')
+                    ->where('active_inactive_status','1')
+                    ->where('is_ban','0')
+                    ->where('rider_fcm_token','!=',null)
+                    ->get();
+                    $rider_fcm_token=[];
+                    foreach($riders as $rid){
+                        if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && $rid->distance <= 1){
+                            $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                            if(empty($check_noti_order)){
+                                NotiOrder::create([
+                                    "rider_id"=>$rid->rider_id,
+                                    "order_id"=>$order_id,
+                                ]);
+                            }
+                            $rider_fcm_token[] =$rid->rider_fcm_token;
+                        }
+                        if(empty($rider_fcm_token)){
+                            if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
                                 $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
                                 if(empty($check_noti_order)){
                                     NotiOrder::create([
@@ -1566,10 +1843,10 @@ class OrderApiController extends Controller
                                         "order_id"=>$order_id,
                                     ]);
                                 }
-                                $rider_fcm_token[] =$rid->rider_fcm_token;
+                                $rider_fcm_token[]=$rid->rider_fcm_token;
                             }
                             if(empty($rider_fcm_token)){
-                                if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 3 && $rid->distance > 1)){
+                                if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
                                     $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
                                     if(empty($check_noti_order)){
                                         NotiOrder::create([
@@ -1579,66 +1856,53 @@ class OrderApiController extends Controller
                                     }
                                     $rider_fcm_token[]=$rid->rider_fcm_token;
                                 }
-                                if(empty($rider_fcm_token)){
-                                    if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 4.5 && $rid->distance > 3)){
-                                        $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                                        if(empty($check_noti_order)){
-                                            NotiOrder::create([
-                                                "rider_id"=>$rid->rider_id,
-                                                "order_id"=>$order_id,
-                                            ]);
-                                        }
-                                        $rider_fcm_token[]=$rid->rider_fcm_token;
+                            }
+                            if(empty($rider_fcm_token)){
+                                if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
+                                    $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
+                                    if(empty($check_noti_order)){
+                                        NotiOrder::create([
+                                            "rider_id"=>$rid->rider_id,
+                                            "order_id"=>$order_id,
+                                        ]);
                                     }
-                                }
-                                if(empty($rider_fcm_token)){
-                                    if($rid->exist_order <= $rid->max_order && $rid->distance <= $rid->max_distance && ($rid->distance <= 6 && $rid->distance > 4.5)){
-                                        $check_noti_order=NotiOrder::whereBetween('created_at',[$date_start,$date_end])->where('rider_id',$rid->rider_id)->where('order_id',$order_id)->first();
-                                        if(empty($check_noti_order)){
-                                            NotiOrder::create([
-                                                "rider_id"=>$rid->rider_id,
-                                                "order_id"=>$order_id,
-                                            ]);
-                                        }
-                                        $rider_fcm_token[]=$rid->rider_fcm_token;
-                                    }
+                                    $rider_fcm_token[]=$rid->rider_fcm_token;
                                 }
                             }
                         }
-                        if($rider_fcm_token){
-                            $rider_client = new Client();
-                            $rider_token=$rider_fcm_token;
-                            $orderId=(string)$customer_orders->order_id;
-                            $orderstatusId=(string)$customer_orders->order_status_id;
-                            $orderType=(string)$customer_orders->order_type;
-                            $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                            if($rider_token){
-                                try{
-                                    $rider_client->post($url,[
-                                        'json' => [
-                                            "to"=>$rider_token,
-                                            "data"=> [
-                                                "type"=> "new_order",
-                                                "order_id"=>$orderId,
-                                                "order_status_id"=>$orderstatusId,
-                                                "order_type"=>$orderType,
-                                                "title_mm"=> "Order Incomed",
-                                                "body_mm"=> "One new order is incomed! Please check it!",
-                                                "title_en"=> "Order Incomed",
-                                                "body_en"=> "One new order is incomed! Please check it!",
-                                                "title_ch"=> "订单通知",
-                                                "body_ch"=> "有新订单!请查看！"
-                                            ],
+                    }
+                    if($rider_fcm_token){
+                        $rider_client = new Client();
+                        $rider_token=$rider_fcm_token;
+                        $orderId=(string)$customer_orders->order_id;
+                        $orderstatusId=(string)$customer_orders->order_status_id;
+                        $orderType=(string)$customer_orders->order_type;
+                        $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        if($rider_token){
+                            try{
+                                $rider_client->post($url,[
+                                    'json' => [
+                                        "to"=>$rider_token,
+                                        "data"=> [
+                                            "type"=> "new_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "Order Incomed",
+                                            "body_mm"=> "One new order is incomed! Please check it!",
+                                            "title_en"=> "Order Incomed",
+                                            "body_en"=> "One new order is incomed! Please check it!",
+                                            "title_ch"=> "订单通知",
+                                            "body_ch"=> "有新订单!请查看！"
                                         ],
-                                    ]);
-                                }catch(ClientException $e){
-                                }
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
                             }
                         }
-
-                    // }
-
-                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
+                    }
+                    $customer_orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1]]);
 
                 }
                 elseif($request['order_status_id']=="2"){
@@ -1752,8 +2016,8 @@ class OrderApiController extends Controller
                 else{
                     return response()->json(['success'=>false,'message'=>'status id not found']);
                 }
-
-                return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders]]);
+                $customer_orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+                return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1]]);
             }else{
                 return response()->json(['success'=>false,'message'=>'order id not found!']);
             }
@@ -2648,7 +2912,10 @@ class OrderApiController extends Controller
         $restaurant_address_longitude=$restaurant_check->restaurant_longitude;
         $average_time=$restaurant_check->average_time;
         $state_id=$restaurant_check->state_id;
+        // $from_parcel_city_id=$restaurant_check->restaurant_block_id;
+        $from_parcel_city_id=0;
 
+        
         $order_description=$request['order_description'];
         $delivery_fee=$request['delivery_fee'];
         $item_total_price=$request['item_total_price'];
@@ -2663,6 +2930,21 @@ class OrderApiController extends Controller
         $order_time=date('g:i A');
         $start_time = Carbon::now()->format('g:i A');
         $end_time = Carbon::now()->addMinutes($average_time)->format('g:i A');
+        
+        // $min_block=ParcelBlockList::select("parcel_block_id","block_name"
+        //     ,DB::raw("6371 * acos(cos(radians(" . $customer_address_latitude . "))
+        //     * cos(radians(latitude))
+        //     * cos(radians(longitude) - radians(" . $customer_address_longitude . "))
+        //     + sin(radians(" .$customer_address_latitude. "))
+        //     * sin(radians(latitude))) AS distance"))
+        //     ->orderBy('distance','asc')
+        //     ->first();
+        // if($min_block){
+        //     $to_parcel_city_id=$min_block->parcel_block_id;
+        // }else{
+        //     $to_parcel_city_id=0;
+        // }
+        $to_parcel_city_id=0;
 
         if($payment_method_id=="1"){
             $order_status_id="1";
@@ -2684,60 +2966,6 @@ class OrderApiController extends Controller
         $miles = $dist * 60 * 1.1515;
         $kilometer=$miles * 1.609344;
         $distances=(float) number_format((float)$kilometer, 1, '.', '');
-
-        // if($distances <= 2) {
-        //     $rider_delivery_fee=650;
-        // }elseif($distances > 2 && $distances < 3.5){
-        //     $rider_delivery_fee=750;
-        // }elseif($distances == 3.5){
-        //     $rider_delivery_fee=850;
-        // }elseif($distances > 3.5 && $distances < 4.5){
-        //     $rider_delivery_fee=950;
-        // }elseif($distances == 4.5){
-        //     $rider_delivery_fee=1050;
-        // }elseif($distances > 4.5 && $distances < 6){
-        //     $rider_delivery_fee=1150;
-        // }elseif($distances == 6){
-        //     $rider_delivery_fee=1250;
-        // }elseif($distances > 6 && $distances < 7.5){
-        //     $rider_delivery_fee=1350;
-        // }elseif($distances==7.5){
-        //     $rider_delivery_fee=1450;
-        // }elseif($distances > 7.5 && $distances < 9){
-        //     $rider_delivery_fee=1550;
-        // }elseif($distances==9){
-        //     $rider_delivery_fee=1650;
-        // }elseif($distances > 9 && $distances < 10.5){
-        //     $rider_delivery_fee=1750;
-        // }elseif($distances==10.5){
-        //     $rider_delivery_fee=1850;
-        // }elseif($distances > 10.5 && $distances < 12){
-        //     $rider_delivery_fee=1950;
-        // }elseif($distances==12){
-        //     $rider_delivery_fee=2050;
-        // }elseif($distances > 12 && $distances < 13.5){
-        //     $rider_delivery_fee=2150;
-        // }elseif($distances==13.5){
-        //     $rider_delivery_fee=2250;
-        // }elseif($distances > 13.5 && $distances < 15){
-        //     $rider_delivery_fee=2350;
-        // }elseif($distances==15){
-        //     $rider_delivery_fee=2450;
-        // }elseif($distances > 15 && $distances < 16.5){
-        //     $rider_delivery_fee=2550;
-        // }elseif($distances==16.5){
-        //     $rider_delivery_fee=2650;
-        // }elseif($distances > 16.5 && $distances < 18){
-        //     $rider_delivery_fee=2750;
-        // }elseif($distances==18){
-        //     $rider_delivery_fee=2850;
-        // }elseif($distances > 18 && $distances < 19.5){
-        //     $rider_delivery_fee=2950;
-        // }elseif($distances >= 19.5){
-        //     $rider_delivery_fee=3050;
-        // }else{
-        //     $rider_delivery_fee=3050;
-        // }
 
         if($distances <= 0.5){
             $define_distance=0.5;
@@ -2810,6 +3038,14 @@ class OrderApiController extends Controller
             $rider_delivery_fee=0;
         }
 
+        // $check_start_block=OrderRouteBlock::where('start_block_id',$from_parcel_city_id)->where('end_block_id',$to_parcel_city_id)->first();
+        // if($check_start_block){
+        //     $order_start_block_id=$check_start_block->order_start_block_id;
+        // }else{
+        //     $order_start_block_id=0;
+        // }
+        $order_start_block_id=0;
+
         $booking_count=CustomerOrder::count();
         // $order_count=CustomerOrder::where('created_at','>',Carbon::now()->startOfMonth()->toDateTimeString())->where('created_at','<',Carbon::now()->endOfMonth()->toDateTimeString())->where('restaurant_id',$restaurant_id)->count();
         $order_count=CustomerOrder::whereRaw('Date(created_at) = CURDATE()')->where('restaurant_id',$restaurant_id)->count();
@@ -2846,6 +3082,9 @@ class OrderApiController extends Controller
             $customer_orders->address_type=$address_type;
             $customer_orders->customer_address_phone=$customer_address_phone;
 
+            $customer_orders->from_parcel_city_id=$from_parcel_city_id;
+            $customer_orders->to_parcel_city_id=$to_parcel_city_id;
+
 
             $customer_orders->restaurant_address_latitude=$restaurant_address_latitude;
             $customer_orders->restaurant_address_longitude=$restaurant_address_longitude;
@@ -2854,6 +3093,8 @@ class OrderApiController extends Controller
             $customer_orders->order_time=$order_time;
             $customer_orders->order_type="food";
             $customer_orders->is_admin_force_order=$is_admin_force_order;
+            // $customer_orders->is_multi_order=0;
+            // $customer_orders->order_start_block_id=$order_start_block_id;
             $customer_orders->save();
 
             //start History

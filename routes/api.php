@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -207,6 +209,8 @@ Route::post('v1/fatty/202221/lashio/main/admin/restaurants/orders/click','Api\Or
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/orders/status','Api\Order\OrderApiController@restaurant_status_v1');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/cancle_orders/status','Api\Order\OrderApiController@restaurant_cancle_order');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/cancel_orders/status','Api\Order\OrderApiController@restaurant_cancel_order_v1');
+Route::post('v1/fatty/202221/lashio/main/admin/restaurants/each_order/cancel/status','Api\Order\OrderApiController@restaurant_each_order_cancel');
+
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/orders/details','Api\Restaurant\RestaurantApiController@restaurant_order_details');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants/activenow','Api\Restaurant\RestaurantApiController@activenow');
 Route::post('v1/fatty/202221/lashio/main/admin/foods/onoff','Api\Restaurant\RestaurantApiController@food_onoff');
@@ -218,6 +222,9 @@ Route::post('v1/fatty/202221/lashio/main/admin/rider/home_page','Api\Rider\Rider
 Route::post('v1/fatty/202221/lashio/main/admin/rider/location/update','Api\Rider\RiderApiController@rider_location');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/location','Api\Rider\RiderApiController@rider_location_get');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/orders/status','Api\Rider\RiderApiController@order_status');
+
+Route::post('v1/fatty/202221/lashio/main/admin/rider/multi_order/cancel','Api\Rider\RiderApiController@multi_order_cancel');
+
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history','Api\Rider\RiderApiController@order_food_history');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history/filter','Api\Rider\RiderApiController@order_food_history_filter');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/foods/orders/history_list','Api\Rider\RiderApiController@order_food_history_list');
@@ -238,6 +245,7 @@ Route::post('v2/fatty/202221/lashio/main/admin/rider/parcels/orders/total_estima
 Route::post('v1/fatty/202221/lashio/main/admin/rider/insight','Api\Rider\RiderApiController@rider_insight');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/get_billing','Api\Rider\RiderApiController@rider_getBilling');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/get_billing_list','Api\Rider\RiderApiController@rider_getBilling_list');
+Route::post('v1/fatty/202221/lashio/main/admin/rider/benefit','Api\Rider\RiderApiController@rider_benefit');
 
 //insightRestaurant
 // Route::post('v1/fatty/202221/lashio/main/admin/restaurants/insight','Api\Restaurant\RestaurantApiController@restaurant_insight');

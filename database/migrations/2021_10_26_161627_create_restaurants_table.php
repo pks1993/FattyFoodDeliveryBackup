@@ -18,6 +18,7 @@ class CreateRestaurantsTable extends Migration
             $table->string('restaurant_name_en')->nullable();
             $table->string('restaurant_name_mm')->nullable();
             $table->string('restaurant_name_ch')->nullable();
+            $table->unsignedBigInteger('restaurant_block_id')->default(1)->nullable();
             $table->unsignedBigInteger('restaurant_category_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
@@ -33,6 +34,8 @@ class CreateRestaurantsTable extends Migration
             $table->tinyInteger('restaurant_emergency_status')->nullable()->default(0);
             $table->integer('average_time')->nullable()->default(0);
             $table->integer('rush_hour_time')->nullable()->default(0);
+            $table->integer('define_amount')->nullable()->default(0);
+            $table->integer('restaurant_delivery_fee')->nullable()->default(0);
             $table->timestamps();
         });
     }
