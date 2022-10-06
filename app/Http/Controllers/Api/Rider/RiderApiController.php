@@ -2877,6 +2877,8 @@ class RiderApicontroller extends Controller
                 $rider_accept_history=CustomerOrderHistory::where('order_id',$value->order_id)->whereIn('order_status_id',[6,14])->first();
             }
 
+            $value->order_time=Carbon::parse($rider_accept_history->created_at)->format('g:i A');
+
             if(($rider_accept_history->created_at >= $start_time_one && $rider_accept_history->created_at <= $end_time_one) || ($rider_accept_history->created_at >= $start_time_two && $rider_accept_history->created_at <= $end_time_two)){
                 $value->check="yes";
                 if($value->order_type=="parcel"){
