@@ -101,6 +101,12 @@ class RiderController extends Controller
     {
         $start_date=$request['min'];
         $end_date=$request['max'];
+        if($start_date){
+            $start_date=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+        }
+        if($end_date){
+            $end_date=Carbon::now()->endOfMonth()->format('Y-m-d 00:00:00');
+        }
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
@@ -114,6 +120,8 @@ class RiderController extends Controller
 
         $order_rider=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
             $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+
+            // dd($order_rider);
             $item1=[];
         foreach($order_rider as $rider_data){
             $payment=RiderPayment::where('rider_id',$rider_data->rider_id)->orderBy('created_at')->first();
@@ -205,10 +213,7 @@ class RiderController extends Controller
 
             array_push($item1,$rider_data);
         }
-        
-        return response()->json($order_rider);
-
-        return view('admin.rider.rider_billing.index',compact('cus_order_list','from_date','to_date'));
+        return view('admin.rider.rider_billing.index',compact('order_rider','from_date','to_date'));
 
     }
 
