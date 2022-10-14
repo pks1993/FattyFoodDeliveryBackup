@@ -231,7 +231,7 @@ class RiderController extends Controller
             $value->total_peak_amount=$peak_parcel_amount+$peak_food_amount;
             $value->peak_time_amount=$peak_time_amount;
             $value->peak_time_percentage=$peak_time_percentage;
-            $value->reward=$total_parcel_amount+$total_food_amount+$peak_parcel_amount;
+            $value->reward=$total_parcel_amount+$total_food_amount+$total_peak_amount;
 
             if($start_count <= $total_order && $end_count >= $total_order ){
                 $value->is_target=1;
