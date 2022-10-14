@@ -42,12 +42,12 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <div class="text-center">
-                            <h5> <b> Title: &nbsp;  {{ \Carbon\Carbon::now()->format('F Y') }} &nbsp; detail</b></h5>
-                        </div>
-                        @foreach ($rider_benefit as $value)
-                            @if($value->is_target==1)
+                    <div class="text-center">
+                        <h5> <b> Title: &nbsp;  {{ \Carbon\Carbon::parse($start_date)->format('F Y') }} &nbsp; detail</b></h5>
+                    </div>
+                    @foreach ($rider_benefit as $value)
+                        @if($value->is_target==1)
+                            <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
                                         @if ($type != "list")
@@ -105,24 +105,33 @@
                                             <td>{{ number_format($value->reward) }}</td>
                                         </tr>
                                     </tbody>
-                                </table>
-                            @endif
-                        @endforeach
-                    </div>
-                    <div class="row">
+                                </table>   
+                            </div>
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    @if(url()->previous()==url()->current())
+                                        <a href="{{ url('fatty/main/admin/v1/riders_billing/list') }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                                    @else
+                                        <a href="{{ url()->previous() }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                                    @endif
+                                </div>
+                                <div class="col-6 text-right">
+                                    @if ($type=="list")
+                                        <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$value->reward.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;" title="Confirm"><i class="fas fa-check-circle"></i></a>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                    @if(count($rider_benefit)==0)
                         <div class="col-6 text-left">
                             @if(url()->previous()==url()->current())
-                                <a href="{{ url('fatty/main/admin/riders_billing/list') }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                                <a href="{{ url('fatty/main/admin/v1/riders_billing/list') }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
                             @else
                                 <a href="{{ url()->previous() }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
                             @endif
                         </div>
-                        <div class="col-6 text-right">
-                            @if ($type=="list")
-                                <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$value->reward.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;" title="Confirm"><i class="fas fa-check-circle"></i></a>
-                            @endif
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
