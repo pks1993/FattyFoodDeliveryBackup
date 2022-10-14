@@ -71,7 +71,7 @@
                             <table id="riders" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        {{-- <th></th> --}}
+                                        <th></th>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
                                         <th class="text-left">Start_Date</th>
@@ -85,7 +85,7 @@
                                 <tbody>
                                     @foreach ($order_rider as $value)
                                     <tr class="text-center">
-                                        {{-- <td></td> --}}
+                                        <td></td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
                                         <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
@@ -93,9 +93,9 @@
                                         <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
-                                        <td>
-                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-info mr-1" style="width: 80px;">Detali</a>
-                                            <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-success" style="width: 80px;">Confirm</a>
+                                        <td class="btn-group">
+                                            {{-- <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-info mr-1" style="width: 80px;">Detali</a> --}}
+                                            <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-danger" style="width: 80px;">Confirm</a>
                                         </td>
                                     </tr>
                                     @endforeach

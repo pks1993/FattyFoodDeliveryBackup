@@ -18,6 +18,13 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-3">
+            <div class="col-md-12 mt-2 flash-message" id="successMessage">
+                @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                @if(Session::has('alert-' . $msg))
+                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                @endif
+                @endforeach
+            </div>
             <div class="col-md-12">
                 <ul class="nav nav-pills">
                     <li class="nav-item col-md-4 btn">
@@ -36,13 +43,6 @@
         </div>
     </div>
 </section>
-<div class="col-md-8 offset-2 flash-message" id="successMessage">
-    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-    @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-    @endif
-    @endforeach
-</div>
 <section class="tab-content">
     <div class="row tab-pane fade show active" id="offered" role="tabpanel" aria-labelledby="offered-tab">
         <div class="col-md-12">
