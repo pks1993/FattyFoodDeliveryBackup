@@ -330,8 +330,10 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     // Route::get('restaurants_billing/update/{id}','Admin\Restaurant\RestaurantController@restaurant_billing_update')->name('restaurants_billing.update');
 
     //rider billing
+    Route::get('v1/riders_billing/list','Admin\Rider\RiderController@rider_billing_list_v1')->name('v1_riders_billing.list');
     Route::get('riders_billing/list','Admin\Rider\RiderController@rider_billing_list')->name('riders_billing.list');
     Route::get('riders_billing/detail/{id}','Admin\Rider\RiderController@rider_billing_detail')->name('riders_billing.detail');
+    Route::get('v1/riders_billing/detail/{id}','Admin\Rider\RiderController@rider_billing_detail_v1')->name('v1_riders_billing.detail');
     Route::get('riders_billing/offered','Admin\Rider\RiderController@rider_billing_offered')->name('riders_billing.offered');
     Route::get('riders_billing/history','Admin\Rider\RiderController@rider_billing_history')->name('riders_billing.history');
     Route::get('riders_billing/store/{id}','Admin\Rider\RiderController@rider_billing_store')->name('riders_billing.store');

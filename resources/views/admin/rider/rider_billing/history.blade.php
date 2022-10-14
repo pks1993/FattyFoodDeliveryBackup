@@ -22,7 +22,7 @@
                 <ul class="nav nav-pills">
                     <li class="nav-item col-md-4 btn">
                         {{-- <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">List</a> --}}
-                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/list') }}">List</a>
+                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/v1/riders_billing/list') }}">List</a>
                     </li>
                     <li class="nav-item col-md-4 btn">
                         {{-- <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="offered-tab" data-toggle="pill" href="#offered" role="tab" aria-controls="offered" aria-selected="true">Offered</a> --}}
