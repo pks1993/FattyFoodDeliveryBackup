@@ -411,7 +411,7 @@ class RiderController extends Controller
         $to_date=Carbon::parse($end_date)->endOfMonth()->format('Y-m-d 23:59:59');
         
         $order_rider=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->paginate(30);
 
         $item1=[];
         foreach($order_rider as $rider_data){
