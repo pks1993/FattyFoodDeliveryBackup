@@ -246,12 +246,12 @@ class RiderController extends Controller
 
     public function rider_billing_list(Request $request)
     {
-        $start_date=$request['min'];
-        $end_date=$request['max'];
-        if($start_date){
+        $current_date=$request['current_date'];
+        if($current_date){
+            $start_date=Carbon::parse($current_date)->startOfMonth()->format('Y-m-d 00:00:00');
+            $end_date=Carbon::parse($current_date)->endOfMonth()->format('Y-m-d 00:00:00');
+        }else{
             $start_date=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
-        }
-        if($end_date){
             $end_date=Carbon::now()->endOfMonth()->format('Y-m-d 00:00:00');
         }
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
@@ -360,7 +360,7 @@ class RiderController extends Controller
 
             array_push($item1,$rider_data);
         }
-        return view('admin.rider.rider_billing.index',compact('order_rider','from_date','to_date'));
+        return view('admin.rider.rider_billing.index',compact('order_rider','from_date','to_date','current_date'));
 
     }
 

@@ -119,7 +119,7 @@
                         </div>
                         <div class="col-6 text-right">
                             @if ($type=="list")
-                                <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$total_amount1.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;">Confirm</a>
+                                <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$total_amount1.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;"><i class="fas fa-check-circle"></i></a>
                             @endif
                         </div>
                     </div>

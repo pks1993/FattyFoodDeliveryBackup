@@ -94,8 +94,8 @@
                                         <td>{{ $value->payment_voucher }} days </td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
-                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" style="width: 80px;">Detali</a>
-                                            <a class="btn btn-sm btn-danger" style="width: 80px;color:white">Call</a>
+                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
+                                            <a class="btn btn-sm btn-danger" style="color:white" title="Call"><i class="fa fa-phone" aria-hidden="true"></i></a>
                                         </td>
                                     </tr>
                                     @endforeach

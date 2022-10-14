@@ -51,12 +51,13 @@
                     <form action="{{ route('fatty.admin.riders_billing.list') }}" method="get">
                         @csrf
                         <div class="row">
-                            <div class="col-md-3 mt-1">
+                            {{-- <div class="col-md-3 mt-1">
                                 <input type="text" id="min" name="min" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('d-M-Y') }}">
                             </div>
                             <div class="col-md-3 mt-1">
                                 <input type="text" id="max" name="max" value="{{ \Carbon\Carbon::now()->endOfMonth()->format('d-M-Y') }}">
-                            </div>
+                            </div> --}}
+                            <input class="col-5 mt-1 col-md-3" type="month" name="current_date" value="{{ \Carbon\Carbon::parse($current_date)->startOfMonth()->format('Y-m') }}"">
                             <div class="col-md-3 mt-1">
                                 <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">
                                     <i class="fa fa-search"></i> {{ __('filter') }}
@@ -97,8 +98,8 @@
                                         <td>{{ $value->duration }} days </td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td>
-                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.',"type":"list","payment_voucher":""}]') }}" class="btn btn-sm btn-info mr-1" style="width: 80px;">Detali</a>
-                                            <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-success" style="width: 80px;">Confirm</a>
+                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.',"type":"list","payment_voucher":""}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
+                                            <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-success" title="Confirm"><i class="fas fa-check-circle"></i></a>
                                         </td>
                                     </tr>
                                     @endforeach
