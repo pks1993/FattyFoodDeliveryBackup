@@ -403,7 +403,7 @@ class RiderController extends Controller
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
-        $cus_order_offered=RiderPayment::where('status','0')->get();
+        $cus_order_offered=RiderPayment::orderBy('rider_payment_id','desc')->where('status','0')->get();
         return view('admin.rider.rider_billing.offered',compact('cus_order_offered','from_date','to_date'));
     }
     public function rider_billing_history(Request $request)
@@ -413,7 +413,7 @@ class RiderController extends Controller
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
-        $cus_order_done=RiderPayment::where('status','1')->get();
+        $cus_order_done=RiderPayment::orderBy('rider_payment_id','desc')->where('status','1')->get();
         return view('admin.rider.rider_billing.history',compact('cus_order_done','from_date','to_date'));
     }
 
