@@ -59,10 +59,12 @@
                     </div> --}}
                     <div class="tab-content">
                         <div class="table-responsive">
+                            <div class="mt-3">
+                                {{ $cus_order_done->appends(request()->input())->links() }}
+                            </div>
                             <table id="" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
                                         {{-- <th class="text-left">Start_Date</th>
@@ -77,7 +79,6 @@
                                 <tbody>
                                     @foreach ($cus_order_done as $value)
                                     <tr>
-                                        <td></td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
                                         {{-- <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>

@@ -68,6 +68,9 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="table-responsive">
+                            <div class="mt-3">
+                                {{ $order_rider->appends(request()->input())->links() }}
+                            </div>
                             <table id="riders" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>

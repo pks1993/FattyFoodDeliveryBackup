@@ -266,7 +266,7 @@ class RiderController extends Controller
         $current_month_end_date=Carbon::parse($date1)->endOfMonth()->format('Y-m-d 23:59:59');
 
         $order_rider=CustomerOrder::whereDoesntHave('rider_payment',function($payment) use ($from_date){
-            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->get();
+            $payment->whereDate('last_offered_date','>=',$from_date);})->groupBy('rider_id')->select('rider_id')->whereBetween('created_at',[$from_date,$to_date])->where('rider_id','!=',null)->whereIn('order_status_id',['7','8','15'])->paginate(30);
 
             // dd($order_rider);
             $item1=[];
@@ -403,7 +403,7 @@ class RiderController extends Controller
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
-        $cus_order_offered=RiderPayment::orderBy('rider_payment_id','desc')->where('status','0')->get();
+        $cus_order_offered=RiderPayment::orderBy('rider_payment_id','desc')->where('status','0')->paginate(30);
         return view('admin.rider.rider_billing.offered',compact('cus_order_offered','from_date','to_date'));
     }
     public function rider_billing_history(Request $request)
@@ -413,7 +413,7 @@ class RiderController extends Controller
         $from_date=date('Y-m-d 00:00:00', strtotime($start_date));
         $to_date=date('Y-m-d 23:59:59', strtotime($end_date));
 
-        $cus_order_done=RiderPayment::orderBy('rider_payment_id','desc')->where('status','1')->get();
+        $cus_order_done=RiderPayment::orderBy('rider_payment_id','desc')->where('status','1')->paginate(30);
         return view('admin.rider.rider_billing.history',compact('cus_order_done','from_date','to_date'));
     }
 

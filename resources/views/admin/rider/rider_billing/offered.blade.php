@@ -48,7 +48,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-3">
+                    <div class="row">
                         <div class="col-md-3">
                             @if(count($cus_order_offered) ==0)
                                 <a aria-disabled="true" class="btn btn-danger btn-sm" style="color: #FFFFFF">Print No Data</a>
@@ -65,10 +65,12 @@
                     </div>
                     <div class="tab-content">
                         <div class="table-responsive">
+                            <div class="mt-3">
+                                {{ $cus_order_offered->appends(request()->input())->links() }}
+                            </div>
                             <table id="" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
                                         {{-- <th class="text-left">Start_Date</th> --}}
@@ -83,7 +85,6 @@
                                 <tbody>
                                     @foreach ($cus_order_offered as $value)
                                     <tr>
-                                        <td></td>
                                         <td>{{ $value->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
                                         {{-- <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
