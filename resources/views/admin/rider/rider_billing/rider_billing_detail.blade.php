@@ -102,7 +102,7 @@
                                         </tr>
                                         <tr>
                                             <th scope="row" colspan="3" class="text-center" style="font-size: 18px;">Total Amount</th>
-                                            <td>{{ number_format($value->reward) }}</td>
+                                            <td>{{ number_format($total_amount1) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
