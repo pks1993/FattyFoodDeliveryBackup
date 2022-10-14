@@ -50,6 +50,16 @@
                             @if($value->is_target==1)
                                 <table class="table table-bordered">
                                     <thead>
+                                        @if ($type != "list")
+                                            <tr>
+                                                <th colspan="4">
+                                                    <div class="row">
+                                                        <div class="col-6 text-left" style="font-size: 18px;">InvoiceId</div>
+                                                        <div class="col-6 text-right" style="font-size: 18px">{{ $payment_voucher}}</div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        @endif
                                         <tr>
                                             <th colspan="4">
                                                 <div class="row">
@@ -92,7 +102,7 @@
                                         </tr>
                                         <tr>
                                             <th scope="row" colspan="3" class="text-center" style="font-size: 18px;">Total Amount</th>
-                                            <td>{{ number_format($total_amount1) }}</td>
+                                            <td>{{ number_format($value->reward) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -101,10 +111,16 @@
                     </div>
                     <div class="row">
                         <div class="col-6 text-left">
-                            <a href="{{ url()->previous() }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                            @if(url()->previous()==url()->current())
+                                <a href="{{ url('fatty/main/admin/riders_billing/list') }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                            @else
+                                <a href="{{ url()->previous() }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                            @endif
                         </div>
                         <div class="col-6 text-right">
-                            <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$total_amount1.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;">Confirm</a>
+                            @if ($type=="list")
+                                <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$value->reward.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;">Confirm</a>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -84,16 +84,17 @@
                                     @foreach ($cus_order_offered as $value)
                                     <tr>
                                         <td></td>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $value->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
                                         {{-- <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td> --}}
                                         <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
-                                        <td>{{ $value->duration }} days </td>
+                                        <td>{{ $value->payment_voucher }} days </td>
                                         <td class="text-left">{{ number_format($value->total_amount) }}</td>
                                         <td class="text-center">
-                                            <p class="btn btn-sm btn-danger" style="width: 80px;">Call</p>
+                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" style="width: 80px;">Detali</a>
+                                            <a class="btn btn-sm btn-danger" style="width: 80px;color:white">Call</a>
                                         </td>
                                     </tr>
                                     @endforeach

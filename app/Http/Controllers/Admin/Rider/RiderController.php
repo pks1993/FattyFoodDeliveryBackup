@@ -123,6 +123,8 @@ class RiderController extends Controller
             $duration=$value->duration;
             $start_date=$value->start_date;
             $end_date=$value->end_date;
+            $type=$value->type;
+            $payment_voucher=$value->payment_voucher;
         }
         $benefit_start_date=$start_date;
         $benefit_end_date=$end_date;
@@ -239,7 +241,7 @@ class RiderController extends Controller
             array_push($data,$value);
         }
         // return response()->json($rider_benefit);
-        return view('admin.rider.rider_billing.rider_billing_detail',compact('rider_benefit','rider_id','total_amount1','duration','start_date','end_date'));
+        return view('admin.rider.rider_billing.rider_billing_detail',compact('rider_benefit','rider_id','total_amount1','duration','start_date','end_date','type','payment_voucher'));
     }
 
     public function rider_billing_list(Request $request)
