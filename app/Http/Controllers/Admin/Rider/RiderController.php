@@ -214,12 +214,12 @@ class RiderController extends Controller
             $value->peak_parcel_order=$peak_parcel_order;
             $value->peak_food_order=$peak_food_order;
 
-            $total_food_amount=$food_orders_delivery_fee+($total_food_order*$value->food_benefit)+$peak_food_amount;
+            $total_food_amount=$food_orders_delivery_fee+($total_food_order*$value->food_benefit);
             if($value->parcel_benefit==0){
                 $parcelamount=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
-                $total_parcel_amount=$parcelamount+$peak_parcel_amount;
+                $total_parcel_amount=$parcelamount;
             }else{
-                $total_parcel_amount=($order*$value->parcel_benefit/100)+$peak_parcel_amount;
+                $total_parcel_amount=($order*$value->parcel_benefit/100);
             }
             $value->reward=$total_parcel_amount+$total_food_amount;
             $value->total_parcel_amount=$total_parcel_amount;
