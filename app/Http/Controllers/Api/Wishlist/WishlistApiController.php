@@ -208,7 +208,7 @@ class WishlistApiController extends Controller
                 if($check_currency){
                     $value->restaurant->currency_type=$check_currency->currency_type;
                 }else{
-                    $value->restaurant->currency_type="Ks";
+                    $value->restaurant->currency_type="MMK";
                 }
 
             array_push($data,$value);

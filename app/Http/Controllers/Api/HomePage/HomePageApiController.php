@@ -227,7 +227,7 @@ class HomePageApiController extends Controller
             if($check_currency){
                 $value->currency_type=$check_currency->currency_type;
             }else{
-                $value->currency_type="Ks";
+                $value->currency_type="MMK";
             }
 
             if($value->restaurant_emergency_status==0){
@@ -490,7 +490,7 @@ class HomePageApiController extends Controller
                 if($check_currency){
                     $value->currency_type=$check_currency->currency_type;
                 }else{
-                    $value->currency_type="Ks";
+                    $value->currency_type="MMK";
                 }
 
                 array_push($restaurants_val,$value);
@@ -721,7 +721,7 @@ class HomePageApiController extends Controller
                 if($check_currency){
                     $value->currency_type=$check_currency->currency_type;
                 }else{
-                    $value->currency_type="Ks";
+                    $value->currency_type="MMK";
                 }
                 array_push($restaurants_val,$value);
 
@@ -750,7 +750,7 @@ class HomePageApiController extends Controller
             if($check_currency){
                 $value->currency_type=$check_currency->currency_type;
             }else{
-                $value->currency_type="Ks";
+                $value->currency_type="MMK";
             }
         array_push($data,$value);
         }
@@ -829,7 +829,7 @@ class HomePageApiController extends Controller
             if($check_currency){
                 $restaurants->currency_type=$check_currency->currency_type;
             }else{
-                $restaurants->currency_type="Ks";
+                $restaurants->currency_type="MMK";
             }
             array_push($data,$restaurants);
 

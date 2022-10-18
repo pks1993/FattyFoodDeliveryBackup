@@ -92,7 +92,7 @@ class ParcelOrderApiController extends Controller
         if($check_currency){
             $currency=$check_currency->currency_type;
         }else{
-            $currency="Ks";
+            $currency="MMK";
         }
         $parcel_extra=ParcelExtraCover::all();
         $data=[];
@@ -1939,10 +1939,10 @@ class ParcelOrderApiController extends Controller
             if($check_currency){
                 $currency_type=$check_currency->currency_type;
             }else{
-                $currency_type="Ks";
+                $currency_type="MMK";
             }
         }else{
-            $currency_type="Ks";
+            $currency_type="MMK";
         }
 
         if($from_block_id && $to_block_id){

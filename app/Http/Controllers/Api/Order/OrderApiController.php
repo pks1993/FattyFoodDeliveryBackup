@@ -296,7 +296,7 @@ class OrderApiController extends Controller
         if($check_currency){
             $currency_type=$check_currency->currency_type;
         }else{
-            $currency_type="Ks";
+            $currency_type="MMK";
         }
 
         return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee,'restaurant_delivery_fee'=>$restaurant_delivery_fee,'define_amount'=>$define_amount,'system_deli_distance'=>$system_deli_distance,'currency_type'=>$currency_type]]);
@@ -399,7 +399,7 @@ class OrderApiController extends Controller
                     if($check_currency){
                         $value->currency_type=$check_currency->currency_type;
                     }else{
-                        $value->currency_type="Ks";
+                        $value->currency_type="MMK";
                     }
                     array_push($data,$value);
                 }
@@ -425,7 +425,7 @@ class OrderApiController extends Controller
                     if($check_currency){
                         $order->currency_type=$check_currency->currency_type;
                     }else{
-                        $order->currency_type="Ks";
+                        $order->currency_type="MMK";
                     }
                     array_push($item,$order);
                 }
@@ -524,7 +524,7 @@ class OrderApiController extends Controller
                     if($check_currency){
                         $item1->currency_type=$check_currency->currency_type;
                     }else{
-                        $item1->currency_type="Ks";
+                        $item1->currency_type="MMK";
                     }
                     array_push($active_data,$item1);
                 }
@@ -580,7 +580,7 @@ class OrderApiController extends Controller
                     if($check_currency){
                         $item1->currency_type=$check_currency->currency_type;
                     }else{
-                        $item1->currency_type="Ks";
+                        $item1->currency_type="MMK";
                     }
                     array_push($past_data,$item1);
                 }
@@ -676,7 +676,7 @@ class OrderApiController extends Controller
                     if($check_currency){
                         $item->currency_type=$check_currency->currency_type;
                     }else{
-                        $item->currency_type="Ks";
+                        $item->currency_type="MMK";
                     }
                     array_push($active_data,$item);
                 }
@@ -745,7 +745,7 @@ class OrderApiController extends Controller
                     if($check_currency){
                         $item1->currency_type=$check_currency->currency_type;
                     }else{
-                        $item1->currency_type="Ks";
+                        $item1->currency_type="MMK";
                     }
                     array_push($past_data,$item1);
                 }
@@ -2684,7 +2684,7 @@ class OrderApiController extends Controller
         if($check_currency){
             $customer_orders->currency_type=$check_currency->currency_type;
         }else{
-            $customer_orders->currency_type="Ks";
+            $customer_orders->currency_type="MMK";
         }
         array_push($data,$customer_orders);
 

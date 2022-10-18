@@ -1160,7 +1160,7 @@ class RestaurantApiController extends Controller
                 if($check_currency){
                     $value->currency_type=$check_currency->currency_type;
                 }else{
-                    $value->currency_type="Ks";
+                    $value->currency_type="MMK";
                 }
 
                 array_push($data,$value);
@@ -1219,7 +1219,7 @@ class RestaurantApiController extends Controller
                     if($check_currency){
                         $value1->currency_type=$check_currency->currency_type;
                     }else{
-                        $value1->currency_type="Ks";
+                        $value1->currency_type="MMK";
                     }
                     array_push($item,$value1);
                 }
@@ -1470,7 +1470,7 @@ class RestaurantApiController extends Controller
                 if($check_currency){
                     $value->currency_type=$check_currency->currency_type;
                 }else{
-                    $value->currency_type="Ks";
+                    $value->currency_type="MMK";
                 }
                 array_push($restaurants_val,$value);
 
