@@ -12,6 +12,7 @@ use App\Models\Restaurant\Restaurant;
 use App\Models\Restaurant\RestaurantAvailableTime;
 use App\Models\Restaurant\RestaurantCategory;
 use App\Models\Food\FoodMenu;
+use App\Models\Order\ParcelState;
 use App\Models\Food\Food;
 use DB;
 use App\Models\City\City;
@@ -222,6 +223,12 @@ class HomePageApiController extends Controller
             $value->distance_time=(int)$distances*2 + $value->average_time;
             $value->delivery_fee=$customer_delivery_fee;
             $value->rider_delivery_fee=$rider_delivery_fee;
+            $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+            if($check_currency){
+                $value->currency_type=$check_currency->currency_type;
+            }else{
+                $value->currency_type="Ks";
+            }
 
             if($value->restaurant_emergency_status==0){
                 $available=RestaurantAvailableTime::where('day',Carbon::now()->format("l"))->where('restaurant_id',$value->restaurant_id)->first();
@@ -479,6 +486,13 @@ class HomePageApiController extends Controller
                     }
                 }
 
+                $check_currency=ParcelState::where('city_id',$value->restaurant->city_id)->first();
+                if($check_currency){
+                    $value->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->currency_type="Ks";
+                }
+
                 array_push($restaurants_val,$value);
 
             }
@@ -703,6 +717,12 @@ class HomePageApiController extends Controller
                         }
                     }
                 }
+                $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                if($check_currency){
+                    $value->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->currency_type="Ks";
+                }
                 array_push($restaurants_val,$value);
 
             }
@@ -726,7 +746,13 @@ class HomePageApiController extends Controller
             }else{
                 $value->is_wish=false;
             }
-            array_push($data,$value);
+            $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+            if($check_currency){
+                $value->currency_type=$check_currency->currency_type;
+            }else{
+                $value->currency_type="Ks";
+            }
+        array_push($data,$value);
         }
 
         $food_menu=FoodMenu::where('restaurant_id',$restaurant_id)->select('food_menu_id','food_menu_name')->get();
@@ -798,6 +824,12 @@ class HomePageApiController extends Controller
             }else{
                 $restaurants->distance=(float)number_format((float)$restaurants->distance, 2, '.', '');
                 $restaurants->limit_distance=$near_distance;
+            }
+            $check_currency=ParcelState::where('city_id',$restaurants->city_id)->first();
+            if($check_currency){
+                $restaurants->currency_type=$check_currency->currency_type;
+            }else{
+                $restaurants->currency_type="Ks";
             }
             array_push($data,$restaurants);
 

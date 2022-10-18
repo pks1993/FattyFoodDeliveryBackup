@@ -22,6 +22,7 @@ use App\Models\Rider\Rider;
 use App\Models\Order\MultiOrderLimit;
 use App\Models\Order\OrderStartBlock;
 use App\Models\Order\OrderRouteBlock;
+use App\Models\Order\ParcelState;
 use DB;
 use App\Models\Order\FoodOrderDeliFees;
 use Carbon\Carbon;
@@ -291,7 +292,14 @@ class OrderApiController extends Controller
             }
         }
 
-        return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee,'restaurant_delivery_fee'=>$restaurant_delivery_fee,'define_amount'=>$define_amount,'system_deli_distance'=>$system_deli_distance]]);
+        $check_currency=ParcelState::where('city_id',$restaurant->city_id)->first();
+        if($check_currency){
+            $currency_type=$check_currency->currency_type;
+        }else{
+            $currency_type="Ks";
+        }
+
+        return response()->json(['success'=>true,'message'=>'this is delivery_fee','data'=>['delivery_fee'=>$delivery_fee,'restaurant_delivery_fee'=>$restaurant_delivery_fee,'define_amount'=>$define_amount,'system_deli_distance'=>$system_deli_distance,'currency_type'=>$currency_type]]);
     }
     /**
      * Display a listing of the resource.
@@ -386,6 +394,13 @@ class OrderApiController extends Controller
                         $city_data=ParcelBlockList::where('parcel_block_id',$value->to_parcel_city_id)->first();
                         $value->to_parcel_city_name=$city_data->block_name;
                     }
+
+                    $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                    if($check_currency){
+                        $value->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value->currency_type="Ks";
+                    }
                     array_push($data,$value);
                 }
 
@@ -405,6 +420,12 @@ class OrderApiController extends Controller
                         // $city_data=ParcelCity::where('parcel_city_id',$order->to_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$order->to_parcel_city_id)->first();
                         $order->to_parcel_city_name=$city_data->block_name;
+                    }
+                    $check_currency=ParcelState::where('city_id',$order->city_id)->first();
+                    if($check_currency){
+                        $order->currency_type=$check_currency->currency_type;
+                    }else{
+                        $order->currency_type="Ks";
                     }
                     array_push($item,$order);
                 }
@@ -499,6 +520,12 @@ class OrderApiController extends Controller
                     }
                     $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
+                    $check_currency=ParcelState::where('city_id',$item1->city_id)->first();
+                    if($check_currency){
+                        $item1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $item1->currency_type="Ks";
+                    }
                     array_push($active_data,$item1);
                 }
                 $past_order1=CustomerOrder::with(['payment_method','order_status','restaurant','rider','foods','foods.sub_item','foods.sub_item.option'])->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->orderby('created_at','DESC')->where('customer_id',$customer_id)->whereIn('order_status_id',['7','2','8','9','18','20'])->where('order_type','food')->get();
@@ -549,6 +576,12 @@ class OrderApiController extends Controller
                     }
                     $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
+                    $check_currency=ParcelState::where('city_id',$item1->city_id)->first();
+                    if($check_currency){
+                        $item1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $item1->currency_type="Ks";
+                    }
                     array_push($past_data,$item1);
                 }
                 $data=$active_order1->merge($past_order1);
@@ -639,6 +672,12 @@ class OrderApiController extends Controller
                         $block_data=ParcelBlockList::where('parcel_block_id',$item->to_parcel_city_id)->first();
                         $item->to_parcel_city_name=$block_data->block_name;
                     }
+                    $check_currency=ParcelState::where('city_id',$item->city_id)->first();
+                    if($check_currency){
+                        $item->currency_type=$check_currency->currency_type;
+                    }else{
+                        $item->currency_type="Ks";
+                    }
                     array_push($active_data,$item);
                 }
                 $past_order1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->where('customer_id',$customer_id)->where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereIn('order_status_id',['15','16'])->where('order_type','parcel')->orderBy('created_at','desc')->get();
@@ -701,6 +740,12 @@ class OrderApiController extends Controller
                         // $city_data=ParcelCity::where('parcel_city_id',$item1->to_parcel_city_id)->first();
                         $block_data=ParcelBlockList::where('parcel_block_id',$item1->to_parcel_city_id)->first();
                         $item1->to_parcel_city_name=$block_data->block_name;
+                    }
+                    $check_currency=ParcelState::where('city_id',$item1->city_id)->first();
+                    if($check_currency){
+                        $item1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $item1->currency_type="Ks";
                     }
                     array_push($past_data,$item1);
                 }
@@ -2634,6 +2679,13 @@ class OrderApiController extends Controller
         $customer_orders->order_status->order_status_name=$status_name;
 
         $customer_orders->distance=$distances;
+
+        $check_currency=ParcelState::where('city_id',$customer_orders->city_id)->first();
+        if($check_currency){
+            $customer_orders->currency_type=$check_currency->currency_type;
+        }else{
+            $customer_orders->currency_type="Ks";
+        }
         array_push($data,$customer_orders);
 
 
@@ -2941,6 +2993,7 @@ class OrderApiController extends Controller
         $restaurant_address_longitude=$restaurant_check->restaurant_longitude;
         $average_time=$restaurant_check->average_time;
         $state_id=$restaurant_check->state_id;
+        $city_id=$restaurant_check->city_id;
         // $from_parcel_city_id=$restaurant_check->restaurant_block_id;
         $from_parcel_city_id=0;
 
@@ -3113,6 +3166,9 @@ class OrderApiController extends Controller
 
             $customer_orders->from_parcel_city_id=$from_parcel_city_id;
             $customer_orders->to_parcel_city_id=$to_parcel_city_id;
+           
+            $customer_orders->state_id=$state_id;
+            $customer_orders->city_id=$city_id;
 
 
             $customer_orders->restaurant_address_latitude=$restaurant_address_latitude;

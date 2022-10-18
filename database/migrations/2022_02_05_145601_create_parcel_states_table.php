@@ -17,6 +17,9 @@ class CreateParcelStatesTable extends Migration
             $table->id('parcel_state_id');
             $table->string('state_name')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
+            $table->string('city_name')->nullable();
+            $table->unsignedBigInteger('city_id')->nullable();
+            $table->string('currency_type')->nullable()->default('Ks');
             $table->timestamps();
         });
     }

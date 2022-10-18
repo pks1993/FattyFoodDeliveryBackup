@@ -23,6 +23,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use App\Models\Order\FoodOrderDeliFees;
 use App\Models\Restaurant\NearRestaurntDistance;
+use App\Models\Order\ParcelState;
 
 
 
@@ -1155,6 +1156,12 @@ class RestaurantApiController extends Controller
                 }
 
                 $value->limit_distance=$near_distance;
+                $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                if($check_currency){
+                    $value->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->currency_type="Ks";
+                }
 
                 array_push($data,$value);
             }
@@ -1166,7 +1173,7 @@ class RestaurantApiController extends Controller
                 },'sub_item.option' => function($option){
                     $option->select('food_sub_item_data_id','food_sub_item_id','item_name_mm','item_name_en','item_name_ch','food_sub_item_price','instock','food_id','restaurant_id')->where('instock',1)->get();
                 },'restaurant'=>function ($restaurant){
-                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude','define_amount')->get();
+                    $restaurant->select('restaurant_id','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_image','restaurant_category_id','restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_emergency_status','restaurant_longitude','restaurant_latitude','define_amount','city_id','state_id')->get();
                 },'restaurant.category' => function ($category){
                     $category->select('restaurant_category_id','restaurant_category_name_mm','restaurant_category_name_en','restaurant_category_name_ch','restaurant_category_image')->get();
                 }])
@@ -1208,7 +1215,12 @@ class RestaurantApiController extends Controller
                         $value1->restaurant->distance=0.01;
                     }
                     $value1->restaurant->limit_distance=$near_distance;
-
+                    $check_currency=ParcelState::where('city_id',$value1->restaurant->city_id)->first();
+                    if($check_currency){
+                        $value1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value1->currency_type="Ks";
+                    }
                     array_push($item,$value1);
                 }
                 $food =  array_values(array_sort($food_check, function ($item) {
@@ -1454,7 +1466,12 @@ class RestaurantApiController extends Controller
                     }
                 }
                 $value->limit_distance=$near_distance;
-
+                $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                if($check_currency){
+                    $value->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->currency_type="Ks";
+                }
                 array_push($restaurants_val,$value);
 
             }

@@ -11,6 +11,7 @@ use App\Models\Order\MultiOrderLimit;
 use App\Models\Order\OrderStartBlock;
 use App\Models\Order\OrderRouteBlock;
 use App\Models\Order\ParcelImage;
+use App\Models\Order\ParcelState;
 use App\Models\City\ParcelCity;
 use App\Models\City\ParcelCityHistory;
 use App\Models\City\ParcelBlockHistory;
@@ -81,6 +82,24 @@ class ParcelOrderApiController extends Controller
     public function parcel_extra_list()
     {
         $parcel_extra=ParcelExtraCover::all();
+        return response()->json(['success'=>true,'message'=>'successfull data','data'=>$parcel_extra]);
+    }
+    public function v2_parcel_extra_list(Request $request)
+    {
+        $state_id=$request['state_id'];
+        $city_id=$request['city_id'];
+        $check_currency=ParcelState::where('city_id',$city_id)->first();
+        if($check_currency){
+            $currency=$check_currency->currency_type;
+        }else{
+            $currency="Ks";
+        }
+        $parcel_extra=ParcelExtraCover::all();
+        $data=[];
+        foreach($parcel_extra as $value){
+            $value->currency_type=$currency;
+            array_push($data,$value);
+        }
         return response()->json(['success'=>true,'message'=>'successfull data','data'=>$parcel_extra]);
     }
 
@@ -1903,6 +1922,7 @@ class ParcelOrderApiController extends Controller
     }
     public function v2_order_estimate_cost(Request $request)
     {
+        $city_id=$request['city_id'];
         $from_block_id=$request['from_block_id'];
         $to_block_id=$request['to_block_id'];
         $parcel_extra_cover_id=$request['parcel_extra_cover_id'];
@@ -1914,6 +1934,17 @@ class ParcelOrderApiController extends Controller
             $extra_coverage=0;
         }
 
+        if($city_id){
+            $check_currency=ParcelState::where('city_id',$city_id)->first();
+            if($check_currency){
+                $currency_type=$check_currency->currency_type;
+            }else{
+                $currency_type="Ks";
+            }
+        }else{
+            $currency_type="Ks";
+        }
+
         if($from_block_id && $to_block_id){
             $block_list=ParcelFromToBlock::where('parcel_from_block_id',$from_block_id)->where('parcel_to_block_id',$to_block_id)->first();
             if($block_list){
@@ -1922,9 +1953,9 @@ class ParcelOrderApiController extends Controller
                 $customer_delivery_fee=0;
             }
             $total_estimated=(int)($customer_delivery_fee + $extra_coverage);
-            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$customer_delivery_fee,'extra_coverage'=>$extra_coverage,'total_estimated'=>$total_estimated]]]);
+            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>$customer_delivery_fee,'extra_coverage'=>$extra_coverage,'total_estimated'=>$total_estimated,'currency_type'=>$currency_type]]]);
         }else{
-            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>0,'extra_coverage'=>$extra_coverage,'total_estimated'=>$extra_coverage]]]);
+            return response()->json(['success'=>true,'message'=>'total estimate cost','data'=>['define_cost'=>null,'estimated_cost'=>['delivery_fee'=>0,'extra_coverage'=>$extra_coverage,'total_estimated'=>$extra_coverage,'currency_type'=>$currency_type]]]);
         }
 
 

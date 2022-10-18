@@ -134,6 +134,7 @@ Route::middleware('one_device_login')->group(function(){
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/extra/store','Api\Order\ParcelOrderApiController@store');
     Route::get('v1/fatty/202221/lashio/main/admin/customers/parcels/type/list','Api\Order\ParcelOrderApiController@parcel_type_list');
     Route::get('v1/fatty/202221/lashio/main/admin/customers/parcels/extra/list','Api\Order\ParcelOrderApiController@parcel_extra_list');
+    Route::post('v2/fatty/202221/lashio/main/admin/customers/parcels/extra/list','Api\Order\ParcelOrderApiController@v2_parcel_extra_list');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/images/delete','Api\Order\ParcelOrderApiController@parcel_image_delete');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/list','Api\Order\ParcelOrderApiController@index');
     Route::post('v1/fatty/202221/lashio/main/admin/customers/parcels/orders/store','Api\Order\ParcelOrderApiController@order_store');

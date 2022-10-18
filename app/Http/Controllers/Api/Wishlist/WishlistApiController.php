@@ -10,6 +10,8 @@ use App\Models\Restaurant\RestaurantAvailableTime;
 use Illuminate\Support\Carbon;
 use DB;
 use App\Models\Restaurant\NearRestaurntDistance;
+use App\Models\Order\ParcelState;
+
 
 class WishlistApiController extends Controller
 {
@@ -201,6 +203,13 @@ class WishlistApiController extends Controller
                     }
                 }
                 $value->restaurant->limit_distance=$near_distance;
+
+                $check_currency=ParcelState::where('city_id',$value->restaurant->city_id)->first();
+                if($check_currency){
+                    $value->restaurant->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->restaurant->currency_type="Ks";
+                }
 
             array_push($data,$value);
         }

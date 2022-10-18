@@ -17,6 +17,8 @@ class CreateParcelExtraCoversTable extends Migration
             $table->id('parcel_extra_cover_id');
             $table->string('parcel_extra_cover_image')->nullable();
             $table->string('parcel_extra_cover_price')->nullable();
+            $table->unsignedBigInteger('state_id')->nullable();
+            $table->unsignedBigInteger('city_id')->nullable();
             $table->timestamps();
         });
     }
