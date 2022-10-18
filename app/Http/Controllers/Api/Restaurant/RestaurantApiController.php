@@ -85,6 +85,14 @@ class RestaurantApiController extends Controller
         $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
         // $tt=Date(Carbon::today());
+        $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        $check_currency=ParcelState::where('city_id',$check_restaurant->city_id)->first();
+        if($check_currency){
+            $currency_type=$check_currency->currency_type;
+        }else{
+            $currency_type="MMK";
+        }
+        
 
         $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->get();
         $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','1')->count();
@@ -122,7 +130,8 @@ class RestaurantApiController extends Controller
             array_push($data1,$value1);
         }
 
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
+            $currency_type="MMK";
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['currency_type'=>$currency_type,'total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
     }
     public function restaurant_insight_list_v1(Request $request)
     {
@@ -134,6 +143,14 @@ class RestaurantApiController extends Controller
         $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
         // $tt=Date(Carbon::today());
+
+        $check_restaurant=Restaurant::where('restaurant_id',$restaurant_id)->first();
+        $check_currency=ParcelState::where('city_id',$check_restaurant->city_id)->first();
+        if($check_currency){
+            $currency_type=$check_currency->currency_type;
+        }else{
+            $currency_type="MMK";
+        }
 
         $total_balance=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->get();
         $CashonDelivery=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->where('payment_method_id','1')->count();
@@ -198,7 +215,7 @@ class RestaurantApiController extends Controller
             $all_data=Paginator::merge($rejectorder,$deliveredorder)->sortByDesc('created_at')->get();
         }
 
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('item_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('item_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('item_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('item_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$deliverOrder->sum('item_total_price'),'delivered_order_count'=>$deliverOrder->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$rejectOrder->count(),'reject_order'=>$reject_order],'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['currency_type'=>$currency_type,'total_balance'=>$total_balance->sum('item_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('item_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('item_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('item_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$deliverOrder->sum('item_total_price'),'delivered_order_count'=>$deliverOrder->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$rejectOrder->count(),'reject_order'=>$reject_order],'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
     }
 
     /**
@@ -549,9 +566,15 @@ class RestaurantApiController extends Controller
         if($restaurant){
             $check_currency=ParcelState::where('city_id',$restaurant->city_id)->first();
             if($check_currency){
-                $restaurant->currency_type=$check_currency->currency_type;
+                $currency_type=$check_currency->currency_type;
             }else{
-                $restaurant->currency_type="MMK";
+                $currency_type="MMK";
+            }
+            foreach($restaurant->menu as $value){
+                $value->currency_type=$currency_type;
+                foreach($value->food as $foods){
+                    $foods->currency_type=$currency_type;
+                }
             }
         }
         return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>['restaurant'=>$restaurant]]);
