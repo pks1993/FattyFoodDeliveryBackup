@@ -99,8 +99,28 @@ class RestaurantApiController extends Controller
 
         //OrderShow
         $delivered_order=CustomerOrder::where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['7','8'])->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();
+        $data=[];
+        foreach($delivered_order as $value){
+            $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+            if($check_currency){
+                $value->currency_type=$check_currency->currency_type;
+            }else{
+                $value->currency_type="MMK";
+            }
+            array_push($data,$value);
+        }
 
         $reject_order=CustomerOrder::where('restaurant_id',$restaurant_id)->where('order_status_id','2')->whereDate('created_at','>=',$start_date)->whereDate('created_at','<=',$end_date)->select('order_id','customer_order_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"),'bill_total_price')->get();;
+        $data1=[];
+        foreach($reject_order as $value1){
+            $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+            if($check_currency){
+                $value1->currency_type=$check_currency->currency_type;
+            }else{
+                $value1->currency_type="MMK";
+            }
+            array_push($data1,$value1);
+        }
 
         return response()->json(['success'=>true,'message'=>'this is restaurant insight','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'delivered_order_balance'=>$delivered_order->sum('bill_total_price'),'delivered_order_count'=>$delivered_order->count(),'delivered_order'=>$delivered_order,'reject_order_count'=>$reject_order->count(),'reject_order'=>$reject_order]]);
     }
@@ -132,6 +152,12 @@ class RestaurantApiController extends Controller
         $data=[];
         foreach($deliveredorder as $item){
             $item->bill_total_price=$item->item_total_price;
+            $check_currency=ParcelState::where('city_id',$item->city_id)->first();
+            if($check_currency){
+                $item->currency_type=$check_currency->currency_type;
+            }else{
+                $item->currency_type="MMK";
+            }
             array_push($data,$item);
         }
         if($deliveredorder->isNotEmpty()){
@@ -148,6 +174,12 @@ class RestaurantApiController extends Controller
         $data1=[];
         foreach($rejectorder as $item1){
             $item1->bill_total_price=$item1->item_total_price;
+            $check_currency=ParcelState::where('city_id',$item1->city_id)->first();
+            if($check_currency){
+                $item1->currency_type=$check_currency->currency_type;
+            }else{
+                $item1->currency_type="MMK";
+            }
             array_push($data1,$item1);
         }
         if($rejectorder->isNotEmpty()){
@@ -514,7 +546,14 @@ class RestaurantApiController extends Controller
             $menu->select('food_menu_id','food_menu_name_mm as food_menu_name','food_menu_name_mm','food_menu_name_en','food_menu_name_ch','restaurant_id')->get(); },'menu.food','menu.food.sub_item'=>function($sub_item){
                 $sub_item->select('required_type','food_id','food_sub_item_id','section_name_mm','section_name_en','section_name_ch')->get();
             },'menu.food.sub_item.option'])->where('restaurant_id',$restaurant_id)->select('restaurant_id','restaurant_name_mm as restaurant_name','restaurant_name_mm','restaurant_name_en','restaurant_name_ch','restaurant_category_id','city_id','state_id','restaurant_latitude','restaurant_longitude','restaurant_address_mm as restaurant_address','restaurant_address_mm','restaurant_address_en','restaurant_address_ch','restaurant_image','restaurant_fcm_token','restaurant_emergency_status')->first();
-
+        if($restaurant){
+            $check_currency=ParcelState::where('city_id',$restaurant->city_id)->first();
+            if($check_currency){
+                $restaurant->currency_type=$check_currency->currency_type;
+            }else{
+                $restaurant->currency_type="MMK";
+            }
+        }
         return response()->json(['success'=>true,'message'=>'this is restaurant food menu data','data'=>['restaurant'=>$restaurant]]);
     }
 
@@ -1488,9 +1527,15 @@ class RestaurantApiController extends Controller
     public function restaurant_order_details(Request $request)
     {
         $order_id=$request['order_id'];
-        $customer_orders=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','restaurant_address_latitude','restaurant_address_longitude','payment_method_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+        $customer_orders=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select('order_id','customer_order_id','customer_booking_id','customer_id','customer_address_id','restaurant_id','rider_id','order_description','estimated_start_time','estimated_end_time','delivery_fee','item_total_price','bill_total_price','customer_address_latitude','customer_address_longitude','current_address','building_system','address_type','state_id','city_id','restaurant_address_latitude','restaurant_address_longitude','payment_method_id','order_status_id','order_time',DB::raw("DATE_FORMAT(created_at, '%b %d,%Y') as order_date"))->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
         if($customer_orders){
+            $check_currency=ParcelState::where('city_id',$customer_orders->city_id)->first();
+            if($check_currency){
+                $customer_orders->currency_type=$check_currency->currency_type;
+            }else{
+                $customer_orders->currency_type="MMK";
+            }
             return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>$customer_orders]);
         }else{
             return response()->json(['success'=>false,'message'=>'order id not found!']);

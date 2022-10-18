@@ -842,6 +842,16 @@ class OrderApiController extends Controller
         if($check_restaurant){
             if($order_status_id=='1'){
                 $customer_orders=CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('restaurant_id',$restaurant_id)->whereIn('order_status_id',['1','19'])->whereRaw('Date(created_at) = CURDATE()')->get();
+                $item=[];
+                foreach($customer_orders as $order1){
+                    $check_currency=ParcelState::where('city_id',$order1->city_id)->first();
+                    if($check_currency){
+                        $order1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $order1->currency_type="MMK";
+                    }
+                    array_push($item,$order1);
+                }
                 return response()->json(['success'=>true,'message'=>"this is customer's of order",'data'=>$customer_orders]);
             }
             elseif($order_status_id >= '5'){
@@ -869,6 +879,12 @@ class OrderApiController extends Controller
                         }
                     }else{
                         $value->rider_arrive_time=null;
+                    }
+                    $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                    if($check_currency){
+                        $value->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value->currency_type="MMK";
                     }
                     array_push($data,$value);
                 }
@@ -910,6 +926,12 @@ class OrderApiController extends Controller
                     }
                 }else{
                     $value->rider_arrive_time=null;
+                }
+                $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                if($check_currency){
+                    $value->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->currency_type="MMK";
                 }
                 array_push($data,$value);
             }
