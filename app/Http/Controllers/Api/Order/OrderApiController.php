@@ -845,6 +845,11 @@ class OrderApiController extends Controller
                 $item=[];
                 foreach($customer_orders as $order1){
                     $check_currency=ParcelState::where('city_id',$order1->city_id)->first();
+                    if($check_currency){
+                        $order1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $order1->currency_type="MMK";
+                    }
                     foreach($order1->foods as $value){
                         if($check_currency){
                             $value->currency_type=$check_currency->currency_type;
@@ -883,6 +888,11 @@ class OrderApiController extends Controller
                         $value->rider_arrive_time=null;
                     }
                     $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                    if($check_currency){
+                        $value->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value->currency_type="MMK";
+                    }
                     foreach($value->foods as $value){
                         if($check_currency){
                             $value->currency_type=$check_currency->currency_type;
@@ -2506,6 +2516,19 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
+        $check_currency=ParcelState::where('city_id',$customer_orders->city_id)->first();
+        if($check_currency){
+            $customer_orders->currency_type=$check_currency->currency_type;
+        }else{
+            $customer_orders->currency_type="MMK";
+        }
+        foreach($customer_orders->foods as $food){
+            if($check_currency){
+                $food->currency_type=$check_currency->currency_type;
+            }else{
+                $food->currency_type="MMK";
+            }
+        }
         array_push($data,$customer_orders);
 
 

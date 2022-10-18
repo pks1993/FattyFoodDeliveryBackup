@@ -570,6 +570,7 @@ class RestaurantApiController extends Controller
             }else{
                 $currency_type="MMK";
             }
+            $restaurant->currency_type=$currency_type;
             foreach($restaurant->menu as $value){
                 $value->currency_type=$currency_type;
                 foreach($value->food as $foods){
