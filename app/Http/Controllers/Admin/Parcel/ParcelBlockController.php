@@ -20,7 +20,7 @@ class ParcelBlockController extends Controller
      */
     public function index()
     {
-        $parcel_block=ParcelBlockList::where('state_id','!=',null)->orderBy('parcel_block_id','desc')->get();
+        $parcel_block=ParcelBlockList::where('state_id','!=',null)->orderBy('parcel_block_id','desc')->paginate(30);
         $parcel_states=State::where('state_id','15')->first();
         return view('admin.parcel_block.index',compact('parcel_block','parcel_states'));
     }
