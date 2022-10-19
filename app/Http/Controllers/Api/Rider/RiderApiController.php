@@ -2866,6 +2866,14 @@ class RiderApicontroller extends Controller
         $customer_type=$request['customer_type'];
         $total_amount=0;
 
+        $check_rider=Rider::where('rider_id',$rider_id)->first();
+        $check_currency=ParcelState::where('city_id',$check_rider->city_id)->first();
+        if($check_currency){
+            $currency_type=$check_currency->currency_type;
+        }else{
+            $currency_type="MMK";
+        }
+
         if(!empty($order_type)){
 	        if($payment_type == 0){
                 if($customer_type ==0){
@@ -2977,7 +2985,7 @@ class RiderApicontroller extends Controller
                 }else{
                     $orders_history_list=[];
                 }
-            return response()->json(['success'=>true,'message'=>'this is rider orders history','total_amount'=>$total_amount,'data_count'=>$orders->count(),'data'=>$orders_history_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]);
+            return response()->json(['success'=>true,'message'=>'this is rider orders history','currency'=>$currency_type,'total_amount'=>$total_amount,'data_count'=>$orders->count(),'data'=>$orders_history_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]);
         }else{
             return response()->json(['success'=>false,'message'=>'Error! order_type is empty']);
         }
@@ -3243,7 +3251,7 @@ class RiderApicontroller extends Controller
         // ]);
         // $order_list=$orders;
         
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['currency_type'=>$currency_type,'today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','currency'=>$currency_type,'total_amount'=>$total_amount,'data'=>['currency_type'=>$currency_type,'today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
     }
     // public function rider_getBilling_list(Request $request)
     // {
