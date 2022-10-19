@@ -820,6 +820,13 @@ class RiderApicontroller extends Controller
                             }
                         }
                     }
+                    if($value1->parcel_extra){
+                        if($check_currency){
+                            $value1->parcel_extra->currency_type=$check_currency->currency_type;
+                        }else{
+                            $value1->parcel_extra->currency_type="MMK";
+                        }
+                    }
                     array_push($food_val,$value1);
 
                 }
@@ -923,6 +930,13 @@ class RiderApicontroller extends Controller
                                 }else{
                                     $foods->currency_type="MMK";
                                 }
+                            }
+                        }
+                        if($value1->parcel_extra){
+                            if($check_currency){
+                                $value1->parcel_extra->currency_type=$check_currency->currency_type;
+                            }else{
+                                $value1->parcel_extra->currency_type="MMK";
                             }
                         }
                         array_push($noti_val,$value1);

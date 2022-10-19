@@ -2535,6 +2535,13 @@ class OrderApiController extends Controller
                 $food->currency_type="MMK";
             }
         }
+        if($customer_orders->parcel_extra){
+            if($check_currency){
+                $customer_orders->parcel_extra->currency_type=$check_currency->currency_type;
+            }else{
+                $customer_orders->parcel_extra->currency_type="MMK";
+            }
+        }
         array_push($data,$customer_orders);
 
 
