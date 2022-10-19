@@ -971,6 +971,12 @@ class OrderApiController extends Controller
         $customer_orders=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
         if($customer_orders){
+            $check_currency=ParcelState::where('city_id',$customer_orders->city_id)->first();
+            if($check_currency){
+                $customer_orders->currency_type=$check_currency->currency_type;
+            }else{
+                $customer_orders->currency_type="MMK";
+            }
             return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>['order'=>$customer_orders]]);
         }else{
             return response()->json(['success'=>false,'message'=>'order id not found!']);
