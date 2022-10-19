@@ -9,6 +9,7 @@ use App\Models\Rider\RiderReport;
 use App\Models\Rider\RiderReportHistory;
 use App\Models\Order\CustomerOrder;
 use App\Models\Order\NotiOrder;
+use App\Models\Order\ParcelState;
 use App\Models\Order\CustomerOrderHistory;
 use App\Models\Customer\Customer;
 use Illuminate\Support\Facades\File;
@@ -83,6 +84,14 @@ class RiderApicontroller extends Controller
         // $end_time_two = Carbon::create($end_time_two)->addHour(6)->addMinutes(30);
 
         $rider_id=$request['rider_id'];
+        $check_rider=Rider::where('rider_id',$rider_id)->first();
+        $check_currency=ParcelState::where('city_id',$check_rider->city_id)->first();
+        if($check_currency){
+            $currency_type=$check_currency->currency_type;
+        }else{
+            $currency_type="MMK";
+        }
+
         $total_food_amount=0;
         $total_parcel_amount=0;
         $total_food_order=0;
@@ -188,9 +197,10 @@ class RiderApicontroller extends Controller
             }else{
                 $value->is_target=0;
             }
+            $value->currency_type=$currency_type;
             array_push($data,$value);
         }
-        return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
+        return response()->json(['success'=>true,'message'=>'this is benefit data','currency_type'=>$currency_type,'total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
         // return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_food_order'=>$total_food_order,'peak_food_order'=>$peak_food_order,'total_parcel_order'=>$total_parcel_order,'peak_parcel_order'=>$peak_parcel_order,'check'=>$check]);
     }
     // public function rider_benefit(Request $request)
@@ -795,6 +805,21 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
+                    $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+                    if($check_currency){
+                        $value1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value1->currency_type="MMK";
+                    }
+                    if(sizeof($value1->foods)){
+                        foreach($value1->foods as $foods){
+                            if($check_currency){
+                                $foods->currency_type=$check_currency->currency_type;
+                            }else{
+                                $foods->currency_type="MMK";
+                            }
+                        }
+                    }
                     array_push($food_val,$value1);
 
                 }
@@ -884,6 +909,21 @@ class RiderApicontroller extends Controller
                             $value1->to_parcel_city_name=$city_data->block_name;
                             $value1->to_latitude=$city_data->latitude;
                             $value1->to_longitude=$city_data->longitude;
+                        }
+                        $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+                        if($check_currency){
+                            $value1->currency_type=$check_currency->currency_type;
+                        }else{
+                            $value1->currency_type="MMK";
+                        }
+                        if(sizeof($value1->foods)){
+                            foreach($value1->foods as $foods){
+                                if($check_currency){
+                                    $foods->currency_type=$check_currency->currency_type;
+                                }else{
+                                    $foods->currency_type="MMK";
+                                }
+                            }
                         }
                         array_push($noti_val,$value1);
 
@@ -2539,6 +2579,22 @@ class RiderApicontroller extends Controller
                     $orders1->to_latitude=$city_data->latitude;
                     $orders1->to_longitude=$city_data->longitude;
                 }
+
+                $check_currency=ParcelState::where('city_id',$orders1->city_id)->first();
+                if($check_currency){
+                    $orders1->currency_type=$check_currency->currency_type;
+                }else{
+                    $orders1->currency_type="MMK";
+                }
+                if(sizeof($orders1->foods)){
+                    foreach($orders1->foods as $foods){
+                        if($check_currency){
+                            $foods->currency_type=$check_currency->currency_type;
+                        }else{
+                            $foods->currency_type="MMK";
+                        }
+                    }
+                }
                 array_push($data,$orders1);
 
                 return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1]);
@@ -2604,6 +2660,21 @@ class RiderApicontroller extends Controller
                         $value1->to_parcel_city_name=$city_data->block_name;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
+                    }
+                    $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+                    if($check_currency){
+                        $value1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value1->currency_type="MMK";
+                    }
+                    if(sizeof($value1->foods)){
+                        foreach($value1->foods as $foods){
+                            if($check_currency){
+                                $foods->currency_type=$check_currency->currency_type;
+                            }else{
+                                $foods->currency_type="MMK";
+                            }
+                        }
                     }
                     array_push($food_val,$value1);
 
@@ -2671,6 +2742,21 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
+                    $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+                    if($check_currency){
+                        $value1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value1->currency_type="MMK";
+                    }
+                    if(sizeof($value1->foods)){
+                        foreach($value1->foods as $foods){
+                            if($check_currency){
+                                $foods->currency_type=$check_currency->currency_type;
+                            }else{
+                                $foods->currency_type="MMK";
+                            }
+                        }
+                    }
                     array_push($food_val,$value1);
 
                 }
@@ -2733,6 +2819,21 @@ class RiderApicontroller extends Controller
                         $value1->to_parcel_city_name=$city_data->block_name;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
+                    }
+                    $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+                    if($check_currency){
+                        $value1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value1->currency_type="MMK";
+                    }
+                    if(sizeof($value1->foods)){
+                        foreach($value1->foods as $foods){
+                            if($check_currency){
+                                $foods->currency_type=$check_currency->currency_type;
+                            }else{
+                                $foods->currency_type="MMK";
+                            }
+                        }
                     }
                     array_push($food_val,$value1);
 
@@ -2850,6 +2951,21 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
+                    $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
+                    if($check_currency){
+                        $value1->currency_type=$check_currency->currency_type;
+                    }else{
+                        $value1->currency_type="MMK";
+                    }
+                    if(sizeof($value1->foods)){
+                        foreach($value1->foods as $foods){
+                            if($check_currency){
+                                $foods->currency_type=$check_currency->currency_type;
+                            }else{
+                                $foods->currency_type="MMK";
+                            }
+                        }
+                    }
                     array_push($food_val,$value1);
 
                 }
@@ -2887,6 +3003,14 @@ class RiderApicontroller extends Controller
         $start_date=date('Y-m-d 00:00:00', strtotime($current_date));
         $end_date=date('Y-m-d 00:00:00', strtotime($next_date));
         $total_amount=0;
+
+        $check_rider=Rider::where('rider_id',$rider_id)->first();
+        $check_currency=ParcelState::where('city_id',$check_rider->city_id)->first();
+        if($check_currency){
+            $currency_type=$check_currency->currency_type;
+        }else{
+            $currency_type="MMK";
+        }
 
         $today_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->whereRaw('Date(created_at) = CURDATE()')->get();
         $this_week_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('created_at','>',Carbon::now()->startOfWeek(0)->toDateTimeLocalString())->where('created_at','<',Carbon::now()->endOfWeek()->toDateTimeLocalString())->get();
@@ -3087,6 +3211,22 @@ class RiderApicontroller extends Controller
             }else{
                 $value->is_estimated=0;
             }
+
+            $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+            if($check_currency){
+                $value->currency_type=$check_currency->currency_type;
+            }else{
+                $value->currency_type="MMK";
+            }
+            if(sizeof($value->foods)){
+                foreach($value->foods as $foods){
+                    if($check_currency){
+                        $foods->currency_type=$check_currency->currency_type;
+                    }else{
+                        $foods->currency_type="MMK";
+                    }
+                }
+            }
             array_push($data,$value);
         }
 
@@ -3103,7 +3243,7 @@ class RiderApicontroller extends Controller
         // ]);
         // $order_list=$orders;
         
-        return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
+        return response()->json(['success'=>true,'message'=>'this is restaurant insight','total_amount'=>$total_amount,'data'=>['currency_type'=>$currency_type,'today_balance'=>$today_balance->sum('rider_delivery_fee'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('rider_delivery_fee'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('rider_delivery_fee'),'this_month_orders'=>$this_month_balance->count(),'orders'=>$order_list,'current_page'=>$orders->toArray()['current_page'],'first_page_url'=>$orders->toArray()['first_page_url'],'from'=>$orders->toArray()['from'],'last_page'=>$orders->toArray()['last_page'],'last_page_url'=>$orders->toArray()['last_page_url'],'next_page_url'=>$orders->toArray()['next_page_url'],'path'=>$orders->toArray()['path'],'per_page'=>$orders->toArray()['per_page'],'prev_page_url'=>$orders->toArray()['prev_page_url'],'to'=>$orders->toArray()['to'],'total'=>$orders->toArray()['total']]]);
     }
     // public function rider_getBilling_list(Request $request)
     // {
@@ -3345,6 +3485,17 @@ class RiderApicontroller extends Controller
     public function rider_insight(Request $request)
     {
         $rider_id=$request['rider_id'];
+        $check_rider=Rider::where('rider_id',$rider_id)->first();
+        if($check_rider){
+            $check_currency=ParcelState::where('city_id',$check_rider->city_id)->first();
+            if($check_currency){
+                $currency_type=$check_currency->currency_type;
+            }else{
+                $currency_type="MMK";
+            }
+        }else{
+            $currency_type="MMK";
+        }
         $total_balance=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->get();
 
         $CashonDelivery=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['7','8','15'])->where('payment_method_id','1')->count();
@@ -3385,7 +3536,7 @@ class RiderApicontroller extends Controller
         }
 
 
-        return response()->json(['success'=>true,'message'=>'this is rider report','data'=>['total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'ranking'=>['today'=>$today,'this_week'=>$this_week,'this_month'=>$this_month]]]);
+        return response()->json(['success'=>true,'message'=>'this is rider report','data'=>['currency_type'=>$currency_type,'total_balance'=>$total_balance->sum('bill_total_price'),'total_orders'=>$total_balance->count(),'CashonDelivery'=>$CashonDelivery,'KBZ'=>$KBZ,'WaveMoney'=>$WaveMoney,'today_balance'=>$today_balance->sum('bill_total_price'),'today_orders'=>$today_balance->count(),'this_week_balance'=>$this_week_balance->sum('bill_total_price'),'this_week_orders'=>$this_week_balance->count(),'this_month_balance'=>$this_month_balance->sum('bill_total_price'),'this_month_orders'=>$this_month_balance->count(),'ranking'=>['today'=>$today,'this_week'=>$this_week,'this_month'=>$this_month]]]);
     }
 
     public function rider_token_update(Request $request)
