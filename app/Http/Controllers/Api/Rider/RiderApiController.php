@@ -2609,6 +2609,13 @@ class RiderApicontroller extends Controller
                         }
                     }
                 }
+                if($orders1->parcel_extra){
+                    if($check_currency){
+                        $orders1->parcel_extra->currency_type=$check_currency->currency_type;
+                    }else{
+                        $orders1->parcel_extra->currency_type="MMK";
+                    }
+                }
                 array_push($data,$orders1);
 
                 return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1]);
