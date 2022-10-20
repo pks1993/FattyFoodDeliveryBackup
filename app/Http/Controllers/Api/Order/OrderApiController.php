@@ -941,13 +941,12 @@ class OrderApiController extends Controller
                 }else{
                     $value->rider_arrive_time=null;
                 }
-                // $check_currency=ParcelState::where('city_id',$value->city_id)->first();
-                // if($check_currency){
-                //     $value->currency_type=$check_currency->currency_type;
-                // }else{
-                //     $value->currency_type="MMK";
-                // }
                 $check_currency=ParcelState::where('city_id',$value->city_id)->first();
+                if($check_currency){
+                    $value->currency_type=$check_currency->currency_type;
+                }else{
+                    $value->currency_type="MMK";
+                }
                 foreach($value->foods as $food){
                     if($check_currency){
                         $food->currency_type=$check_currency->currency_type;
