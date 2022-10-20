@@ -1897,6 +1897,19 @@ class ParcelOrderApiController extends Controller
                         $orders->to_latitude=$city_data->latitude;
                         $orders->to_longitude=$city_data->longitude;
                     }
+                    $check_currency=ParcelState::where('city_id',$orders->city_id)->first();
+                    if($check_currency){
+                        $orders->currency_type=$check_currency->currency_type;
+                    }else{
+                        $orders->currency_type="MMK";
+                    }
+                    if($orders->parcel_extra){
+                        if($check_currency){
+                            $orders->parcel_extra->currency_type=$check_currency->currency_type;
+                        }else{
+                            $orders->parcel_extra->currency_type="MMK";
+                        }
+                    }
                     array_push($parcel_val,$orders);
                 return response()->json(['success'=>true,'message'=>'successfull data','data'=>$orders]);
             }

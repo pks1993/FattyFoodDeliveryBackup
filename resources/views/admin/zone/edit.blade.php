@@ -110,7 +110,6 @@ $(document).ready(function () {
                 type: 'get',
                 url: '/fatty/main/admin/city/list/'+id,
                 success: function(data){ 
-                    console.log(data);
                     $('#city_id').append(`<option value="">မြို့နယ်</option>`);
                     $.each(data, function(index,value) {
                         $('#city_id').append('<option value='+value.city_id+'>'+value.city_name_mm + ' ( '+value.city_name_en+' ) '+'</option>');

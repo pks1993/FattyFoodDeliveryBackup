@@ -581,6 +581,7 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     //parcel_block
     Route::get('parcel_block','Admin\Parcel\ParcelBlockController@index');
     Route::post('store/parcel_block','Admin\Parcel\ParcelBlockController@store')->name('parcel_block.store');;
+    Route::get('parcel_block/edit/{parcel_block_id}','Admin\Parcel\ParcelBlockController@edit')->name('parcel_block.edit');
     Route::post('parcel_block/update/{parcel_block_id}','Admin\Parcel\ParcelBlockController@update')->name('parcel_block.update');
     Route::delete('parcel_block/delete/{parcel_block_id}','Admin\Parcel\ParcelBlockController@destroy')->name('parcel_block.destroy');
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Parcel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\City\ParcelBlockList;
+use App\Models\City\City;
 use App\Models\State\State;
 use App\Models\Order\CustomerOrder;
 use App\Models\Order\MultiOrderLimit;
@@ -21,8 +22,10 @@ class ParcelBlockController extends Controller
     public function index()
     {
         $parcel_block=ParcelBlockList::where('state_id','!=',null)->orderBy('parcel_block_id','desc')->paginate(30);
-        $parcel_states=State::where('state_id','15')->first();
-        return view('admin.parcel_block.index',compact('parcel_block','parcel_states'));
+        // $parcel_states=State::where('state_id','15')->first();
+        $parcel_states=State::all();
+        $parcel_cities=City::all();
+        return view('admin.parcel_block.index',compact('parcel_block','parcel_states','parcel_cities'));
     }
     
     public function order_block_list()
@@ -126,9 +129,14 @@ class ParcelBlockController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        //
+        $parcel_block_id=$id;
+        $parcel_block=ParcelBlockList::where('parcel_block_id',$id)->first();
+        // $parcel_states=State::where('state_id','15')->first();
+        $parcel_states=State::where('state_id','!=',$parcel_block->state_id)->get();
+        $parcel_cities=City::where('state_id',$parcel_block->state_id)->where('city_id','!=',$parcel_block->city_id)->get();
+        return view('admin.parcel_block.edit',compact('parcel_block','parcel_states','parcel_cities','parcel_block_id'));
     }
 
     /**
@@ -142,7 +150,7 @@ class ParcelBlockController extends Controller
     {
         ParcelBlockList::find($id)->update($request->all());
         $request->session()->flash('alert-success', 'successfully update parcel state!');
-        return redirect()->back();
+        return redirect('fatty/main/admin/parcel_block');
     }
     public function multi_order_update(Request $request, $id)
     {
