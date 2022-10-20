@@ -18,6 +18,7 @@ class CreateParcelBlockHistoriesTable extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('parcel_block_id')->nullable();
             $table->bigInteger('state_id')->nullable();
+            $table->unsignedBigInteger('city_id')->default(15);
             $table->bigInteger('count')->default(0);
             $table->timestamps();
         });

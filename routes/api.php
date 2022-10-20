@@ -180,7 +180,7 @@ Route::post('v1/fatty/202221/lashio/main/admin/states','Api\StateCity\StateCityA
 //Parcel State
 Route::post('v1/fatty/202221/lashio/main/admin/parcels/states','Api\StateCity\StateCityApiController@parcel_state_version1');
 Route::post('v1/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@parcel_choose_address');
-Route::post('v2/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@v2_parcel_choose_address');
+Route::post('v2/fatty/202221/lashio/main/admin/rider/parcels/choose_address','Api\StateCity\StateCityApiController@rider_v2_parcel_choose_address');
 
 
 //Rider About

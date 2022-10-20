@@ -64,19 +64,77 @@ class StateCityApiController extends Controller
             return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['default_address'=>null,'recent_cities'=>[],'city_lists'=>[]]]);
         }
     }
-    public function v2_parcel_choose_address(Request $request)
+    public function rider_v2_parcel_choose_address(Request $request)
     {
         $customer_id=$request['customer_id'];
         $state_id=$request['state_id'];
+        $city_id=$request['city_id'];
+
         if($customer_id && $state_id){
-            $blocks=ParcelBlockList::where('state_id',$state_id)->get();
-            $recent=ParcelBlockHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->orderBy('count','desc')->limit(3)->select('parcel_block_id','state_id','created_at','updated_at')->get();
+            $blocks=ParcelBlockList::where('state_id',$state_id)->where('city_id',$city_id)->get();
+            $item1=[];
+            foreach($blocks as $item){
+                $item->block_name=$item->block_name_mm;
+                array_push($item1,$item);
+            }
+            $recent=ParcelBlockHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->where('city_id',$city_id)->orderBy('count','desc')->limit(3)->select('parcel_block_id','state_id','created_at','updated_at')->get();
             if($recent){
                 $item=[];
                 foreach($recent as $value){
                     if($value){
                         $parcel_block=ParcelBlockList::where('parcel_block_id',$value->parcel_block_id)->first();
-                        $value->block_name=$parcel_block->block_name;
+                        $value->block_name=$parcel_block->block_name_mm;
+                        $value->block_name_mm=$parcel_block->block_name_mm;
+                        $value->block_name_en=$parcel_block->block_name_en;
+                        $value->block_name_ch=$parcel_block->block_name_ch;
+                        $value->latitude=$parcel_block->latitude;
+                        $value->longitude=$parcel_block->longitude;
+                    }
+                    array_push($item,$value);
+                }
+            }
+            return response()->json(['success'=>true,'message'=>'customer choose address data','data'=>['recent_blocks'=>$recent,'block_lists'=>$blocks]]);
+        }else{
+            return response()->json(['success'=>false,'message'=>'customer_id or state_id are not found','data'=>['recent_blocks'=>[],'block_lists'=>[]]]);
+        }
+    }
+    public function v2_parcel_choose_address(Request $request)
+    {
+        $language=$request->header('language');
+        $customer_id=$request['customer_id'];
+        $state_id=$request['state_id'];
+        $city_id=$request['city_id'];
+
+        if($customer_id && $state_id){
+            $blocks=ParcelBlockList::where('state_id',$state_id)->where('city_id',$city_id)->get();
+            $item1=[];
+            foreach($blocks as $item){
+                if($language=="mm"){
+                    $item->block_name=$item->block_name_mm;
+                }elseif($language=="en"){
+                    $item->block_name=$item->block_name_en;
+                }elseif($language=="zh"){
+                    $item->block_name=$item->block_name_ch;
+                }else{
+                    $item->block_name=$item->block_name_en;
+                }
+                array_push($item1,$item);
+            }
+            $recent=ParcelBlockHistory::where('customer_id',$customer_id)->where('state_id',$state_id)->where('city_id',$city_id)->orderBy('count','desc')->limit(3)->select('parcel_block_id','state_id','created_at','updated_at')->get();
+            if($recent){
+                $item=[];
+                foreach($recent as $value){
+                    if($value){
+                        $parcel_block=ParcelBlockList::where('parcel_block_id',$value->parcel_block_id)->first();
+                        if($language=="mm"){
+                            $value->block_name=$parcel_block->block_name_mm;
+                        }elseif($language=="en"){
+                            $value->block_name=$parcel_block->block_name_en;
+                        }elseif($language=="zh"){
+                            $value->block_name=$parcel_block->block_name_ch;
+                        }else{
+                            $value->block_name=$parcel_block->block_name_en;
+                        }
                         $value->latitude=$parcel_block->latitude;
                         $value->longitude=$parcel_block->longitude;
                     }

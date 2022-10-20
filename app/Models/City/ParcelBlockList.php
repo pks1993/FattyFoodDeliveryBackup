@@ -12,4 +12,8 @@ class ParcelBlockList extends Model
     {
         return $this->belongsTo('App\Models\State\State','state_id');
     }
+    public function cities()
+    {
+        return $this->belongsTo('App\Models\City\City','city_id');
+    }
 }
