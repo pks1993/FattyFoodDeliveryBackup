@@ -1170,6 +1170,7 @@ class ParcelStateController extends Controller
 
         $from_pickup_latitude=$parcel_orders->from_pickup_latitude;
         $from_pickup_longitude=$parcel_orders->from_pickup_longitude;
+        
 
         if($rider_id=="0"){
             $riders=Rider::select("rider_id","rider_fcm_token"
@@ -1203,10 +1204,20 @@ class ParcelStateController extends Controller
             $orders->order_status_id=12;
             $orders->update();
 
+            // $riders=Rider::where('rider_id',$rider_id)->first();
+            // $riders->is_order=1;
+            // $riders->update();
             $riders=Rider::where('rider_id',$rider_id)->first();
-            $riders->is_order=1;
-            $riders->update();
-
+            $check_order=CustomerOrder::where('rider_id',$rider_id)->whereIn('order_status_id',['3','4','5','6','10','12','13','14','17'])->first();
+            if($check_order){
+                $riders->is_order=1;
+                $riders->exist_order=($riders->exist_order)-1;
+                $riders->update();
+            }else{
+                $riders->is_order=0;
+                $riders->update();
+            }
+            NotiOrder::where('order_id',$parcel_orders->order_id)->delete();
         }
 
         $rider_token=$riderFcmToken;

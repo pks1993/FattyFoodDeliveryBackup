@@ -182,7 +182,8 @@
                                     <td>{{ $item->bill_total_price }}</td>
                                     <td class="btn-group">
                                         <a href="/fatty/main/admin/parcel_orders/view/{{ $item->order_id }}" class="btn btn-success btn-sm mr-2"><i class="fas fa-eye"></i></a>
-                                        @if($item->customer_id==null)
+                                        <a href="/fatty/main/admin/parcel_orders/edit/{{ $item->order_id }}" class="btn btn-primary btn-sm mr-2" title="Parcel Edit"><i class="fas fa-edit"></i></a>
+                                        {{-- @if($item->customer_id==null)
                                             <a href="/fatty/main/admin/parcel_orders/edit" class="btn btn-danger btn-sm mr-2 disabled" title="Do Not Edit"><i class="fas fa-edit"></i></a>
                                         @else
                                             @if ($item->customer->customer_type_id==3 && $item->order_type=="parcel")
@@ -190,7 +191,7 @@
                                             @else
                                                 <a href="/fatty/main/admin/parcel_orders/edit" class="btn btn-danger btn-sm mr-2 disabled" title="Do Not Edit"><i class="fas fa-edit"></i></a>
                                             @endif
-                                        @endif
+                                        @endif --}}
                                     </td>
                                 </tr>
                                 @endforeach

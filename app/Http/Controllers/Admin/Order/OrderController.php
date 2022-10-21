@@ -661,7 +661,7 @@ class OrderController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(30);
         $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
         $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
         $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
@@ -674,7 +674,7 @@ class OrderController extends Controller
     {
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
-        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(30);
         // return response($total_orders);
         $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
         $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
