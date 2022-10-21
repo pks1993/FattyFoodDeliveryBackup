@@ -2881,7 +2881,7 @@ class RiderApicontroller extends Controller
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->block_name;
                         $value1->to_parcel_city_name_en=$city_data->block_name_en;
-                        $value1->to_parcel_city_name_en=$city_data->block_name_ch;
+                        $value1->to_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
