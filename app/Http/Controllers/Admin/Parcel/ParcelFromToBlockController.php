@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\City\ParcelFromToBlock;
 use App\Models\City\ParcelBlockList;
-// use App\Models\State\State;
+use App\Models\State\State;
 use App\Models\Order\CustomerOrder;
 use Yajra\DataTables\DataTables;
 
@@ -19,14 +19,21 @@ class ParcelFromToBlockController extends Controller
      */
     public function index()
     {
-        $parcel_from_to_block=ParcelFromToBlock::all();
+        $parcel_from_to_block=ParcelFromToBlock::orderBy('created_at','desc')->paginate(30);
         $blocks=ParcelBlockList::all();
-        return view('admin.parcel_from_to_block.index',compact('parcel_from_to_block','blocks'));
+        $states=State::all();
+        return view('admin.parcel_from_to_block.index',compact('parcel_from_to_block','blocks','states'));
+    }
+
+    public function parcel_block_list($city_id)
+    {
+        $blocks=ParcelBlockList::where('city_id',$city_id)->get();
+        return response()->json($blocks);
     }
 
     public function ajaxparcelfromtoblock()
     {
-        $model =ParcelFromToBlock::orderBy('parcel_from_block_id','desc')->orderBy('parcel_from_block_id','desc')->get();
+        $model =ParcelFromToBlock::orderBy('created_at','desc')->get();
         $data=[];
         foreach($model as $value){
             $value->from_block_name=$value->from_block->block_name;
@@ -80,7 +87,14 @@ class ParcelFromToBlockController extends Controller
             $request->session()->flash('alert-warning', 'from and to parcel block exits database! please check!');
             return redirect()->back();
         }else{
-            ParcelFromToBlock::create($request->all());
+            ParcelFromToBlock::create([
+                "parcel_from_block_id"=>$request['parcel_from_block_id'],
+                "parcel_to_block_id"=>$request['parcel_to_block_id'],
+                "delivery_fee"=>$request['delivery_fee'],
+                "rider_delivery_fee"=>$request['rider_delivery_fee'],
+                "percentage"=>$request['percentage'],
+                "remark"=>$request['remark'],
+            ]);
             $request->session()->flash('alert-success', 'successfully store parcel!');
             return redirect()->back();
         }
