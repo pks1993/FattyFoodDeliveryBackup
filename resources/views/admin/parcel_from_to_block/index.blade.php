@@ -51,7 +51,7 @@
             </div>
             <div class="form-group">
                 <label for="city_id" class="col-form-label">{{ __('မြို့နယ်') }} <span  style="color: #990000;font-weight:700;">*</span></label>
-                <select id="city_id" class="form-control @error('city_id') is-invalid @enderror" name="city_id" value="{{ old('city_id') }}" autocomplete="city_id" autofocus>
+                <select id="city_id" class="form-control @error('city_id') is-invalid @enderror" name="city_id" value="{{ old('city_id') }}" autocomplete="city_id" autofocus required>
                 </select>
                 @error('city_id')
                     <span class="invalid-feedback" role="alert">
@@ -61,7 +61,7 @@
             </div>
             <div class="form-group">
                 <label for="parcel_from_block_id" class="col-form-label">From Block Name:</label>
-                <select type="text" class="form-control" id="parcel_from_block_id" name="parcel_from_block_id">
+                <select type="text" class="form-control" id="parcel_from_block_id" name="parcel_from_block_id" required>
                     {{-- <option value="">Choose From Block Name</option>
                     @foreach ($blocks as $value)
                         <option value="{{ $value->parcel_block_id }}">{{ $value->block_name }}</option>
@@ -70,7 +70,7 @@
             </div>
             <div class="form-group">
                 <label for="parcel_to_block_id" class="col-form-label">To Block Name:</label>
-                <select type="text" class="form-control" id="parcel_to_block_id" name="parcel_to_block_id">
+                <select type="text" class="form-control" id="parcel_to_block_id" name="parcel_to_block_id" required>
                     {{-- <option value="">Choose To Block Name</option>
                     @foreach ($blocks as $value)
                         <option value="{{ $value->parcel_block_id }}">{{ $value->block_name }}</option>
