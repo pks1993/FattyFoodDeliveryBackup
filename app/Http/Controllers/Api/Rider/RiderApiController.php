@@ -2682,23 +2682,31 @@ class RiderApicontroller extends Controller
 
                     if($value1->from_parcel_city_id==0){
                         $value1->from_parcel_city_name=null;
+                        $value1->from_parcel_city_name_en=null;
+                        $value1->from_parcel_city_name_ch=null;
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
                         $value1->from_parcel_city_name=$city_data->block_name;
+                        $value1->from_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->from_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
                     if($value1->to_parcel_city_id==0){
                         $value1->to_parcel_city_name=null;
+                        $value1->to_parcel_city_name_en=null;
+                        $value1->to_parcel_city_name_ch=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->block_name;
+                        $value1->to_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->to_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
@@ -2765,21 +2773,29 @@ class RiderApicontroller extends Controller
 
                     if($value1->from_parcel_city_id==0){
                         $value1->from_parcel_city_name=null;
+                        $value1->from_parcel_city_name_mm=null;
+                        $value1->from_parcel_city_name_en=null;
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
                         $value1->from_parcel_city_name=$city_data->block_name;
+                        $value1->from_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->from_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
                     if($value1->to_parcel_city_id==0){
                         $value1->to_parcel_city_name=null;
+                        $value1->to_parcel_city_name_en=null;
+                        $value1->to_parcel_city_name_ch=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->block_name;
+                        $value1->to_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->to_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
@@ -2841,23 +2857,31 @@ class RiderApicontroller extends Controller
 
                     if($value1->from_parcel_city_id==0){
                         $value1->from_parcel_city_name=null;
+                        $value1->from_parcel_city_name_en=null;
+                        $value1->from_parcel_city_name_ch=null;
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
                         $value1->from_parcel_city_name=$city_data->block_name;
+                        $value1->from_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->from_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
                     if($value1->to_parcel_city_id==0){
                         $value1->to_parcel_city_name=null;
+                        $value1->to_parcel_city_name_en=null;
+                        $value1->to_parcel_city_name_ch=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->block_name;
+                        $value1->to_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->to_parcel_city_name_en=$city_data->block_name_ch;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
@@ -2982,21 +3006,29 @@ class RiderApicontroller extends Controller
 
                     if($value1->from_parcel_city_id==0){
                         $value1->from_parcel_city_name=null;
+                        $value1->from_parcel_city_name_en=null;
+                        $value1->from_parcel_city_name_ch=null;
                         $value1->from_latitude=null;
                         $value1->from_longitude=null;
                     }else{
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
                         $value1->from_parcel_city_name=$city_data->block_name;
+                        $value1->from_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->from_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
                     if($value1->to_parcel_city_id==0){
                         $value1->to_parcel_city_name=null;
+                        $value1->to_parcel_city_name_en=null;
+                        $value1->to_parcel_city_name_ch=null;
                         $value1->to_latitude=null;
                         $value1->to_longitude=null;
                     }else{
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
                         $value1->to_parcel_city_name=$city_data->block_name;
+                        $value1->to_parcel_city_name_en=$city_data->block_name_en;
+                        $value1->to_parcel_city_name_ch=$city_data->block_name_ch;
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
