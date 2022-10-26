@@ -11,6 +11,14 @@ use App\Models\Restaurant\Restaurant;
 
 class DownAdsController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:down_ads-list', ['only' => ['index']]);
+        $this->middleware('permission:down_ads-create', ['only' => ['create','store']]);
+        $this->middleware('permission:down_ads-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:down_ads-delete', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      *

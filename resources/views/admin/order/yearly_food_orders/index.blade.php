@@ -121,21 +121,25 @@
                                             @elseif($item->order_status_id=='20')
                                                 <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:red;">KBZ Fail</a>
                                             @else
-                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:black">CheckError</a>
+                                                <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:black">Empty</a>
                                             @endif
                                         </td>
                                         <td>
                                             @if($item->customer_id==null)
-                                                <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
+                                                <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
                                             @else
-                                                @if($item->customer->customer_type_id==null)
-                                                    <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
-                                                @elseif($item->customer->customer_type_id==2)
-                                                    <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
-                                                @elseif($item->customer->customer_type_id==1)
-                                                    <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                                @if ($item->customer)
+                                                    @if($item->customer->customer_type_id==null)
+                                                        <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
+                                                    @elseif($item->customer->customer_type_id==2)
+                                                        <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                                    @elseif($item->customer->customer_type_id==1)
+                                                        <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                                    @else
+                                                        <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                                    @endif
                                                 @else
-                                                    <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                                    <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
                                                 @endif
                                             @endif
                                         </td>
@@ -150,24 +154,24 @@
                                             @endif
                                         </td>
                                         <td class="text-left">
-                                            @if($item->customer_id)
+                                            @if($item->customer)
                                                 {{ $item->customer->customer_name }}
                                             @else
-                                                {{ "Empty" }}
+                                                <span style="color: red">{{ "Empty" }}</span>
                                             @endif
                                         </td>
                                         <td class="text-left">
-                                            @if($item->restaurant_id)
+                                            @if($item->restaurant)
                                                 {{ $item->restaurant->restaurant_name_mm }}
                                             @else
-                                                {{ "Empty" }}
+                                                <span style="color: red">{{ "Empty" }}</span>
                                             @endif
                                         </td>
                                         <td class="text-left">
-                                            @if($item->rider_id)
+                                            @if($item->rider)
                                                 {{ $item->rider->rider_user_name }}
                                             @else
-                                                {{ "Empty" }}
+                                                <span style="color: red">{{ "Empty" }}</span>
                                             @endif
                                         </td>
                                         <td>{{ $item->rider_delivery_fee }}</td>

@@ -117,7 +117,7 @@
                                     <td>{{ $item->customer_order_id }}</td>
                                     <td class="text-left">{{ $item->customer_booking_id }}</td>
                                     <td class="text-left">
-                                        @if($item->customer_id)
+                                        @if($item->customer)
                                             {{ $item->customer->customer_name }}
                                         @else
                                             <span class="text-red">{{ "Empty" }}</span>

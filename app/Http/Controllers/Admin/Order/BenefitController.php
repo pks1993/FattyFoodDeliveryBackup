@@ -10,6 +10,18 @@ use Carbon\Carbon;
 
 class BenefitController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:rider_benefit-list', ['only' => ['index']]);
+        $this->middleware('permission:rider_benefit-store', ['only' => ['rider_benefit_store']]);
+        $this->middleware('permission:rider_benefit-update', ['only' => ['rider_benefit_update']]);
+        $this->middleware('permission:rider_benefit-delete', ['only' => ['rider_benefit_destroy']]);
+        
+        $this->middleware('permission:benefit_peak_time-list', ['only' => ['peak_index']]);
+        $this->middleware('permission:benefit_peak_time-store', ['only' => ['benefit_peak_time_store']]);
+        $this->middleware('permission:benefit_peak_time-update', ['only' => ['benefit_peak_time_update']]);
+        $this->middleware('permission:benefit_peak_time-delete', ['only' => ['benefit_peak_time_destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *

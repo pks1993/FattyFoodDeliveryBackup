@@ -16,6 +16,33 @@ use Illuminate\Support\Carbon;
 
 class CustomerController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:customers-list', ['only' => ['index']]);
+        $this->middleware('permission:customers-view', ['only' => ['show']]);
+        $this->middleware('permission:customers-restricted', ['only' => ['restricted']]);
+        $this->middleware('permission:customers-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:customers-delete', ['only' => ['destroy']]);
+
+        $this->middleware('permission:daily_customers-list', ['only' => ['dailyindex']]);
+        $this->middleware('permission:monthly_customers-list', ['only' => ['monthlyindex']]);
+        $this->middleware('permission:yearly_customers-list', ['only' => ['yearlyindex']]);
+
+        $this->middleware('permission:daily_ordered_customers-list', ['only' => ['dailyorderedindex']]);
+        $this->middleware('permission:monthly_ordered_customers-list', ['only' => ['monthlyorderedindex']]);
+        $this->middleware('permission:yearly_ordered_customers-list', ['only' => ['yearlyorderedindex']]);
+        
+        $this->middleware('permission:daily_active_customers-list', ['only' => ['dailyactiveindex']]);
+        $this->middleware('permission:monthly_active_customers-list', ['only' => ['monthlyactiveindex']]);
+        $this->middleware('permission:yearly_active_customers-list', ['only' => ['yearlyactiveindex']]);
+
+        $this->middleware('permission:customerchart-list', ['only' => ['customerchart']]);
+        $this->middleware('permission:order_customer_chart-list', ['only' => ['ordercustomerchart']]);
+        $this->middleware('permission:active_customer_chart-list', ['only' => ['activecustomerchart']]);
+
+        $this->middleware('permission:rider_parcel_order_report-list', ['only' => ['rider_parcel_order_report']]);
+        
+    }
     public function restricted(Request $request,$id)
     {
         $check_customer=Customer::find($id);

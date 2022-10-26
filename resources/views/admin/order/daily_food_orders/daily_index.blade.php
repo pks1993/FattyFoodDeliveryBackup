@@ -33,7 +33,7 @@
                 <div class="small-box bg-primary">
                     <div class="col-12">
                         <div><span class="count"><h3>{{ $pending_orders }}</h3></span></div>
-                        <p>Total Pending Orders</p>
+                        <p>Total PendingOrders</p>
                     </div>
                 </div>
             </div>

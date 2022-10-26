@@ -24,6 +24,31 @@ use App\Models\Order\RiderBenefit;
 
 class RiderController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:riders-list', ['only' => ['index']]);
+        $this->middleware('permission:riders-create', ['only' => ['create','store']]);
+        $this->middleware('permission:riders-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:riders-view', ['only' => ['show']]);
+        $this->middleware('permission:riders_activenow-update', ['only' => ['activenow']]);
+        $this->middleware('permission:riders_location-list', ['only' => ['location']]);
+
+        $this->middleware('permission:riders_admin_approved-update', ['only' => ['admin_approved']]);
+        $this->middleware('permission:riders_daily_admin_approved-update', ['only' => ['daily_admin_approved']]);
+        $this->middleware('permission:riders_monthly_admin_approved-update', ['only' => ['monthly_admin_approved']]);
+        $this->middleware('permission:riders_yearly_admin_approved-update', ['only' => ['yearly_admin_approved']]);
+
+        $this->middleware('permission:riders_ban-update', ['only' => ['ban_rider']]);
+        $this->middleware('permission:riders-delete', ['only' => ['destroy']]);
+        
+        $this->middleware('permission:riders_level-list', ['only' => ['level_list']]);
+        $this->middleware('permission:riders_level-store', ['only' => ['level_store']]);
+        $this->middleware('permission:riders_level-update', ['only' => ['level_update']]);
+        $this->middleware('permission:riders_level-delete', ['only' => ['level_destroy']]);
+
+        $this->middleware('permission:riders_chart-list', ['only' => ['riderchart']]);
+    }
+
     public function rider_print_all_page()
     {
         $rider_payments=RiderPayment::where('status',0)->get();

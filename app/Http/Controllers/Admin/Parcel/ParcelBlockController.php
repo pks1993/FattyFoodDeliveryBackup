@@ -14,6 +14,13 @@ use App\Models\Order\OrderRouteBlock;
 
 class ParcelBlockController extends Controller
 {
+    // function __construct()
+    // {
+    //      $this->middleware('permission:daily_parcel_orders-list', ['only' => ['index']]);
+    //      $this->middleware('permission:daily_parcel_orders-create', ['only' => ['create','store']]);
+    //      $this->middleware('permission:daily_parcel_orders-edit', ['only' => ['edit','update']]);
+    //      $this->middleware('permission:daily_parcel_orders-delete', ['only' => ['destroy']]);
+    // }
     /**
      * Display a listing of the resource.
      *

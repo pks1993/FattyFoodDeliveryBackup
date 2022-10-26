@@ -61,7 +61,7 @@
                                         <select id="zone_id" class="form-control @error('zone_id') is-invalid @enderror" name="zone_id" value="{{ old('zone_id') }}" autocomplete="zone_id" autofocus>
                                           @if($roles->zone_id=="0")
                                             <option value="{{ "0" }}">
-                                              {{ "Administrator" }}
+                                              {{ "Super Admin" }}
                                             </option>
                                           @else
                                             @foreach($zones as $value)
@@ -77,7 +77,7 @@
                                               <option value="{{ $value->zone_id }}">{{ $value->zone_name }}</option>
                                             @endforeach
                                           @elseif(Auth::user()->is_main_admin=="1")
-                                            <option value="{{ "0" }}">Administratior</option>
+                                            <option value="{{ "0" }}">Super Admin</option>
                                             @foreach($zone_one as $value)
                                               <option value="{{ $value->zone_id }}">{{ $value->zone_name }}</option>
                                             @endforeach

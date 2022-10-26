@@ -22,6 +22,34 @@ use App\Models\Order\FoodOrderDeliFees;
 
 class OrderController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:order_assign-list', ['only' => ['index']]);
+        $this->middleware('permission:rider_order_assign-list', ['only' => ['assign']]);
+        $this->middleware('permission:rider_order_assign-noti', ['only' => ['assign_noti']]);
+        $this->middleware('permission:food_orders-detail', ['only' => ['show']]);
+        $this->middleware('permission:rider_pending_assign-list', ['only' => ['edit','pending_assign']]);
+        $this->middleware('permission:rider_pending_assign-noti', ['only' => ['pending_assign_noti']]);
+
+        $this->middleware('permission:daily_food_orders-list', ['only' => ['dailyfoodorderlist']]);
+        $this->middleware('permission:monthly_food_orders-list', ['only' => ['monthlyfoodorderindex']]);
+        $this->middleware('permission:yearly_food_orders-list', ['only' => ['yearlyfoodorderindex']]);
+
+        $this->middleware('permission:daily_parcel_orders-list', ['only' => ['dailyparcelorderlist']]);
+        $this->middleware('permission:monthly_parcel_orders-list', ['only' => ['monthlyparcelorderlist']]);
+        $this->middleware('permission:yearly_parcel_orders-list', ['only' => ['yearlyparcelorderlist']]);
+
+        $this->middleware('permission:food_orders_pending-define', ['only' => ['pendingorderdefine']]);
+        $this->middleware('permission:food_orders_completed-update', ['only' => ['completeorderupdate']]);
+
+        $this->middleware('permission:food_order_delivery_fee-list', ['only' => ['food_order_delivery_fee']]);
+        $this->middleware('permission:food_orders_chart-list', ['only' => ['foodorderchart']]);
+        $this->middleware('permission:parcel_orders_chart-list', ['only' => ['parcelorderchart']]);
+
+        $this->middleware('permission:rider_parcel_order_report-list', ['only' => ['rider_parcel_order_report']]);
+        $this->middleware('permission:rider_food_order_report-list', ['only' => ['rider_food_order_report']]);
+
+    }
 
     public function pending()
     {

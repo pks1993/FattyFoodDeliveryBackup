@@ -11,6 +11,13 @@ use App\Models\Restaurant\Restaurant;
 
 class UpAdsController extends Controller
 {
+    // function __construct()
+    // {
+    //     $this->middleware('permission:up_ads-list', ['only' => ['index']]);
+    //     $this->middleware('permission:up_ads-create', ['only' => ['create','store']]);
+    //     $this->middleware('permission:up_ads-edit', ['only' => ['edit','update']]);
+    //     $this->middleware('permission:up_ads-delete', ['only' => ['destroy']]);
+    // }
     /**
      * Display a listing of the resource.
      *

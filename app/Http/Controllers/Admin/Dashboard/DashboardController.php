@@ -14,7 +14,7 @@ class DashboardController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:deliveryfee-list', ['only' => ['index','store']]);
+        $this->middleware('permission:dashboard-list', ['only' => ['index']]);
     }
     /**
      * Display a listing of the resource.

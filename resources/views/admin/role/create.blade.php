@@ -52,7 +52,7 @@
                                     <div class="col-md-12">
                                         <select id="zone_id" style="width: 100%;" class="form-control @error('zone_id') is-invalid @enderror" name="zone_id" value="{{ old('zone_id') }}" autocomplete="zone_id" autofocus>
                                           @if(Auth::user()->is_main_admin=="1")
-                                            <option value="{{ "0" }}">Administratior</option>
+                                            <option value="{{ "0" }}">Super Admin</option>
                                             @foreach($zones as $value)
                                               <option value="{{ $value->zone_id }}">{{ $value->zone_name }}</option>
                                             @endforeach

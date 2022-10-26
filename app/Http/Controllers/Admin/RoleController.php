@@ -129,7 +129,7 @@ class RoleController extends Controller
         $order=Permission::whereBetween('id',[68,70])->get();
         $invoice=Permission::whereBetween('id',[73,74])->get();
         $feedback=Permission::whereBetween('id',[71,72])->get();
-        $dashboard=Permission::where('id',75)->get();
+        $dashboard=Permission::where('id',78)->get();
         $wishlist=Permission::where('id',76)->get();
         $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
             ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
@@ -171,9 +171,9 @@ class RoleController extends Controller
         $role = Role::find($id);
         $role->name = $request->input('name');
         $role->zone_id=$request->input('zone_id');
-        $role->zone_name=$zone_name;
+        // $role->zone_name=$zone_name;
         $role->user_id=Auth::user()->user_id;
-        $role->save();
+        $role->update();
 
         $role->syncPermissions($request->input('permission'));
         $request->session()->flash('alert-success', 'successfully update role!');
