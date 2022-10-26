@@ -145,6 +145,9 @@ class RiderApicontroller extends Controller
         $total_parcel_order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_parcel_order_id_one)->whereNotIn('order_id',$peak_parcel_order_id_two)->where('order_status_id',15)->where('order_type','parcel')->count();
         $order=CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->whereNotIn('order_id',$peak_parcel_order_id_one)->whereNotIn('order_id',$peak_parcel_order_id_two)->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
 
+        $total_parcel_price=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('bill_total_price');
+        $total_food_price=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',[7,8])->where('order_type','food')->sum('rider_delivery_fee');
+
         // $total_food_amount=$food_orders_delivery_fee+($total_food_order*$benefit_food_amount)+$peak_food_amount;
         // if($benefit_parcel_percentage==0){
         //     $parcelamount=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
@@ -161,17 +164,18 @@ class RiderApicontroller extends Controller
             $value->total_count=$start_count."-".$end_count;
             $value->food_order=$total_food_order;
             $value->parcel_order=$total_parcel_order;
-            if($peak_parcel_order+$peak_food_order!=0){
-                if($peak_parcel_order==0 && $peak_food_order != 0){
-                    $value->peak_time=$peak_food_order."F";
-                }elseif($peak_parcel_order!=0 && $peak_food_order == 0){
-                    $value->peak_time=$peak_parcel_order."P";
-                }else{
-                    $value->peak_time=$peak_parcel_order."P + ".$peak_food_order."F";
-                }
-            }else{
-                $value->peak_time="0";
-            }
+            // if($peak_parcel_order+$peak_food_order!=0){
+            //     if($peak_parcel_order==0 && $peak_food_order != 0){
+            //         $value->peak_time=$peak_food_order."F";
+            //     }elseif($peak_parcel_order!=0 && $peak_food_order == 0){
+            //         $value->peak_time=$peak_parcel_order."P";
+            //     }else{
+            //         $value->peak_time=$peak_parcel_order."P + ".$peak_food_order."F";
+            //     }
+            // }else{
+            //     $value->peak_time="0";
+            // }
+            $value->peak_time=(string) ($peak_food_amount+$peak_parcel_amount);
 
             $total_food_amount=$food_orders_delivery_fee+($total_food_order*$value->food_benefit)+$peak_food_amount;
             if($value->parcel_benefit==0){
@@ -188,9 +192,28 @@ class RiderApicontroller extends Controller
             }else{
                 $value->is_target=0;
             }
+
+            $total_food_price1=$food_orders_delivery_fee+($total_food_order*$value->food_benefit);
+            if($value->parcel_benefit==0){
+                $parcelamount1=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
+                $total_parcel_price1=$parcelamount1;
+            }else{
+                $total_parcel_price1=($order*$value->parcel_benefit/100);
+            }
+
+            if($value->parcel_benefit==0){
+                $value->parcel_benefit=(string)$total_parcel_price1;
+            }else{
+                $value->parcel_benefit=$total_parcel_price1 ." ( $value->parcel_benefit% )";
+            }
+            if($value->food_benefit==0){
+                $value->food_benefit=(string)$total_food_price1;
+            }else{
+                $value->food_benefit=$total_food_price1 ." ( +$value->food_benefit )";
+            }
             array_push($data,$value);
         }
-        return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
+        return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_parcel_amount'=>$total_parcel_price,'total_food_amount'=>$total_food_price,'data'=>$rider_benefit]);
         // return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_food_order'=>$total_food_order,'peak_food_order'=>$peak_food_order,'total_parcel_order'=>$total_parcel_order,'peak_parcel_order'=>$peak_parcel_order,'check'=>$check]);
     }
     // public function rider_benefit(Request $request)
