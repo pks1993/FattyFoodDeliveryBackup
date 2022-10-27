@@ -42,67 +42,102 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="text-center">
-                        <h5> <b> Title: &nbsp;  {{ \Carbon\Carbon::parse($start_date)->format('F Y') }} &nbsp; detail</b></h5>
+                    <div class="row">
+                        @if ($type != "list")
+                            <div class="col-6 text-left">
+                                <h5> <b> Title: &nbsp;  {{ \Carbon\Carbon::parse($start_date)->format('F Y') }} &nbsp; detail</b></h5>
+                            </div>
+                            <div class="col-6 text-right">
+                                <h5> <b> InvoiceId: &nbsp;  {{ $payment_voucher }}</b></h5>
+                            </div>
+                        @else
+                            <div class="col-12 text-center">
+                                <h5> <b> Title: &nbsp;  {{ \Carbon\Carbon::parse($start_date)->format('F Y') }} &nbsp; detail</b></h5>
+                            </div>
+                        @endif
                     </div>
                     @foreach ($rider_benefit as $value)
                         @if($value->is_target==1)
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
-                                        @if ($type != "list")
-                                            <tr>
-                                                <th colspan="4">
-                                                    <div class="row">
-                                                        <div class="col-6 text-left" style="font-size: 18px;">InvoiceId</div>
-                                                        <div class="col-6 text-right" style="font-size: 18px">{{ $payment_voucher}}</div>
-                                                    </div>
-                                                </th>
-                                            </tr>
-                                        @endif
                                         <tr>
                                             <th colspan="4">
                                                 <div class="row">
-                                                    <div class="col-6 text-left" style="font-size: 18px;">Total Order</div>
-                                                    <div class="col-6 text-right" style="font-size: 18px">{{ $value->total_order }}</div>
+                                                    <div class="col-6 text-left" style="font-size: 16px;">Total Parcel Income</div>
+                                                    <div class="col-6 text-right" style="font-size: 15px">{{ number_format($value->total_parcel_price) }} MMK</div>
                                                 </div>
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th scope="col">Order</th>
-                                            <th scope="col">Order Count</th>
-                                            <th scope="col">Benefit</th>
-                                            <th scope="col">Amount</th>
+                                            <th colspan="4">
+                                                <div class="row">
+                                                    <div class="col-6 text-left" style="font-size: 16px;">Total Food Income</div>
+                                                    <div class="col-6 text-right" style="font-size: 15px">{{ number_format($value->total_food_price) }} MMK</div>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4">
+                                                <div class="row">
+                                                    <div class="col-6 text-left" style="font-size: 18px;">Total Income Amount</div>
+                                                    <div class="col-6 text-right" style="font-size: 16px">{{ number_format($value->total_food_price + $value->total_parcel_price) }} MMK</div>
+                                                </div>
+                                            </th>
                                         </tr>
                                     </thead>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
                                     <tbody>
                                         <tr>
-                                            <td scope="row">Food Order</td>
-                                            <td>{{ $value->food_order }}</td>
-                                            <td>{{ $value->food_benefit }}</td>
-                                            <td>{{ number_format($value->total_food_amount) }}</td>
+                                            <th scope="row" class="text-left" style="width:170px;">Total Count</th>
+                                            <td>{{ $value->total_order }}</td>
+                                            <td style="width:170px;"></td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Parcel Order</td>
-                                            <td>{{ $value->parcel_order }}</td>
-                                            <td>{{ $value->parcel_benefit }}%</td>
-                                            <td>{{ number_format($value->total_parcel_amount) }}</td>
+                                            <th scope="row" class="text-left" style="width:170px;">Parcel Benefit</th>
+                                            <td>{{ number_format($value->total_parcel_amount) }} MMK ( {{ $value->parcel_benefit }} % )</td>
+                                            <td style="width:170px;"></td>
                                         </tr>
                                         <tr>
-                                            <td scope="row">Peak Time Order</td>
-                                            <td>
-                                                <div>{{ $value->peak_food_order }}F,</div>
-                                                <div>{{ $value->peak_parcel_order }}P</div>
-                                            </td>
-                                            <td>
-                                                <div>{{ $value->peak_time_amount }},</div>
-                                                <div>{{ $value->peak_time_percentage }}%</div>
-                                            </td>
-                                            <td>{{ number_format($value->total_peak_amount)}}</td>
+                                            <th scope="row" class="text-left" style="width:170px;">Food Benefit</th>
+                                            <td>{{ number_format($value->total_food_amount)}} MMK ( +{{ $value->food_benefit }} )</td>
+                                            <td style="width:170px;"></td>
                                         </tr>
                                         <tr>
-                                            <th scope="row" colspan="3" class="text-center" style="font-size: 18px;">Total Amount</th>
-                                            <td>{{ number_format($value->reward) }}</td>
+                                            <th scope="row" class="text-left" style="width:170px;">Parcel Order</th>
+                                            <td>{{ number_format($value->parcel_order)}}</td>
+                                            <td style="width:170px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:170px;">Food Order</th>
+                                            <td>{{ number_format($value->food_order)}}</td>
+                                            <td style="width:170px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:170px;">Peak Order</th>
+                                            <td>{{ $value->peak_food_order + $value->peak_parcel_order }}</td>
+                                            <td style="width:170px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:170px;">Peak Time</th>
+                                            <td>{{ number_format($value->total_peak_amount)}} MMK</td>
+                                            <td style="width:170px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:170px;">Reward</th>
+                                            <td>{{ number_format($value->reward)}} MMK</td>
+                                            <td style="width:170px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" colspan="2" class="text-center" style="font-size: 18px;">Total Order</th>
+                                            <th>{{ number_format($value->total_order) }}</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" colspan="2" class="text-center" style="font-size: 18px;">Total Amount</th>
+                                            <th>{{ number_format($value->reward) }} MMK</th>
                                         </tr>
                                     </tbody>
                                 </table>   
@@ -110,14 +145,14 @@
                             <div class="row">
                                 <div class="col-6 text-left">
                                     @if(url()->previous()==url()->current())
-                                        <a href="{{ url('fatty/main/admin/v1/riders_billing/list') }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                                        <a href="{{ url('fatty/main/admin/v1/riders_billing/list') }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;"><< Back</a>
                                     @else
-                                        <a href="{{ url()->previous() }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;">Back</a>
+                                        <a href="{{ url()->previous() }}"  class="btn btn-sm btn-danger" style="color:#FFFFFF;font-weight:510;"><< Back</a>
                                     @endif
                                 </div>
                                 <div class="col-6 text-right">
                                     @if ($type=="list")
-                                        <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"total_amount":'.$value->reward.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;" title="Confirm"><i class="fas fa-check-circle"></i></a>
+                                        <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$rider_id.',"parcel_benefit":'.$value->parcel_benefit.',"food_benefit":'.$value->food_benefit.',"total_parcel_income":'.$value->total_parcel_price.',"total_food_income":'.$value->total_food_price.',"total_amount":'.$value->reward.',"total_parcel_benefit_amount":'.$value->total_parcel_amount.',"total_food_benefit_amount":'.$value->total_food_amount.',"total_peak_amount":'.$value->total_peak_amount.',"total_count":'.$value->total_order.',"total_food_count":'.$value->food_order.',"total_parcel_count":'.$value->parcel_order.',"peak_food_order":'.$value->peak_food_order.',"peak_parcel_order":'.$value->peak_parcel_order.',"start_date":"'.$start_date.'","end_date":"'.$end_date.'","duration":'.$duration.'}]') }}" class="btn btn-sm btn-success" style="color:#FFFFFF;font-weight:510;" title="Confirm">Confirm <i class="fas fa-check-circle"></i></a>
                                     @endif
                                 </div>
                             </div>

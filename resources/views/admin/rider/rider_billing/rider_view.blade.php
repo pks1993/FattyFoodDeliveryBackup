@@ -37,8 +37,112 @@
         </div>
     </div>
 </div>
-
 <div class="container mt-5 mb-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
+    <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
+        <div class="col">
+            @if($check)
+                @foreach ($rider_payments as $value)
+                    @if($value)
+                        <div class="card-body mt-4" style="width: 100%;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#00dfc2;background-color:#FFFFFF">
+                            <div class="col text-center" style="font-size: 20px;font-weight:510">
+                                Comfirmation!
+                            </div>
+                            <div class="table-responsive mt-2">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="4">
+                                                <div class="row">
+                                                    <div class="col-6 text-left" style="font-size: 15px;">Total Parcel Income</div>
+                                                    <div class="col-6 text-right" style="font-size: 15px">{{ number_format($value->total_parcel_income) }} MMK</div>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4">
+                                                <div class="row">
+                                                    <div class="col-6 text-left" style="font-size: 15px;">Total Food Income</div>
+                                                    <div class="col-6 text-right" style="font-size: 15px">{{ number_format($value->total_food_income) }} MMK</div>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="4">
+                                                <div class="row">
+                                                    <div class="col-6 text-left" style="font-size: 15px;">Total Income</div>
+                                                    <div class="col-6 text-right" style="font-size: 15px">{{ number_format($value->total_food_income + $value->total_parcel_income) }} MMK</div>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">InvoiceId</th>
+                                            <td>{{ $value->payment_voucher }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Parcel Benefit</th>
+                                            <td>{{ number_format($value->total_parcel_benefit_amount) }} MMK ( {{ $value->parcel_benefit }} % )</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Food Benefit</th>
+                                            <td>{{ number_format($value->total_food_benefit_amount)}} MMK ( +{{ $value->food_benefit }} )</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Parcel Order</th>
+                                            <td>{{ number_format($value->total_parcel_count)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Food Order</th>
+                                            <td>{{ number_format($value->total_food_count)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Peak Order</th>
+                                            <td>{{ $value->peak_food_order + $value->peak_parcel_order }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Peak Time</th>
+                                            <td>{{ number_format($value->total_peak_amount)}} MMK</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-left" style="width:140px;">Reward</th>
+                                            <td>{{ number_format($value->total_amount)}} MMK</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" colspan="1" class="text-left" style="font-size: 18px;">Total Order</th>
+                                            <th>{{ number_format($value->total_count) }}</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" colspan="1" class="text-left" style="font-size: 18px;">Total Amount</th>
+                                            <th>{{ number_format($value->total_amount) }} MMK</th>
+                                        </tr>
+                                    </tbody>
+                                </table>   
+                            </div>
+                            <div class="row">
+                                <div class="col text-center" style="margin-top:10px;margin-bottom:10px;">
+                                    <a href="{{ url('fatty/main/admin/rider_billing/update',$value->rider_payment_id) }}"  class="btn btn-sm" style="width: 80%;background-color:#00dfc2;color:#FFFFFF;font-weight:510;">Accept</a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            @else
+                <div class="card-body" style="width: 100%;height:200px;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#00dfc2;background-color:#FFFFFF">
+                    <div class="col text-center" style="padding:70px 0px;">
+                        <h4 style="font-weight:500;color:red;"> Empty Billing Voucher! </h4>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+{{-- <div class="container mt-5 mb-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
     <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col">
             @if($check)
@@ -71,7 +175,6 @@
                             <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
                                 <div class="col" style="height: 10px;font-weight:510;">Amount</div>
                                 <div class="col text-right" style="height: 10px;">{{ number_format($rider_payment->total_amount) }} ks</div>
-                                {{-- <div class="col text-right" style="height: 10px;">100,000 ks</div> --}}
                                 <div class="col-12" style="height: 10px;"><hr style="border-top: 1px dashed black;"></div>
                             </div>
                             <div class="row" style="margin-right:20px;margin-left:20px;margin-top:20px;">
@@ -95,7 +198,7 @@
             @endif
         </div>
     </div>
-</div>
+</div> --}}
 @include('admin.layouts._partial.script')
 <script>
     $(".nav-link").on('click',function(){

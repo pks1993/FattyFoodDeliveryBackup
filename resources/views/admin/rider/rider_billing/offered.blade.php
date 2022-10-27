@@ -73,28 +73,25 @@
                                     <tr>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
-                                        {{-- <th class="text-left">Start_Date</th> --}}
-                                        {{-- <th class="text-left">End_Date</th> --}}
                                         <th>StartOffered</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
-                                        <th class="text-left">TotalAmount</th>
+                                        <th>TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($cus_order_offered as $value)
                                     <tr>
-                                        <td>{{ $value->iteration }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
-                                        {{-- <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
-                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td> --}}
                                         <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->payment_voucher }} days </td>
-                                        <td class="text-left">{{ number_format($value->total_amount) }}</td>
+                                        <td>{{ number_format($value->total_amount) }} MMK</td>
                                         <td class="text-center">
-                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
+                                            {{-- <a href="{{ url('fatty/main/admin/v1/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a> --}}
+                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"type":"offered","rider_payment_id":"'.$value->rider_payment_id.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
                                             <a class="btn btn-sm btn-danger" style="color:white" title="Call"><i class="fa fa-phone" aria-hidden="true"></i></a>
                                         </td>
                                     </tr>

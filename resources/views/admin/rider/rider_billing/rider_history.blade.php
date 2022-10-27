@@ -50,10 +50,10 @@
             @foreach ($rider_payment as $value)
                 <a href="{{ url('fatty/main/admin/rider_billing/data_history/detail/'.$value->rider_payment_id) }}" class="col mt-3">
                     <div class="row" style="width: 100%;height:100%;background:#FFFFFF;color:#000000;font-size:15px;border-radius:5px;margin-left:1px;">
-                        <div class="col-5" style="padding: 10px;">
-                            {{ $value->payment_voucher }}
+                        <div class="col-7" style="padding: 10px;">
+                            {{ $value->payment_voucher }} ( {{ date('M Y',strtotime($value->start_offered_date)) }} )
                         </div>
-                        <div class="col-6 text-right" style="padding: 10px;">
+                        <div class="col-4 text-right" style="padding: 10px;">
                             {{ $value->total_amount }} Ks
                         </div>
                         <div class="col-1" style="padding: 11px;">

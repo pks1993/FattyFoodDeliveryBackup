@@ -188,7 +188,7 @@ class RiderApicontroller extends Controller
 
             if($start_count <= $total_order && $end_count >= $total_order ){
                 $value->is_target=1;
-                $total_amount=$total_parcel_amount+$total_food_amount;;
+                $total_amount=$total_parcel_amount+$total_food_amount;
             }else{
                 $value->is_target=0;
             }
