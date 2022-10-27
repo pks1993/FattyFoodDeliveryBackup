@@ -7,9 +7,11 @@
     <title>Rider Billing</title>
     @include('admin.layouts._partial.css')
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body{
             background-color: #e2e1e1;
-            min-height: 100%;
         }
         .nav-pills li>#list-tab.active,.nav-pills li>#offered-tab.active,.nav-pills li>#history-tab.active, .nav-pills .show>.nav-link {
             background-color: #00dfc2 !important;

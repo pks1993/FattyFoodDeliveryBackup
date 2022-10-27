@@ -25,7 +25,7 @@
 </head>
 <body>
 
-<div class="container mt-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
+<div class="container mt-5 mb-5" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
     <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col">
             <div class="card-body" style="width: 100%;color: #000000;font-size:15px;border-radius:5px;padding:10px;border-style:solid;border-width:2px;border-color:#00dfc2;background-color:#FFFFFF">
