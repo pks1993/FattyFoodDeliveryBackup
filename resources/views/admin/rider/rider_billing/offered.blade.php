@@ -73,6 +73,7 @@
                                     <tr>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
+                                        <th>Voucher</th>
                                         <th>StartOffered</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
@@ -85,9 +86,10 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
+                                        <td>{{ $value->payment_voucher }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
-                                        <td>{{ $value->payment_voucher }} days </td>
+                                        <td>{{ $value->duration }} days </td>
                                         <td>{{ number_format($value->total_amount) }} MMK</td>
                                         <td class="text-center">
                                             {{-- <a href="{{ url('fatty/main/admin/v1/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a> --}}

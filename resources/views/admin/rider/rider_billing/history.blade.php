@@ -67,8 +67,7 @@
                                     <tr>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
-                                        {{-- <th class="text-left">Start_Date</th>
-                                        <th class="text-left">End_Date</th> --}}
+                                        <th>Voucher</th>
                                         <th>StartOffered</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
@@ -81,8 +80,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
-                                        {{-- <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
-                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td> --}}
+                                        <td>{{ $value->payment_voucher }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->duration }} days </td>
