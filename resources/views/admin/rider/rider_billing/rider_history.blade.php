@@ -7,9 +7,6 @@
     <title>Rider Billing</title>
     @include('admin.layouts._partial.css')
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
         body{
             background-color: #e2e1e1;
         }
