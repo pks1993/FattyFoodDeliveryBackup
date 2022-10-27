@@ -9,6 +9,7 @@
     <style>
         body{
             background-color: #e2e1e1;
+            min-height: 100%;
         }
         .nav-pills li>#list-tab.active,.nav-pills li>#offered-tab.active,.nav-pills li>#history-tab.active, .nav-pills .show>.nav-link {
             background-color: #00dfc2 !important;
@@ -38,7 +39,7 @@
     </div>
 </div>
 
-<div class="container mt-4" style="padding-left: 20px;padding-right:20px;" id="tabcontent">
+<div class="container mt-4" style="padding-left: 20px;padding-right:20px;height:100%;" id="tabcontent">
     <div class="row tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
         <div class="col">
             <form action="{{ route('rider_billing_history.search',$rider_id) }}">
