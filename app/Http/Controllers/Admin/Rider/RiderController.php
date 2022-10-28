@@ -50,8 +50,8 @@ class RiderController extends Controller
     {
         $rider_id=$id;
         $current_date= $from_date=date('Y-m-d 00:00:00', strtotime($request['current_date']));
-        $rider_payment=RiderPayment::where('rider_id',$rider_id)->whereDate('last_offered_date',$current_date)->orderBy('created_at','DESC')->where('status',1)->get();
-        $check=RiderPayment::where('rider_id',$rider_id)->whereDate('last_offered_date',$current_date)->orderBy('created_at','DESC')->where('status',1)->first();
+        $rider_payment=RiderPayment::where('rider_id',$rider_id)->whereDate('created_at',$current_date)->orderBy('created_at','DESC')->where('status',1)->get();
+        $check=RiderPayment::where('rider_id',$rider_id)->whereDate('created_at',$current_date)->orderBy('created_at','DESC')->where('status',1)->first();
         return view('admin.rider.rider_billing.rider_history',compact('rider_payment','rider_id','check','rider_id'));
     }
 

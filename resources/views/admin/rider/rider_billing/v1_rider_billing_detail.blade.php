@@ -58,6 +58,18 @@
                     </div>
                     @foreach ($rider_benefit as $value)
                         @if($value->is_target==1)
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    @if ($value->rider)
+                                        <h6>Name: <b>{{ $value->rider->rider_user_name }}</b></h6>
+                                    @endif
+                                </div>
+                                <div class="col-6 text-right">
+                                    @if ($value->rider)
+                                        <h6>Phone: <b>{{ $value->rider->rider_user_phone }}</b></h6>
+                                    @endif
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
