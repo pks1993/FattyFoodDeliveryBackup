@@ -21,16 +21,15 @@
             <div class="col-md-12">
                 <ul class="nav nav-pills">
                     <li class="nav-item col-md-4 btn">
-                        {{-- <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">List</a> --}}
-                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/v1/riders_billing/list') }}">List</a>
+                        <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">List</a>
                     </li>
                     <li class="nav-item col-md-4 btn">
-                        {{-- <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="offered-tab" data-toggle="pill" href="#offered" role="tab" aria-controls="offered" aria-selected="true">Offered</a> --}}
+                        {{-- <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="offered-tab" data-toggle="pill" href="#offered" role="tab" aria-controls="offered" aria-selected="true">Offered</a> --}}
                         <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/offered') }}">Offered</a>
                     </li>
                     <li class="nav-item col-md-4 btn">
-                        <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a>
-                        {{-- <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/history') }}">History</a> --}}
+                        {{-- <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="history-tab" data-toggle="pill" href="#history" role="tab" aria-controls="history" aria-selected="true">History</a> --}}
+                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/history') }}">History</a>
                     </li>
                 </ul>
             </div>
@@ -45,41 +44,52 @@
     @endforeach
 </div>
 <section class="tab-content">
-    <div class="row tab-pane fade show active" id="history" role="tabpanel" aria-labelledby="history-tab">
+    <div class="row tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
         <div class="col-md-12">
             <div class="card">
+                <div class="card-header">
+                    <form action="{{ route('fatty.admin.v1_riders_billing.list') }}" method="get">
+                        @csrf
+                        <div class="row">
+                            {{-- <div class="col-md-3 mt-1">
+                                <input type="text" id="min" name="min" value="{{ \Carbon\Carbon::now()->startOfMonth()->format('d-M-Y') }}">
+                            </div>
+                            <div class="col-md-3 mt-1">
+                                <input type="text" id="max" name="max" value="{{ \Carbon\Carbon::now()->endOfMonth()->format('d-M-Y') }}">
+                            </div> --}}
+                            <input class="col-5 mt-1 col-md-3" type="month" name="current_date" value="{{ \Carbon\Carbon::parse($current_date)->startOfMonth()->format('Y-m') }}"">
+                            <div class="col-md-3 mt-1">
+                                <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">
+                                    <i class="fa fa-search"></i> {{ __('filter') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="card-body">
-                    {{-- <div class="row mb-3">
-                        <div class="col-md-3">
-                            <input type="text" id="min" name="min" placeholder="Start Date">
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" id="max" name="max" placeholder="End Date">
-                        </div>
-                    </div> --}}
                     <div class="tab-content">
                         <div class="table-responsive">
                             <div class="mt-3">
-                                {{ $cus_order_done->appends(request()->input())->links() }}
+                                {{ $order_rider->appends(request()->input())->links() }}
                             </div>
-                            <table id="" class="table table-hover table-bordered">
+                            <table id="riders" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
+                                        {{-- <th></th> --}}
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
-                                        <th>Voucher</th>
-                                        <th>StartOffered</th>
+                                        <th class="text-left">Start_Date</th>
+                                        <th class="text-left">End_Date</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
-                                        <th>TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($cus_order_done as $value)
-                                    <tr>
+                                    @foreach ($order_rider as $value)
+                                    <tr class="text-center">
+                                        {{-- <td></td> --}}
                                         <td>{{ $loop->iteration }}</td>
-                                        {{-- <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td> --}}
                                         <td class="text-left">
                                             @if ($value->rider)
                                                 {{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})
@@ -87,15 +97,13 @@
                                                 <span style="color: red">{{ "Empty" }}</span>
                                             @endif
                                         </td>
-                                        <td>{{ $value->payment_voucher }}</td>
-                                        <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
-                                        <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
+                                        <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
+                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
+                                        <td>{{ $value->last_offered_date }}</td>
                                         <td>{{ $value->duration }} days </td>
-                                        <td>{{ number_format($value->total_amount) }} MMK</td>
-                                        <td class="text-center">
-                                            {{-- <a href="{{ url('fatty/main/admin/v1/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a> --}}
-                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"type":"history","rider_payment_id":"'.$value->rider_payment_id.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
-                                            <a class="btn btn-sm btn-success" style="color:white" title="Done"><i class="fa fa-check-square-o" aria-hidden="true"></i></a>
+                                        <td>
+                                            <a href="{{ url('fatty/main/admin/v1/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.',"type":"list","payment_voucher":""}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
+                                            {{-- <a href="{{ url('fatty/main/admin/riders_billing/store','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$from_date.'","end_date":"'.$to_date.'","duration":'.$value->duration.'}]') }}" class="btn btn-sm btn-success" title="Confirm"><i class="fas fa-check-circle"></i></a> --}}
                                         </td>
                                     </tr>
                                     @endforeach

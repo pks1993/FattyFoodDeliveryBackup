@@ -18,11 +18,18 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-3">
+            <div class="col-md-12 mt-2 flash-message" id="successMessage">
+                @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                @if(Session::has('alert-' . $msg))
+                <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
+                @endif
+                @endforeach
+            </div>
             <div class="col-md-12">
                 <ul class="nav nav-pills">
                     <li class="nav-item col-md-4 btn">
                         {{-- <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="list-tab" data-toggle="pill" href="#list" role="tab" aria-controls="list" aria-selected="false">List</a> --}}
-                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/riders_billing/list') }}">List</a>
+                        <a class="nav-link" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" href="{{ url('fatty/main/admin/v1/riders_billing/list') }}">List</a>
                     </li>
                     <li class="nav-item col-md-4 btn">
                         <a class="nav-link active" style="width: 100%;border-radius: 0%;background:grey;color: white;font-size:23px;" id="offered-tab" data-toggle="pill" href="#offered" role="tab" aria-controls="offered" aria-selected="true">Offered</a>
@@ -36,19 +43,12 @@
         </div>
     </div>
 </section>
-<div class="col-md-8 offset-2 flash-message" id="successMessage">
-    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-    @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}</p>
-    @endif
-    @endforeach
-</div>
 <section class="tab-content">
     <div class="row tab-pane fade show active" id="offered" role="tabpanel" aria-labelledby="offered-tab">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-3">
+                    <div class="row">
                         <div class="col-md-3">
                             @if(count($cus_order_offered) ==0)
                                 <a aria-disabled="true" class="btn btn-danger btn-sm" style="color: #FFFFFF">Print No Data</a>
@@ -65,35 +65,43 @@
                     </div>
                     <div class="tab-content">
                         <div class="table-responsive">
+                            <div class="mt-3">
+                                {{ $cus_order_offered->appends(request()->input())->links() }}
+                            </div>
                             <table id="" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>#Id.</th>
                                         <th class="text-left">RiderName</th>
-                                        {{-- <th class="text-left">Start_Date</th> --}}
-                                        {{-- <th class="text-left">End_Date</th> --}}
+                                        <th>Voucher</th>
                                         <th>StartOffered</th>
                                         <th>LastOffered</th>
                                         <th>Duration</th>
-                                        <th class="text-left">TotalAmount</th>
+                                        <th>TotalAmount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($cus_order_offered as $value)
                                     <tr>
-                                        <td></td>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
-                                        {{-- <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
-                                        <td>{{ date('d/M/Y', strtotime($to_date)) }}</td> --}}
+                                        {{-- <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td> --}}
+                                        <td class="text-left">
+                                            @if ($value->rider)
+                                                {{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})
+                                            @else
+                                                <span style="color: red">{{ "Empty" }}</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $value->payment_voucher }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
                                         <td>{{ $value->duration }} days </td>
-                                        <td class="text-left">{{ number_format($value->total_amount) }}</td>
+                                        <td>{{ number_format($value->total_amount) }} MMK</td>
                                         <td class="text-center">
-                                            <p class="btn btn-sm btn-danger" style="width: 80px;">Call</p>
+                                            {{-- <a href="{{ url('fatty/main/admin/v1/riders_billing/detail','[{"rider_id":'.$value->rider_id.',"total_amount":'.$value->total_amount.',"start_date":"'.$value->start_offered_date.'","end_date":"'.$value->last_offered_date.'","duration":'.$value->duration.',"type":"offered","payment_voucher":"'.$value->payment_voucher.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a> --}}
+                                            <a href="{{ url('fatty/main/admin/riders_billing/detail','[{"type":"offered","rider_payment_id":"'.$value->rider_payment_id.'"}]') }}" class="btn btn-sm btn-info mr-1" title="Detail"><i class="fas fa-eye"></i></a>
+                                            <a class="btn btn-sm btn-danger" style="color:white" title="Call"><i class="fa fa-phone" aria-hidden="true"></i></a>
                                         </td>
                                     </tr>
                                     @endforeach
