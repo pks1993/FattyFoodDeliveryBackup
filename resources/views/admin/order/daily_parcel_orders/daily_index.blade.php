@@ -33,7 +33,7 @@
                 <div class="small-box bg-info">
                     <div class="col-12">
                         <div id="shiva"><span class="count"><h3>{{ $processing_orders }}</h3></span></div>
-                        <p>Total Processing Orders</p>
+                        <p>Total ProcessingOrders</p>
                     </div>
                 </div>
             </div>
@@ -128,21 +128,25 @@
                                         @elseif($item->order_status_id=='16')
                                             <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">CustomerCancel</a>
                                         @else
-                                            <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
+                                            <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
                                         @endif
                                     </td>
                                     <td>
                                         @if($item->customer_id==null)
-                                            <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
+                                            <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
                                         @else
-                                            @if($item->customer->customer_type_id==null)
-                                                <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">CheckError</a>
-                                            @elseif($item->customer->customer_type_id==2)
-                                                <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
-                                            @elseif($item->customer->customer_type_id==1)
-                                                <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                            @if ($item->customer)
+                                                @if($item->customer->customer_type_id==null)
+                                                    <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
+                                                @elseif($item->customer->customer_type_id==2)
+                                                    <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                                @elseif($item->customer->customer_type_id==1)
+                                                    <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                                @else
+                                                    <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                                @endif
                                             @else
-                                                <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                                    <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
                                             @endif
                                         @endif
                                     </td>
@@ -158,14 +162,14 @@
                                         @endif
                                     </td>
                                     <td class="text-left">
-                                        @if($item->customer_id)
+                                        @if($item->customer)
                                             {{ $item->customer->customer_name }}
                                         @else
                                             {{ "Empty" }}
                                         @endif
                                     </td>
                                     <td class="text-left">
-                                        @if($item->rider_id)
+                                        @if($item->rider)
                                             {{ $item->rider->rider_user_name }}
                                         @else
                                             {{ "Empty" }}
@@ -182,7 +186,8 @@
                                     <td>{{ $item->bill_total_price }}</td>
                                     <td class="btn-group">
                                         <a href="/fatty/main/admin/parcel_orders/view/{{ $item->order_id }}" class="btn btn-success btn-sm mr-2"><i class="fas fa-eye"></i></a>
-                                        @if($item->customer_id==null)
+                                        <a href="/fatty/main/admin/parcel_orders/edit/{{ $item->order_id }}" class="btn btn-primary btn-sm mr-2" title="Parcel Edit"><i class="fas fa-edit"></i></a>
+                                        {{-- @if($item->customer_id==null)
                                             <a href="/fatty/main/admin/parcel_orders/edit" class="btn btn-danger btn-sm mr-2 disabled" title="Do Not Edit"><i class="fas fa-edit"></i></a>
                                         @else
                                             @if ($item->customer->customer_type_id==3 && $item->order_type=="parcel")
@@ -190,7 +195,7 @@
                                             @else
                                                 <a href="/fatty/main/admin/parcel_orders/edit" class="btn btn-danger btn-sm mr-2 disabled" title="Do Not Edit"><i class="fas fa-edit"></i></a>
                                             @endif
-                                        @endif
+                                        @endif --}}
                                     </td>
                                 </tr>
                                 @endforeach

@@ -312,6 +312,9 @@
                                     <label for="rider_id" class="col-md-12 col-form-label">{{ __('Assign Rider') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="rider_id" style="width: 100%;" class="form-control @error('rider_id') is-invalid @enderror" name="rider_id" value="{{ old('rider_id') }}" autocomplete="rider_id" autofocus onchange="calExtra();">
+                                            @if ($orders->rider_id)
+                                                <option value="{{ $orders->rider_id }}">{{ $orders->rider->rider_user_name }} ( @if($orders->rider->is_order)HasOrder @else Free @endif )</option>
+                                            @endif
                                             <option value="0"> All Rider</option>
                                             @foreach($riders as $value)
                                                 <option value="{{ $value->rider_id }}"> {{ $value->rider_user_name }} ( @if($value->is_order)HasOrder @else Free @endif )</option>

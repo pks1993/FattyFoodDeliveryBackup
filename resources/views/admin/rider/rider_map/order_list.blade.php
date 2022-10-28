@@ -98,13 +98,13 @@
                                                 @elseif($value->order_status_id=='5')
                                                     <a class="btn btn-sm mr-2" style="color: white;width: 100%;background-color:orange;">{{ "ReadyToPick(NotAcceptRider)"}}</a>
                                                 @else
-                                                    <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">{{ "Check Error"}}</a>
+                                                    <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">{{ "Empty"}}</a>
                                                 @endif
                                             </td>
                                             <td>{{ $value->customer_order_id }}</td>
                                             <td>{{ $value->customer_booking_id }}</td>
                                             <td>
-                                                @if ($value->customer_id)
+                                                @if ($value->customer)
                                                     {{ $value->customer->customer_name }}
                                                 @else
                                                     {{ "Empty" }}
