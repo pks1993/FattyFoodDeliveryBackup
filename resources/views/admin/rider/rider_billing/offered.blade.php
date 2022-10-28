@@ -85,7 +85,14 @@
                                     @foreach ($cus_order_offered as $value)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
+                                        {{-- <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td> --}}
+                                        <td class="text-left">
+                                            @if ($value->rider)
+                                                {{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})
+                                            @else
+                                                <span style="color: red">{{ "Empty" }}</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $value->payment_voucher }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->start_offered_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($value->last_offered_date)) }}</td>
