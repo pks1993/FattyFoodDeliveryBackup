@@ -1353,6 +1353,7 @@ class OrderController extends Controller
         }else{
             $customer_orders->order_status_id=12;
         }
+        $customer_orders->rider_accept_time=now();
         $customer_orders->update();
 
 
@@ -1413,6 +1414,7 @@ class OrderController extends Controller
         }else{
             $customer_orders->order_status_id=14;
         }
+        $customer_orders->rider_accept_time=now();
         $customer_orders->update();
 
         $riders_check->is_order=1;

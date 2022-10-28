@@ -2330,6 +2330,7 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
+        $customer_orders->rider_accept_time=date('M d,Y : g:i A',strtotime($customer_orders->rider_accept_time));
 
 
         $customer_orders->test=(float)number_format($customer_orders->from_pickup_latitude==0?0.0:1.02,2);
@@ -2427,6 +2428,7 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
+        $customer_orders->rider_accept_time=date('M d,Y : g:i A',strtotime($customer_orders->rider_accept_time));
         array_push($data,$customer_orders);
 
 
