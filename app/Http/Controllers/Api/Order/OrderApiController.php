@@ -1316,7 +1316,14 @@ class OrderApiController extends Controller
                 $_SESSION['customer_orders']=$customer_orders;
                 NotiOrder::where('order_id',$order_id)->delete();
 
-                return view('admin.src.example.refund');
+                if($customer_orders->is_partial_refund==1){
+                    $_SESSION['refundAmount']=$customer_orders->bill_total_price;
+                    return view('admin.src.example.each_refund');
+                }else{
+                    return view('admin.src.example.refund');
+                }
+
+                // return view('admin.src.example.refund');
             }else{
                 if ($cancel_type == 'other') {
                     CustomerOrder::where('order_id',$order_id)->update([
