@@ -63,8 +63,9 @@ try {
             $sign='"'.$response->sign.'"';
 
             $sql="INSERT INTO order_kbz_refunds (order_id,result,code,msg,merch_order_id,merch_code,trans_order_id,refund_status,refund_order_id,refund_amount,refund_currency,refund_time,nonce_str,sign_type,sign) VALUES ($order_id,$result1,$code,$msg,$merch_order_id,$merch_code,$trans_order_id,$refund_status,$refund_order_id,$refund_amount,$refund_currency,$refund_time,$nonce_str,$sign_type,$sign)";
+            $orde_update = "UPDATE customer_orders SET is_partial_refund=1 WHERE order_id=$orderId;";
 
-            if ($conn->query($sql) === TRUE) {
+            if ($conn->query($sql) === TRUE && $conn->query($orde_update) === TRUE) {
                 $arrayName = array('success' =>true,'message'=>"successfully cancel food order by customer",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
                 $result=json_encode($arrayName);
                 echo $result;

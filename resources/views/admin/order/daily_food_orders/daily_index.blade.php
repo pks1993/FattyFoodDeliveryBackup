@@ -170,9 +170,15 @@
                                     </td>
                                     <td>
                                         @if($item->customer_id==null)
+<<<<<<< HEAD
                                             <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Null</a>
                                         @else
                                             @if(!empty($item->customer))
+=======
+                                            <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
+                                        @else
+                                            @if ($item->customer)
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                                                 @if($item->customer->customer_type_id==null)
                                                     <a class="btn btn-warning btn-sm mr-2" style="color: white;width: 100%;">Empty</a>
                                                 @elseif($item->customer->customer_type_id==2)
@@ -199,23 +205,36 @@
                                         @endif
                                     </td>
                                     <td class="text-left">
+<<<<<<< HEAD
                                         @if(!empty($item->customer))
                                             @if($item->customer->customer_name)
                                                 {{ $item->customer->customer_name }}
                                             @endif
+=======
+                                        @if($item->customer)
+                                            {{ $item->customer->customer_name }}
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                                         @else
                                             {{ "Empty" }}
                                         @endif
                                     </td>
                                     <td class="text-left">
+<<<<<<< HEAD
                                         @if(!empty($item->restaurant))
+=======
+                                        @if($item->restaurant)
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                                             {{ $item->restaurant->restaurant_name_mm }}
                                         @else
                                             {{ "Empty" }}
                                         @endif
                                     </td>
                                     <td class="text-left">
+<<<<<<< HEAD
                                         @if(!empty($item->rider))
+=======
+                                        @if($item->rider)
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                                             {{ $item->rider->rider_user_name }}
                                         @else
                                             {{ "Empty" }}

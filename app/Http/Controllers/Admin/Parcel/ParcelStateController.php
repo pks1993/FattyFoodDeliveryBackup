@@ -396,6 +396,7 @@ class ParcelStateController extends Controller
         }
         $orders->is_force_assign=1;
         $orders->order_status_id=12;
+        $orders->rider_accept_time=now();
         $orders->update();
     
         // if($rider_id==0){
@@ -899,6 +900,7 @@ class ParcelStateController extends Controller
                 }
                 $orders->is_force_assign=1;
                 $orders->order_status_id=12;
+                $orders->rider_accept_time=now();
                 $orders->update();
 
                 $riders=Rider::where('rider_id',$rider_id)->first();
@@ -1049,6 +1051,7 @@ class ParcelStateController extends Controller
             }
             $orders->is_force_assign=1;
             $orders->order_status_id=12;
+            $orders->rider_accept_time=now();
             $orders->update();
 
             $riders=Rider::where('rider_id',$rider_id)->first();
@@ -1164,7 +1167,13 @@ class ParcelStateController extends Controller
             $parcel_orders->to_drop_latitude=$parcel_orders->to_block->latitude;
             $parcel_orders->to_drop_longitude=$parcel_orders->to_block->longitude;
         }
-        $parcel_orders->rider_delivery_fee=$delivery_fee/2;
+        $check_price=ParcelFromToBlock::where('parcel_from_block_id',$from_parcel_city_id)->where('parcel_to_block_id',$to_parcel_city_id)->first();
+        if($check_price){
+            $parcel_orders->rider_delivery_fee=$check_price->rider_delivery_fee;
+        }else{
+            $parcel_orders->rider_delivery_fee=0;
+        }
+        // $parcel_orders->rider_delivery_fee=$delivery_fee/2;
         $parcel_orders->is_admin_force_order=0;
         $parcel_orders->update();
 
@@ -1202,6 +1211,7 @@ class ParcelStateController extends Controller
             }
             $orders->is_force_assign=1;
             $orders->order_status_id=12;
+            $orders->rider_accept_time=now();
             $orders->update();
 
             // $riders=Rider::where('rider_id',$rider_id)->first();
@@ -1218,6 +1228,10 @@ class ParcelStateController extends Controller
                 $riders->update();
             }
             NotiOrder::where('order_id',$parcel_orders->order_id)->delete();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
         }
 
         $rider_token=$riderFcmToken;

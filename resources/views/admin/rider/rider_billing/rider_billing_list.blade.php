@@ -90,7 +90,13 @@
                                     <tr class="text-center">
                                         {{-- <td></td> --}}
                                         <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})</td>
+                                        <td class="text-left">
+                                            @if ($value->rider)
+                                                {{ $value->rider->rider_user_name }} (#{{ $value->rider_id }})
+                                            @else
+                                                <span style="color: red">{{ "Empty" }}</span>
+                                            @endif
+                                        </td>
                                         <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ $value->last_offered_date }}</td>

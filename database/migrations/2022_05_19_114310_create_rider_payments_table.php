@@ -18,6 +18,18 @@ class CreateRiderPaymentsTable extends Migration
             $table->string('payment_voucher')->nullable()->default("V001");
             $table->unsignedBigInteger('rider_id')->nullable();
             $table->integer('total_amount')->nullable();
+            $table->string('food_benefit')->nullable();
+            $table->string('parcel_benefit')->nullable();
+            $table->integer('total_parcel_income')->nullable();
+            $table->integer('total_food_income')->nullable();
+            $table->integer('total_parcel_benefit_amount')->nullable();
+            $table->integer('total_food_benefit_amount')->nullable();
+            $table->integer('total_peak_amount')->nullable();
+            $table->integer('total_count')->nullable();
+            $table->integer('total_parcel_count')->nullable();
+            $table->integer('total_food_count')->nullable();
+            $table->integer('peak_food_order')->nullable();
+            $table->integer('peak_parcel_order')->nullable();
             $table->timestamp('start_offered_date')->nullable();
             $table->timestamp('last_offered_date')->nullable();
             $table->integer('duration')->nullable();

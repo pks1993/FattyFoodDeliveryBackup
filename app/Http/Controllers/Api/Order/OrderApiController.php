@@ -1210,8 +1210,13 @@ class OrderApiController extends Controller
 
                         $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                         $_SESSION['customer_orders']=$customer_orders;
+                        if($customer_orders->is_partial_refund==1){
+                            $_SESSION['refundAmount']=$customer_orders->bill_total_price;
+                            return view('admin.src.example.each_refund');
+                        }else{
+                            return view('admin.src.example.refund');
+                        }
 
-                        return view('admin.src.example.refund');
                 }else{
                     $customer_orders->order_status_id=9;
                     $customer_orders->update();
@@ -1456,7 +1461,14 @@ class OrderApiController extends Controller
                 $_SESSION['customer_orders']=$customer_orders;
                 NotiOrder::where('order_id',$order_id)->delete();
 
-                return view('admin.src.example.refund');
+                if($customer_orders->is_partial_refund==1){
+                    $_SESSION['refundAmount']=$customer_orders->bill_total_price;
+                    return view('admin.src.example.each_refund');
+                }else{
+                    return view('admin.src.example.refund');
+                }
+
+                // return view('admin.src.example.refund');
             }else{
                 if ($cancel_type == 'other') {
                     CustomerOrder::where('order_id',$order_id)->update([
@@ -1654,11 +1666,11 @@ class OrderApiController extends Controller
                 NotiOrder::where('order_id',$order_id)->delete();
 
                 if($select_all==0){
-			if($check_food==0){
-				CustomerOrder::where('order_id',$order_id)->update([
-                        		'order_status_id'=>2,
-                    		]);
-			}
+                    if($check_food==0){
+                        CustomerOrder::where('order_id',$order_id)->update([
+                                        'order_status_id'=>2,
+                                    ]);
+                    }
                     return view('admin.src.example.each_refund');
                 }else{
                     CustomerOrder::where('order_id',$order_id)->update([
@@ -2475,6 +2487,7 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
+        $customer_orders->rider_accept_time=date('M d,Y : g:i A',strtotime($customer_orders->rider_accept_time));
 
 
         $customer_orders->test=(float)number_format($customer_orders->from_pickup_latitude==0?0.0:1.02,2);
@@ -2580,6 +2593,7 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
+<<<<<<< HEAD
         $check_currency=ParcelState::where('city_id',$customer_orders->city_id)->first();
         if($check_currency){
             $customer_orders->currency_type=$check_currency->currency_type;
@@ -2600,6 +2614,9 @@ class OrderApiController extends Controller
                 $customer_orders->parcel_extra->currency_type="MMK";
             }
         }
+=======
+        $customer_orders->rider_accept_time=date('M d,Y : g:i A',strtotime($customer_orders->rider_accept_time));
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
         array_push($data,$customer_orders);
 
 

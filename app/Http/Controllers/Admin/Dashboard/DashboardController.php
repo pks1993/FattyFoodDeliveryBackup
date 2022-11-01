@@ -12,10 +12,17 @@ use App\User;
 use App\Models\Order\CustomerOrder;
 class DashboardController extends Controller
 {
+<<<<<<< HEAD
     function __construct()
     {
         $this->middleware('permission:dashboard-list', ['only' => ['index']]);
     }
+=======
+    // function __construct()
+    // {
+    //     $this->middleware('permission:dashboard-list', ['only' => ['index','store']]);
+    // }
+>>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
     /**
      * Display a listing of the resource.
      *

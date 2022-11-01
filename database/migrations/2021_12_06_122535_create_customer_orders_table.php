@@ -80,6 +80,7 @@ class CreateCustomerOrdersTable extends Migration
             $table->tinyInteger('is_multi_order')->nullable()->default(0);
             $table->tinyInteger('is_multi_order_cancel')->nullable()->default(0);
             $table->timestamps('rider_accept_time');
+            $table->tinyInteger('is_partial_refund')->nullable()->default(0);
             $table->timestamps();
         });
     }
