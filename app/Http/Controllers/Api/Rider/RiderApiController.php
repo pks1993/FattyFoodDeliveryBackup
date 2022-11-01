@@ -201,13 +201,7 @@ class RiderApicontroller extends Controller
             }else{
                 $value->is_target=0;
             }
-<<<<<<< HEAD
             $value->currency_type=$currency_type;
-            array_push($data,$value);
-        }
-        return response()->json(['success'=>true,'message'=>'this is benefit data','currency_type'=>$currency_type,'total_order'=>$total_order,'total_amount'=>$total_amount,'data'=>$rider_benefit]);
-=======
-
             $total_food_price1=$food_orders_delivery_fee+($total_food_order*$value->food_benefit);
             if($value->parcel_benefit==0){
                 $parcelamount1=(int) CustomerOrder::where('rider_id',$rider_id)->whereBetween('created_at',[$benefit_start_date, $benefit_end_date])->where('order_status_id',15)->where('order_type','parcel')->sum('rider_delivery_fee');
@@ -228,9 +222,7 @@ class RiderApicontroller extends Controller
             }
             array_push($data,$value);
         }
-        return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_parcel_amount'=>$total_parcel_price,'total_food_amount'=>$total_food_price,'data'=>$rider_benefit]);
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
-        // return response()->json(['success'=>true,'message'=>'this is benefit data','total_order'=>$total_order,'total_amount'=>$total_amount,'total_food_order'=>$total_food_order,'peak_food_order'=>$peak_food_order,'total_parcel_order'=>$total_parcel_order,'peak_parcel_order'=>$peak_parcel_order,'check'=>$check]);
+        return response()->json(['success'=>true,'message'=>'this is benefit data','currency_type'=>$currency_type,'total_order'=>$total_order,'total_amount'=>$total_amount,'total_parcel_amount'=>$total_parcel_price,'total_food_amount'=>$total_food_price,'data'=>$rider_benefit]);
     }
     // public function rider_benefit(Request $request)
     // {
@@ -754,11 +746,7 @@ class RiderApicontroller extends Controller
             $rider_longitude=$rider_check->rider_longitude;
 
             if($check_order){
-<<<<<<< HEAD
-                $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","city_id","is_force_assign","is_multi_order", "created_at", "updated_at"
-=======
                 $rider_orders=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign","is_multi_order","rider_accept_time" ,"created_at", "updated_at"
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                 ,DB::raw("6371 * acos(cos(radians(customer_orders.customer_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_latitude))
                 * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
@@ -846,7 +834,6 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
-<<<<<<< HEAD
                     $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
                     if($check_currency){
                         $value1->currency_type=$check_currency->currency_type;
@@ -869,9 +856,7 @@ class RiderApicontroller extends Controller
                             $value1->parcel_extra->currency_type="MMK";
                         }
                     }
-=======
                     $value1->rider_accept_time=date('M d,Y : g:i A',strtotime($value1->rider_accept_time));
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                     array_push($food_val,$value1);
 
                 }
@@ -882,11 +867,7 @@ class RiderApicontroller extends Controller
 
                 $noti_order=Notiorder::where('rider_id',$rider_id)->whereRaw('Date(created_at) = CURDATE()')->pluck('order_id')->toArray();
                 if($noti_order){
-<<<<<<< HEAD
-                    $noti_rider=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","city_id","is_force_assign","is_multi_order","created_at", "updated_at"
-=======
                     $noti_rider=CustomerOrder::with(['rider','customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','customer_address','foods','foods.sub_item','foods.sub_item.option'])->select("order_id", "customer_order_id", "customer_booking_id", "customer_id", "customer_address_id", "restaurant_id", "rider_id", "order_description", "estimated_start_time", "estimated_end_time", "delivery_fee", "item_total_price", "bill_total_price", "customer_address_latitude", "customer_address_longitude","current_address","building_system","address_type","customer_address_phone", "restaurant_address_latitude", "restaurant_address_longitude", "rider_address_latitude", "rider_address_longitude", "order_type","from_pickup_note","to_drop_note", "from_sender_name", "from_sender_phone", "from_pickup_address", "from_pickup_latitude", "from_pickup_longitude", "to_recipent_name", "to_recipent_phone", "to_drop_address", "to_drop_latitude", "to_drop_longitude", "parcel_type_id","from_parcel_city_id","to_parcel_city_id", "total_estimated_weight", "item_qty", "parcel_order_note","rider_parcel_block_note","rider_parcel_address", "parcel_extra_cover_id", "payment_method_id", "order_time", "order_status_id", "rider_restaurant_distance","state_id","is_force_assign","is_multi_order","rider_accept_time","created_at", "updated_at"
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                     ,DB::raw("6371 * acos(cos(radians(customer_orders.customer_address_latitude))
                     * cos(radians(customer_orders.restaurant_address_latitude))
                     * cos(radians(customer_orders.restaurant_address_longitude) - radians(customer_orders.customer_address_longitude))
@@ -970,7 +951,6 @@ class RiderApicontroller extends Controller
                             $value1->to_latitude=$city_data->latitude;
                             $value1->to_longitude=$city_data->longitude;
                         }
-<<<<<<< HEAD
                         $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
                         if($check_currency){
                             $value1->currency_type=$check_currency->currency_type;
@@ -993,9 +973,7 @@ class RiderApicontroller extends Controller
                                 $value1->parcel_extra->currency_type="MMK";
                             }
                         }
-=======
                         $value1->rider_accept_time=date('M d,Y : g:i A',strtotime($value1->rider_accept_time));
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                         array_push($noti_val,$value1);
 
                     }
@@ -2658,7 +2636,6 @@ class RiderApicontroller extends Controller
                     $orders1->to_latitude=$city_data->latitude;
                     $orders1->to_longitude=$city_data->longitude;
                 }
-<<<<<<< HEAD
 
                 $check_currency=ParcelState::where('city_id',$orders1->city_id)->first();
                 if($check_currency){
@@ -2682,9 +2659,7 @@ class RiderApicontroller extends Controller
                         $orders1->parcel_extra->currency_type="MMK";
                     }
                 }
-=======
                 $orders1->rider_accept_time=date('M d,Y : g:i A',strtotime($orders1->rider_accept_time));
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                 array_push($data,$orders1);
 
                 return response()->json(['success'=>true,'message'=>'successfull order accept!','data'=>$orders1]);
@@ -2934,7 +2909,6 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
-<<<<<<< HEAD
                     $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
                     if($check_currency){
                         $value1->currency_type=$check_currency->currency_type;
@@ -2950,9 +2924,7 @@ class RiderApicontroller extends Controller
                             }
                         }
                     }
-=======
                     $value1->rider_accept_time=date('M d,Y : g:i A',strtotime($value1->rider_accept_time));
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                     array_push($food_val,$value1);
 
                 }
@@ -3085,7 +3057,6 @@ class RiderApicontroller extends Controller
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
-<<<<<<< HEAD
                     $check_currency=ParcelState::where('city_id',$value1->city_id)->first();
                     if($check_currency){
                         $value1->currency_type=$check_currency->currency_type;
@@ -3101,9 +3072,7 @@ class RiderApicontroller extends Controller
                             }
                         }
                     }
-=======
                     $value1->rider_accept_time=date('M d,Y : g:i A',strtotime($value1->rider_accept_time));
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
                     array_push($food_val,$value1);
 
                 }

@@ -2593,7 +2593,6 @@ class OrderApiController extends Controller
         }
 
         $customer_orders->distance=$distances;
-<<<<<<< HEAD
         $check_currency=ParcelState::where('city_id',$customer_orders->city_id)->first();
         if($check_currency){
             $customer_orders->currency_type=$check_currency->currency_type;
@@ -2614,9 +2613,7 @@ class OrderApiController extends Controller
                 $customer_orders->parcel_extra->currency_type="MMK";
             }
         }
-=======
         $customer_orders->rider_accept_time=date('M d,Y : g:i A',strtotime($customer_orders->rider_accept_time));
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
         array_push($data,$customer_orders);
 
 

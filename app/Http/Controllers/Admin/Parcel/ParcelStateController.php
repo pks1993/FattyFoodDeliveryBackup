@@ -1228,10 +1228,6 @@ class ParcelStateController extends Controller
                 $riders->update();
             }
             NotiOrder::where('order_id',$parcel_orders->order_id)->delete();
-<<<<<<< HEAD
-=======
-
->>>>>>> 3dcd07a1ea59e1be6c670bcd291ceda4975b9965
         }
 
         $rider_token=$riderFcmToken;
