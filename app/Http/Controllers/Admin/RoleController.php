@@ -19,7 +19,7 @@ class RoleController extends Controller
 
     function __construct()
     {
-         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:role-list', ['only' => ['index']]);
          $this->middleware('permission:role-create', ['only' => ['create','store']]);
          $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:role-delete', ['only' => ['destroy']]);
@@ -50,19 +50,16 @@ class RoleController extends Controller
     public function create()
     {
         $permission_admin = Permission::whereBetween('id',[0,24])->get();
-        $permission_tax=Permission::whereBetween('id',[25,27])->get();
-        $permission_other=Permission::whereBetween('id',[28,67])->get();
-        $order=Permission::whereBetween('id',[68,70])->get();
-        $invoice=Permission::whereBetween('id',[73,74])->get();
-        $feedback=Permission::whereBetween('id',[71,72])->get();
-        $dashboard=Permission::where('id',75)->get();
-        $wishlist=Permission::where('id',76)->get();
+        $permission_tax=Permission::whereBetween('id',[25,28])->get();
+        $permission_other=Permission::whereBetween('id',[29,144])->whereNotIn('id',[72,73,74,81,82,83,88,89,90,91,105,109])->get();
+        $order=Permission::orwhereIn('id',[72,73,74,81,82,83,88,89,90,91,105,109])->get();
+        $invoice=Permission::whereBetween('id',[145,155])->get();
         if(Auth::user()->is_main_admin=="1"){
             $zones=Zone::all();
         }else{
             $zones=Zone::where('zone_id',Auth::user()->zone_id)->get();
         }
-        return view('admin.role.create', compact('permission_admin','permission_tax','permission_other','order','invoice','feedback','dashboard','wishlist','zones'));
+        return view('admin.role.create', compact('permission_admin','permission_tax','permission_other','order','invoice','zones'));
 
     }
 
@@ -123,14 +120,13 @@ class RoleController extends Controller
         //
         $roles = Role::find($id);
         // $permission = Permission::get();
+
         $permission_admin = Permission::whereBetween('id',[0,24])->get();
-        $permission_tax=Permission::whereBetween('id',[25,27])->get();
-        $permission_other=Permission::whereBetween('id',[28,67])->get();
-        $order=Permission::whereBetween('id',[68,70])->get();
-        $invoice=Permission::whereBetween('id',[73,74])->get();
-        $feedback=Permission::whereBetween('id',[71,72])->get();
-        $dashboard=Permission::where('id',78)->get();
-        $wishlist=Permission::where('id',76)->get();
+        $permission_tax=Permission::whereBetween('id',[25,28])->get();
+        $permission_other=Permission::whereBetween('id',[29,144])->whereNotIn('id',[72,73,74,81,82,83,88,89,90,91,105,109])->get();
+        $order=Permission::orwhereIn('id',[72,73,74,81,82,83,88,89,90,91,105,109])->get();
+        $invoice=Permission::whereBetween('id',[145,155])->get();
+
         $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
             ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
             ->all();
@@ -143,7 +139,7 @@ class RoleController extends Controller
             $zones=Zone::where('zone_id',Auth::user()->zone_id)->get();
         }
         $zone_one=Zone::where('zone_id','!=',$roles->zone_id)->get();
-        return view('admin.role.edit',compact('permission_admin','permission_tax','permission_other','order','invoice','feedback','dashboard','wishlist','roles','rolePermissions','zones','zone_one'));
+        return view('admin.role.edit',compact('permission_admin','permission_tax','permission_other','order','invoice','roles','rolePermissions','zones','zone_one'));
     }
 
     /**

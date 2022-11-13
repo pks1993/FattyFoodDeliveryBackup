@@ -16,6 +16,8 @@ class CreateDownAdsTable extends Migration
         Schema::create('down_ads', function (Blueprint $table) {
             $table->id('down_ads_id');
             $table->unsignedBigInteger('restaurant_id')->nullable()->default(0);
+            $table->unsignedBigInteger('city_id')->nullable()->default(297);
+            $table->unsignedBigInteger('state_id')->nullable()->default(15);
             $table->string('image')->nullable();
             $table->bigInteger('sort_id')->nullable()->default(0);
             $table->timestamps();

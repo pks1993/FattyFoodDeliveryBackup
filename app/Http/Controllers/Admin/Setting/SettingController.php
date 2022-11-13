@@ -12,6 +12,15 @@ use App\Models\Order\PaymentMethodClose;
 
 class SettingController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:kpay_onoff-list', ['only' => ['kpay_onoff_list']]);
+         $this->middleware('permission:version-list', ['only' => ['version_list']]);
+         $this->middleware('permission:version-update', ['only' => ['version_update']]);
+         $this->middleware('permission:force_update', ['only' => ['force_update']]);
+         $this->middleware('permission:available_update', ['only' => ['available_update']]);
+         $this->middleware('permission:kpay_onoff-update', ['only' => ['kpay_update','kpay_onoff_update_android']]);
+    }
     /**
      * Display a listing of the resource.
      *

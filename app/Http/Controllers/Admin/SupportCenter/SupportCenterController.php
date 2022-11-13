@@ -12,7 +12,7 @@ class SupportCenterController extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:supportCenter-list|supportCenter-create|supportCenter-edit|supportCenter-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:supportCenter-list', ['only' => ['index']]);
          $this->middleware('permission:supportCenter-create', ['only' => ['create','store']]);
          $this->middleware('permission:supportCenter-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:supportCenter-delete', ['only' => ['destroy']]);

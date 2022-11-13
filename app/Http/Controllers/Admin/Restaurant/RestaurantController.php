@@ -32,6 +32,38 @@ use App\Models\Restaurant\NearRestaurntDistance;
 
 class RestaurantController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:restaurants-list', ['only' => ['index']]);
+        $this->middleware('permission:100_restaurants-list', ['only' => ['hundredIndex']]);
+        $this->middleware('permission:restaurants_user_create-list', ['only' => ['user_create']]);
+        $this->middleware('permission:restaurants-store', ['only' => ['store']]);
+        $this->middleware('permission:restaurants-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:restaurants-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:restaurants-detail', ['only' => ['show']]);
+        $this->middleware('permission:restaurants_opening-update', ['only' => ['opening_update']]);
+        $this->middleware('permission:restaurants_approved-update', ['only' => ['approved_update']]);
+        $this->middleware('permission:100_restaurants_approved-update', ['only' => ['approved_update_100']]);
+        $this->middleware('permission:restaurants_recommend-update', ['only' => ['restaurant_recommend_update']]);
+        $this->middleware('permission:restaurants_openingtime-view', ['only' => ['openingtime_view']]);
+        $this->middleware('permission:restaurants_openingtime-update', ['only' => ['openingtime_update']]);
+        $this->middleware('permission:100_restaurants_openingtime-update', ['only' => ['opening_update_100']]);
+        $this->middleware('permission:restaurants_menu-list', ['only' => ['menu_list']]);
+        $this->middleware('permission:restaurants_menu-store', ['only' => ['menu_store']]);
+        $this->middleware('permission:restaurants_menu-edit', ['only' => ['menu_edit','menu_update']]);
+        $this->middleware('permission:restaurants_menu-destroy', ['only' => ['menu_destroy']]);
+        $this->middleware('permission:restaurant_food-list', ['only' => ['restaurant_food_list']]);
+        $this->middleware('permission:restaurant_food-view', ['only' => ['restaurant_food_view']]);
+        $this->middleware('permission:restaurant_food-create', ['only' => ['restaurant_food_store','restauant_food_create']]);
+        $this->middleware('permission:restaurant_food-edit', ['only' => ['restaurant_food_edit','restaurant_food_update']]);
+        $this->middleware('permission:restaurant_food-destroy', ['only' => ['restaurant_food_destroy']]);
+        $this->middleware('permission:restaurant_food_recommend-update', ['only' => ['restaurant_food_recommend']]);
+        $this->middleware('permission:restaurant_food_open-update', ['only' => ['restaurant_food_open']]);
+        $this->middleware('permission:restaurants_chart-list', ['only' => ['restaurantchart']]);
+        $this->middleware('permission:restaurant_billing-list', ['only' => ['restaurant_billing_list']]);
+        $this->middleware('permission:restaurant_billing-store', ['only' => ['restaurant_billing_store']]);
+    }
+
     public function restaurant_food_open(Request $request,$id){
         $check=Food::where('food_id',$id)->first();
         if($check->food_emergency_status==1){
@@ -219,8 +251,14 @@ class RestaurantController extends Controller
             }
             $value->last_offered_date=$last_date;
             $value->duration=$days;
-            $value->percentage=$value->restaurant->percentage;
-            $value->pay_amount=(int)$value->total_amount - $value->total_amount*$value->restaurant->percentage/100;
+            if($value->restaurant){
+                $value->percentage=$value->restaurant->percentage;
+                $percentage=$value->restaurant->percentage;
+            }else{
+                $value->percentage=0;
+                $percentage=0;
+            }
+            $value->pay_amount=(int)$value->total_amount - $value->total_amount*$percentage/100;
             array_push($data,$value);
         }
 

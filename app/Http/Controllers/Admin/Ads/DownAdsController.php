@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Ads\DownAds;
 use App\Models\Restaurant\Restaurant;
+use Illuminate\Support\Facades\Auth;
+use App\Models\State\State;
 
 class DownAdsController extends Controller
 {
@@ -26,7 +28,11 @@ class DownAdsController extends Controller
      */
     public function index()
     {
-        $down_ads=DownAds::orderBy('sort_id')->get();
+        if(Auth::user()->zone){
+            $down_ads=DownAds::orderBy('sort_id')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $down_ads=DownAds::orderBy('sort_id')->get();
+        }
         return view('admin.Ads.down.index',compact('down_ads'));
     }
 
@@ -52,8 +58,9 @@ class DownAdsController extends Controller
      */
     public function create()
     {
+        $states=State::all();
         $restaurants=Restaurant::doesnthave('down_ads')->get();
-        return view('admin.Ads.down.create',compact('restaurants'));
+        return view('admin.Ads.down.create',compact('restaurants','states'));
     }
 
     /**

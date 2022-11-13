@@ -13,6 +13,13 @@ use App\Models\City\City;
 
 class RecommendRestaurantController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:recommend_restaurants-list', ['only' => ['index']]);
+        $this->middleware('permission:recommend_restaurants-create', ['only' => ['store','create']]);
+        $this->middleware('permission:recommend_restaurants-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:recommend_restaurants-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *

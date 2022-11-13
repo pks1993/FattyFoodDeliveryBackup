@@ -129,6 +129,7 @@
                                               @endforeach
                                             </div>
                                           @endforeach
+                                          <hr>
                                       <h3 class="mt-3"><strong>Other Permissions:</strong></h3>
                                         @foreach($permission_other->chunk(4) as $permissions)
                                           <div class="row">
@@ -142,10 +143,12 @@
                                               @endforeach
                                             </div>
                                         @endforeach
+                                        <hr>
+                                        <h3><strong>Other Permissions:</strong></h3>
                                         @foreach($order->chunk(3) as $permissions)
                                           <div class="row">
                                               @foreach($permissions as $value)
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                   <label>
                                                     {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => 'name')) }}
                                               {{ $value->name }}
@@ -154,10 +157,10 @@
                                               @endforeach
                                             </div>
                                         @endforeach 
-                                        @foreach($invoice->chunk(2) as $permissions)
+                                        @foreach($invoice->chunk(3) as $permissions)
                                           <div class="row">
                                               @foreach($permissions as $value)
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                   <label>
                                                     {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => 'name')) }}
                                               {{ $value->name }}
@@ -166,42 +169,6 @@
                                               @endforeach
                                             </div>
                                         @endforeach 
-                                        @foreach($feedback->chunk(2) as $permissions)
-                                          <div class="row">
-                                              @foreach($permissions as $value)
-                                                <div class="col-md-3">
-                                                  <label>
-                                                    {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => 'name')) }}
-                                              {{ $value->name }}
-                                                  </label>
-                                                </div>
-                                              @endforeach
-                                            </div>
-                                        @endforeach
-                                        @foreach($dashboard->chunk(1) as $permissions)
-                                          <div class="row">
-                                              @foreach($permissions as $value)
-                                                <div class="col-md-3">
-                                                  <label>
-                                                    {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => 'name')) }}
-                                              {{ $value->name }}
-                                                  </label>
-                                                </div>
-                                              @endforeach
-                                            </div>
-                                        @endforeach
-                                        @foreach($wishlist->chunk(4) as $permissions)
-                                          <div class="row">
-                                              @foreach($permissions as $value)
-                                                <div class="col-md-3">
-                                                  <label>
-                                                    {{ Form::checkbox('permission[]', $value->id, in_array($value->id, $rolePermissions) ? true : false, array('class' => 'name')) }}
-                                                    {{ $value->name }}
-                                                  </label>
-                                                </div>
-                                              @endforeach
-                                            </div>
-                                        @endforeach
                                     </div>
                                   </div>
                                 </div>

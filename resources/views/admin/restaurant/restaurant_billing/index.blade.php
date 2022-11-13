@@ -78,7 +78,7 @@
                             <table id="restaurants" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        {{-- <th></th> --}}
                                         <th>#Id.</th>
                                         <th class="text-left">Restaurant</th>
                                         <th class="text-left">Start_Date</th>
@@ -94,9 +94,15 @@
                                 <tbody>
                                     @foreach ($cus_order_list as $value)
                                     <tr>
-                                        <td></td>
+                                        {{-- <td></td> --}}
                                         <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</td>
+                                        <td class="text-left">
+                                            @if($value->restaurant)
+                                                {{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})
+                                            @else
+                                                <span style="color: red;">{{ "Empty" }}</span>
+                                            @endif
+                                        </td>
                                         <td>{{ date('d/M/Y', strtotime($from_date)) }}</td>
                                         <td>{{ date('d/M/Y', strtotime($to_date)) }}</td>
                                         <td>{{ $value->last_offered_date }}</td>
@@ -182,41 +188,39 @@
                             <input type="text" id="max" name="max" placeholder="End Date">
                         </div>
                     </div>
-                    <div class="tab-content">
-                        <div class="table-responsive">
-                            <table id="" class="table table-hover table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>#Id.</th>
-                                        <th class="text-left">Restaurant</th>
-                                        <th>LastOffered</th>
-                                        <th>Duration</th>
-                                        <th class="text-left">Amonut</th>
-                                        <th>Percentage</th>
-                                        <th class="text-left">Total</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($cus_order_done as $value)
-                                    <tr>
-                                        <td></td>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</td>
-                                        <td>{{ date('d M Y', strtotime($value->last_offered_date)) }}</td>
-                                        <td>{{ $value->duration }} days </td>
-                                        <td class="text-left">{{ $value->total_amount }}</td>
-                                        <td>{{ $value->percentage }} %</td>
-                                        <td class="text-left">{{ $value->pay_amount }}</td>
-                                        <td class="text-center">
-                                            <p class="btn btn-sm btn-success" style="width: 80px;">Done</p>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table id="" class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>#Id.</th>
+                                    <th class="text-left">Restaurant</th>
+                                    <th>LastOffered</th>
+                                    <th>Duration</th>
+                                    <th class="text-left">Amonut</th>
+                                    <th>Percentage</th>
+                                    <th class="text-left">Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($cus_order_done as $value)
+                                <tr>
+                                    <td></td>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td class="text-left">{{ $value->restaurant->restaurant_name_mm }} ({{ $value->restaurant->restaurant_name_en }})</td>
+                                    <td>{{ date('d M Y', strtotime($value->last_offered_date)) }}</td>
+                                    <td>{{ $value->duration }} days </td>
+                                    <td class="text-left">{{ $value->total_amount }}</td>
+                                    <td>{{ $value->percentage }} %</td>
+                                    <td class="text-left">{{ $value->pay_amount }}</td>
+                                    <td class="text-center">
+                                        <p class="btn btn-sm btn-success" style="width: 80px;">Done</p>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -232,19 +236,19 @@
     $(document).ready(function() {
         $("#min").datepicker({ changeMonth: true, changeYear: true,dateFormat: 'dd-M-yy' });
         $("#max").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'dd-M-yy' });
-        $('#restaurants').DataTable( {
-        // Create date inputs
-            columnDefs: [ {
-                orderable: false,
-                className: 'select-checkbox',
-                targets:   0
-            } ],
-            select: {
-                style:'os',
-                selector:'td:first-child'
-            },
-            order: [[ 1, 'asc' ]]
-        } );
+        $('#restaurants').DataTable();
+        // $('#restaurants').DataTable( {
+        //     columnDefs: [ {
+        //         orderable: false,
+        //         className: 'select-checkbox',
+        //         targets:   0
+        //     } ],
+        //     select: {
+        //         style:'os',
+        //         selector:'td:first-child'
+        //     },
+        //     order: [[ 1, 'asc' ]]
+        // } );
     } );
 </script>
 @endpush

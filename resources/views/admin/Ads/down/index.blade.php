@@ -53,10 +53,12 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>Action</th>
-                                        <th>#</th>
+                                        {{-- <th>#</th> --}}
                                         <th>Sort</th>
                                         <th>#Id</th>
                                         <th>Restaurant</th>
+                                        <th>City</th>
+                                        <th>State</th>
                                         <th>Image Myanmar</th>
                                         <th>Image English</th>
                                         <th>Image China</th>
@@ -74,10 +76,38 @@
                                                     <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
                                                 </form>
                                             </td>
-                                            <td class="pl-3" width="20px"><i class="fa fa-sort"></i></td>
+                                            {{-- <td class="pl-3" width="20px"><i class="fa fa-sort"></i></td> --}}
                                             <td>{{ $ads->sort_id }}</td>
                                             <td>{{ $ads->down_ads_id }}</td>
-                                            <td class="text-left">{{ $ads->restaurant->restaurant_name_mm }} ({{ $ads->restaurant->restaurant_name_en }})</td>
+                                            <td class="text-left">
+                                                @if ($ads->restaurant)
+                                                    {{ $ads->restaurant->restaurant_name_mm }} ({{ $ads->restaurant->restaurant_name_en }})
+                                                @else
+                                                    <span style="color: red">{{ "Empty" }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($ads->restaurant)
+                                                    @if ($ads->restaurant->city)
+                                                        {{ $ads->restaurant->city->city_name_mm }} ({{ $ads->restaurant->city->city_name_en }})
+                                                    @else
+                                                        <span style="color: red">{{ "Empty" }}</span>
+                                                    @endif
+                                                @else
+                                                    <span style="color: red">{{ "Empty" }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($ads->restaurant)
+                                                    @if ($ads->restaurant->state)
+                                                        {{ $ads->restaurant->state->state_name_mm }} ({{ $ads->restaurant->state->state_name_en }})
+                                                    @else
+                                                        <span style="color: red">{{ "Empty" }}</span>
+                                                    @endif
+                                                @else
+                                                    <span style="color: red">{{ "Empty" }}</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if($ads->image_mm)
                                                     <img src="/uploads/down_ads/{{$ads->image_mm}}" class="img-rounded" style="width: 300px;height: 100px;">

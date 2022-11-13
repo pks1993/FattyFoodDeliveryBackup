@@ -47,6 +47,13 @@ class RiderController extends Controller
         $this->middleware('permission:riders_level-delete', ['only' => ['level_destroy']]);
 
         $this->middleware('permission:riders_chart-list', ['only' => ['riderchart']]);
+        $this->middleware('permission:rider_billing-list', ['only' => ['rider_billing_list_v1']]);
+        $this->middleware('permission:rider_billing-store', ['only' => ['rider_billing_store']]);
+        $this->middleware('permission:rider_billing-detail', ['only' => ['rider_billing_detail_v1','rider_billing_detail']]);
+        $this->middleware('permission:rider_billing_offered-list', ['only' => ['rider_billing_offered']]);
+        $this->middleware('permission:rider_billing_history-list', ['only' => ['rider_billing_history']]);
+        $this->middleware('permission:today_rider_billing-list', ['only' => ['today_rider_billing_list']]);
+        $this->middleware('permission:today_rider_billing-store', ['only' => ['today_rider_billing_store']]);
     }
 
     public function rider_print_all_page()

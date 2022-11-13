@@ -15,6 +15,23 @@ use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class CategoryController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:categories-list', ['only' => ['index']]);
+        $this->middleware('permission:categories-store', ['only' => ['store']]);
+        $this->middleware('permission:categories-update', ['only' => ['update']]);
+        $this->middleware('permission:categories-delete', ['only' => ['destroy']]);
+        
+        $this->middleware('permission:restaurant_category_assign-list', ['only' => ['assign_list']]);
+        $this->middleware('permission:restaurant_category_assign-store', ['only' => ['assign_store']]);
+        $this->middleware('permission:restaurant_category_assign-update', ['only' => ['assign_update']]);
+        $this->middleware('permission:restaurant_category_assign-delete', ['only' => ['assign_destroy']]);
+        
+        $this->middleware('permission:restaurant_category_assign_edit-list', ['only' => ['assign_edit']]);
+        $this->middleware('permission:restaurant_category_assign_sort-update', ['only' => ['sort_update']]);
+
+        $this->middleware('permission:restaurant_category_type-list', ['only' => ['assign_sort_list']]);
+    }
     /**
      * Display a listing of the resource.
      *

@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
+    // function __construct()
+    // {
+    //      $this->middleware('permission:user-list', ['only' => ['index']]);
+    //      $this->middleware('permission:user-create', ['only' => ['create','store']]);
+    //      $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+    //      $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    // }
     /**
      * Display a listing of the resource.
      *

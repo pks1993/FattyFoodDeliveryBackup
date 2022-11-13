@@ -93,8 +93,8 @@
                                     <label for="roles" class="col-md-12 col-form-label">{{ __('Role') }} <span  style="color: #990000;font-weight:700;">*</span></label>
                                     <div class="col-md-12">
                                         <select id="roles" class="form-control @error('roles') is-invalid @enderror"  name="roles" value="{{ old('roles') }}"  autocomplete="roles" required="required">
-                                            @foreach($roles as $key=>$role)
-                                                <option value="{{$key}}">{{$role->name}} ( {{ $role->zone_name }} )</option>
+                                            @foreach($roles as $role)
+                                                <option value="{{$role->id}}">{{$role->name}} ( {{ $role->zone_name }} )</option>
                                             @endforeach
                                         </select>
                                         @error('roles')

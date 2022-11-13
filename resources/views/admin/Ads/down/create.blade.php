@@ -56,6 +56,25 @@
                             <form method="POST" action="{{ route('fatty.admin.down_ads.store') }}" autocomplete="off" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group row">
+                                    <label for="state_id" class="col-form-label">{{ __('တိုင်း / ပြည်နယ်') }}</label>
+                                    <select class="form-control" name="state_id" id="state_id" required>
+                                        <option value="">တိုင်း/ပြည်နယ်</option>
+                                        @foreach($states as $st)
+                                            <option value="{{$st->state_id}}">{{$st->state_name_mm}} ( {{ $st->state_name_en }} )</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="city_id" class="col-form-label">{{ __('မြို့နယ်') }} <span  style="color: #990000;font-weight:700;">*</span></label>
+                                    <select id="city_id" class="form-control @error('city_id') is-invalid @enderror" name="city_id" value="{{ old('city_id') }}" autocomplete="city_id" autofocus required>
+                                    </select>
+                                    @error('city_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="form-group row">
                                     <label for="restaurant_id" class="col-md-12 col-form-label">{{ __('Restaurant Name') }} </label>
                                     <div class="col-md-12">
                                         <select style="height: auto;" id="restaurant_id" class="form-control @error('restaurant_id') is-invalid @enderror" name="restaurant_id" autocomplete="restaurant_id">
@@ -133,5 +152,50 @@
         var image2 = document.getElementById('image3');
         image2.src = URL.createObjectURL(event.target.files[2]);
     };
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#state_id').on('change', function(){
+            $('#city_id').empty();
+            var id = $(this).val();
+            if(id){
+                $.ajax({
+                    type: 'get',
+                    url: '/fatty/main/admin/city/list/'+id,
+                    success: function(data){ 
+                        $('#city_id').append(`<option value="">မြို့နယ်</option>`);
+                        $.each(data, function(index,value) {
+                            $('#city_id').append('<option value='+value.city_id+'>'+value.city_name_mm + ' ( '+value.city_name_en+' ) '+'</option>');
+                        });
+                    }
+                });  
+            }    
+        }); 
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#city_id').on('change', function(){
+            $('#parcel_from_block_id').empty();
+            $('#parcel_to_block_id').empty();
+            var city_id = $(this).val();
+            if(city_id){
+                $.ajax({
+                    type: 'get',
+                    url: '/fatty/main/admin/parcel_block/list/'+city_id,
+                    success: function(data){ 
+                        $('#parcel_from_block_id').append(`<option value="">Choose From Block Name</option>`);
+                        $.each(data, function(index,value) {
+                            $('#parcel_from_block_id').append('<option value='+value.parcel_block_id+'>'+value.block_name_mm + ' ( '+value.block_name_en+' ) '+'</option>');
+                        });
+                        $('#parcel_to_block_id').append(`<option value="">Choose To Block Name</option>`);
+                        $.each(data, function(index,value) {
+                            $('#parcel_to_block_id').append('<option value='+value.parcel_block_id+'>'+value.block_name_mm + ' ( '+value.block_name_en+' ) '+'</option>');
+                        });
+                    }
+                });  
+            }    
+        }); 
+    });
 </script>
 @endsection

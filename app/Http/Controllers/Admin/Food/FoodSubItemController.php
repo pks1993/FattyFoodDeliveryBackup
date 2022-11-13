@@ -16,6 +16,15 @@ use App\Models\Order\OrderFoodSection;
 
 class FoodSubItemController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:foods_sub_items-list', ['only' => ['index']]);
+        $this->middleware('permission:foods_sub_items-create', ['only' => ['store','create']]);
+        $this->middleware('permission:foods_sub_items-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:foods_sub_items-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:foods_sub_items_data-edit', ['only' => ['item_edit','item_update']]);
+        $this->middleware('permission:foods_sub_items_data-delete', ['only' => ['item_destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *

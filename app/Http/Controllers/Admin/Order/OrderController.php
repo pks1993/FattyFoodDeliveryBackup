@@ -17,7 +17,7 @@ use App\Models\Order\NotiOrder;
 use App\Models\Restaurant\Restaurant;
 use DB;
 use App\Models\Order\FoodOrderDeliFees;
-
+use Illuminate\Support\Facades\Auth;
 
 
 class OrderController extends Controller
@@ -53,13 +53,21 @@ class OrderController extends Controller
 
     public function pending()
     {
-        $orders=CustomerOrder::orderBy('created_at','DESC')->where('order_status_id',8)->paginate(15);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::orderBy('created_at','DESC')->where('order_status_id',8)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+        }else{
+            $orders=CustomerOrder::orderBy('created_at','DESC')->where('order_status_id',8)->paginate(15);
+        }
         return view('admin.order.pending_order.index',compact('orders'));
     }
 
     public function pendingorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->where('order_status_id','8')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::orderBy('created_at','DESC')->where('order_status_id','8')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::orderBy('created_at','DESC')->where('order_status_id','8')->get();
+        }
         $data=[];
         foreach($model as $value){
             $value->customer_name=$value->customer->customer_name;
@@ -118,8 +126,11 @@ class OrderController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        // $food_orders=CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','16','7','8','9','15'])->get();
-        $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->orderBy('order_id','desc')->paginate(15);
+        }else{
+            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        }
         $total_order=$orders->count();
         return view('admin.order.index',compact('orders','date_start','date_end','total_order'));
     }
@@ -127,7 +138,11 @@ class OrderController extends Controller
     {
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
-        $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->orderBy('order_id','desc')->paginate(15);
+        }else{
+            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+        }
         $total_order=$orders->count();
         return view('admin.order.index',compact('orders','date_start','date_end','total_order'));
     }
@@ -138,9 +153,17 @@ class OrderController extends Controller
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
         if($search_name){
-            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->orderBy('order_id','desc')->paginate(15);
+            if(Auth::user()->zone){
+                $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }else{
+                $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->orderBy('order_id','desc')->paginate(15);
+            }
         }else{
-            $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+            if(Auth::user()->zone){
+                $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }else{
+                $orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('order_id','desc')->paginate(15);
+            }
         }
         $total_order=$orders->count();
         return view('admin.order.index',compact('orders','date_start','date_end','total_order'));
@@ -148,7 +171,11 @@ class OrderController extends Controller
 
     public function assignorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('created_at')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('created_at')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::orderBy('created_at','DESC')->whereNull("rider_id")->whereNotIn('order_status_id',['2','4','6','10','12','13','14','17','16','7','8','9','15'])->orderBy('created_at')->get();
+        }
         $data=[];
         foreach($model as $value){
             $value->customer_name=$value->customer->customer_name;
@@ -210,14 +237,25 @@ class OrderController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
-        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
-        $all_count=CustomerOrder::where('order_type','food')->count();
-        $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
-        $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
-        $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
-        $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
-        $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+        }else{
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+            $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
+            $all_count=CustomerOrder::where('order_type','food')->count();
+            $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
+            $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
+            $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
+            $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
+            $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
+        }
 
         return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
     }
@@ -226,14 +264,25 @@ class OrderController extends Controller
     {
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
-        $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
-        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
-        $all_count=CustomerOrder::where('order_type','food')->count();
-        $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
-        $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
-        $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
-        $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
-        $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+        }else{
+            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+            $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
+            $all_count=CustomerOrder::where('order_type','food')->count();
+            $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
+            $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
+            $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
+            $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
+            $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
+        }
 
         return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
     }
@@ -243,25 +292,44 @@ class OrderController extends Controller
         $search_name=$request['search_name'];
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
-        if($search_name){
-            $total_orders=CustomerOrder::where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+        if(Auth::user()->zone){
+            if($search_name){
+                $total_orders=CustomerOrder::where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }
+            $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
         }else{
-            $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+            if($search_name){
+                $total_orders=CustomerOrder::where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('order_id','desc')->paginate(15);
+            }
+            $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
+            $all_count=CustomerOrder::where('order_type','food')->count();
+            $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
+            $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
+            $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
+            $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
+            $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
         }
-        $filter_count=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->count();
-        $all_count=CustomerOrder::where('order_type','food')->count();
-        $processing_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[3,4,5,6,10])->count();
-        $restaurant_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',2)->count();
-        $customer_cancel_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',9)->count();
-        $delivered_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->where('order_status_id',7)->count();
-        $pending_orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->whereIn('order_status_id',[1,8])->count();
 
         return view('admin.order.daily_food_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','restaurant_cancel_orders','customer_cancel_orders','pending_orders','delivered_orders','date_start','date_end'));
     }
 
     public function completeorderupdate(Request $request,$id)
     {
-        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
+        if(Auth::user()->zone){
+            $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->first();
+        }else{
+            $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
+        }
         if($check_order){
             CustomerOrder::where('order_id',$id)->update(['order_status_id'=>7,'is_admin_completed'=>1]);
             NotiOrder::where('order_id',$id)->delete();
@@ -391,7 +459,11 @@ class OrderController extends Controller
     }
 
     public function dailyfoodorderajax(){
-        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
+        }
         $data=[];
         foreach($model as $value){
             if($value->order_statu_id==null)
@@ -519,12 +591,20 @@ class OrderController extends Controller
             $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
             $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
         }
-        $orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('created_at','DESC')->paginate(30);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(30);
+        }else{
+            $orders=CustomerOrder::whereBetween('created_at',[$date_start,$date_end])->where('order_type','food')->orderBy('created_at','DESC')->paginate(30);
+        }
         return view('admin.order.monthly_food_orders.index',compact('orders','date_start','date_end'));
     }
 
     public function monthlyfoodorderajax(){
-        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
+        }
         $data=[];
         // foreach($model as $value){
         //     $value->order_status_name=$value->order_status->order_status_name;
@@ -641,12 +721,20 @@ class OrderController extends Controller
         }else{
             $date_start=Carbon::now()->startOfYear()->format('Y');
         }
-        $orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','food')->orderBy('created_at','DESC')->paginate(30);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','food')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(30);
+        }else{
+            $orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','food')->orderBy('created_at','DESC')->paginate(30);
+        }
         return view('admin.order.yearly_food_orders.index',compact('orders','date_start'));
     }
 
     public function yearlyfoodorderajax(){
-        $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::where('order_type','food')->orderBy('created_at','DESC')->get();
+        }
         $data=[];
         foreach($model as $value){
             $value->order_status_name=$value->order_status->order_status_name;
@@ -689,12 +777,21 @@ class OrderController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(30);
-        $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(30);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+        }else{
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(30);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        }
 
         return view('admin.order.daily_parcel_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
     }
@@ -702,13 +799,21 @@ class OrderController extends Controller
     {
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
-        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(30);
-        // return response($total_orders);
-        $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(30);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+        }else{
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(30);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        }
 
         return view('admin.order.daily_parcel_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
     }
@@ -718,16 +823,29 @@ class OrderController extends Controller
         $search_name=$request['search_name'];
         $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
-        if($search_name){
-            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+        if(Auth::user()->zone){
+            if($search_name){
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
         }else{
-            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            if($search_name){
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            }
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
         }
-        $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
 
         return view('admin.order.daily_parcel_orders.daily_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
     }
@@ -738,7 +856,11 @@ class OrderController extends Controller
     }
 
     public function dailyparcelorderajax(){
-        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();    
+        }
         $data=[];
         foreach($model as $value){
             if($value->order_statu_id==null)
@@ -850,12 +972,21 @@ class OrderController extends Controller
             $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
             $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
         }
-        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
-        $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+        }else{
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        }
 
         return view('admin.order.monthly_parcel_orders.monthly_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
     }
@@ -864,13 +995,22 @@ class OrderController extends Controller
     {
         $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
         $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
-        $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
-        // return response($total_orders);
-        $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+        }else{
+            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
+
+        }
 
         return view('admin.order.monthly_parcel_orders.monthly_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
     }
@@ -880,16 +1020,30 @@ class OrderController extends Controller
         $search_name=$request['search_name'];
         $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
         $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
-        if($search_name){
-            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+        if(Auth::user()->zone){
+            if($search_name){
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            
         }else{
-            $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            if($search_name){
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            }
+            $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
         }
-        $filter_count=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::where('created_at','>=',$date_start)->where('created_at','<=',$date_end)->where('order_type','parcel')->where('order_status_id',15)->count();
 
         return view('admin.order.monthly_parcel_orders.monthly_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start','date_end'));
     }
@@ -900,7 +1054,11 @@ class OrderController extends Controller
     }
 
     public function monthlyparcelorderajax(){
-        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        }
         $data=[];
         foreach($model as $value){
             if($value->order_statu_id==null)
@@ -1000,12 +1158,22 @@ class OrderController extends Controller
         }else{
             $date_start=Carbon::now()->startOfYear()->format('Y');
         }
-        $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
-        $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            
+        }else{
+            $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->count();
+        }
 
         return view('admin.order.yearly_parcel_orders.yearly_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start'));
     }
@@ -1013,12 +1181,22 @@ class OrderController extends Controller
     public function yearlyparcelorderdatefilter(Request $request)
     {
         $date_start=$request['start_date'];
-        $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
-        $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->count();
+        if(Auth::user()->zone){
+            $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            
+        }else{
+            $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->count();
+        }
 
         return view('admin.order.yearly_parcel_orders.yearly_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start'));
     }
@@ -1027,16 +1205,30 @@ class OrderController extends Controller
     {
         $search_name=$request['search_name'];
         $date_start=$request['start_date'];
-        if($search_name){
-            $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+        if(Auth::user()->zone){
+            if($search_name){
+                $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(15);
+            }
+            $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            
         }else{
-            $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            if($search_name){
+                $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->where('customer_order_id',$search_name)->orwhere('customer_booking_id',$search_name)->paginate(15);
+            }else{
+                $total_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->paginate(15);
+            }
+            $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
+            $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
+            $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->count();
+            $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->count();
         }
-        $filter_count=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $all_count=CustomerOrder::where('order_type','parcel')->orderBy('order_id','desc')->count();
-        $processing_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->whereIn('order_status_id',[11,12,13,14,17])->count();
-        $cancel_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',16)->count();
-        $delivered_orders=CustomerOrder::whereYear('created_at',$date_start)->where('order_type','parcel')->where('order_status_id',15)->count();
 
         return view('admin.order.yearly_parcel_orders.yearly_index',compact('total_orders','all_count','filter_count','processing_orders','cancel_orders','delivered_orders','date_start'));
     }
@@ -1047,7 +1239,11 @@ class OrderController extends Controller
     }
 
     public function yearlyparcelorderajax(){
-        $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::where('order_type','parcel')->orderBy('created_at','DESC')->get();
+        }
         $data=[];
         foreach($model as $value){
             if($value->order_statu_id==null)
@@ -1151,15 +1347,20 @@ class OrderController extends Controller
         for($i=0; $i<10; $i++){
             $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y));
             $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y));
-            $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','food')->count();
-
             $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y));
             $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y));
-            $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','food')->count();
-
             $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
-            $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','food')->count();
+
+            if(Auth::user()->zone){
+                $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+                $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+                $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            }else{
+                $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','food')->count();
+                $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','food')->count();
+                $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','food')->count();
+            }
         }
         // dd($years);
         return view('admin.order.food_orders_chart.index')->with('days',$days)->with('daily_orders',$daily_orders)->with('months',$months)->with('monthly_orders',$monthly_orders)->with('years',$years)->with('yearly_orders',$yearly_orders);
@@ -1177,15 +1378,20 @@ class OrderController extends Controller
         for($i=0; $i<10; $i++){
             $days[] = date('d-m-Y',mktime(0,0,0,$m,($de-$i),$y));
             $format_date = date('Y-m-d',mktime(0,0,0,$m,($de-$i),$y));
-            $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','parcel')->count();
-
             $months[] = date('M-Y',mktime(0,0,0,($m-$i),$de,$y));
             $format_month = date('m',mktime(0,0,0,($m-$i),$de,$y));
-            $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','parcel')->count();
-
             $years[] = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
             $format_year = date('Y',mktime(0,0,0,$m,$de,($y-$i)));
-            $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','parcel')->count();
+            
+            if(Auth::user()->zone){
+                $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','parcel')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+                $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','parcel')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+                $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','parcel')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->count();
+            }else{
+                $daily_orders[] = CustomerOrder::whereDate('created_at', '=', $format_date)->where('order_type','parcel')->count();
+                $monthly_orders[] = CustomerOrder::whereMonth('created_at', '=', $format_month)->where('order_type','parcel')->count();
+                $yearly_orders[] = CustomerOrder::whereYear('created_at', '=', $format_year)->where('order_type','parcel')->count();
+            }
         }
         // dd($years);
         return view('admin.order.parcel_orders_chart.index')->with('days',$days)->with('daily_orders',$daily_orders)->with('months',$months)->with('monthly_orders',$monthly_orders)->with('years',$years)->with('yearly_orders',$yearly_orders);
@@ -1221,7 +1427,11 @@ class OrderController extends Controller
     public function show($id)
     {
         $previous_url=url()->previous();
-        $food_order = CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->withCount(['foods'])->findOrFail($id);
+        if(Auth::user()->zone){
+            $food_order = CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->withCount(['foods'])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->findOrFail($id);
+        }else{
+            $food_order = CustomerOrder::with(['customer','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->withCount(['foods'])->findOrFail($id);
+        }
         if($food_order->customer_address_latitude){
             $customer_address_latitude=$food_order->customer_address_latitude;
         }else{
@@ -1276,7 +1486,11 @@ class OrderController extends Controller
     public function parcel_show($id)
     {
         $previous_url=url()->previous();
-        $parcel_order = CustomerOrder::findOrFail($id);
+        if(Auth::user()->zone){
+            $parcel_order = CustomerOrder::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->findOrFail($id);
+        }else{
+            $parcel_order = CustomerOrder::findOrFail($id);
+        }
         if($parcel_order->from_pickup_latitude){
             $from_pickup_latitude=$parcel_order->from_pickup_latitude;
         }else{
@@ -1327,23 +1541,36 @@ class OrderController extends Controller
     public function assign(Request $request,$id)
     {
         $order_id=$id;
-        $orders=CustomerOrder::findOrFail($id);
-        // $rider_all=Rider::where('is_order',0)->get();
-        $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->findOrFail($id);
+            $rider_all=Rider::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
+        }else{
+            $orders=CustomerOrder::findOrFail($id);
+            $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
+        }
         return view('admin.order.assign',compact('orders','rider_all','order_id'));
     }
 
     public function pending_assign(Request $request,$id)
     {
         $order_id=$id;
-        $orders=CustomerOrder::findOrFail($id);
-        // $rider_all=Rider::where('is_order',0)->get();
-        $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->findOrFail($id);
+            $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $orders=CustomerOrder::findOrFail($id);
+            $rider_all=Rider::orderBy('is_order')->where('active_inactive_status',1)->where('is_ban',0)->get();
+        }
         return view('admin.order.pending_order.assign',compact('orders','rider_all','order_id'));
     }
     public function pendingorderdefine(Request $request,$id)
     {
-        $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
+        if(Auth::user()->zone){
+            $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->first();    
+        }else{
+            $check_order=CustomerOrder::where('order_id',$id)->where('order_status_id',6)->first();
+        }
+
         if($check_order){
             CustomerOrder::where('order_id',$id)->update(['order_status_id'=>8,'is_admin_completed'=>1]);
             NotiOrder::where('order_id',$id)->delete();
@@ -1370,6 +1597,7 @@ class OrderController extends Controller
     public function assign_noti(Request $request,$id)
     {
         $order_id=$request['order_id'];
+
         $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
         $riders_check=Rider::where('rider_id',$id)->first();
 
@@ -1500,13 +1728,21 @@ class OrderController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->whereBetween('created_at',[$date_start,$date_end])->paginate(50);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->whereBetween('created_at',[$date_start,$date_end])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(50);
+        }else{
+            $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->whereBetween('created_at',[$date_start,$date_end])->paginate(50);
+        }
         return view('admin.report.parcel_report',compact('orders','date_start','date_end'));
     }
 
     public function report_parcelorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['8','15'])->where('order_type','parcel')->get();
+        }
         $data=[];
         foreach($model as $value){
             if($value->customer_id){
@@ -1544,13 +1780,22 @@ class OrderController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->whereBetween('created_at',[$date_start,$date_end])->paginate(50);
+        if(Auth::user()->zone){
+            $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->whereBetween('created_at',[$date_start,$date_end])->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->paginate(50);
+            
+        }else{
+            $orders=CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->whereBetween('created_at',[$date_start,$date_end])->paginate(50);
+        }
         return view('admin.report.food_report',compact('orders','date_start','date_end'));
     }
 
     public function report_foodorderajax()
     {
-        $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->get();
+        if(Auth::user()->zone){
+            $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $model = CustomerOrder::orderBy('created_at','DESC')->whereIn('order_status_id',['7','8'])->where('order_type','food')->get();
+        }
         $data=[];
         foreach($model as $value){
             if($value->customer_id){
@@ -1582,11 +1827,19 @@ class OrderController extends Controller
     public function rider_order_report()
     {
         $date=Carbon::now()->format('Y-m-d');
-        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->get();
-        $riders=$rider_check->where('order_count','!=',0);
-        $orders=CustomerOrder::whereDate('created_at',$date)->get();
-        $blocks=ParcelBlockList::all();
-        $restaurants=Restaurant::all();
+        if(Auth::user()->zone){
+            $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+            $riders=$rider_check->where('order_count','!=',0);
+            $orders=CustomerOrder::whereDate('created_at',$date)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+            $blocks=ParcelBlockList::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+            $restaurants=Restaurant::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+        }else{
+            $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->get();
+            $riders=$rider_check->where('order_count','!=',0);
+            $orders=CustomerOrder::whereDate('created_at',$date)->get();
+            $blocks=ParcelBlockList::all();
+            $restaurants=Restaurant::all();
+        }
 
         return view('admin.report.rider_report',compact('riders','orders','blocks','restaurants','date'));
     }
@@ -1594,11 +1847,20 @@ class OrderController extends Controller
     public function rider_order_report_filter(Request $request)
     {
         $date=$request['date'];
-        $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->get();
-        $riders=$rider_check->where('order_count','!=',0);
-        $orders=CustomerOrder::whereDate('created_at',$date)->get();
-        $blocks=ParcelBlockList::all();
-        $restaurants=Restaurant::all();
+        if(Auth::user()->zone){
+            $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+            $riders=$rider_check->where('order_count','!=',0);
+            $orders=CustomerOrder::whereDate('created_at',$date)->where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+            $blocks=ParcelBlockList::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+            $restaurants=Restaurant::where('state_id',Auth::user()->zone->state_id)->where('city_id',Auth::user()->zone->city_id)->get();
+
+        }else{
+            $rider_check=Rider::withCount(['rider_order as order_count' => function($query) use ($date){$query->select(DB::raw('count(*)'))->whereDate('created_at',$date)->whereIn('order_status_id',[7,8,15]);}])->orderBy('order_count','desc')->get();
+            $riders=$rider_check->where('order_count','!=',0);
+            $orders=CustomerOrder::whereDate('created_at',$date)->get();
+            $blocks=ParcelBlockList::all();
+            $restaurants=Restaurant::all();
+        }
 
         return view('admin.report.rider_report',compact('riders','orders','blocks','restaurants','date'));
     }

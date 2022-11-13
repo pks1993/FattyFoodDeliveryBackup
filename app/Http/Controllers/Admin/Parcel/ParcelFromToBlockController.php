@@ -12,6 +12,13 @@ use Yajra\DataTables\DataTables;
 
 class ParcelFromToBlockController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:parcel_from_to_block-list', ['only' => ['index']]);
+        $this->middleware('permission:parcel_from_to_block-create', ['only' => ['create','store']]);
+        $this->middleware('permission:parcel_from_to_block-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:parcel_from_to_block-delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
