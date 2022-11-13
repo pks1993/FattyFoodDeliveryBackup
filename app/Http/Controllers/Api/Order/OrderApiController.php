@@ -1498,7 +1498,7 @@ class OrderApiController extends Controller
                 //}
 
             $item_total_price=($customer_orders->item_total_price)-($price);
-            $delivery_fee=$customer_orders->devlivery_fee;
+            $delivery_fee=$customer_orders->delivery_fee;
             //$bill_total_price=$item_total_price+$delivery_fee;
             $bill_total_price=($customer_orders->bill_total_price)-($price);
 
