@@ -1071,6 +1071,7 @@ class OrderApiController extends Controller
                         }else{
                             return view('admin.src.example.refund');
                         }
+                        // return view('admin.src.example.refund');
 
                 }else{
                     $customer_orders->order_status_id=9;
@@ -1516,21 +1517,23 @@ class OrderApiController extends Controller
             $customer_order=CustomerOrder::where('order_id',$order_id)->first();
 
                 $_SESSION['merchOrderId']=$customer_order->merch_order_id;
-                $_SESSION['customer_orders']=$customer_order;
+                //$_SESSION['customer_orders']=$customer_order;
                 $_SESSION['refundAmount']=$price;
                 NotiOrder::where('order_id',$order_id)->delete();
-
+                
                 if($select_all==0){
+                    $_SESSION['customer_orders']=$customer_order;
                     if($check_food==0){
-                        CustomerOrder::where('order_id',$order_id)->update([
-                                        'order_status_id'=>2,
-                                    ]);
+                        CustomerOrder::where('order_id',$order_id)->update(['order_status_id'=>2,]);
                     }
                     return view('admin.src.example.each_refund');
                 }else{
+                    
                     CustomerOrder::where('order_id',$order_id)->update([
                         'order_status_id'=>2,
                     ]);
+                    $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+                    $_SESSION['customer_orders']=$customer_order;
                     return view('admin.src.example.refund');
                 }
 
