@@ -1066,7 +1066,13 @@ class OrderApiController extends Controller
                         $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                         $_SESSION['customer_orders']=$customer_orders;
 
-                        return view('admin.src.example.refund');
+			if($customer_orders->is_partial_refund==1){
+                            $_SESSION['refundAmount']=$customer_orders->bill_total_price;
+                            return view('admin.src.example.each_refund');
+                        }else{
+                            return view('admin.src.example.refund');
+                        }
+                       // return view('admin.src.example.refund');
                 }else{
                     $customer_orders->order_status_id=9;
                     $customer_orders->update();
@@ -1311,7 +1317,14 @@ class OrderApiController extends Controller
                 $_SESSION['customer_orders']=$customer_orders;
                 NotiOrder::where('order_id',$order_id)->delete();
 
-                return view('admin.src.example.refund');
+		if($customer_orders->is_partial_refund==1){
+                    $_SESSION['refundAmount']=$customer_orders->bill_total_price;
+                    return view('admin.src.example.each_refund');
+                }else{
+                    return view('admin.src.example.refund');
+                }
+
+                //return view('admin.src.example.refund');
             }else{
                 if ($cancel_type == 'other') {
                     CustomerOrder::where('order_id',$order_id)->update([
@@ -1486,7 +1499,7 @@ class OrderApiController extends Controller
                 //}
 
             $item_total_price=($customer_orders->item_total_price)-($price);
-            $delivery_fee=$customer_orders->devlivery_fee;
+            $delivery_fee=$customer_orders->delivery_fee;
             //$bill_total_price=$item_total_price+$delivery_fee;
             $bill_total_price=($customer_orders->bill_total_price)-($price);
 
@@ -1504,11 +1517,12 @@ class OrderApiController extends Controller
             $customer_order=CustomerOrder::where('order_id',$order_id)->first();
 
                 $_SESSION['merchOrderId']=$customer_order->merch_order_id;
-                $_SESSION['customer_orders']=$customer_order;
+               //$_SESSION['customer_orders']=$customer_order;
                 $_SESSION['refundAmount']=$price;
                 NotiOrder::where('order_id',$order_id)->delete();
 
                 if($select_all==0){
+			$_SESSION['customer_orders']=$customer_order;
 			if($check_food==0){
 				CustomerOrder::where('order_id',$order_id)->update([
                         		'order_status_id'=>2,
@@ -1519,6 +1533,8 @@ class OrderApiController extends Controller
                     CustomerOrder::where('order_id',$order_id)->update([
                         'order_status_id'=>2,
                     ]);
+		    $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+                    $_SESSION['customer_orders']=$customer_order;
                     return view('admin.src.example.refund');
                 }
 
