@@ -1684,35 +1684,33 @@ class OrderApiController extends Controller
             $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
             if($customer_orders){
-                $customer_address_latitude=$customer_orders->customer_address_latitude;
-                $customer_address_longitude=$customer_orders->customer_address_longitude;
-
-                $restaurant_address_latitude=$customer_orders->restaurant_address_latitude;
-                $restaurant_address_longitude=$customer_orders->restaurant_address_longitude;
-                // $distance="1000";
-
-                $customer_orders->order_status_id=$order_status_id;
-                $customer_orders->update();
-
-                CustomerOrderHistory::create([
-                    "order_id"=>$order_id,
-                    "order_status_id"=>$order_status_id,
-                ]);
-
-                $customer_check=Customer::where('customer_id',$customer_orders->customer_id)->first();
-                if($request['order_status_id']=="3"){
-                    
-                    $cancel_check=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
-                    if($cancel_check){
-                        if($language == "mm"){
-                            $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် လက်ခံလိုမရပါ";
-                        }elseif($language == "en"){
-                            $message="Sorry! Order is already cancelled by user and cannot accept and print.";
-                        }else{
-                            $message="抱歉！无法打印 用户已取消订单！";
-                        }
-                        return response()->json(['success'=>false,'message'=>$message]);
+                if($customer_orders->order_status_id == 9){
+                    if($language == "mm"){
+                        $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် လက်ခံလိုမရပါ";
+                    }elseif($language == "en"){
+                        $message="Sorry! Order is already cancelled by user and cannot accept and print.";
                     }else{
+                        $message="抱歉！无法打印 用户已取消订单！";
+                    }
+                    return response()->json(['success'=>false,'message'=>$message]);
+                }else{
+                    $customer_address_latitude=$customer_orders->customer_address_latitude;
+                    $customer_address_longitude=$customer_orders->customer_address_longitude;
+    
+                    $restaurant_address_latitude=$customer_orders->restaurant_address_latitude;
+                    $restaurant_address_longitude=$customer_orders->restaurant_address_longitude;
+                    // $distance="1000";
+    
+                    $customer_orders->order_status_id=$order_status_id;
+                    $customer_orders->update();
+    
+                    CustomerOrderHistory::create([
+                        "order_id"=>$order_id,
+                        "order_status_id"=>$order_status_id,
+                    ]);
+    
+                    $customer_check=Customer::where('customer_id',$customer_orders->customer_id)->first();
+                    if($request['order_status_id']=="3"){                    
                         // customer
                         $cus_client = new Client();
                         $cus_token=$customer_check->fcm_token;
@@ -1838,123 +1836,123 @@ class OrderApiController extends Controller
                         }
                         $customer_orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
                         return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1]]);
+    
+    
                     }
-
-
-                }
-                elseif($request['order_status_id']=="2"){
-
-                    //Customer
-                    $cus_client = new Client();
-                    $cus_token=$customer_check->fcm_token;
-                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                    if($cus_token){
-                        try{
-                            $cus_client->post($cus_url,[
-                                'json' => [
-                                    "to"=>$cus_token,
-                                    "data"=> [
-                                        "type"=> "restaurant_cancel_order",
-                                        "order_id"=>$customer_orders->order_id,
-                                        "order_status_id"=>$customer_orders->order_status_id,
-                                        "order_type"=>$customer_orders->order_type,
-                                        "title_mm"=> "Order Canceled by Restaurant",
-                                        "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
-                                        "title_en"=> "Order Canceled by Restaurant",
-                                        "body_en"=> "It’s sorry as your order is canceled by restaurant!",
-                                        "title_ch"=> "订单已被取消",
-                                        "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                    elseif($request['order_status_id']=="2"){
+    
+                        //Customer
+                        $cus_client = new Client();
+                        $cus_token=$customer_check->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        if($cus_token){
+                            try{
+                                $cus_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$cus_token,
+                                        "data"=> [
+                                            "type"=> "restaurant_cancel_order",
+                                            "order_id"=>$customer_orders->order_id,
+                                            "order_status_id"=>$customer_orders->order_status_id,
+                                            "order_type"=>$customer_orders->order_type,
+                                            "title_mm"=> "Order Canceled by Restaurant",
+                                            "body_mm"=> "It’s sorry as your order is canceled by restaurant!",
+                                            "title_en"=> "Order Canceled by Restaurant",
+                                            "body_en"=> "It’s sorry as your order is canceled by restaurant!",
+                                            "title_ch"=> "订单已被取消",
+                                            "body_ch"=> "非常抱歉 您的订单已被商家取消!"
+                                        ],
+                                        "mutable_content" => true ,
+                                        "content_available" => true,
+                                        "notification"=> [
+                                            "title"=>"this is a title",
+                                            "body"=>"this is a body",
+                                        ],
                                     ],
-                                    "mutable_content" => true ,
-                                    "content_available" => true,
-                                    "notification"=> [
-                                        "title"=>"this is a title",
-                                        "body"=>"this is a body",
-                                    ],
-                                ],
-                            ]);
-                        }catch(ClientException $e){
+                                ]);
+                            }catch(ClientException $e){
+                            }
                         }
                     }
-                }
-                elseif($request['order_status_id']=="5"){
-                    //customer
-                    $cus_client = new Client();
-                    $cus_token=$customer_check->fcm_token;
-                    $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                    if($cus_token){
-                        try{
-                            $cus_client->post($cus_url,[
-                                'json' => [
-                                    "to"=>$cus_token,
-                                    "data"=> [
-                                        "type"=> "ready_pickup_order",
-                                        "order_id"=>$customer_orders->order_id,
-                                        "order_status_id"=>$customer_orders->order_status_id,
-                                        "order_type"=>$customer_orders->order_type,
-                                        "title_mm"=> "Order is Ready",
-                                        "body_mm"=> "Your order is ready! Delivering to you soon!",
-                                        "title_en"=> "Order is Ready",
-                                        "body_en"=> "Your order is ready! Delivering to you soon!",
-                                        "title_ch"=> "Order is Ready",
-                                        "body_ch"=> "Your order is ready! Delivering to you soon!"
+                    elseif($request['order_status_id']=="5"){
+                        //customer
+                        $cus_client = new Client();
+                        $cus_token=$customer_check->fcm_token;
+                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                        if($cus_token){
+                            try{
+                                $cus_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$cus_token,
+                                        "data"=> [
+                                            "type"=> "ready_pickup_order",
+                                            "order_id"=>$customer_orders->order_id,
+                                            "order_status_id"=>$customer_orders->order_status_id,
+                                            "order_type"=>$customer_orders->order_type,
+                                            "title_mm"=> "Order is Ready",
+                                            "body_mm"=> "Your order is ready! Delivering to you soon!",
+                                            "title_en"=> "Order is Ready",
+                                            "body_en"=> "Your order is ready! Delivering to you soon!",
+                                            "title_ch"=> "Order is Ready",
+                                            "body_ch"=> "Your order is ready! Delivering to you soon!"
+                                        ],
+                                        "mutable_content" => true ,
+                                        "content_available" => true,
+                                        "notification"=> [
+                                            "title"=>"this is a title",
+                                            "body"=>"this is a body",
+                                        ],
                                     ],
-                                    "mutable_content" => true ,
-                                    "content_available" => true,
-                                    "notification"=> [
-                                        "title"=>"this is a title",
-                                        "body"=>"this is a body",
+                                ]);
+    
+                            }catch(ClientException $e){
+                            }
+                        }
+    
+                        //rider
+                        $riders_check=Rider::where('rider_id',$customer_orders->rider_id)->select('rider_id','rider_fcm_token')->get();
+                        $rider_fcm_token=array();
+                        foreach($riders_check as $rid){
+                            if($rid->rider_fcm_token){
+                                array_push($rider_fcm_token, $rid->rider_fcm_token);
+                            }
+                        }
+                        $rider_client = new Client();
+                        $token_rider=$rider_fcm_token;
+                        $orderId=(string)$customer_orders->order_id;
+                        $orderstatusId=(string)$customer_orders->order_status_id;
+                        $orderType=(string)$customer_orders->order_type;
+                        $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
+                        if($token_rider){
+                            try{
+                                $rider_client->post($url,[
+                                    'json' => [
+                                        "to"=>$token_rider,
+                                        "data"=> [
+                                            "type"=> "ready_pickup_order",
+                                            "order_id"=>$orderId,
+                                            "order_status_id"=>$orderstatusId,
+                                            "order_type"=>$orderType,
+                                            "title_mm"=> "Order is Ready to Pick Up",
+                                            "body_mm"=> "=Restaurant has prepared the order! Pick it up quickly!",
+                                            "title_en"=> "Order is Ready to Pick Up",
+                                            "body_en"=> "Restaurant has prepared the order! Pick it up quickly!",
+                                            "title_ch"=> "商家已完成",
+                                            "body_ch"=> "商家已完成订单! 请尽快取餐！"
+                                        ],
                                     ],
-                                ],
-                            ]);
-
-                        }catch(ClientException $e){
+                                ]);
+    
+                            }catch(ClientException $e){
+                            }
                         }
                     }
-
-                    //rider
-                    $riders_check=Rider::where('rider_id',$customer_orders->rider_id)->select('rider_id','rider_fcm_token')->get();
-                    $rider_fcm_token=array();
-                    foreach($riders_check as $rid){
-                        if($rid->rider_fcm_token){
-                            array_push($rider_fcm_token, $rid->rider_fcm_token);
-                        }
+                    else{
+                        return response()->json(['success'=>false,'message'=>'status id not found']);
                     }
-                    $rider_client = new Client();
-                    $token_rider=$rider_fcm_token;
-                    $orderId=(string)$customer_orders->order_id;
-                    $orderstatusId=(string)$customer_orders->order_status_id;
-                    $orderType=(string)$customer_orders->order_type;
-                    $url = "https://api.pushy.me/push?api_key=b7648d843f605cfafb0e911e5797b35fedee7506015629643488daba17720267";
-                    if($token_rider){
-                        try{
-                            $rider_client->post($url,[
-                                'json' => [
-                                    "to"=>$token_rider,
-                                    "data"=> [
-                                        "type"=> "ready_pickup_order",
-                                        "order_id"=>$orderId,
-                                        "order_status_id"=>$orderstatusId,
-                                        "order_type"=>$orderType,
-                                        "title_mm"=> "Order is Ready to Pick Up",
-                                        "body_mm"=> "=Restaurant has prepared the order! Pick it up quickly!",
-                                        "title_en"=> "Order is Ready to Pick Up",
-                                        "body_en"=> "Restaurant has prepared the order! Pick it up quickly!",
-                                        "title_ch"=> "商家已完成",
-                                        "body_ch"=> "商家已完成订单! 请尽快取餐！"
-                                    ],
-                                ],
-                            ]);
-
-                        }catch(ClientException $e){
-                        }
-                    }
+                    $customer_orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
+                    return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1]]);
                 }
-                else{
-                    return response()->json(['success'=>false,'message'=>'status id not found']);
-                }
-                $customer_orders1=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-                return response()->json(['success'=>true,'message'=>"successfully send message to customer",'data'=>['order'=>$customer_orders1]]);
             }else{
                 return response()->json(['success'=>false,'message'=>'order id not found!']);
             }
