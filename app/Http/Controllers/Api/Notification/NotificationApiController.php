@@ -129,7 +129,7 @@ class NotificationApiController extends Controller
             $data[]=(['order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image]);
         }
         $total=count($data);
-        $per_page =5;
+        $per_page =10;
         $current_page = $request->input("page") ?? 1;
         $starting_point = ($current_page * $per_page) - $per_page;
         $array = array_slice($data, $starting_point, $per_page, true);
@@ -308,7 +308,7 @@ class NotificationApiController extends Controller
         }
 
         $total=count($data);
-        $per_page =5;
+        $per_page =10;
         $current_page = $request->input("page") ?? 1;
         $starting_point = ($current_page * $per_page) - $per_page;
         $array = array_slice($data, $starting_point, $per_page, true);
