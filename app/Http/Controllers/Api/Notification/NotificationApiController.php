@@ -56,9 +56,9 @@ class NotificationApiController extends Controller
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
         if($notification_type== "all"){
-            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->paginate(20);
         }else{
-            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->paginate(20);
         }
         foreach($notifications as $value){
             $noti_type=$value->notification_type;
@@ -199,9 +199,9 @@ class NotificationApiController extends Controller
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
         if($notification_type == "all"){
-            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->paginate(20);
         }else{
-            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->paginate(20);
         }
         foreach($notifications as $value){
             $noti_type=$value->notification_type;
