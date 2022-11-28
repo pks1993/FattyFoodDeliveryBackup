@@ -30,7 +30,7 @@ class NotificationApiController extends Controller
         // $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         $status_title=null;
         $language=$request->header('language');
-        if($language == "mm"){
+        if($language == "my"){
             $order_cancel_customer="အသုံးပြုသူမှ မှာယူမှုကို ပယ်ဖျက်သည်";
             $order_cancel_restaurant="ဆိုင်မှ မှာယူမှုကို ပယ်ဖျက်ထားပါသည်";
             $item_reject_restaturant="ဆိုင်မှ ပစ္စည်းအမျိုးအစားတခုခုကို ပယ်ဖျက်ထားပါသည်";
@@ -134,7 +134,7 @@ class NotificationApiController extends Controller
         // $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         $status_title=null;
         $language=$request->header('language');
-        if($language == "mm"){
+        if($language == "my"){
             $order_cancel_customer="အသုံးပြုသူမှ မှာယူမှုကို ပယ်ဖျက်သည်";
             $order_cancel_restaurant="ဆိုင်မှ မှာယူမှုကို ပယ်ဖျက်ထားပါသည်";
             $item_reject_restaturant="ဆိုင်မှ ပစ္စည်းအမျိုးအစားတခုခုကို ပယ်ဖျက်ထားပါသည်";
