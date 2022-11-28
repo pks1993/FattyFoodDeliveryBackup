@@ -10,4 +10,9 @@ class NotificationTemplate extends Model
     protected $primaryKey = 'notification_template_id';
     protected $guarded=[];
 
+    public function customer_order()
+    {
+        return $this->hasOne('App\Models\Order\CustomerOrder','order_id','order_id');
+    }
+
 }

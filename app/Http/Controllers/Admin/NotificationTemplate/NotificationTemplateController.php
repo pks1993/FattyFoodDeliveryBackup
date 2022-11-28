@@ -66,7 +66,7 @@ class NotificationTemplateController extends Controller
             $notification->notification_image=$img_name;
             Storage::disk('Notification')->put($img_name, File::get($request['notification_image']));
         }
-
+        $notification->notification_type="system_noti";
         $notification->save();
 
 

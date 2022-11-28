@@ -16,6 +16,7 @@ class CreateOrderKbzRefundsTable extends Migration
         Schema::create('order_kbz_refunds', function (Blueprint $table) {
             $table->id('order_kbz_refund_id');
             $table->unsignedBigInteger('order_id')->nullable();
+            $table->tinyInteger('is_partial_refund')->nullable()->default(0);
             $table->string('result')->nullable();
             $table->string('code')->nullable();
             $table->string('msg')->nullable();

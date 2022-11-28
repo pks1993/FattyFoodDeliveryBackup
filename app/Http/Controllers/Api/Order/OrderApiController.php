@@ -11,6 +11,7 @@ use App\Models\Order\OrderStatus;
 use App\Models\Order\OrderFoodSection;
 use App\Models\Order\OrderFoodOption;
 use App\Models\Order\CustomerOrderHistory;
+use App\Models\Order\OrderKbzRefund;
 use App\Models\Food\Food;
 use App\Models\Food\FoodSubItem;
 use App\Models\Food\FoodSubItemData;
@@ -22,6 +23,7 @@ use App\Models\Rider\Rider;
 use App\Models\Order\MultiOrderLimit;
 use App\Models\Order\OrderStartBlock;
 use App\Models\Order\OrderRouteBlock;
+use App\Models\Notification\NotificationTemplate;
 use DB;
 use App\Models\Order\FoodOrderDeliFees;
 use Carbon\Carbon;
@@ -880,7 +882,7 @@ class OrderApiController extends Controller
     {
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
-
+        
         if($customer_orders){
             return response()->json(['success'=>true,'message'=>"this is customer's of order detail",'data'=>['order'=>$customer_orders]]);
         }else{
@@ -1070,15 +1072,22 @@ class OrderApiController extends Controller
                     if($customer_orders->order_status_id==19){
                         $customer_orders->order_status_id=9;
                         $customer_orders->update();
-                            if(!isset($_SESSION))
-                            {
-                                session_start();
-                            }
+
+                        NotificationTemplate::create([
+                            "notification_type"=>"kpay_refund",
+                            "order_id"=>$order_id,
+                            "customer_id"=>$customer_orders->customer_id,
+                        ]);
+
+                        if(!isset($_SESSION))
+                        {
+                            session_start();
+                        }
+
+                        $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
+                        $_SESSION['customer_orders']=$customer_orders;
     
-                            $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
-                            $_SESSION['customer_orders']=$customer_orders;
-    
-                if($customer_orders->is_partial_refund==1){
+                        if($customer_orders->is_partial_refund==1){
                                 $_SESSION['refundAmount']=$customer_orders->bill_total_price;
                                 return view('admin.src.example.each_refund');
                             }else{
@@ -1088,7 +1097,13 @@ class OrderApiController extends Controller
                     }else{
                         $customer_orders->order_status_id=9;
                         $customer_orders->update();
-    
+
+                        NotificationTemplate::create([
+                            "notification_type"=>"order_cancel",
+                            "order_id"=>$order_id,
+                            "customer_id"=>$customer_orders->customer_id,
+                        ]);
+
                         return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
                     }
                 }elseif($customer_orders->order_type=="parcel"){
@@ -1241,7 +1256,7 @@ class OrderApiController extends Controller
                 }
                 return response()->json(['success'=>false,'message'=>$message]);
             }else{
-                if($check_order->order_status_id==19){
+                if($check_order->order_status_id==19){  
                     if ($cancel_type == 'other') {
                         CustomerOrder::where('order_id',$order_id)->update([
                             'restaurant_remark'=>$restaurant_remark,
@@ -1262,6 +1277,12 @@ class OrderApiController extends Controller
                         ]);
                         // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                     }
+
+                    NotificationTemplate::create([
+                        "notification_type"=>"kpay_refund",
+                        "order_id"=>$order_id,
+                        "customer_id"=>$check_order->customer_id,
+                    ]);
     
                     //Customer
                     $cus_client = new Client();
@@ -1373,6 +1394,11 @@ class OrderApiController extends Controller
                         ]);
                         // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                     }
+                    NotificationTemplate::create([
+                        "notification_type"=>"order_cancel",
+                        "order_id"=>$order_id,
+                        "customer_id"=>$check_order->customer_id,
+                    ]);
                     //Customer
                     $cus_client = new Client();
                     $cus_token=$check_order->customer->fcm_token;
@@ -1487,6 +1513,12 @@ class OrderApiController extends Controller
                         }
                         CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
                     }
+
+                    NotificationTemplate::create([
+                        "notification_type"=>"kpay_refund",
+                        "order_id"=>$order_id,
+                        "customer_id"=>$check_order->customer_id,
+                    ]);
     
                     //Customer
                     $cus_client = new Client();
@@ -1587,6 +1619,12 @@ class OrderApiController extends Controller
                         }
                         CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
                     }
+
+                    NotificationTemplate::create([
+                        "notification_type"=>"order_cancel",
+                        "order_id"=>$order_id,
+                        "customer_id"=>$check_order->customer_id,
+                    ]);
                     //Customer
                     $cus_client = new Client();
                     $cus_token=$check_order->customer->fcm_token;
@@ -2430,21 +2468,9 @@ class OrderApiController extends Controller
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
         $language=$request->header('language');
-
-        // if($customer_orders->rider_id){
-            //     $riders=Rider::where('rider_id',$customer_orders->rider_id)->first();
-            //     $theta = $customer_orders->customer_address_longitude - $riders->rider_longitude;
-            //     $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($riders->rider_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($riders->rider_latitude)) * cos(deg2rad($theta));
-            //     $dist = acos($dist);
-            //     $dist = rad2deg($dist);
-        //     $miles = $dist * 60 * 1.1515;
-        //     $kilometer=$miles * 1.609344;
-        //     $distances=(float) number_format((float)$kilometer, 2, '.', '');
-        // }else{
-            //     $distances=0.00;
-            // }
-            if($customer_orders->order_type=="food"){
-                $theta = $customer_orders->customer_address_longitude - $customer_orders->restaurant_address_longitude;
+        $refund_amount=OrderKbzRefund::where('order_id',$order_id)->sum('refund_amount');
+        if($customer_orders->order_type=="food"){
+            $theta = $customer_orders->customer_address_longitude - $customer_orders->restaurant_address_longitude;
             $dist = sin(deg2rad($customer_orders->customer_address_latitude)) * sin(deg2rad($customer_orders->customer_address_latitude)) +  cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($customer_orders->customer_address_latitude)) * cos(deg2rad($theta));
             $dist = acos($dist);
             $dist = rad2deg($dist);
@@ -2542,6 +2568,7 @@ class OrderApiController extends Controller
         $customer_orders->order_status->order_status_name=$status_name;
 
         $customer_orders->distance=$distances;
+        $customer_orders->refund_amount=$refund_amount;
         array_push($data,$customer_orders);
 
 
