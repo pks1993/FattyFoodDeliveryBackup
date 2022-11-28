@@ -13,7 +13,9 @@ use App\Models\Restaurant\Restaurant;
 use App\Models\Setting\VersionUpdate;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 // use Illuminate\Support\Carbon;
+
 
 class NotificationApiController extends Controller
 {
@@ -124,9 +126,23 @@ class NotificationApiController extends Controller
             $date=date('d-m-Y',strtotime($value->created_at));
             $time=date('H:i A',strtotime($value->created_at));
 
-            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
+            $data[]=(['order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image]);
         }
-        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
+        $total=count($data);
+        $per_page =5;
+        $current_page = $request->input("page") ?? 1;
+        $starting_point = ($current_page * $per_page) - $per_page;
+        $array = array_slice($data, $starting_point, $per_page, true);
+
+        $all_data = new Paginator($array, $total, $per_page, $current_page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+        $datas=[];
+        foreach($all_data as $value){
+            $datas[]=$value;
+        }
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$datas,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
     }
 
     public function customer_noti_menu(Request $request){
@@ -290,7 +306,23 @@ class NotificationApiController extends Controller
 
             $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
         }
-        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
+
+        $total=count($data);
+        $per_page =5;
+        $current_page = $request->input("page") ?? 1;
+        $starting_point = ($current_page * $per_page) - $per_page;
+        $array = array_slice($data, $starting_point, $per_page, true);
+
+        $all_data = new Paginator($array, $total, $per_page, $current_page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+        $datas=[];
+        foreach($all_data as $value){
+            $datas[]=$value;
+        }
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$datas,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+        // return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
 
     public function android_version_check(Request $request)
