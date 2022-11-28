@@ -272,8 +272,8 @@ class NotificationApiController extends Controller
                 }else{
                     $status_title=null;
                 }//system_noti
-            }elseif($value->notification_type == 2){
-                $status_title="system";
+            }elseif($value->notification_type == 6){
+                $status_title=$value->notification_title;
             }else{
                 $status_title=null;
             }
