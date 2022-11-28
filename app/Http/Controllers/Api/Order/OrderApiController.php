@@ -1645,7 +1645,7 @@ class OrderApiController extends Controller
                         "customer_id"=>$check_order->customer_id,
                         "restaurant_id"=>$check_order->restaurant_id,
                         "customer_order_id"=>$check_order->customer_order_id,
-                        "cancel_amount"=>$check_order->bill_total_price,
+                        "cancel_amount"=>$price,
                         "noti_type"=>"restaurant",
                     ]);
                     //Customer
