@@ -61,7 +61,7 @@ class NotificationApiController extends Controller
             $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
             $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
             $notification3=$notifications1->merge($notifications2);
-            $notifications =  array_values(array_sort($notification3, function ($item) {
+            $notifications =  array_reverse(array_sort($notification3, function ($item) {
                 return $item['created_at'];
             }));
 
@@ -228,7 +228,7 @@ class NotificationApiController extends Controller
             $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
             $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
             $notification3=$notifications1->merge($notifications2);
-            $notifications =  array_values(array_sort($notification3, function ($item) {
+            $notifications =  array_reverse(array_sort($notification3, function ($item) {
                 return $item['created_at'];
             }));
         }
