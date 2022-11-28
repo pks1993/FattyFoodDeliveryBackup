@@ -56,7 +56,13 @@ class NotificationApiController extends Controller
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
         if($notification_type== 1){
-            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+            $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+            $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
+            $notification3=$notifications1->merge($notifications2);
+            $notifications =  array_values(array_sort($notification3, function ($item) {
+                return $item['created_at'];
+            }));
+
         }elseif($notification_type == 2){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }else{
@@ -103,7 +109,7 @@ class NotificationApiController extends Controller
                     $status_title=null;
                 }
             }elseif($value->notification_type == 2){
-                $status_title="system";
+                $status_title=$value->notification_title;
             }else{
                 $status_title=null;
             }
@@ -203,7 +209,12 @@ class NotificationApiController extends Controller
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
         if($notification_type == 5){
-            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+            $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+            $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+            $notification3=$notifications1->merge($notifications2);
+            $notifications =  array_values(array_sort($notification3, function ($item) {
+                return $item['created_at'];
+            }));
         }
         elseif($notification_type == 6){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
