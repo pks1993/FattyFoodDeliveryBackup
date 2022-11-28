@@ -251,7 +251,7 @@ class NotificationApiController extends Controller
             $noti_menu_id=$value->notification_type;
             $noti_menu=$value->noti_menu->noti_menu_name_en;
             //order_cancel
-            if($value->notification_type==3){
+            if($value->notification_type==7){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
@@ -271,7 +271,7 @@ class NotificationApiController extends Controller
                     $status_title=null;
                 }
             }//kpay_refund
-            elseif($value->notification_type == 4){
+            elseif($value->notification_type == 8){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
                         $status_title=$kpay_refund_customer;
