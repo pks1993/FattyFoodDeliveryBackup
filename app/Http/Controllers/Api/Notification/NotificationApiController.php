@@ -57,6 +57,8 @@ class NotificationApiController extends Controller
         }
         if($notification_type== 1){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+        }elseif($notification_type == 2){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }else{
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
