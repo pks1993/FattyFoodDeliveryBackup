@@ -204,7 +204,7 @@ class NotificationApiController extends Controller
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
         }else{
             if($notification_type == 6){
-                $notification_type=2;
+                $notification_type=6;
             }
             elseif($notification_type == 7){
                 $notification_type=3;
