@@ -1074,7 +1074,7 @@ class OrderApiController extends Controller
                         $customer_orders->update();
 
                         NotificationTemplate::create([
-                            "notification_type"=>"kpay_refund",
+                            "notification_type"=>4,
                             "order_id"=>$order_id,
                             "customer_id"=>$customer_orders->customer_id,
                         ]);
@@ -1099,7 +1099,7 @@ class OrderApiController extends Controller
                         $customer_orders->update();
 
                         NotificationTemplate::create([
-                            "notification_type"=>"order_cancel",
+                            "notification_type"=>3,
                             "order_id"=>$order_id,
                             "customer_id"=>$customer_orders->customer_id,
                         ]);
@@ -1279,7 +1279,7 @@ class OrderApiController extends Controller
                     }
 
                     NotificationTemplate::create([
-                        "notification_type"=>"kpay_refund",
+                        "notification_type"=>8,
                         "order_id"=>$order_id,
                         "customer_id"=>$check_order->customer_id,
                     ]);
@@ -1395,7 +1395,7 @@ class OrderApiController extends Controller
                         // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                     }
                     NotificationTemplate::create([
-                        "notification_type"=>"order_cancel",
+                        "notification_type"=>7,
                         "order_id"=>$order_id,
                         "customer_id"=>$check_order->customer_id,
                     ]);
@@ -1515,7 +1515,7 @@ class OrderApiController extends Controller
                     }
 
                     NotificationTemplate::create([
-                        "notification_type"=>"kpay_refund",
+                        "notification_type"=>8,
                         "order_id"=>$order_id,
                         "customer_id"=>$check_order->customer_id,
                     ]);
@@ -1621,7 +1621,7 @@ class OrderApiController extends Controller
                     }
 
                     NotificationTemplate::create([
-                        "notification_type"=>"order_cancel",
+                        "notification_type"=>7,
                         "order_id"=>$order_id,
                         "customer_id"=>$check_order->customer_id,
                     ]);
