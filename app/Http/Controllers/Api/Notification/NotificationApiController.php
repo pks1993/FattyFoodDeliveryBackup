@@ -236,14 +236,14 @@ class NotificationApiController extends Controller
             $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
         else{
-            if($notification_type == 7){
-                $notification_type=3;
-            }
-            elseif($notification_type == 8){
-                $notification_type=4;
-            }else{
-                $notification_type=3;
-            }
+            // if($notification_type == 7){
+            //     $notification_type=3;
+            // }
+            // elseif($notification_type == 8){
+            //     $notification_type=4;
+            // }else{
+            //     $notification_type=3;
+            // }
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
         foreach($notifications as $value){

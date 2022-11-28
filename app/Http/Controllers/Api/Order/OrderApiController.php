@@ -1073,11 +1073,15 @@ class OrderApiController extends Controller
                         $customer_orders->order_status_id=9;
                         $customer_orders->update();
 
-                        NotificationTemplate::create([
-                            "notification_type"=>4,
-                            "order_id"=>$order_id,
-                            "customer_id"=>$customer_orders->customer_id,
-                        ]);
+                        // NotificationTemplate::create([
+                        //     "notification_type"=>4,
+                        //     "order_id"=>$order_id,
+                        //     "customer_id"=>$customer_orders->customer_id,
+                        //     "restaurant_id"=>$customer_orders->restaurant_id,
+                        //     "customer_order_id"=>$customer_orders->customer_order_id,
+                        //     "cancel_amount"=>$customer_orders->bill_total_price,
+                        //     "noti_type"=>"customer",
+                        // ]);
 
                         if(!isset($_SESSION))
                         {
@@ -1086,6 +1090,8 @@ class OrderApiController extends Controller
 
                         $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                         $_SESSION['customer_orders']=$customer_orders;
+                        $_SESSION['notification_menu_id']=4;
+                        $_SESSION['noti_type']="customer";
     
                         if($customer_orders->is_partial_refund==1){
                                 $_SESSION['refundAmount']=$customer_orders->bill_total_price;
@@ -1102,6 +1108,10 @@ class OrderApiController extends Controller
                             "notification_type"=>3,
                             "order_id"=>$order_id,
                             "customer_id"=>$customer_orders->customer_id,
+                            "restaurant_id"=>$customer_orders->restaurant_id,
+                            "customer_order_id"=>$customer_orders->customer_order_id,
+                            "cancel_amount"=>$customer_orders->bill_total_price,
+                            "noti_type"=>"customer",
                         ]);
 
                         return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
@@ -1278,11 +1288,11 @@ class OrderApiController extends Controller
                         // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                     }
 
-                    NotificationTemplate::create([
-                        "notification_type"=>8,
-                        "order_id"=>$order_id,
-                        "customer_id"=>$check_order->customer_id,
-                    ]);
+                    // NotificationTemplate::create([
+                    //     "notification_type"=>8,
+                    //     "order_id"=>$order_id,
+                    //     "customer_id"=>$check_order->customer_id,
+                    // ]);
     
                     //Customer
                     $cus_client = new Client();
@@ -1363,6 +1373,9 @@ class OrderApiController extends Controller
     
                     $_SESSION['merchOrderId']=$customer_orders->merch_order_id;
                     $_SESSION['customer_orders']=$customer_orders;
+                    $_SESSION['notification_menu_id']=8;
+                    $_SESSION['noti_type']="restaurant";
+
                     NotiOrder::where('order_id',$order_id)->delete();
     
                     if($customer_orders->is_partial_refund==1){
@@ -1398,6 +1411,10 @@ class OrderApiController extends Controller
                         "notification_type"=>7,
                         "order_id"=>$order_id,
                         "customer_id"=>$check_order->customer_id,
+                        "restaurant_id"=>$check_order->restaurant_id,
+                        "customer_order_id"=>$check_order->customer_order_id,
+                        "cancel_amount"=>$check_order->bill_total_price,
+                        "noti_type"=>"restaurant",
                     ]);
                     //Customer
                     $cus_client = new Client();
@@ -1514,11 +1531,11 @@ class OrderApiController extends Controller
                         CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
                     }
 
-                    NotificationTemplate::create([
-                        "notification_type"=>8,
-                        "order_id"=>$order_id,
-                        "customer_id"=>$check_order->customer_id,
-                    ]);
+                    // NotificationTemplate::create([
+                    //     "notification_type"=>8,
+                    //     "order_id"=>$order_id,
+                    //     "customer_id"=>$check_order->customer_id,
+                    // ]);
     
                     //Customer
                     $cus_client = new Client();
@@ -1588,24 +1605,26 @@ class OrderApiController extends Controller
     
                     $customer_order=CustomerOrder::where('order_id',$order_id)->first();
     
-                        $_SESSION['merchOrderId']=$customer_order->merch_order_id;
+                    $_SESSION['merchOrderId']=$customer_order->merch_order_id;
                     //$_SESSION['customer_orders']=$customer_order;
-                        $_SESSION['refundAmount']=$price;
-                        NotiOrder::where('order_id',$order_id)->delete();
-    
-                        if($select_all==0){
-                    $_SESSION['customer_orders']=$customer_order;
-                    if($check_food==0){
-                        CustomerOrder::where('order_id',$order_id)->update([
-                                        'order_status_id'=>2,
-                                    ]);
-                    }
+                    $_SESSION['refundAmount']=$price;
+                    $_SESSION['notification_menu_id']=8;
+                    $_SESSION['noti_type']="restaurant";
+                    NotiOrder::where('order_id',$order_id)->delete();
+
+                    if($select_all==0){
+                        $_SESSION['customer_orders']=$customer_order;
+                        if($check_food==0){
+                            CustomerOrder::where('order_id',$order_id)->update([
+                                'order_status_id'=>2,
+                            ]);
+                        }
                         return view('admin.src.example.each_refund');
                     }else{
                         CustomerOrder::where('order_id',$order_id)->update([
                             'order_status_id'=>2,
                         ]);
-                    $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+                        $customer_order=CustomerOrder::where('order_id',$order_id)->first();
                         $_SESSION['customer_orders']=$customer_order;
                         return view('admin.src.example.refund');
                     }
@@ -1624,6 +1643,10 @@ class OrderApiController extends Controller
                         "notification_type"=>7,
                         "order_id"=>$order_id,
                         "customer_id"=>$check_order->customer_id,
+                        "restaurant_id"=>$check_order->restaurant_id,
+                        "customer_order_id"=>$check_order->customer_order_id,
+                        "cancel_amount"=>$check_order->bill_total_price,
+                        "noti_type"=>"restaurant",
                     ]);
                     //Customer
                     $cus_client = new Client();
