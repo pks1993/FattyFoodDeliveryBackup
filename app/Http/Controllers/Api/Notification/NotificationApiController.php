@@ -77,8 +77,8 @@ class NotificationApiController extends Controller
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
-                        $noti_menu_id= 9;
-                        $noti_menu="restaurant_order_cancel";
+                        // $noti_menu_id= 9;
+                        // $noti_menu="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
@@ -255,8 +255,8 @@ class NotificationApiController extends Controller
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
-                        $noti_menu_id=9;
-                        $noti_menu="restaurant_order_cancel";
+                        // $noti_menu_id=9;
+                        // $noti_menu="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
