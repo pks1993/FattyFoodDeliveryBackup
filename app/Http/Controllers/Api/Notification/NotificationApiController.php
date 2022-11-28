@@ -202,11 +202,12 @@ class NotificationApiController extends Controller
         }
         if($notification_type == 5){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
-        }else{
-            if($notification_type == 6){
-                $notification_type=6;
-            }
-            elseif($notification_type == 7){
+        }
+        elseif($notification_type == 6){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }
+        else{
+            if($notification_type == 7){
                 $notification_type=3;
             }
             elseif($notification_type == 8){
