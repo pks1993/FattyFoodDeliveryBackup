@@ -67,13 +67,18 @@ class NotificationApiController extends Controller
 
         }elseif($notification_type == 2){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }elseif($notification_type == 3){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[3,7])->get();
+        }elseif($notification_type == 4){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[4,8])->get();
         }else{
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
+
         foreach($notifications as $value){
             $noti_menu_id=$value->notification_type;
             $noti_menu=$value->noti_menu->noti_menu_name_en;
-            if($value->notification_type== 3){
+            if($value->notification_type== 3 || $value->notification_type== 7){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
@@ -93,7 +98,7 @@ class NotificationApiController extends Controller
                     $status_title=null;
                 }
             }
-            elseif($value->notification_type == 4){
+            elseif($value->notification_type == 4 || $value->notification_type== 8){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
                         $status_title=$kpay_refund_customer;
@@ -234,18 +239,15 @@ class NotificationApiController extends Controller
                 return $item['created_at'];
             }));
         }
-        elseif($notification_type == 6 || $notification_type == 2){
+        elseif($notification_type == 6){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
+        elseif($notification_type == 7){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[3,7])->get();
+        }elseif($notification_type == 8){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[4,8])->get();
+        }
         else{
-            // if($notification_type == 7){
-            //     $notification_type=3;
-            // }
-            // elseif($notification_type == 8){
-            //     $notification_type=4;
-            // }else{
-            //     $notification_type=3;
-            // }
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
         foreach($notifications as $value){
@@ -257,8 +259,6 @@ class NotificationApiController extends Controller
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
-                        // $noti_menu_id=9;
-                        // $noti_menu="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
@@ -290,7 +290,7 @@ class NotificationApiController extends Controller
                 }else{
                     $status_title=null;
                 }//system_noti
-            }elseif($value->notification_type == 6 || $value->notification_type == 2){
+            }elseif($value->notification_type == 6){
                 $status_title=$value->notification_title;
             }else{
                 $status_title=null;
