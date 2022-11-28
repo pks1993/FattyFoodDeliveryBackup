@@ -68,6 +68,7 @@ Route::middleware('one_device_login')->group(function(){
     Route::post('v1/fatty/202221/lashio/main/admin/recommend/restaurant/list','Api\HomePage\HomePageApiController@recommend_list');
 
     //Customer Notification
+    Route::get('v1/fatty/202221/lashio/main/admin/customers/notifications/menus','Api\Notification\NotificationApiController@customer_noti_menu');
     Route::get('v1/fatty/202221/lashio/main/admin/customers/notifications','Api\Notification\NotificationApiController@get_noti');
     Route::post('v1/fatty/202221/lashio/main/admin/customers_notifications','Api\Notification\NotificationApiController@index');
     Route::post('v1/fatty/202221/lashio/main/admin/click/category/data','Api\HomePage\HomePageApiController@click_category_data');
@@ -151,6 +152,8 @@ Route::get('v1/fatty/202221/lashio/main/admin/riders/notifications','Api\Notific
 //Restauant Notification
 Route::get('v1/fatty/202221/lashio/main/admin/restaurants/notifications','Api\Notification\NotificationApiController@restaurant');
 Route::post('v1/fatty/202221/lashio/main/admin/restaurants_notifications','Api\Notification\NotificationApiController@restaurant_noti');
+Route::get('v1/fatty/202221/lashio/main/admin/restaurants/notifications/menus','Api\Notification\NotificationApiController@restaurant_noti_menu');
+
 
 
 //Restaurant Api

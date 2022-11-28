@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Notification;
 
 use App\Models\Notification\NotificationTemplate;
+use App\Models\Notification\NotiMenu;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order\CustomerOrder;
@@ -24,9 +25,11 @@ class NotificationApiController extends Controller
     public function index(Request $request)
     {
         $customer_id=$request['customer_id'];
+        $noti_type=$request['noti_type'];
         $start_date=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $end_date=date('Y-m-d 23:59:59',strtotime($request['end_date']));
         $data=[];
+
         // $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         $status_title=null;
         $language=$request->header('language');
@@ -52,13 +55,14 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+        $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$noti_type)->get();
         foreach($notifications as $value){
             $noti_type=$value->notification_type;
             if($value->notification_type=="order_cancel"){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
+                        $noti_type="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
@@ -110,6 +114,39 @@ class NotificationApiController extends Controller
         }
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
+
+    public function customer_noti_menu(Request $request){
+        $language=$request->header('language');
+        $data=[];
+        $menu_data=NotiMenu::where('noti_type','customer')->where('is_close_status',0)->get();
+        foreach($menu_data as $value){
+            if($language == 'my'){
+                $menu=$value->noti_menu_name_mm;
+            }elseif($language == 'en'){
+                $menu=$value->noti_menu_name_en;
+            }else{
+                $menu=$value->noti_menu_name_ch;
+            }
+            $data[]=array('menu'=>$menu);
+        }
+        return response()->json(['success'=>true,'message'=>'this is notification menus data','data'=>$data]);
+    }
+    public function restaurant_noti_menu(Request $request){
+        $language=$request->header('language');
+        $data=[];
+        $menu_data=NotiMenu::where('noti_type','restaurant')->where('is_close_status',0)->get();
+        foreach($menu_data as $value){
+            if($language == 'my'){
+                $menu=$value->noti_menu_name_mm;
+            }elseif($language == 'en'){
+                $menu=$value->noti_menu_name_en;
+            }else{
+                $menu=$value->noti_menu_name_ch;
+            }
+            $data[]=array('menu'=>$menu);
+        }
+        return response()->json(['success'=>true,'message'=>'this is notification menus data','data'=>$data]);
+    }
     public function get_noti()
     {
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
@@ -127,6 +164,7 @@ class NotificationApiController extends Controller
     }
     public function restaurant_noti(Request $request)
     {
+        $noti_type=$request['noti_type'];
         $restaurant_id=$request['restaurant_id'];
         $start_date=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $end_date=date('Y-m-d 23:59:59',strtotime($request['end_date']));
@@ -156,13 +194,14 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+        $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$noti_type)->get();
         foreach($notifications as $value){
             $noti_type=$value->notification_type;
             if($value->notification_type=="order_cancel"){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
+                        $noti_type="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){

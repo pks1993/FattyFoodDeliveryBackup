@@ -18,6 +18,7 @@ class CreateNotiMenusTable extends Migration
             $table->string('noti_menu_name_mm')->nullable();
             $table->string('noti_menu_name_en')->nullable();
             $table->string('noti_menu_name_ch')->nullable();
+            $table->string('noti_type')->nullable()->default('customer');
             $table->tinyInteger('is_close_status')->nullable()->default(0);
             $table->timestamps();
         });

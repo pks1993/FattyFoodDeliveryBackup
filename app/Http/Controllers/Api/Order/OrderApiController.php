@@ -976,7 +976,7 @@ class OrderApiController extends Controller
         $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',2)->first();
 
         if($cancel_order){
-            if($language == "mm"){
+            if($language == "my"){
                 $message="ဝမ်းနည်းပါတယ် သင့်အော်ဒါကို ဆိုင်ဘက်မှ ပယ်ဖျက်ပြီးဖြစ်ပါသဖြင့် ပယ်ဖျက်လိုမရနိူင်ပါ";
             }elseif($language == "en"){
                 $message="Sorry! Cannot cancel. Your order is already cancelled by restaurant";
@@ -1247,7 +1247,7 @@ class OrderApiController extends Controller
         if($check_order){
             $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
             if($cancel_order){
-                if($language == "mm"){
+                if($language == "my"){
                     $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် ထပ်မံပယ်ဖျက်၍ မရနိူင်ပါ";
                 }elseif($language == "en"){
                     $message="Sorry! Cannot cancel ! Order is already cancelled by user!";
@@ -1495,7 +1495,7 @@ class OrderApiController extends Controller
         if($check_order){
             $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
             if ($cancel_order) {
-                if ($language == "mm") {
+                if ($language == "my") {
                     $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် ထပ်မံပယ်ဖျက်၍ မရနိူင်ပါ";
                 } elseif ($language == "en") {
                     $message="Sorry! Cannot cancel ! Order is already cancelled by user!";
@@ -1723,7 +1723,7 @@ class OrderApiController extends Controller
 
             if($customer_orders){
                 if($customer_orders->order_status_id == 9){
-                    if($language == "mm"){
+                    if($language == "my"){
                         $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် လက်ခံလိုမရပါ";
                     }elseif($language == "en"){
                         $message="Sorry! Order is already cancelled by user and cannot accept and print.";
