@@ -131,7 +131,7 @@ class NotificationApiController extends Controller
             }else{
                 $menu=$value->noti_menu_name_ch;
             }
-            $data[]=array('menu'=>$menu);
+            $data[]=array('menu'=>$menu,'noti_menu_key'=>$value->noti_menu_key);
         }
         return response()->json(['success'=>true,'message'=>'this is notification menus data','data'=>$data]);
     }
@@ -147,7 +147,7 @@ class NotificationApiController extends Controller
             }else{
                 $menu=$value->noti_menu_name_ch;
             }
-            $data[]=array('menu'=>$menu);
+            $data[]=array('menu'=>$menu,'noti_menu_key'=>$value->noti_menu_key);
         }
         return response()->json(['success'=>true,'message'=>'this is notification menus data','data'=>$data]);
     }
