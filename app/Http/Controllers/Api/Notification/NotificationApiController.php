@@ -55,18 +55,20 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        if($notification_type== "all"){
+        if($notification_type== 1){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
         }else{
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
         foreach($notifications as $value){
-            $noti_type=$value->notification_type;
-            if($value->notification_type=="order_cancel"){
+            $noti_menu_id=$value->notification_type;
+            $noti_menu=$value->noti_menu->noti_menu_name_en;
+            if($value->notification_type== 3){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
-                        $noti_type="restaurant_order_cancel";
+                        $noti_menu_id= 9;
+                        $noti_menu="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
@@ -81,7 +83,7 @@ class NotificationApiController extends Controller
                     $status_title=null;
                 }
             }
-            elseif($value->notification_type == "kpay_refund"){
+            elseif($value->notification_type == 4){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
                         $status_title=$kpay_refund_customer;
@@ -98,7 +100,7 @@ class NotificationApiController extends Controller
                 }else{
                     $status_title=null;
                 }
-            }elseif($value->notification_type == "system_noti"){
+            }elseif($value->notification_type == 2){
                 $status_title="system";
             }else{
                 $status_title=null;
@@ -114,7 +116,7 @@ class NotificationApiController extends Controller
             $date=date('d-m-Y',strtotime($value->created_at));
             $time=date('H:i A',strtotime($value->created_at));
 
-            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_type'=>$noti_type,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
+            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
         }
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
@@ -198,18 +200,22 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        if($notification_type == "all"){
+        if($notification_type == 5){
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
         }else{
             $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
         }
         foreach($notifications as $value){
-            $noti_type=$value->notification_type;
-            if($value->notification_type=="order_cancel"){
+            // $noti_type=$value->notification_type;
+            $noti_menu_id=$value->notification_type;
+            $noti_menu=$value->noti_menu->noti_menu_name_en;
+            //order_cancel
+            if($value->notification_type==7){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
-                        $noti_type="restaurant_order_cancel";
+                        $noti_menu_id=9;
+                        $noti_menu="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
@@ -223,8 +229,8 @@ class NotificationApiController extends Controller
                 }else{
                     $status_title=null;
                 }
-            }
-            elseif($value->notification_type == "kpay_refund"){
+            }//kpay_refund
+            elseif($value->notification_type == 8){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
                         $status_title=$kpay_refund_customer;
@@ -240,8 +246,8 @@ class NotificationApiController extends Controller
                     }
                 }else{
                     $status_title=null;
-                }
-            }elseif($value->notification_type == "system_noti"){
+                }//system_noti
+            }elseif($value->notification_type == 6){
                 $status_title="system";
             }else{
                 $status_title=null;
@@ -257,7 +263,7 @@ class NotificationApiController extends Controller
             $date=date('d-m-Y',strtotime($value->created_at));
             $time=date('H:i A',strtotime($value->created_at));
 
-            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_type'=>$noti_type,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
+            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
         }
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
