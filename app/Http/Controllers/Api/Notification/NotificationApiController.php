@@ -25,7 +25,7 @@ class NotificationApiController extends Controller
     public function index(Request $request)
     {
         $customer_id=$request['customer_id'];
-        $noti_type=$request['noti_type'];
+        $notification_type=$request['noti_type'];
         $start_date=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $end_date=date('Y-m-d 23:59:59',strtotime($request['end_date']));
         $data=[];
@@ -55,7 +55,11 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$noti_type)->get();
+        if($notification_type== "all"){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+        }else{
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }
         foreach($notifications as $value){
             $noti_type=$value->notification_type;
             if($value->notification_type=="order_cancel"){
@@ -110,7 +114,7 @@ class NotificationApiController extends Controller
             $date=date('d-m-Y',strtotime($value->created_at));
             $time=date('H:i A',strtotime($value->created_at));
 
-            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_type'=>$noti_type);
+            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_type'=>$noti_type,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
         }
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
@@ -164,7 +168,7 @@ class NotificationApiController extends Controller
     }
     public function restaurant_noti(Request $request)
     {
-        $noti_type=$request['noti_type'];
+        $notification_type=$request['noti_type'];
         $restaurant_id=$request['restaurant_id'];
         $start_date=date('Y-m-d 00:00:00',strtotime($request['start_date']));
         $end_date=date('Y-m-d 23:59:59',strtotime($request['end_date']));
@@ -194,7 +198,11 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$noti_type)->get();
+        if($notification_type == "all"){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+        }else{
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }
         foreach($notifications as $value){
             $noti_type=$value->notification_type;
             if($value->notification_type=="order_cancel"){
@@ -249,7 +257,7 @@ class NotificationApiController extends Controller
             $date=date('d-m-Y',strtotime($value->created_at));
             $time=date('H:i A',strtotime($value->created_at));
 
-            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_type'=>$noti_type);
+            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_type'=>$noti_type,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image);
         }
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
