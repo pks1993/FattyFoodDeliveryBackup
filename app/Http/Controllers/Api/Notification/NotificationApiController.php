@@ -57,7 +57,7 @@ class NotificationApiController extends Controller
             $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
-        if($notification_type== 1){
+        if($notification_type == 1){
             $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
             $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
             $notification3=$notifications1->merge($notifications2);
@@ -191,7 +191,7 @@ class NotificationApiController extends Controller
     }
     public function rider()
     {
-        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->where('noti_type','rider')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
     public function restaurant()
