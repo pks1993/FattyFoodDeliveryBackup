@@ -135,9 +135,12 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
 
     //Customer
     Route::get('customers','Admin\Customer\CustomerController@index');
-    Route::get('customers/search','Admin\Customer\CustomerController@customer_search');
     Route::get('customers/datatable/ssd','Admin\Customer\CustomerController@ssd');
     Route::get('customers/view/{customer_id}','Admin\Customer\CustomerController@show')->name('customers.view');
+    Route::get('customers/search','Admin\Customer\CustomerController@customer_search');
+    Route::get('daily_customers/search','Admin\Customer\CustomerController@daily_customer_search');
+    Route::get('monthly_customers/search','Admin\Customer\CustomerController@monthly_customer_search');
+    Route::get('yearly_customers/search','Admin\Customer\CustomerController@yearly_customer_search');
 
     //customer chart
     Route::get('customer_chart','Admin\Customer\CustomerController@customerchart');
