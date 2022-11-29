@@ -82,8 +82,6 @@ class NotificationApiController extends Controller
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
                         $status_title=$order_cancel_restaurant;
-                        // $noti_menu_id= 9;
-                        // $noti_menu="restaurant_order_cancel";
                     }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
                         $status_title=$order_cancel_customer;
                     }elseif($value->customer_order->payment_method_id == 1){
@@ -101,9 +99,9 @@ class NotificationApiController extends Controller
             elseif($value->notification_type == 4 || $value->notification_type== 8){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
-                        $status_title=$kpay_refund_customer;
-                    }elseif($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==9){
                         $status_title=$kpay_refund_restaurant;
+                    }elseif($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==9){
+                        $status_title=$kpay_refund_customer;
                     }elseif($value->customer_order->payment_method_id == 2){
                         $cancel_order_food=OrderFoods::where('order_id',$value->order_id)->where('is_cancel',1)->count();
                         if($cancel_order_food > 0){
@@ -276,9 +274,9 @@ class NotificationApiController extends Controller
             elseif($value->notification_type == 8 || $value->notification_type == 4){
                 if($value->customer_order){
                     if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
-                        $status_title=$kpay_refund_customer;
-                    }elseif($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==9){
                         $status_title=$kpay_refund_restaurant;
+                    }elseif($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==9){
+                        $status_title=$kpay_refund_customer;
                     }elseif($value->customer_order->payment_method_id == 2){
                         $cancel_order_food=OrderFoods::where('order_id',$value->order_id)->where('is_cancel',1)->count();
                         if($cancel_order_food > 0){
