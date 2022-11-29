@@ -120,7 +120,13 @@ class NotificationApiController extends Controller
             }
 
             if($value->customer_order){
-                $restaurant_name="name";
+                if($language == "my"){
+                    $restaurant_name=$value->customer_order->restaurant_name_mm;
+                }elseif($language == "en"){
+                    $restaurant_name=$value->customer_order->restaurant_name_en;
+                }else{
+                    $restaurant_name=$value->customer_order->restaurant_name_ch;
+                }
                 $order_status_id=$value->customer_order->order_status_id;
             }else{
                 $restaurant_name=null;
@@ -295,7 +301,13 @@ class NotificationApiController extends Controller
             }
 
             if($value->customer_order){
-                $restaurant_name="name";
+                if($language == "my"){
+                    $restaurant_name=$value->customer_order->restaurant_name_mm;
+                }elseif($language == "en"){
+                    $restaurant_name=$value->customer_order->restaurant_name_en;
+                }else{
+                    $restaurant_name=$value->customer_order->restaurant_name_ch;
+                }
                 $order_status_id=$value->customer_order->order_status_id;
             }else{
                 $restaurant_name=null;

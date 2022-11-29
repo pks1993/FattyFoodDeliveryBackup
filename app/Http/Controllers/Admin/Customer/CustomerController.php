@@ -53,7 +53,24 @@ class CustomerController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(25);
+        return view('admin.customer.all_customer.index',compact('date_start','date_end','customers'));
+    }
+   
+    public function customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start="2022-01-01 00:00:00";
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $search_name=$request['search_name'];
+        $customers=Customer::where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->paginate(25);
         return view('admin.customer.all_customer.index',compact('date_start','date_end','customers'));
     }
 

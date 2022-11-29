@@ -68,11 +68,22 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <form action="{{ url('fatty/main/admin/customers') }}">
-                            <input class="col-5 col-md-2" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
-                            <input class="col-5 col-md-2" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
-                            <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
-                        </form>
+                        <div class="row">
+                            <div class="col-md-6 mt-1">
+                                <form action="{{ url('fatty/main/admin/customers') }}">
+                                    <input class="col-4 col-md-4" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                    <input class="col-4 col-md-4" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                    <button class="col-2 col-md-2" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;height:33px;"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
+                            <div class="col-md-6 mt-1">
+                                <form action="{{ url('fatty/main/admin/customers/search') }}">
+                                    <input class="col-9 col-md-7" type="type" name="search_name" placeholder="Filter Enter Name or Phone (+95)" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;border-radius:5px">
+                                    <button class="col-2 col-md-2" type="submit" class="btn mb-1" style="height:100%;height:33px;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <hr>
                         <div class="mt-3">
                             {{ $customers->appends(request()->input())->links() }}
                         </div>
