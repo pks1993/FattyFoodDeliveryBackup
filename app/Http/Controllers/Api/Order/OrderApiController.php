@@ -1175,15 +1175,22 @@ class OrderApiController extends Controller
                         $customer_orders->order_status_id=9;
                         $customer_orders->update();
 
-                        NotificationTemplate::create([
-                            "notification_type"=>3,
-                            "order_id"=>$order_id,
-                            "customer_id"=>$customer_orders->customer_id,
-                            "restaurant_id"=>$customer_orders->restaurant_id,
-                            "customer_order_id"=>$customer_orders->customer_order_id,
-                            "cancel_amount"=>$customer_orders->bill_total_price,
-                            "noti_type"=>"customer",
-                        ]);
+                        $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                        if($check_noti){
+                            $check_noti->cancel_amount=$check_noti->cancel_amount+$customer_orders->bill_total_price;
+                            $check_noti->update();
+                        }else{
+                            NotificationTemplate::create([
+                                "notification_type"=>3,
+                                "order_id"=>$order_id,
+                                "customer_id"=>$customer_orders->customer_id,
+                                "restaurant_id"=>$customer_orders->restaurant_id,
+                                "customer_order_id"=>$customer_orders->customer_order_id,
+                                "cancel_amount"=>$customer_orders->bill_total_price,
+                                "noti_type"=>"customer",
+                            ]);
+                        }
+
 
                         return response()->json(['success'=>true,'message'=>'successfull cancel food order by customer','data'=>['response'=>null,'order'=>$customer_orders]]);
                     }
@@ -1481,15 +1488,21 @@ class OrderApiController extends Controller
                         ]);
                         // return response()->json(['success'=>true,'message'=>'successfully cancle order','data'=>$data]);
                     }
-                    NotificationTemplate::create([
-                        "notification_type"=>7,
-                        "order_id"=>$order_id,
-                        "customer_id"=>$check_order->customer_id,
-                        "restaurant_id"=>$check_order->restaurant_id,
-                        "customer_order_id"=>$check_order->customer_order_id,
-                        "cancel_amount"=>$check_order->bill_total_price,
-                        "noti_type"=>"restaurant",
-                    ]);
+                    $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                    if($check_noti){
+                        $check_noti->cancel_amount=$check_noti->cancel_amount+$check_order->bill_total_price;
+                        $check_noti->update();
+                    }else{
+                        NotificationTemplate::create([
+                            "notification_type"=>7,
+                            "order_id"=>$order_id,
+                            "customer_id"=>$check_order->customer_id,
+                            "restaurant_id"=>$check_order->restaurant_id,
+                            "customer_order_id"=>$check_order->customer_order_id,
+                            "cancel_amount"=>$check_order->bill_total_price,
+                            "noti_type"=>"restaurant",
+                        ]);
+                    }
                     //Customer
                     $cus_client = new Client();
                     $cus_token=$check_order->customer->fcm_token;

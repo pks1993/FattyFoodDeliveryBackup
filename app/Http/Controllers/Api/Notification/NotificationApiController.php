@@ -58,8 +58,19 @@ class NotificationApiController extends Controller
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
         if($notification_type == 1){
-            $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
-            $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
+            $noti_menu_id=NotiMenu::where('noti_type','restaurant')->where('is_close_status',1)->pluck('noti_menu_id');
+            if($noti_menu_id){
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereNotIn('notification_type',$noti_menu_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $check=NotiMenu::where('noti_type','restaurant')->where('noti_menu_id',6)->where('is_close_status',1)->first();
+                if($check){
+                    $notifications2=[];
+                }else{
+                    $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
+                }
+            }else{
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
+            }
             $notification3=$notifications1->merge($notifications2);
             $notifications =  array_reverse(array_sort($notification3, function ($item) {
                 return $item['created_at'];
@@ -236,8 +247,19 @@ class NotificationApiController extends Controller
             $kpay_refund_item_reject="Kpay 退款了订单中的商品";
         }
         if($notification_type == 5){
-            $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
-            $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+            $noti_menu_id=NotiMenu::where('noti_type','restaurant')->where('is_close_status',1)->pluck('noti_menu_id');
+            if($noti_menu_id){
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereNotIn('notification_type',$noti_menu_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $check=NotiMenu::where('noti_type','restaurant')->where('noti_menu_id',6)->where('is_close_status',1)->first();
+                if($check){
+                    $notifications2=[];
+                }else{
+                    $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+                }
+            }else{
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+            }
             $notification3=$notifications1->merge($notifications2);
             $notifications =  array_reverse(array_sort($notification3, function ($item) {
                 return $item['created_at'];
