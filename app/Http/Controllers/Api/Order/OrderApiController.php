@@ -1585,7 +1585,14 @@ class OrderApiController extends Controller
 
         if($check_order){
             if($check_order->kpay_refund_count==2){
-                return response()->json(['success'=>false,'message'=>'kpay not refund']);
+                if($language=="my"){
+                    $message="Kpay refund limit ရှိသဖြင့် item များကို ထပ်ပြီး cancel လိုမရနိူင်ပါ order တခုလုံးကိုသာ cancel ပေးပါ";
+                }elseif($language=="en"){
+                    $message="As there is a Kpay refund limit, you cannot cancel the items again, just cancel the entire order";
+                }else{
+                    $message="KBZ Pay 商品退款次数已到达上限！可申请取消订单！";
+                }
+                return response()->json(['success'=>false,'message'=>$message]);
             }else{
                 $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
                 if ($cancel_order) {
