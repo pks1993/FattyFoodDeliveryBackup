@@ -1607,7 +1607,11 @@ class OrderApiController extends Controller
     
                     $_SESSION['merchOrderId']=$customer_order->merch_order_id;
                     //$_SESSION['customer_orders']=$customer_order;
-                    $_SESSION['refundAmount']=$price;
+                    if($check_food==0){
+                        $_SESSION['refundAmount']=$customer_order->bill_total_price;
+                    }else{
+                        $_SESSION['refundAmount']=$price;
+                    }
                     $_SESSION['notification_menu_id']=8;
                     $_SESSION['noti_type']="restaurant";
                     NotiOrder::where('order_id',$order_id)->delete();

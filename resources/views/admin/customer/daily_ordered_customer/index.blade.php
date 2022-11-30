@@ -78,11 +78,24 @@
                 </div> --}}
                 <!-- /.card-header -->
                 <div class="card-body table-responsive">
-                    <form action="{{ url('fatty/main/admin/daily_ordered_customers') }}">
-                        <input class="col-5 col-md-2" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
-                        <input class="col-5 col-md-2" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
-                        <button class="col-1 col-md-1" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
-                    </form>
+                    <div class="row">
+                        <div class="col-md-6 mt-1">
+                            <form action="{{ url('fatty/main/admin/daily_ordered_customers') }}">
+                                <input class="col-4 col-md-4" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                <input class="col-4 col-md-4" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                <button class="col-2 col-md-2" type="submit" class="btn mb-1" style="height:100%;background:#00dfc2;color:white;font-size:15px;border-radius:5px;height:33px;"><i class="fa fa-search"></i></button>
+                            </form>
+                        </div>
+                        <div class="col-md-6 mt-1">
+                            <form action="{{ url('fatty/main/admin/daily_ordered_customers/search') }}">
+                                <input class="col-9 col-md-7" type="type" name="search_name" placeholder="Filter Enter Name or Phone (+95)" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;border-radius:5px">
+                                <input hidden class="col-4 col-md-4" type="date" name="start_date" value="{{ \Carbon\Carbon::parse($date_start)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                <input hidden class="col-4 col-md-4" type="date" name="end_date" value="{{ \Carbon\Carbon::parse($date_end)->format('Y-m-d') }}" class="btn mb-1" style="background-color:#FFFFFF;width: 100%;height:33px;border-color:#00dfc2;border-style:solid;border-width:2px;color: #1c1a1a;font-size:15px;font-weight:510;border-radius:5px">
+                                <button class="col-2 col-md-2" type="submit" class="btn mb-1" style="height:100%;height:33px;background:#00dfc2;color:white;font-size:15px;border-radius:5px;"><i class="fa fa-search"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <hr>
                     <div class="mt-3">
                         {{ $customers->appends(request()->input())->links() }}
                     </div>
@@ -104,23 +117,49 @@
                             <tr class="text-center">
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="text-left">
-                                    @if($value->customer->customer_name)
-                                        {{ $value->customer->customer_name }}
+                                    @if($value->customer)
+                                        @if ($value->customer->customer_name == null)
+                                            <span style="color: red">{{ "Empty" }}</span>
+                                        @else
+                                            {{ $value->customer->customer_name }}
+                                        @endif
                                     @else
                                         <span style="color: red">{{ "Empty" }}</span>
                                     @endif
                                 </td>
-                                <td>{{ $value->customer->customer_phone }}</td>
-                                <td>{{ date('d/M/Y',strtotime($value->created_at)) }}</td>
-                                <td>{{ $value->customer->order_count }}</td>
-                                <td>{{ $value->customer->order_amount }}</td>
                                 <td>
-                                    @if($value->customer->customer_type_id==1)
-                                        <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
-                                    @elseif($value->customer->customer_type_id==2)
-                                        <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                    @if($value->customer)
+                                        {{ $value->customer->customer_phone }}
                                     @else
-                                        <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                        <span style="color: red">{{ "Empty" }}</span>
+                                    @endif
+                                </td>
+                                <td>{{ date('d/M/Y',strtotime($value->created_at)) }}</td>
+                                <td>
+                                    @if($value->customer)
+                                        {{ $value->customer->order_count }}
+                                    @else
+                                        {{ 0 }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($value->customer)
+                                        {{ $value->customer->order_amount }}
+                                    @else
+                                        {{ 0 }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($value->customer)
+                                        @if($value->customer->customer_type_id==1)
+                                            <a class="btn btn-secondary btn-sm mr-2" style="color: white;width: 100%;">Normal</a>
+                                        @elseif($value->customer->customer_type_id==2)
+                                            <a class="btn btn-success btn-sm mr-2" style="color: white;width: 100%;">VIP</a>
+                                        @else
+                                            <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;">Admin</a>
+                                        @endif
+                                    @else
+                                        <a class="btn btn-danger btn-sm mr-2" style="color: white;width: 100%;"><span style="color: red">Empty</span></a>
                                     @endif
                                 </td>
                                 <td class="btn-group">

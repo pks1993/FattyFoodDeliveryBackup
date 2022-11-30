@@ -332,6 +332,26 @@ class CustomerController extends Controller
         return view('admin.customer.daily_ordered_customer.index',compact('date_start','date_end','customers'));
     }
 
+    public function daily_ordered_customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start="2022-01-01 00:00:00";
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $search_name=$request['search_name'];
+        $customer_id=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->pluck('customer_id');
+        $customer=Customer::whereIn('customer_id',$customer_id)->where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->pluck('customer_id');
+        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->whereIn('customer_id',$customer)->paginate(25);
+
+        return view('admin.customer.daily_ordered_customer.index',compact('date_start','date_end','customers'));
+    }
+
     public function dailyorderedajax(){
         $model=OrderCustomer::orderBy('created_at','desc')->get();
         $data=[];

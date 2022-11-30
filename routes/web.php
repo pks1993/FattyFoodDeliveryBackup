@@ -233,6 +233,9 @@ Route::group(['prefix'=>'fatty/main/admin','as'=>'fatty.admin.','middleware'=>['
     Route::get('customers/datatable/yearlyorderedajax','Admin\Customer\CustomerController@yearlyorderedajax');
     Route::get('order_customer_chart','Admin\Customer\CustomerController@ordercustomerchart');
 
+    Route::get('daily_ordered_customers/search','Admin\Customer\CustomerController@daily_ordered_customer_search');
+    Route::get('monthly_ordered_customers/search','Admin\Customer\CustomerController@monthly_ordered_customer_search');
+    Route::get('yearly_ordered_customers/search','Admin\Customer\CustomerController@yearly_ordered_customer_search');
 
 
 
