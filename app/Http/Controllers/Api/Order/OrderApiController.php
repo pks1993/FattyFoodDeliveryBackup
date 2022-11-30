@@ -1608,7 +1608,7 @@ class OrderApiController extends Controller
                     $_SESSION['merchOrderId']=$customer_order->merch_order_id;
                     //$_SESSION['customer_orders']=$customer_order;
                     if($check_food==0){
-                        $_SESSION['refundAmount']=$cancel_order->bill_total_price;
+                        $_SESSION['refundAmount']=$check_order->bill_total_price;
                     }else{
                         $_SESSION['refundAmount']=$price;
                     }
