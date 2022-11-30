@@ -1606,6 +1606,7 @@ class OrderApiController extends Controller
                     $customer_order=CustomerOrder::where('order_id',$order_id)->first();
     
                     $_SESSION['merchOrderId']=$customer_order->merch_order_id;
+                    $_SESSION['payment_total_amount']=$customer_order->payment_total_amount;
                     //$_SESSION['customer_orders']=$customer_order;
                     if($check_food==0){
                         $_SESSION['refundAmount']=$check_order->bill_total_price;

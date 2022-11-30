@@ -68,6 +68,7 @@ try {
             $sql1="INSERT INTO notification_templates (notification_type,order_id,customer_id,restaurant_id,customer_order_id,cancel_amount,noti_type,created_at,updated_at) VALUES ($notification_menu_id,$order_id,$customer_id,$restaurant_id,$customer_order_id,$refund_amount,'$noti_type',now(),now())";
 
             $sql="INSERT INTO order_kbz_refunds (order_id,result,code,msg,merch_order_id,merch_code,trans_order_id,refund_status,refund_order_id,refund_amount,refund_currency,refund_time,nonce_str,sign_type,sign,created_at,updated_at) VALUES ($order_id,$result1,$code,$msg,$merch_order_id,$merch_code,$trans_order_id,$refund_status,$refund_order_id,$refund_amount,$refund_currency,$refund_time,$nonce_str,$sign_type,$sign,now(),now())";
+        
 
             if ($conn->query($sql) === TRUE && $conn->query($sql1) === TRUE) {
                 if($customer_orders->order_status_id==9){
