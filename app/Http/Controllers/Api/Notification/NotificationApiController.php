@@ -255,6 +255,7 @@ class NotificationApiController extends Controller
                     $notifications2=[];
                 }else{
                     $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+                    // $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
                 }
             }else{
                 $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
