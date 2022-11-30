@@ -1569,35 +1569,22 @@ class OrderApiController extends Controller
                         }catch(ClientException $e){
                         }
                     }
+                    $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+
                     $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
-                    //if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
-                    //	$item_total_price=($customer_orders->item_total_price)-($price);
-                    //	$delivery_fee=$customer_orders->devlivery_fee;
-                    //	$bill_total_price=$item_total_price+$delivery_fee;
-                    //}else{
-                    //	$item_price=($customer_orders->item_total_price)-($price);
-                    //	if($item_price < $customer_orders->restaurant->define_amount){
-                        //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
-                        //	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
-                            //$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
-                        //}else{
-                        //	$delivery_fee=$customer_orders->delivery_fee;
-                        //	$item_total_price=$item_price;
-                        //	$bill_total_price=($customer_orders->bill_total_price)-($price);
-                        //}
-                    //}
-    
                     $item_total_price=($customer_orders->item_total_price)-($price);
                     $delivery_fee=$customer_orders->delivery_fee;
                     //$bill_total_price=$item_total_price+$delivery_fee;
-                    $bill_total_price=($customer_orders->bill_total_price)-($price);
-    
+                    if($check_food==0){
+                        $bill_total_price=($customer_orders->bill_total_price)-($price+$delivery_fee);
+                    }else{
+                        $bill_total_price=($customer_orders->bill_total_price)-($price);
+                    }
                     $customer_orders->delivery_fee=$delivery_fee;
                     $customer_orders->item_total_price=$item_total_price;
                     $customer_orders->bill_total_price=$bill_total_price;
                     $customer_orders->update();
-                    $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
-    
+                    
                     if(!isset($_SESSION))
                     {
                         session_start();

@@ -72,7 +72,7 @@ try {
 
             $is_partial_refund=1;
             $sql="INSERT INTO order_kbz_refunds (order_id,is_partial_refund,result,code,msg,merch_order_id,merch_code,trans_order_id,refund_status,refund_order_id,refund_amount,refund_currency,refund_time,nonce_str,sign_type,sign,created_at,updated_at) VALUES ($order_id,$is_partial_refund,$result1,$code,$msg,$merch_order_id,$merch_code,$trans_order_id,$refund_status,$refund_order_id,$refund_amount,$refund_currency,$refund_time,$nonce_str,$sign_type,$sign,now(),now())";
-	        $orde_update = "UPDATE customer_orders SET is_partial_refund=1 AND payment_total_amount = $payment_total WHERE order_id=$orderId;";
+	        $orde_update = "UPDATE customer_orders SET is_partial_refund=1,payment_total_amount = $payment_total WHERE order_id=$orderId;";
 
             if ($conn->query($sql) === TRUE && $conn->query($orde_update) === TRUE && $conn->query($sql1) === TRUE) {
                 $arrayName = array('success' =>true,'message'=>"successfully cancel food order by customer",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
