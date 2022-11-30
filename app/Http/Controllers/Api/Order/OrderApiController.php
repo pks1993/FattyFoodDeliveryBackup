@@ -1589,7 +1589,8 @@ class OrderApiController extends Controller
                     {
                         session_start();
                     }
-    
+
+                    $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
                     $customer_order=CustomerOrder::where('order_id',$order_id)->first();
     
                     $_SESSION['merchOrderId']=$customer_order->merch_order_id;
@@ -1601,6 +1602,7 @@ class OrderApiController extends Controller
                         $_SESSION['refundAmount']=$price;
                     }
                     $_SESSION['notification_menu_id']=8;
+                    $_SESSION['check_noti']=$check_noti;
                     $_SESSION['noti_type']="restaurant";
                     NotiOrder::where('order_id',$order_id)->delete();
 
@@ -1630,16 +1632,21 @@ class OrderApiController extends Controller
                         }
                         CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
                     }
-
-                    NotificationTemplate::create([
-                        "notification_type"=>7,
-                        "order_id"=>$order_id,
-                        "customer_id"=>$check_order->customer_id,
-                        "restaurant_id"=>$check_order->restaurant_id,
-                        "customer_order_id"=>$check_order->customer_order_id,
-                        "cancel_amount"=>$price,
-                        "noti_type"=>"restaurant",
-                    ]);
+                    $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                    if($check_noti){
+                        $check_noti->cancel_amount=$check_noti->cancel_amount+$price;
+                        $check_noti->update();
+                    }else{
+                        NotificationTemplate::create([
+                            "notification_type"=>7,
+                            "order_id"=>$order_id,
+                            "customer_id"=>$check_order->customer_id,
+                            "restaurant_id"=>$check_order->restaurant_id,
+                            "customer_order_id"=>$check_order->customer_order_id,
+                            "cancel_amount"=>$price,
+                            "noti_type"=>"restaurant",
+                        ]);
+                    }
                     //Customer
                     $cus_client = new Client();
                     $cus_token=$check_order->customer->fcm_token;
