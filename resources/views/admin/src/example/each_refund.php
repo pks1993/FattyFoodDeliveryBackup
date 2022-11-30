@@ -73,7 +73,7 @@ try {
             $payment_total=$payment_total_amount-$refundAmount;
             if($check_noti){
                 $amount=$check_noti->cancel_amount+$refundAmount;
-                "UPDATE notification_templates SET cancel_amount='$amount' WHERE order_id=$check_noti->order_id;";
+                $sql2="UPDATE notification_templates SET cancel_amount='$amount' WHERE order_id=$check_noti->order_id";
             }else{
                 $sql1="INSERT INTO notification_templates (notification_type,order_id,customer_id,restaurant_id,customer_order_id,cancel_amount,noti_type,created_at,updated_at) VALUES ($notification_menu_id,$order_id,$customer_id,$restaurant_id,$customer_order_id,$refund_amount,'$noti_type',now(),now())";
             }
@@ -82,7 +82,7 @@ try {
             $sql="INSERT INTO order_kbz_refunds (order_id,is_partial_refund,result,code,msg,merch_order_id,merch_code,trans_order_id,refund_status,refund_order_id,refund_amount,refund_currency,refund_time,nonce_str,sign_type,sign,created_at,updated_at) VALUES ($order_id,$is_partial_refund,$result1,$code,$msg,$merch_order_id,$merch_code,$trans_order_id,$refund_status,$refund_order_id,$refund_amount,$refund_currency,$refund_time,$nonce_str,$sign_type,$sign,now(),now())";
 	        $orde_update = "UPDATE customer_orders SET is_partial_refund=1,	payment_total_amount = '$payment_total' WHERE order_id=$orderId;";
 
-            if ($conn->query($sql) === TRUE && $conn->query($orde_update) === TRUE && $conn->query($sql1) === TRUE) {
+            if ($conn->query($sql) === TRUE && $conn->query($orde_update) === TRUE && $conn->query($sql1) === TRUE && $conn->query($sql2) === TRUE) {
                 $arrayName = array('success' =>true,'message'=>"successfully cancel food order by customer",'merchOrderId_log'=>$merchOrderId,'data'=>['response'=>$response,'order'=>$customer_orders]);
                 $result=json_encode($arrayName);
                 echo $result;
