@@ -1161,6 +1161,8 @@ class OrderApiController extends Controller
                         $_SESSION['notification_menu_id']=4;
                         $_SESSION['noti_type']="customer";
                         $_SESSION['payment_total_amount']=$customer_orders->payment_total_amount;
+                        $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                        $_SESSION['check_noti']=$check_noti;
     
                         if($customer_orders->is_partial_refund==1){
                                 $_SESSION['refundAmount']=$customer_orders->bill_total_price;
@@ -1445,6 +1447,8 @@ class OrderApiController extends Controller
                     $_SESSION['notification_menu_id']=8;
                     $_SESSION['noti_type']="restaurant";
                     $_SESSION['payment_total_amount']=$customer_orders->payment_total_amount;
+                    $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                    $_SESSION['check_noti']=$check_noti;
 
                     NotiOrder::where('order_id',$order_id)->delete();
     
