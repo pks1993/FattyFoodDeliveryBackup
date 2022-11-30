@@ -9,9 +9,21 @@ use App\Models\Customer\Customer;
 use Illuminate\Support\Carbon;
 use App\Models\Order\CustomerOrder;
 use App\Models\Customer\OrderCustomer;
+use App\Models\Order\OrderKbzRefund;
 
 class AboutApiController extends Controller
 {
+    public function refund_date(){
+        $re=OrderKbzRefund::all();
+        foreach($re as $value){
+            $date=date("Y-m-d h:i:s",substr($value->refund_time, 0, 10));
+            OrderKbzRefund::where('order_kbz_refund_id',$value->order_kbz_refund_id)->update([
+                "created_at"=>$date,
+                "updated_at"=>$date,
+            ]);
+        }
+    }
+
     public function order_time()
     {
         $data=CustomerOrder::all();

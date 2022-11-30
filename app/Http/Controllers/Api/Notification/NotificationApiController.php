@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\Api\Notification;
 
 use App\Models\Notification\NotificationTemplate;
+use App\Models\Notification\NotiMenu;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order\CustomerOrder;
+use App\Models\Order\OrderFoods;
 use App\Models\Customer\Customer;
 use App\Models\Restaurant\Restaurant;
 use App\Models\Setting\VersionUpdate;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+// use Illuminate\Support\Carbon;
+
 
 class NotificationApiController extends Controller
 {
@@ -19,20 +24,341 @@ class NotificationApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
+    {
+        $customer_id=$request['customer_id'];
+        $notification_type=$request['noti_type'];
+        $start_date=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $end_date=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        $data=[];
+
+        // $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        $status_title=null;
+        $language=$request->header('language');
+        if($language == "my"){
+            $order_cancel_customer="အသုံးပြုသူမှ မှာယူမှုကို ပယ်ဖျက်သည်";
+            $order_cancel_restaurant="ဆိုင်မှ မှာယူမှုကို ပယ်ဖျက်ထားပါသည်";
+            $item_reject_restaturant="ဆိုင်မှ ပစ္စည်းအမျိုးအစားတခုခုကို ပယ်ဖျက်ထားပါသည်";
+            $kpay_refund_customer="အသုံးပြုသူမှ ပယ်ဖျက်ထားသောမှာယူမှုအတွက် KPayပြန်အမ်းထားပါသည်";
+            $kpay_refund_restaurant="ဆိုင်မှ ပယ်ဖျက်ထားသော မှာယူမှုအတွက် KPay ပြန်အမ်းထားပါသည်";
+            $kpay_refund_item_reject="ဆိုင်မှ ပယ်ဖျက်ထားသော ပစ္စည်းများအတွက် KPay  ပြန်အမ်းထားပါသည်";
+        }elseif($language == "en"){
+            $order_cancel_customer="Order Cancel by Customer";
+            $order_cancel_restaurant="Order Cancel by Restaurant";
+            $item_reject_restaturant="Item Rejected by Restaurant";
+            $kpay_refund_customer="Kpay Refund for Order Cancel by Customer";
+            $kpay_refund_restaurant="Kpay Refund for Order Cancel by Restaurant";
+            $kpay_refund_item_reject="Kpay Refund for Item Rejected";
+        }else{
+            $order_cancel_customer="用户取消订单";
+            $order_cancel_restaurant="商家取消订单";
+            $item_reject_restaturant="商家取消订单中的商品";
+            $kpay_refund_customer="Kpay 退款了用户取消的订单";
+            $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
+            $kpay_refund_item_reject="Kpay 退款了订单中的商品";
+        }
+        if($notification_type == 1){
+            $noti_menu_id=NotiMenu::where('noti_type','restaurant')->where('is_close_status',1)->pluck('noti_menu_id');
+            if($noti_menu_id){
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereNotIn('notification_type',$noti_menu_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $check=NotiMenu::where('noti_type','restaurant')->where('noti_menu_id',6)->where('is_close_status',1)->first();
+                if($check){
+                    $notifications2=[];
+                }else{
+                    $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
+                }
+            }else{
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',2)->get();
+            }
+            $notification3=$notifications1->merge($notifications2);
+            $notifications =  array_reverse(array_sort($notification3, function ($item) {
+                return $item['created_at'];
+            }));
+
+        }elseif($notification_type == 2){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }elseif($notification_type == 3){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[3,7])->get();
+        }elseif($notification_type == 4){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[4,8])->get();
+        }else{
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('customer_id',$customer_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }
+
+        foreach($notifications as $value){
+            $noti_menu_id=$value->notification_type;
+            $noti_menu=$value->noti_menu->noti_menu_name_en;
+            if($value->notification_type== 3 || $value->notification_type== 7){
+                if($value->customer_order){
+                    if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
+                        $status_title=$order_cancel_restaurant;
+                    }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
+                        $status_title=$order_cancel_customer;
+                    }elseif($value->customer_order->payment_method_id == 1){
+                        $cancel_order_food=OrderFoods::where('order_id',$value->order_id)->where('is_cancel',1)->count();
+                        if($cancel_order_food > 0){
+                            $status_title=$item_reject_restaturant;
+                        }
+                    }else{
+                        $status_title=null;
+                    }
+                }else{
+                    $status_title=null;
+                }
+            }
+            elseif($value->notification_type == 4 || $value->notification_type== 8){
+                if($value->customer_order){
+                    if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
+                        $status_title=$kpay_refund_restaurant;
+                    }elseif($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==9){
+                        $status_title=$kpay_refund_customer;
+                    }elseif($value->customer_order->payment_method_id == 2){
+                        $cancel_order_food=OrderFoods::where('order_id',$value->order_id)->where('is_cancel',1)->count();
+                        if($cancel_order_food > 0){
+                            $status_title=$kpay_refund_item_reject;
+                        }
+                    }else{
+                        $status_title=null;
+                    }
+                }else{
+                    $status_title=null;
+                }
+            }elseif($value->notification_type == 2){
+                $status_title=$value->notification_title;
+            }else{
+                $status_title=null;
+            }
+
+            if($value->customer_order){
+                if($language == "my"){
+                    $restaurant_name=$value->customer_order->restaurant->restaurant_name_mm;
+                }elseif($language == "en"){
+                    $restaurant_name=$value->customer_order->restaurant->restaurant_name_en;
+                }else{
+                    $restaurant_name=$value->customer_order->restaurant->restaurant_name_ch;
+                }
+                $order_status_id=$value->customer_order->order_status_id;
+            }else{
+                $restaurant_name=null;
+                $order_status_id=null;
+            }
+            $cancel_amount=$value->cancel_amount;
+            $customer_order_id=$value->customer_order_id;
+            $date=date('d-m-Y',strtotime($value->created_at));
+            $time=date('h:i A',strtotime($value->created_at));
+
+            $data[]=(['order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image,'order_status_id'=>$order_status_id]);
+        }
+        $total=count($data);
+        $per_page =10;
+        $current_page = $request->input("page") ?? 1;
+        $starting_point = ($current_page * $per_page) - $per_page;
+        $array = array_slice($data, $starting_point, $per_page, true);
+
+        $all_data = new Paginator($array, $total, $per_page, $current_page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+        $datas=[];
+        foreach($all_data as $value){
+            $datas[]=$value;
+        }
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$datas,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+    }
+
+    public function customer_noti_menu(Request $request){
+        $language=$request->header('language');
+        $data=[];
+        $menu_data=NotiMenu::where('noti_type','customer')->where('is_close_status',0)->get();
+        foreach($menu_data as $value){
+            if($language == 'my'){
+                $menu=$value->noti_menu_name_mm;
+            }elseif($language == 'en'){
+                $menu=$value->noti_menu_name_en;
+            }else{
+                $menu=$value->noti_menu_name_ch;
+            }
+            $data[]=array('menu'=>$menu,'noti_menu_key'=>$value->noti_menu_id);
+        }
+        return response()->json(['success'=>true,'message'=>'this is notification menus data','data'=>$data]);
+    }
+    public function restaurant_noti_menu(Request $request){
+        $language=$request->header('language');
+        $data=[];
+        $menu_data=NotiMenu::where('noti_type','restaurant')->where('is_close_status',0)->get();
+        foreach($menu_data as $value){
+            if($language == 'my'){
+                $menu=$value->noti_menu_name_mm;
+            }elseif($language == 'en'){
+                $menu=$value->noti_menu_name_en;
+            }else{
+                $menu=$value->noti_menu_name_ch;
+            }
+            $data[]=array('menu'=>$menu,'noti_menu_key'=>$value->noti_menu_id);
+        }
+        return response()->json(['success'=>true,'message'=>'this is notification menus data','data'=>$data]);
+    }
+    public function get_noti()
     {
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
     public function rider()
     {
-        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->where('noti_type','rider')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
     }
     public function restaurant()
     {
         $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
         return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$notifications]);
+    }
+    public function restaurant_noti(Request $request)
+    {
+        $notification_type=$request['noti_type'];
+        $restaurant_id=$request['restaurant_id'];
+        $start_date=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        $end_date=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        $data=[];
+        // $notifications=NotificationTemplate::orderBy('notification_template_id','DESC')->get();
+        $status_title=null;
+        $language=$request->header('language');
+        if($language == "my"){
+            $order_cancel_customer="အသုံးပြုသူမှ မှာယူမှုကို ပယ်ဖျက်သည်";
+            $order_cancel_restaurant="ဆိုင်မှ မှာယူမှုကို ပယ်ဖျက်ထားပါသည်";
+            $item_reject_restaturant="ဆိုင်မှ ပစ္စည်းအမျိုးအစားတခုခုကို ပယ်ဖျက်ထားပါသည်";
+            $kpay_refund_customer="အသုံးပြုသူမှ ပယ်ဖျက်ထားသောမှာယူမှုအတွက် KPayပြန်အမ်းထားပါသည်";
+            $kpay_refund_restaurant="ဆိုင်မှ ပယ်ဖျက်ထားသော မှာယူမှုအတွက် KPay ပြန်အမ်းထားပါသည်";
+            $kpay_refund_item_reject="ဆိုင်မှ ပယ်ဖျက်ထားသော ပစ္စည်းများအတွက် KPay  ပြန်အမ်းထားပါသည်";
+        }elseif($language == "en"){
+            $order_cancel_customer="Order Cancel by Customer";
+            $order_cancel_restaurant="Order Cancel by Restaurant";
+            $item_reject_restaturant="Item Rejected by Restaurant";
+            $kpay_refund_customer="Kpay Refund for Order Cancel by Customer";
+            $kpay_refund_restaurant="Kpay Refund for Order Cancel by Restaurant";
+            $kpay_refund_item_reject="Kpay Refund for Item Rejected";
+        }else{
+            $order_cancel_customer="用户取消订单";
+            $order_cancel_restaurant="商家取消订单";
+            $item_reject_restaturant="商家取消订单中的商品";
+            $kpay_refund_customer="Kpay 退款了用户取消的订单";
+            $kpay_refund_restaurant="Kpay 退款了商家取消的订单";
+            $kpay_refund_item_reject="Kpay 退款了订单中的商品";
+        }
+        if($notification_type == 5){
+            $noti_menu_id=NotiMenu::where('noti_type','restaurant')->where('is_close_status',1)->pluck('noti_menu_id');
+            if($noti_menu_id){
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereNotIn('notification_type',$noti_menu_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $check=NotiMenu::where('noti_type','restaurant')->where('noti_menu_id',6)->where('is_close_status',1)->first();
+                if($check){
+                    $notifications2=[];
+                }else{
+                    $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+                }
+            }else{
+                $notifications1=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->get();
+                $notifications2=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',6)->get();
+            }
+            $notification3=$notifications1->merge($notifications2);
+            $notifications =  array_reverse(array_sort($notification3, function ($item) {
+                return $item['created_at'];
+            }));
+        }
+        elseif($notification_type == 6){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }
+        elseif($notification_type == 7){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[3,7])->get();
+        }elseif($notification_type == 8){
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->whereIn('notification_type',[4,8])->get();
+        }
+        else{
+            $notifications=NotificationTemplate::orderBy('created_at','desc')->where('restaurant_id',$restaurant_id)->whereBetween('created_at',[$start_date,$end_date])->where('notification_type',$notification_type)->get();
+        }
+        foreach($notifications as $value){
+            // $noti_type=$value->notification_type;
+            $noti_menu_id=$value->notification_type;
+            $noti_menu=$value->noti_menu->noti_menu_name_en;
+            //order_cancel
+            if($value->notification_type==7 || $value->notification_type == 3){
+                if($value->customer_order){
+                    if($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==2){
+                        $status_title=$order_cancel_restaurant;
+                    }elseif($value->customer_order->payment_method_id == 1 && $value->customer_order->order_status_id ==9){
+                        $status_title=$order_cancel_customer;
+                    }elseif($value->customer_order->payment_method_id == 1){
+                        $cancel_order_food=OrderFoods::where('order_id',$value->order_id)->where('is_cancel',1)->count();
+                        if($cancel_order_food > 0){
+                            $status_title=$item_reject_restaturant;
+                        }
+                    }else{
+                        $status_title=null;
+                    }
+                }else{
+                    $status_title=null;
+                }
+            }//kpay_refund
+            elseif($value->notification_type == 8 || $value->notification_type == 4){
+                if($value->customer_order){
+                    if($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==2){
+                        $status_title=$kpay_refund_restaurant;
+                    }elseif($value->customer_order->payment_method_id == 2 && $value->customer_order->order_status_id ==9){
+                        $status_title=$kpay_refund_customer;
+                    }elseif($value->customer_order->payment_method_id == 2){
+                        $cancel_order_food=OrderFoods::where('order_id',$value->order_id)->where('is_cancel',1)->count();
+                        if($cancel_order_food > 0){
+                            $status_title=$kpay_refund_item_reject;
+                        }
+                    }else{
+                        $status_title=null;
+                    }
+                }else{
+                    $status_title=null;
+                }//system_noti
+            }elseif($value->notification_type == 6){
+                $status_title=$value->notification_title;
+            }else{
+                $status_title=null;
+            }
+
+            if($value->customer_order){
+                if($language == "my"){
+                    $restaurant_name=$value->customer_order->restaurant->restaurant_name_mm;
+                }elseif($language == "en"){
+                    $restaurant_name=$value->customer_order->restaurant->restaurant_name_en;
+                }else{
+                    $restaurant_name=$value->customer_order->restaurant->restaurant_name_ch;
+                }
+                $order_status_id=$value->customer_order->order_status_id;
+            }else{
+                $restaurant_name=null;
+                $order_status_id=null;
+            }
+            $cancel_amount=$value->cancel_amount;
+            $customer_order_id=$value->customer_order_id;
+            $date=date('d-m-Y',strtotime($value->created_at));
+            $time=date('h:i A',strtotime($value->created_at));
+
+            $data[]=array('order_id'=>$value->order_id,'status_title'=>$status_title,'restaurant_name'=>$restaurant_name,'cancel_amount'=>$cancel_amount,'customer_order_id'=>$customer_order_id,'date'=>$date,'time'=>$time,'noti_menu_id'=>$noti_menu_id,'noti_menu'=>$noti_menu,'notification_title'=>$value->notification_title,'notification_body'=>$value->notification_body,'notification_image'=>$value->notification_image,'order_status_id'=>$order_status_id);
+        }
+
+        $total=count($data);
+        $per_page =10;
+        $current_page = $request->input("page") ?? 1;
+        $starting_point = ($current_page * $per_page) - $per_page;
+        $array = array_slice($data, $starting_point, $per_page, true);
+
+        $all_data = new Paginator($array, $total, $per_page, $current_page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+        $datas=[];
+        foreach($all_data as $value){
+            $datas[]=$value;
+        }
+        return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$datas,'current_page'=>$all_data->toArray()['current_page'],'first_page_url'=>$all_data->toArray()['first_page_url'],'from'=>$all_data->toArray()['from'],'last_page'=>$all_data->toArray()['last_page'],'last_page_url'=>$all_data->toArray()['last_page_url'],'next_page_url'=>$all_data->toArray()['next_page_url'],'path'=>$all_data->toArray()['path'],'per_page'=>$all_data->toArray()['per_page'],'prev_page_url'=>$all_data->toArray()['prev_page_url'],'to'=>$all_data->toArray()['to'],'total'=>$all_data->toArray()['total']]);
+        // return response()->json(['success'=>true,'message'=>'this is notifications','data'=>$data]);
     }
 
     public function android_version_check(Request $request)

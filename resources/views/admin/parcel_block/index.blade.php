@@ -41,8 +41,16 @@
       </div>
         <div class="modal-body">
             <div class="form-group">
-                <label for="block_name" class="col-form-label">Block Name:</label>
-                <input type="text" class="form-control" name="block_name" placeholder="Enter Block Name">
+                <label for="block_name_mm" class="col-form-label">Block Name Myanmar:</label>
+                <input type="text" class="form-control" name="block_name_mm" placeholder="Enter Block Name Myanmar">
+            </div>
+            <div class="form-group">
+                <label for="block_name_en" class="col-form-label">Block Name English:</label>
+                <input type="text" class="form-control" name="block_name_en" placeholder="Enter Block Name English">
+            </div>
+            <div class="form-group">
+                <label for="block_name_ch" class="col-form-label">Block Name China:</label>
+                <input type="text" class="form-control" name="block_name_ch" placeholder="Enter Block Name China">
             </div>
             <div class="form-group">
                 <label for="latitude" class="col-form-label">Latitude:</label>
@@ -83,7 +91,9 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">No.</th>
-                                        <th class="text-left">BlockName</th>
+                                        <th class="text-left">NameMyanmar</th>
+                                        <th class="text-left">NameEnglish</th>
+                                        <th class="text-left">NameChina</th>
                                         <th class="text-left">StateName</th>
                                         <th class="text-left">Latitude</th>
                                         <th class="text-left">Longitude</th>
@@ -95,7 +105,9 @@
                                     @foreach($parcel_block as $parcel)
                                     <tr class="text-center">
                                         <td>{{ $loop->iteration }}</td>
-                                        <td class="text-left">{{ $parcel->block_name }}</td>
+                                        <td class="text-left">{{ $parcel->block_name_mm }}</td>
+                                        <td class="text-left">{{ $parcel->block_name_en }}</td>
+                                        <td class="text-left">{{ $parcel->block_name_ch }}</td>
                                         <td class="text-left">
                                             @if($parcel->state_id)
                                                 {{ $parcel->states->state_name_mm }} ( {{ $parcel->states->state_name_en }} )
@@ -133,8 +145,16 @@
                                                   <div class="modal-body">
                                                     <form>
                                                       <div class="form-group">
-                                                        <label for="block_name" class="col-form-label">Block Name:</label>
-                                                        <input type="text" class="form-control" value="{{ $parcel->block_name }}" name="block_name">
+                                                        <label for="block_name_mm" class="col-form-label">Block Name Myanmar:</label>
+                                                        <input type="text" class="form-control" value="{{ $parcel->block_name_mm }}" name="block_name_mm">
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="block_name_en" class="col-form-label">Block Name English:</label>
+                                                        <input type="text" class="form-control" value="{{ $parcel->block_name_en }}" name="block_name_en">
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="block_name_ch" class="col-form-label">Block Name China:</label>
+                                                        <input type="text" class="form-control" value="{{ $parcel->block_name_ch }}" name="block_name_ch">
                                                       </div>
                                                       <div class="form-group">
                                                         <label for="latitude" class="col-form-label">Latitude:</label>

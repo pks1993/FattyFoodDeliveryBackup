@@ -18,6 +18,12 @@ class CreateNotificationTemplatesTable extends Migration
             $table->string('notification_title', 255)->nullable()->default(null);
             $table->longText('notification_body')->nullable()->default(null);
             $table->string('notification_image')->nullable()->default(null);
+            $table->string('notification_type')->nullable()->default(null);
+            $table->unsignedBigInteger('order_id')->nullable()->default(null);
+            $table->unsignedBigInteger('restaurant_id')->nullable()->default(null);
+            $table->string('customer_order_id')->nullable()->default(null);
+            $table->unsignedBigInteger('customer_id')->nullable()->default(null);
+            $table->integer('cancel_amount')->nullable()->default(0);
             $table->timestamps();
         });
     }

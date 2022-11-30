@@ -53,7 +53,24 @@ class CustomerController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(25);
+        return view('admin.customer.all_customer.index',compact('date_start','date_end','customers'));
+    }
+   
+    public function customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start="2022-01-01 00:00:00";
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $search_name=$request['search_name'];
+        $customers=Customer::where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->paginate(25);
         return view('admin.customer.all_customer.index',compact('date_start','date_end','customers'));
     }
 
@@ -120,7 +137,24 @@ class CustomerController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(25);
+        return view('admin.customer.daily_customer.index',compact('date_start','date_end','customers'));
+    }
+
+    public function daily_customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start="2022-01-01 00:00:00";
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $search_name=$request['search_name'];
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->paginate(25);
         return view('admin.customer.daily_customer.index',compact('date_start','date_end','customers'));
     }
 
@@ -176,10 +210,22 @@ class CustomerController extends Controller
             $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
             $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
         }
-        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(50);
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->paginate(25);
         return view('admin.customer.monthly_customer.index',compact('date_start','customers','date_end'));
     }
-
+    public function monthly_customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=Carbon::parse($request['start_date'])->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::parse($request['start_date'])->endOfMonth()->format('Y-m-d 00:00:00');
+        }else{
+            $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
+            $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
+        }
+        $search_name=$request['search_name'];
+        $customers=Customer::whereBetween('created_at',[$date_start,$date_end])->where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->paginate(25);
+        return view('admin.customer.monthly_customer.index',compact('date_start','date_end','customers'));
+    }
     public function monthlyajax(){
         $model = Customer::orderBy('created_at','DESC')->get();
         $data=[];
@@ -220,7 +266,19 @@ class CustomerController extends Controller
         }else{
             $date_start=Carbon::now()->startOfYear()->format('Y');
         }
-        $customers=Customer::whereYear('created_at',$date_start)->orderBy('created_at','desc')->paginate(50);
+        $customers=Customer::whereYear('created_at',$date_start)->orderBy('created_at','desc')->paginate(25);
+        return view('admin.customer.yearly_customer.index',compact('date_start','customers'));
+    }
+
+    public function yearly_customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=$request['start_date'];
+        }else{
+            $date_start=Carbon::now()->startOfYear()->format('Y');
+        }
+        $search_name=$request['search_name'];
+        $customers=Customer::whereYear('created_at',$date_start)->where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->paginate(25);
         return view('admin.customer.yearly_customer.index',compact('date_start','customers'));
     }
 
@@ -270,7 +328,27 @@ class CustomerController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(25);
+        return view('admin.customer.daily_ordered_customer.index',compact('date_start','date_end','customers'));
+    }
+
+    public function daily_ordered_customer_search(Request $request)
+    {
+        if($request['start_date']){
+            $date_start=date('Y-m-d 00:00:00',strtotime($request['start_date']));
+        }else{
+            $date_start="2022-01-01 00:00:00";
+        }
+        if($request['end_date']){
+            $date_end=date('Y-m-d 23:59:59',strtotime($request['end_date']));
+        }else{
+            $date_end=date('Y-m-d 23:59:59');
+        }
+        $search_name=$request['search_name'];
+        $customer_id=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->pluck('customer_id');
+        $customer=Customer::whereIn('customer_id',$customer_id)->where("customer_name","LIKE","%$search_name%")->orwhere("customer_phone","LIKE","%$search_name%")->pluck('customer_id');
+        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->whereIn('customer_id',$customer)->paginate(25);
+
         return view('admin.customer.daily_ordered_customer.index',compact('date_start','date_end','customers'));
     }
 
@@ -319,7 +397,7 @@ class CustomerController extends Controller
             $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
             $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
         }
-        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        $customers=OrderCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(25);
         return view('admin.customer.monthly_ordered_customer.index',compact('customers','date_start','date_end'));
     }
 
@@ -378,7 +456,7 @@ class CustomerController extends Controller
         }else{
             $date_start=Carbon::now()->startOfYear()->format('Y');
         }
-        $customers=OrderCustomer::with(['customer'])->whereYear('created_at',$date_start)->orderBy('created_at','desc')->has('customer')->paginate(50);
+        $customers=OrderCustomer::with(['customer'])->whereYear('created_at',$date_start)->orderBy('created_at','desc')->has('customer')->paginate(25);
         return view('admin.customer.yearly_ordered_customer.index',compact('customers','date_start'));
     }
 
@@ -430,7 +508,7 @@ class CustomerController extends Controller
         }else{
             $date_end=date('Y-m-d 23:59:59');
         }
-        $customers=ActiveCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        $customers=ActiveCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(25);
         return view('admin.customer.daily_active_customer.index',compact('customers','date_start','date_end'));
     }
 
@@ -480,7 +558,7 @@ class CustomerController extends Controller
             $date_start=Carbon::now()->startOfMonth()->format('Y-m-d 00:00:00');
             $date_end=Carbon::now()->endOfMonth()->format('Y-m-d 23:59:59');
         }
-        $customers=ActiveCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(50);
+        $customers=ActiveCustomer::with(['customer'])->whereBetween('created_at',[$date_start,$date_end])->orderBy('created_at','desc')->has('customer')->paginate(25);
         return view('admin.customer.monthly_active_customer.index',compact('customers','date_start','date_end'));
     }
 
@@ -526,7 +604,7 @@ class CustomerController extends Controller
         }else{
             $date_start=Carbon::now()->startOfYear()->format('Y');
         }
-        $customers=ActiveCustomer::with(['customer'])->whereYear('created_at',$date_start)->orderBy('created_at','desc')->has('customer')->paginate(50);
+        $customers=ActiveCustomer::with(['customer'])->whereYear('created_at',$date_start)->orderBy('created_at','desc')->has('customer')->paginate(25);
         return view('admin.customer.yearly_active_customer.index',compact('customers','date_start'));
     }
 
