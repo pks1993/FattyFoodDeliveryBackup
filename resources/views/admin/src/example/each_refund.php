@@ -69,7 +69,7 @@ try {
             $customer_order_id=$customer_orders->customer_order_id;
 
             $amount=(int)$refund_amount;
-            $payment_total=$amount-$payment_total_amount;
+            $payment_total=$payment_total_amount-$amount;
 
             $sql1="INSERT INTO notification_templates (notification_type,order_id,customer_id,restaurant_id,customer_order_id,cancel_amount,noti_type,created_at,updated_at) VALUES ($notification_menu_id,$order_id,$customer_id,$restaurant_id,$customer_order_id,$refund_amount,'$noti_type',now(),now())";
 
