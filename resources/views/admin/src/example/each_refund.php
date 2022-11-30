@@ -73,7 +73,7 @@ try {
             $payment_total=$payment_total_amount-$refundAmount;
             if($check_noti){
                 $amount=$check_noti->cancel_amount+$refundAmount;
-                $sql2="UPDATE notification_templates SET cancel_amount='$amount' WHERE order_id=$check_noti->order_id";
+                $sql2="UPDATE notification_templates SET cancel_amount='$amount' WHERE order_id=$orderId";
             }else{
                 $sql1="INSERT INTO notification_templates (notification_type,order_id,customer_id,restaurant_id,customer_order_id,cancel_amount,noti_type,created_at,updated_at) VALUES ($notification_menu_id,$order_id,$customer_id,$restaurant_id,$customer_order_id,$refund_amount,'$noti_type',now(),now())";
             }
