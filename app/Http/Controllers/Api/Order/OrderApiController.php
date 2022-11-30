@@ -1585,6 +1585,8 @@ class OrderApiController extends Controller
 
         if($check_order){
             if($check_order->kpay_refund_count==2){
+                return response()->json(['success'=>false,'message'=>'kpay not refund']);
+            }else{
                 $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
                 if ($cancel_order) {
                     if ($language == "my") {
@@ -1801,8 +1803,6 @@ class OrderApiController extends Controller
                         return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_order]]);
                     }
                 }
-            }else{
-                return response()->json(['success'=>false,'message'=>'kpay not refund']);    
             }
 
         }else{
