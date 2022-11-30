@@ -1160,6 +1160,7 @@ class OrderApiController extends Controller
                         $_SESSION['customer_orders']=$customer_orders;
                         $_SESSION['notification_menu_id']=4;
                         $_SESSION['noti_type']="customer";
+                        $_SESSION['payment_total_amount']=$customer_orders->payment_total_amount;
     
                         if($customer_orders->is_partial_refund==1){
                                 $_SESSION['refundAmount']=$customer_orders->bill_total_price;
@@ -1443,6 +1444,7 @@ class OrderApiController extends Controller
                     $_SESSION['customer_orders']=$customer_orders;
                     $_SESSION['notification_menu_id']=8;
                     $_SESSION['noti_type']="restaurant";
+                    $_SESSION['payment_total_amount']=$customer_orders->payment_total_amount;
 
                     NotiOrder::where('order_id',$order_id)->delete();
     
@@ -1578,221 +1580,225 @@ class OrderApiController extends Controller
         $check_order=CustomerOrder::where('order_id',$order_id)->first();
 
         if($check_order){
-            $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
-            if ($cancel_order) {
-                if ($language == "my") {
-                    $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် ထပ်မံပယ်ဖျက်၍ မရနိူင်ပါ";
-                } elseif ($language == "en") {
-                    $message="Sorry! Cannot cancel ! Order is already cancelled by user!";
-                } else {
-                    $message="抱歉！无法取消！用户已取消订单";
-                }
-                return response()->json(['success'=>false,'message'=>$message]);
-            }else{
-                if($check_order->order_status_id==19 || $check_order->payment_method_id==2 ){
-                    if($cancel_data){
-                        foreach($cancel_data as $value){
-                            OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
-                            // $price +=$value['food_qty']*$value['food_price'];
-                            $price +=$value['food_price'];
-                        }
-                        CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
+            if($check_order->kpay_refund_count==2){
+                $cancel_order=CustomerOrder::where('order_id',$order_id)->where('order_status_id',9)->first();
+                if ($cancel_order) {
+                    if ($language == "my") {
+                        $message="ဝမ်းနည်းပါတယ် အော်ဒါကို ဝယ်သူဘက်မှ ပယ်ဖျက်ပြီး ဖြစ်ပါသဖြင့် ထပ်မံပယ်ဖျက်၍ မရနိူင်ပါ";
+                    } elseif ($language == "en") {
+                        $message="Sorry! Cannot cancel ! Order is already cancelled by user!";
+                    } else {
+                        $message="抱歉！无法取消！用户已取消订单";
                     }
-
-                    // NotificationTemplate::create([
-                    //     "notification_type"=>8,
-                    //     "order_id"=>$order_id,
-                    //     "customer_id"=>$check_order->customer_id,
-                    // ]);
-    
-                    //Customer
-                    $cus_client = new Client();
-                    $cus_token=$check_order->customer->fcm_token;
-                    if($cus_token){
-                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        try{
-                            $cus_client->post($cus_url,[
-                                'json' => [
-                                    "to"=>$cus_token,
-                                    "data"=> [
-                                        "type"=> "restaurant_each_order_cancel",
-                                        "order_id"=>$order_id,
-                                        "order_status_id"=>0,
-                                        "order_type"=>$check_order->order_type,
-                                        "title_mm"=> "အားနာပါတယ်",
-                                        "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
-                                        "title_en"=> "Sorry !",
-                                        "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
-                                        "title_ch"=> "非常抱歉！",
-                                        "body_ch"=> "非常抱歉！商家取消了订单中的商品"
-                                    ],
-                                    "mutable_content" => true ,
-                                    "content_available" => true,
-                                    "notification"=> [
-                                        "title"=>"this is a title",
-                                        "body"=>"this is a body",
-                                    ],
-                                ],
-                            ]);
-                        }catch(ClientException $e){
-                        }
-                    }
-                    $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
-
-                    $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
-                    $item_total_price=($customer_orders->item_total_price)-($price);
-                    $delivery_fee=$customer_orders->delivery_fee;
-                    //$bill_total_price=$item_total_price+$delivery_fee;
-                    if($check_food==0){
-                        $bill_total_price=($customer_orders->bill_total_price)-($price+$delivery_fee);
-                    }else{
-                        $bill_total_price=($customer_orders->bill_total_price)-($price);
-                    }
-                    $customer_orders->delivery_fee=$delivery_fee;
-                    $customer_orders->item_total_price=$item_total_price;
-                    $customer_orders->bill_total_price=$bill_total_price;
-                    $customer_orders->update();
-                    
-                    if(!isset($_SESSION))
-                    {
-                        session_start();
-                    }
-
-                    $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
-                    $customer_order=CustomerOrder::where('order_id',$order_id)->first();
-    
-                    $_SESSION['merchOrderId']=$customer_order->merch_order_id;
-                    $_SESSION['payment_total_amount']=$customer_order->payment_total_amount;
-                    //$_SESSION['customer_orders']=$customer_order;
-                    if($check_food==0){
-                        $_SESSION['refundAmount']=$check_order->bill_total_price;
-                    }else{
-                        $_SESSION['refundAmount']=$price;
-                    }
-                    $_SESSION['notification_menu_id']=8;
-                    $_SESSION['check_noti']=$check_noti;
-                    $_SESSION['noti_type']="restaurant";
-                    NotiOrder::where('order_id',$order_id)->delete();
-
-                    if($select_all==0){
-                        $_SESSION['customer_orders']=$customer_order;
-                        if($check_food==0){
-                            CustomerOrder::where('order_id',$order_id)->update([
-                                'order_status_id'=>2,
-                            ]);
-                        }
-                        return view('admin.src.example.each_refund');
-                    }else{
-                        CustomerOrder::where('order_id',$order_id)->update([
-                            'order_status_id'=>2,
-                        ]);
-                        $customer_order=CustomerOrder::where('order_id',$order_id)->first();
-                        $_SESSION['customer_orders']=$customer_order;
-                        return view('admin.src.example.refund');
-                    }
-    
+                    return response()->json(['success'=>false,'message'=>$message]);
                 }else{
-                    if($cancel_data){
-                        foreach($cancel_data as $value){
-                            OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
-                            // $price +=$value['food_qty']*$value['food_price'];
-                            $price +=$value['food_price'];
+                    if($check_order->order_status_id==19 || $check_order->payment_method_id==2 ){
+                        if($cancel_data){
+                            foreach($cancel_data as $value){
+                                OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
+                                // $price +=$value['food_qty']*$value['food_price'];
+                                $price +=$value['food_price'];
+                            }
+                            CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
                         }
-                        CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
-                    }
-                    $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
-                    if($check_noti){
-                        $check_noti->cancel_amount=$check_noti->cancel_amount+$price;
-                        $check_noti->update();
-                    }else{
-                        NotificationTemplate::create([
-                            "notification_type"=>7,
-                            "order_id"=>$order_id,
-                            "customer_id"=>$check_order->customer_id,
-                            "restaurant_id"=>$check_order->restaurant_id,
-                            "customer_order_id"=>$check_order->customer_order_id,
-                            "cancel_amount"=>$price,
-                            "noti_type"=>"restaurant",
-                        ]);
-                    }
-                    //Customer
-                    $cus_client = new Client();
-                    $cus_token=$check_order->customer->fcm_token;
-                    if($cus_token){
-                        $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
-                        try{
-                            $cus_client->post($cus_url,[
-                                'json' => [
-                                    "to"=>$cus_token,
-                                    "data"=> [
-                                        "type"=> "restaurant_each_order_cancel",
-                                        "order_id"=>$order_id,
-                                        "order_status_id"=>0,
-                                        "order_type"=>$check_order->order_type,
-                                        "title_mm"=> "အားနာပါတယ်",
-                                        "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
-                                        "title_en"=> "Sorry !",
-                                        "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
-                                        "title_ch"=> "非常抱歉！",
-                                        "body_ch"=> "非常抱歉！商家取消了订单中的商品"
-                                    ],
-                                    "mutable_content" => true ,
-                                    "content_available" => true,
-                                    "notification"=> [
-                                        "title"=>"this is a title",
-                                        "body"=>"this is a body",
-                                    ],
-                                ],
-                            ]);
     
-                        }catch(ClientException $e){
+                        // NotificationTemplate::create([
+                        //     "notification_type"=>8,
+                        //     "order_id"=>$order_id,
+                        //     "customer_id"=>$check_order->customer_id,
+                        // ]);
+        
+                        //Customer
+                        $cus_client = new Client();
+                        $cus_token=$check_order->customer->fcm_token;
+                        if($cus_token){
+                            $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                            try{
+                                $cus_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$cus_token,
+                                        "data"=> [
+                                            "type"=> "restaurant_each_order_cancel",
+                                            "order_id"=>$order_id,
+                                            "order_status_id"=>0,
+                                            "order_type"=>$check_order->order_type,
+                                            "title_mm"=> "အားနာပါတယ်",
+                                            "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
+                                            "title_en"=> "Sorry !",
+                                            "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
+                                            "title_ch"=> "非常抱歉！",
+                                            "body_ch"=> "非常抱歉！商家取消了订单中的商品"
+                                        ],
+                                        "mutable_content" => true ,
+                                        "content_available" => true,
+                                        "notification"=> [
+                                            "title"=>"this is a title",
+                                            "body"=>"this is a body",
+                                        ],
+                                    ],
+                                ]);
+                            }catch(ClientException $e){
+                            }
                         }
-                    }
+                        $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
     
-                    $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
-    
-                    if($select_all==1){
-                        CustomerOrder::where('order_id',$order_id)->update([
-                            'order_status_id'=>2,
-                        ]);
-                    }else{
-                    if($check_food==0){
-                        CustomerOrder::where('order_id',$order_id)->update([
-                                        'order_status_id'=>2,
-                                    ]);
-                    }
-                    $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
-                    // 	if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
-                          //  	$item_total_price=($customer_orders->item_total_price)-($price);
-                        //    	$bill_total_price=($customer_orders->bill_total_price)-($price);
-                      //      	$delivery_fee=$customer_orders->delivery_fee;
-                    //	}else{
-                            //	$item_price=($customer_orders->item_total_price)-($price);
-                            //	if($item_price < $customer_orders->restaurant->define_amount){
-                                    //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
-                                  //  	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
-                                //    	$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
-                            //	}else{
-                              //      	$delivery_fee=$customer_orders->delivery_fee;
-                                //    	$item_total_price=$item_price;
-                              //      	$bill_total_price=($customer_orders->bill_total_price)-($price);
-                            //	}
-                        //}
-    
+                        $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
                         $item_total_price=($customer_orders->item_total_price)-($price);
-                        $bill_total_price=($customer_orders->bill_total_price)-($price);
                         $delivery_fee=$customer_orders->delivery_fee;
-    
+                        //$bill_total_price=$item_total_price+$delivery_fee;
+                        if($check_food==0){
+                            $bill_total_price=($customer_orders->bill_total_price)-($price+$delivery_fee);
+                        }else{
+                            $bill_total_price=($customer_orders->bill_total_price)-($price);
+                        }
                         $customer_orders->delivery_fee=$delivery_fee;
                         $customer_orders->item_total_price=$item_total_price;
                         $customer_orders->bill_total_price=$bill_total_price;
                         $customer_orders->update();
-                    }
+                        
+                        if(!isset($_SESSION))
+                        {
+                            session_start();
+                        }
     
-                    $customer_order=CustomerOrder::where('order_id',$order_id)->first();
-                    NotiOrder::where('order_id',$order_id)->delete();
-                    return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_order]]);
+                        $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                        $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+        
+                        $_SESSION['merchOrderId']=$customer_order->merch_order_id;
+                        $_SESSION['payment_total_amount']=$customer_order->payment_total_amount;
+                        //$_SESSION['customer_orders']=$customer_order;
+                        if($check_food==0){
+                            $_SESSION['refundAmount']=$check_order->bill_total_price;
+                        }else{
+                            $_SESSION['refundAmount']=$price;
+                        }
+                        $_SESSION['notification_menu_id']=8;
+                        $_SESSION['check_noti']=$check_noti;
+                        $_SESSION['noti_type']="restaurant";
+                        NotiOrder::where('order_id',$order_id)->delete();
+    
+                        if($select_all==0){
+                            $_SESSION['customer_orders']=$customer_order;
+                            if($check_food==0){
+                                CustomerOrder::where('order_id',$order_id)->update([
+                                    'order_status_id'=>2,
+                                ]);
+                            }
+                            return view('admin.src.example.each_refund');
+                        }else{
+                            CustomerOrder::where('order_id',$order_id)->update([
+                                'order_status_id'=>2,
+                            ]);
+                            $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+                            $_SESSION['customer_orders']=$customer_order;
+                            return view('admin.src.example.refund');
+                        }
+        
+                    }else{
+                        if($cancel_data){
+                            foreach($cancel_data as $value){
+                                OrderFoods::where('order_food_id',$value['order_food_id'])->update(['is_cancel'=>1]);
+                                // $price +=$value['food_qty']*$value['food_price'];
+                                $price +=$value['food_price'];
+                            }
+                            CustomerOrder::where('order_id',$order_id)->update(["each_order_restaurant_remark"=>$remark]);
+                        }
+                        $check_noti=NotificationTemplate::where('order_id',$order_id)->first();
+                        if($check_noti){
+                            $check_noti->cancel_amount=$check_noti->cancel_amount+$price;
+                            $check_noti->update();
+                        }else{
+                            NotificationTemplate::create([
+                                "notification_type"=>7,
+                                "order_id"=>$order_id,
+                                "customer_id"=>$check_order->customer_id,
+                                "restaurant_id"=>$check_order->restaurant_id,
+                                "customer_order_id"=>$check_order->customer_order_id,
+                                "cancel_amount"=>$price,
+                                "noti_type"=>"restaurant",
+                            ]);
+                        }
+                        //Customer
+                        $cus_client = new Client();
+                        $cus_token=$check_order->customer->fcm_token;
+                        if($cus_token){
+                            $cus_url = "https://api.pushy.me/push?api_key=cf7a01eccd1469d307d89eccdd7cee2f75ea0f588544f227c849a21075232d41";
+                            try{
+                                $cus_client->post($cus_url,[
+                                    'json' => [
+                                        "to"=>$cus_token,
+                                        "data"=> [
+                                            "type"=> "restaurant_each_order_cancel",
+                                            "order_id"=>$order_id,
+                                            "order_status_id"=>0,
+                                            "order_type"=>$check_order->order_type,
+                                            "title_mm"=> "အားနာပါတယ်",
+                                            "body_mm"=> "အားနာပါတယ် အော်ဒါထဲကပစ္စည်းကို စားသောက်ဆိုင်ဘက်မှ ပယ်ဖျက်ထားပါတယ်",
+                                            "title_en"=> "Sorry !",
+                                            "body_en"=> "Sorry ! Your order item is canceled by restaurant!",
+                                            "title_ch"=> "非常抱歉！",
+                                            "body_ch"=> "非常抱歉！商家取消了订单中的商品"
+                                        ],
+                                        "mutable_content" => true ,
+                                        "content_available" => true,
+                                        "notification"=> [
+                                            "title"=>"this is a title",
+                                            "body"=>"this is a body",
+                                        ],
+                                    ],
+                                ]);
+        
+                            }catch(ClientException $e){
+                            }
+                        }
+        
+                        $check_food=OrderFoods::where('order_id',$order_id)->where('is_cancel',0)->count();
+        
+                        if($select_all==1){
+                            CustomerOrder::where('order_id',$order_id)->update([
+                                'order_status_id'=>2,
+                            ]);
+                        }else{
+                        if($check_food==0){
+                            CustomerOrder::where('order_id',$order_id)->update([
+                                            'order_status_id'=>2,
+                                        ]);
+                        }
+                        $customer_orders=CustomerOrder::where('order_id',$order_id)->first();
+                        // 	if($customer_orders->item_total_price < $customer_orders->restaurant->define_amount){
+                              //  	$item_total_price=($customer_orders->item_total_price)-($price);
+                            //    	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                          //      	$delivery_fee=$customer_orders->delivery_fee;
+                        //	}else{
+                                //	$item_price=($customer_orders->item_total_price)-($price);
+                                //	if($item_price < $customer_orders->restaurant->define_amount){
+                                        //	$delivery_fee=$customer_orders->delivery_fee+$customer_orders->restaurant->restauarnt_delivery_fee;
+                                      //  	$item_total_price=$item_price+$customer_orders->restaurant->define_amount;
+                                    //    	$bill_total_price=($customer_orders->bill_total_price + $customer_orders->restaurant->restaurant_delivery_fee)-($price);
+                                //	}else{
+                                  //      	$delivery_fee=$customer_orders->delivery_fee;
+                                    //    	$item_total_price=$item_price;
+                                  //      	$bill_total_price=($customer_orders->bill_total_price)-($price);
+                                //	}
+                            //}
+        
+                            $item_total_price=($customer_orders->item_total_price)-($price);
+                            $bill_total_price=($customer_orders->bill_total_price)-($price);
+                            $delivery_fee=$customer_orders->delivery_fee;
+        
+                            $customer_orders->delivery_fee=$delivery_fee;
+                            $customer_orders->item_total_price=$item_total_price;
+                            $customer_orders->bill_total_price=$bill_total_price;
+                            $customer_orders->update();
+                        }
+        
+                        $customer_order=CustomerOrder::where('order_id',$order_id)->first();
+                        NotiOrder::where('order_id',$order_id)->delete();
+                        return response()->json(['success'=>true,'message'=>'successfully cancel order','data'=>['response'=>null,'order'=>$customer_order]]);
+                    }
                 }
+            }else{
+                return response()->json(['success'=>false,'message'=>'kpay not refund']);    
             }
 
         }else{
