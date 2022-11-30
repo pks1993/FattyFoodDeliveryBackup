@@ -729,6 +729,7 @@ class RiderApicontroller extends Controller
 
     public function home_page(Request $request)
     {
+        $language=$request->header('language');
         $rider_id=$request['rider_id'];
         $rider_check=Rider::where('rider_id',$rider_id)->first();
 
@@ -803,7 +804,13 @@ class RiderApicontroller extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
-                        $value1->from_parcel_city_name=$city_data->block_name;
+                        if($language=="my"){
+                            $value1->from_parcel_city_name=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value1->from_parcel_city_name=$city_data->block_name_en;
+                        }else{
+                            $value1->from_parcel_city_name=$city_data->block_name_ch;
+                        }
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
@@ -814,7 +821,13 @@ class RiderApicontroller extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
-                        $value1->to_parcel_city_name=$city_data->block_name;
+                        if($language=="my"){
+                            $value1->to_parcel_city_name=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value1->to_parcel_city_name=$city_data->block_name_en;
+                        }else{
+                            $value1->to_parcel_city_name=$city_data->block_name_ch;
+                        }
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
@@ -894,7 +907,13 @@ class RiderApicontroller extends Controller
                         }else{
                             // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
                             $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
-                            $value1->from_parcel_city_name=$city_data->block_name;
+                            if($language=="my"){
+                                $value1->from_parcel_city_name=$city_data->block_name_mm;
+                            }elseif($language == "en"){
+                                $value1->from_parcel_city_name=$city_data->block_name_en;
+                            }else{
+                                $value1->from_parcel_city_name=$city_data->block_name_ch;
+                            }
                             $value1->from_latitude=$city_data->latitude;
                             $value1->from_longitude=$city_data->longitude;
                         }
@@ -905,7 +924,13 @@ class RiderApicontroller extends Controller
                         }else{
                             // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                             $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
-                            $value1->to_parcel_city_name=$city_data->block_name;
+                            if($language=="my"){
+                                $value1->to_parcel_city_name=$city_data->block_name_mm;
+                            }elseif($language == "en"){
+                                $value1->to_parcel_city_name=$city_data->block_name_en;
+                            }else{
+                                $value1->to_parcel_city_name=$city_data->block_name_ch;
+                            }
                             $value1->to_latitude=$city_data->latitude;
                             $value1->to_longitude=$city_data->longitude;
                         }
@@ -1583,6 +1608,7 @@ class RiderApicontroller extends Controller
 
     public function order_status(Request $request)
     {
+        $language=$request->header('language');
         $rider_id=$request['rider_id'];
         $order_id=$request['order_id'];
         $order_id=(int)$order_id;
@@ -2549,7 +2575,13 @@ class RiderApicontroller extends Controller
                 }else{
                     // $city_data=ParcelCity::where('parcel_city_id',$orders1->from_parcel_city_id)->first();
                     $city_data=ParcelBlockList::where('parcel_block_id',$orders1->from_parcel_city_id)->first();
-                    $orders1->from_parcel_city_name=$city_data->block_name;
+                    if($language=="my"){
+                        $orders1->from_parcel_city_name=$city_data->block_name_mm;
+                    }elseif($language == "en"){
+                        $orders1->from_parcel_city_name=$city_data->block_name_en;
+                    }else{
+                        $orders1->from_parcel_city_name=$city_data->block_name_ch;
+                    }
                     $orders1->from_latitude=$city_data->latitude;
                     $orders1->from_longitude=$city_data->longitude;
                 }
@@ -2560,7 +2592,13 @@ class RiderApicontroller extends Controller
                 }else{
                     // $city_data=ParcelCity::where('parcel_city_id',$orders1->to_parcel_city_id)->first();
                     $city_data=ParcelBlockList::where('parcel_block_id',$orders1->to_parcel_city_id)->first();
-                    $orders1->to_parcel_city_name=$city_data->block_name;
+                    if($language=="my"){
+                        $orders1->to_parcel_city_name=$city_data->block_name_mm;
+                    }elseif($language == "en"){
+                        $orders1->to_parcel_city_name=$city_data->block_name_en;
+                    }else{
+                        $orders1->to_parcel_city_name=$city_data->block_name_ch;
+                    }
                     $orders1->to_latitude=$city_data->latitude;
                     $orders1->to_longitude=$city_data->longitude;
                 }
@@ -2708,6 +2746,7 @@ class RiderApicontroller extends Controller
     }
     public function order_food_history_list(Request $request)
     {
+        $language=$request['language'];
         $rider_id=$request['rider_id'];
         $order_type=$request['order_type'];
         if(!empty($order_type)){
@@ -2745,7 +2784,13 @@ class RiderApicontroller extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->from_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
-                        $value1->from_parcel_city_name=$city_data->block_name;
+                        if($language=="my"){
+                            $value1->from_parcel_city_name=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value1->from_parcel_city_name=$city_data->block_name_en;
+                        }else{
+                            $value1->from_parcel_city_name=$city_data->block_name_ch;
+                        }
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
@@ -2756,7 +2801,13 @@ class RiderApicontroller extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value1->to_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
-                        $value1->to_parcel_city_name=$city_data->block_name;
+                        if($language=="my"){
+                            $value1->to_parcel_city_name=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value1->to_parcel_city_name=$city_data->block_name_en;
+                        }else{
+                            $value1->to_parcel_city_name=$city_data->block_name_ch;
+                        }
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }
@@ -2782,6 +2833,7 @@ class RiderApicontroller extends Controller
 
     public function order_food_history_list_filter(Request $request)
     {
+        $language=$request['language'];
         $rider_id=$request['rider_id'];
         $order_type=$request['order_type'];
         $from_date_one=$request['from_date'];
@@ -2863,7 +2915,13 @@ class RiderApicontroller extends Controller
                         $value1->from_longitude=null;
                     }else{
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->from_parcel_city_id)->first();
-                        $value1->from_parcel_city_name=$city_data->block_name;
+                        if($language=="my"){
+                            $value1->from_parcel_city_name=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value1->from_parcel_city_name=$city_data->block_name_en;
+                        }else{
+                            $value1->from_parcel_city_name=$city_data->block_name_ch;
+                        }
                         $value1->from_latitude=$city_data->latitude;
                         $value1->from_longitude=$city_data->longitude;
                     }
@@ -2873,7 +2931,13 @@ class RiderApicontroller extends Controller
                         $value1->to_longitude=null;
                     }else{
                         $city_data=ParcelBlockList::where('parcel_block_id',$value1->to_parcel_city_id)->first();
-                        $value1->to_parcel_city_name=$city_data->block_name;
+                        if($language=="my"){
+                            $value1->to_parcel_city_name=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value1->to_parcel_city_name=$city_data->block_name_en;
+                        }else{
+                            $value1->to_parcel_city_name=$city_data->block_name_ch;
+                        }
                         $value1->to_latitude=$city_data->latitude;
                         $value1->to_longitude=$city_data->longitude;
                     }

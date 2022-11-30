@@ -497,7 +497,15 @@ class OrderApiController extends Controller
                             }
                         }
                     }else{
-                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                        if($item1->order_status->order_status_name_ch){
+                            $status_name=$item1->order_status->order_status_name_ch;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
                     }
                     $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
@@ -547,7 +555,15 @@ class OrderApiController extends Controller
                             }
                         }
                     }else{
-                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                        if($item1->order_status->order_status_name_ch){
+                            $status_name=$item1->order_status->order_status_name_ch;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
                     }
                     $item1->system_distance=$system_deli_distance;
                     $item1->order_status->order_status_name=$status_name;
@@ -623,7 +639,15 @@ class OrderApiController extends Controller
                             }
                         }
                     }else{
-                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                        if($item->order_status->order_status_name_ch){
+                            $status_name=$item->order_status->order_status_name_ch;
+                        }else{
+                            if($item->order_status->order_status_name){
+                                $status_name=$item->order_status->order_status_name;
+                            }else{
+                                $status_name=$item->order_status->order_status_name_ch;
+                            }
+                        }
                     }
                     $item->order_status->order_status_name=$status_name;
 
@@ -632,14 +656,26 @@ class OrderApiController extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$item->from_parcel_city_id)->first();
                         $block_data=ParcelBlockList::where('parcel_block_id',$item->from_parcel_city_id)->first();
-                        $item->from_parcel_city_name=$block_data->block_name;
+                        if($language=="my"){
+                            $item->from_parcel_city_name=$block_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $item->from_parcel_city_name=$block_data->block_name_en;
+                        }else{
+                            $item->from_parcel_city_name=$block_data->block_name_ch;
+                        }
                     }
                     if($item->to_parcel_city_id==0){
                         $item->to_parcel_city_name=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$item->to_parcel_city_id)->first();
                         $block_data=ParcelBlockList::where('parcel_block_id',$item->to_parcel_city_id)->first();
-                        $item->to_parcel_city_name=$block_data->block_name;
+                        if($language=="my"){
+                            $item->to_parcel_city_name=$block_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $item->to_parcel_city_name=$block_data->block_name_en;
+                        }else{
+                            $item->to_parcel_city_name=$block_data->block_name_ch;
+                        }
                     }
                     array_push($active_data,$item);
                 }
@@ -687,7 +723,15 @@ class OrderApiController extends Controller
                             }
                         }
                     }else{
-                        return response()->json(['success'=>false,'message'=>'language is not define! You can use my ,en and zh']);
+                        if($item1->order_status->order_status_name_ch){
+                            $status_name=$item1->order_status->order_status_name_ch;
+                        }else{
+                            if($item1->order_status->order_status_name){
+                                $status_name=$item1->order_status->order_status_name;
+                            }else{
+                                $status_name=$item1->order_status->order_status_name_ch;
+                            }
+                        }
                     }
                     $item1->order_status->order_status_name=$status_name;
                     if($item1->from_parcel_city_id==0){
@@ -695,14 +739,26 @@ class OrderApiController extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$item1->from_parcel_city_id)->first();
                         $block_data=ParcelBlockList::where('parcel_block_id',$item1->from_parcel_city_id)->first();
-                        $item1->from_parcel_city_name=$block_data->block_name;
+                        if($language=="my"){
+                            $item1->from_parcel_city_name=$block_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $item1->from_parcel_city_name=$block_data->block_name_en;
+                        }else{
+                            $item1->from_parcel_city_name=$block_data->block_name_ch;
+                        }
                     }
                     if($item1->to_parcel_city_id==0){
                         $item1->to_parcel_city_name=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$item1->to_parcel_city_id)->first();
                         $block_data=ParcelBlockList::where('parcel_block_id',$item1->to_parcel_city_id)->first();
-                        $item1->to_parcel_city_name=$block_data->block_name;
+                        if($language=="my"){
+                            $item1->to_parcel_city_name=$block_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $item1->to_parcel_city_name=$block_data->block_name_en;
+                        }else{
+                            $item1->to_parcel_city_name=$block_data->block_name_ch;
+                        }
                     }
                     array_push($past_data,$item1);
                 }
@@ -734,14 +790,26 @@ class OrderApiController extends Controller
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value['from_parcel_city_id'])->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value['from_parcel_city_id'])->first();
-                        $value['from_parcel_city_name']=$city_data->block_name;
+                        if($language=="my"){
+                            $value['from_parcel_city_name']=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value['from_parcel_city_name']=$city_data->block_name_en;
+                        }else{
+                            $value['from_parcel_city_name']=$city_data->block_name_ch;
+                        }
                     }
                     if($value['to_parcel_city_id']==0){
                         $value['to_parcel_city_name']=null;
                     }else{
                         // $city_data=ParcelCity::where('parcel_city_id',$value->to_parcel_city_id)->first();
                         $city_data=ParcelBlockList::where('parcel_block_id',$value['to_parcel_city_id'])->first();
-                        $value['to_parcel_city_name']=$city_data->block_name;
+                        if($language=="my"){
+                            $value['to_parcel_city_name']=$city_data->block_name_mm;
+                        }elseif($language == "en"){
+                            $value['to_parcel_city_name']=$city_data->block_name_en;
+                        }else{
+                            $value['to_parcel_city_name']=$city_data->block_name_ch;
+                        }
                     }
                     array_push($item,$value);
 
@@ -2311,6 +2379,7 @@ class OrderApiController extends Controller
     }
     public function v2_rider_order_click(Request $request)
     {
+        $language=$request->header('language');
         $order_id=$request['order_id'];
         $customer_orders=CustomerOrder::with(['customer','parcel_type','parcel_extra','parcel_images','payment_method','order_status','restaurant','rider','customer_address','foods','foods.sub_item','foods.sub_item.option'])->orderby('created_at','DESC')->where('order_id',$order_id)->first();
 
@@ -2359,7 +2428,13 @@ class OrderApiController extends Controller
         }else{
             // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
             $city_data=ParcelBlockList::where('parcel_block_id',$customer_orders->from_parcel_city_id)->first();
-            $customer_orders->from_parcel_city_name=$city_data->block_name;
+            if($language=="my"){
+                $customer_orders->from_parcel_city_name=$city_data->block_name_mm;
+            }elseif($language == "en"){
+                $customer_orders->from_parcel_city_name=$city_data->block_name_en;
+            }else{
+                $customer_orders->from_parcel_city_name=$city_data->block_name_ch;
+            }
             $customer_orders->from_latitude=$city_data->latitude;
             $customer_orders->from_longitude=$city_data->longitude;
         }
@@ -2370,7 +2445,13 @@ class OrderApiController extends Controller
         }else{
             // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
             $city_data=ParcelBlockList::where('parcel_block_id',$customer_orders->to_parcel_city_id)->first();
-            $customer_orders->to_parcel_city_name=$city_data->block_name;
+            if($language=="my"){
+                $customer_orders->to_parcel_city_name=$city_data->block_name_mm;
+            }elseif($language == "en"){
+                $customer_orders->to_parcel_city_name=$city_data->block_name_en;
+            }else{
+                $customer_orders->to_parcel_city_name=$city_data->block_name_ch;
+            }
             $customer_orders->to_latitude=$city_data->latitude;
             $customer_orders->to_longitude=$city_data->longitude;
         }
@@ -2572,14 +2653,26 @@ class OrderApiController extends Controller
         }else{
             // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->from_parcel_city_id)->first();
             $block_data=ParcelBlockList::where('parcel_block_id',$customer_orders->from_parcel_city_id)->first();
-            $customer_orders->from_parcel_city_name=$block_data->block_name;
+            if($language=="my"){
+                $customer_orders->from_parcel_city_name=$block_data->block_name_mm;
+            }elseif($language == "en"){
+                $customer_orders->from_parcel_city_name=$block_data->block_name_en;
+            }else{
+                $customer_orders->from_parcel_city_name=$block_data->block_name_ch;
+            }
         }
         if($customer_orders->to_parcel_city_id==0){
             $customer_orders->to_parcel_city_name=null;
         }else{
             // $city_data=ParcelCity::where('parcel_city_id',$customer_orders->to_parcel_city_id)->first();
             $block_data=ParcelBlockList::where('parcel_block_id',$customer_orders->to_parcel_city_id)->first();
-            $customer_orders->to_parcel_city_name=$block_data->block_name;
+            if($language=="my"){
+                $customer_orders->to_parcel_city_name=$block_data->block_name_mm;
+            }elseif($language == "en"){
+                $customer_orders->to_parcel_city_name=$block_data->block_name_en;
+            }else{
+                $customer_orders->to_parcel_city_name=$block_data->block_name_ch;
+            }
         }
 
         if($customer_orders->rider_parcel_address==null){

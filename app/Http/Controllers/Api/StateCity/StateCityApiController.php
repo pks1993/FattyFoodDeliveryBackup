@@ -66,6 +66,7 @@ class StateCityApiController extends Controller
     }
     public function v2_parcel_choose_address(Request $request)
     {
+        $language=$request->header('language');
         $customer_id=$request['customer_id'];
         $state_id=$request['state_id'];
         if($customer_id && $state_id){
@@ -76,7 +77,13 @@ class StateCityApiController extends Controller
                 foreach($recent as $value){
                     if($value){
                         $parcel_block=ParcelBlockList::where('parcel_block_id',$value->parcel_block_id)->first();
-                        $value->block_name=$parcel_block->block_name;
+                        if($language=="my"){
+                            $value->block_name=$parcel_block->block_name_mm;
+                        }elseif($language == "en"){
+                            $value->block_name=$parcel_block->block_name_en;
+                        }else{
+                            $value->block_name=$parcel_block->block_name_ch;
+                        }
                         $value->latitude=$parcel_block->latitude;
                         $value->longitude=$parcel_block->longitude;
                     }
@@ -169,13 +176,20 @@ class StateCityApiController extends Controller
 
     public function v2_parcel_default_address_list(Request $request)
     {
+        $language=$request->header('language');
         $customer_id=$request['customer_id'];
         if($customer_id){
             $parcel_address=ParcelAddress::where('customer_id',$customer_id)->select('parcel_default_address_id','customer_id','phone','address','is_default','parcel_block_id')->orderBy('is_default','desc')->orderBy('parcel_default_address_id','desc')->limit(50)->get();
             if($parcel_address->isNotEmpty()){
                 $data=[];
                 foreach($parcel_address as $value){
-                    $value->block_name=$value->parcel_block->block_name;
+                    if($language=="my"){
+                        $value->block_name=$value->parcel_block->block_name_mm;
+                    }elseif($language == "en"){
+                        $value->block_name=$value->parcel_block->block_name_en;
+                    }else{
+                        $value->block_name=$value->parcel_block->block_name_ch;
+                    }
                     $value->state_id=$value->parcel_block->state_id;
                     $value->latitude=$value->parcel_block->latitude;
                     $value->longitude=$value->parcel_block->longitude;
