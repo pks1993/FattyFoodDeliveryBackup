@@ -67,7 +67,10 @@ try {
             $customer_id=$customer_orders->customer_id;
             $restaurant_id=$customer_orders->restaurant_id;
             $customer_order_id=$customer_orders->customer_order_id;
-            $payment_total=$refund_amount-$payment_total_amount;
+
+            $amount=(int)$refund_amount;
+            $payment_total=$amount-$payment_total_amount;
+
             $sql1="INSERT INTO notification_templates (notification_type,order_id,customer_id,restaurant_id,customer_order_id,cancel_amount,noti_type,created_at,updated_at) VALUES ($notification_menu_id,$order_id,$customer_id,$restaurant_id,$customer_order_id,$refund_amount,'$noti_type',now(),now())";
 
             $is_partial_refund=1;
